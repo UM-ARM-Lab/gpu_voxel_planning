@@ -1,0 +1,75 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(gpu_voxel_planning)
+
+## Compile as C++11, supported in ROS Kinetic and newer
+# add_compile_options(-std=c++11)
+
+set(CATKIN_PACKAGES
+  roscpp
+  )
+
+## Find catkin macros and libraries
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## is used, also find other catkin packages
+find_package(catkin REQUIRED REQUIRED COMPONENTS ${CATKIN_PACKAGES})
+FIND_PACKAGE(icl_core REQUIRED )
+FIND_PACKAGE(gpu_voxels REQUIRED)
+FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
+
+
+
+# This is a quirk and should be removed in upcoming versions
+# If you built GPU Voxels without ROS support, remove this.
+# FIND_PACKAGE(orocos_kdl REQUIRED)
+
+
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+
+# Also we have to inherit some Environment definitions required for our base libs:
+add_definitions(
+  ${icl_core_DEFINITIONS}
+  ${gpu_voxels_DEFINITIONS}
+)
+
+
+###################################
+## catkin specific configuration ##
+###################################
+## The catkin_package macro generates cmake config files for your package
+## Declare things to be passed to dependent projects
+## INCLUDE_DIRS: uncomment this if your package contains header files
+## LIBRARIES: libraries you create in this project that dependent projects also need
+## CATKIN_DEPENDS: catkin_packages dependent projects also need
+## DEPENDS: system dependencies of this project that dependent projects also need
+catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES gpu_voxel_planning
+ CATKIN_DEPENDS ${CATKIN_PACKAGES}
+#  DEPENDS system_lib
+)
+
+###########
+## Build ##
+###########
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+include_directories(
+  # include
+  ${catkin_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${gpu_voxels_INCLUDE_DIRS}
+  # ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
+
+)
+
+
+
+add_executable(urdf_test src/URDF_Loader_ROS_listener.cpp)
+target_link_libraries (urdf_test
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+)
+
