@@ -59,16 +59,18 @@ Vector3f object_position(0.1, 0.15, 0.15);
 void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
 {
   //std::cout << "Got JointStateMessage" << std::endl;
-  gvl->clearMap("myHandVoxellist");
+  gvl->clearMap("victorCurrentVoxels");
 
   for(size_t i = 0; i < msg->name.size(); i++)
   {
     myRobotJointValues[msg->name[i]] = msg->position[i];
   }
   // update the robot joints:
-  gvl->setRobotConfiguration("myUrdfRobot", myRobotJointValues);
+  gvl->setRobotConfiguration("victorUrdf", myRobotJointValues);
   // insert the robot into the map:
-  gvl->insertRobotIntoMap("myUrdfRobot", "myHandVoxellist", eBVM_OCCUPIED);
+  gvl->insertRobotIntoMap("victorUrdf", "victorCurrentVoxels", eBVM_OCCUPIED);
+  gvl->insertRobotIntoMap("victorUrdf", "victorSweptVoxels", eBVM_SWEPT_VOLUME_START);
+  
 }
 
 void obstaclePoseCallback(const geometry_msgs::Pose::ConstPtr& msg)
@@ -104,24 +106,37 @@ int main(int argc, char* argv[])
   gvl->initialize(200, 200, 200, 0.01); // ==> 200 Voxels, each one is 1 mm in size so the map represents 20x20x20 centimeter
 
   // Add a map:
-  gvl->addMap(MT_PROBAB_VOXELMAP, "myObjectVoxelmap");
-  gvl->addMap(MT_BITVECTOR_VOXELLIST, "myHandVoxellist");
+  // gvl->addMap(MT_PROBAB_VOXELMAP, "myObjectVoxelmap");
+  
+  gvl->addMap(MT_BITVECTOR_VOXELLIST, "victorCurrentVoxels");
+  gvl->addMap(MT_BITVECTOR_VOXELLIST, "victorSweptVoxels");
+  gvl->addMap(gpu_voxels::MT_PROBAB_VOXELMAP, "possibleObstacles");              // 3D-Array of probabilistic Voxels (identified by their Voxelmap-like Pointer adress) that hold a Probability
+
+  /*
+   * At this point we can add geometries to the maps in different ways.
+   *
+   * We can add a simple box.
+   */
+  gpu_voxels::Vector3f center_box1_min(1.0,2.5,1.5);
+  gpu_voxels::Vector3f center_box1_max(1.1,2.6,1.6);
+  gvl->insertBoxIntoMap(center_box1_min,center_box1_max, "possibleObstacles", gpu_voxels::eBVM_OCCUPIED);
+
 
   // And a robot, generated from a ROS URDF file:
-  // gvl->addRobot("myUrdfRobot", "schunk_svh/svh-standalone.urdf", true);
-  gvl->addRobot("myUrdfRobot", "/home/bradsaund/catkin_ws/src/kuka_iiwa_interface/victor_description/urdf/victor.urdf", false);  
+  gvl->addRobot("victorUrdf", "/home/bradsaund/catkin_ws/src/kuka_iiwa_interface/victor_description/urdf/victor.urdf", false);  
 
   ros::NodeHandle n;
   ros::Subscriber sub1 = n.subscribe("joint_states", 1, jointStateCallback);
-  ros::Subscriber sub2 = n.subscribe("obstacle_pose", 1, obstaclePoseCallback);
+  
+  // ros::Subscriber sub2 = n.subscribe("obstacle_pose", 1, obstaclePoseCallback);
 
   // A an obstacle that can be moved with the ROS callback
-  gvl->insertPointCloudFromFile("myObjectVoxelmap", "hals_vereinfacht.binvox", true,
-                                eBVM_OCCUPIED, false, object_position, 0.3);
+  // gvl->insertPointCloudFromFile("myObjectVoxelmap", "hals_vereinfacht.binvox", true,
+  //                               eBVM_OCCUPIED, false, object_position, 0.3);
   // update the robot joints:
-  gvl->setRobotConfiguration("myUrdfRobot", myRobotJointValues);
+  gvl->setRobotConfiguration("victorUrdf", myRobotJointValues);
   // insert the robot into the map:
-  gvl->insertRobotIntoMap("myUrdfRobot", "myHandVoxellist", eBVM_OCCUPIED);
+  gvl->insertRobotIntoMap("victorUrdf", "victorCurrentVoxels", eBVM_OCCUPIED);
   /*
    * Now we start the main loop, that will read ROS messages and update the Robot.
    */
@@ -131,14 +146,17 @@ int main(int argc, char* argv[])
   {
     ros::spinOnce();
 
-    num_colls = gvl->getMap("myHandVoxellist")->as<voxellist::BitVectorVoxelList>()->collideWithTypes(gvl->getMap("myObjectVoxelmap")->as<voxelmap::ProbVoxelMap>(), bits_in_collision);
+    // num_colls = gvl->getMap("victorCurrentVoxels")->as<voxellist::BitVectorVoxelList>()->collideWithTypes(gvl->getMap("myObjectVoxelmap")->as<voxelmap::ProbVoxelMap>(), bits_in_collision);
 
-    std::cout << "Detected " << num_colls << " collisiosn " << std::endl;
+    // std::cout << "Detected " << num_colls << " collisiosn " << std::endl;
     //std::cout << "with bits \n" << bits_in_collision << std::endl;
 
     // tell the visualier that the map has changed:
-    gvl->visualizeMap("myHandVoxellist");
-    gvl->visualizeMap("myObjectVoxelmap");
+    gvl->visualizeMap("victorCurrentVoxels");
+    gvl->visualizeMap("victorSweptVoxels");
+    gvl->visualizeMap("possibleObstacles");
+    
+    // gvl->visualizeMap("myObjectVoxelmap");
 
     usleep(30000);
   }
