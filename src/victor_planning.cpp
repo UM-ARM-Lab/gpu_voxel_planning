@@ -30,9 +30,9 @@ int main(int argc, char **argv)
     PERF_MON_ENABLE("planning");
 
     // construct the state space we are planning in
-    auto space(std::make_shared<ob::RealVectorStateSpace>(6));
+    auto space(std::make_shared<ob::RealVectorStateSpace>(7));
     //We then set the bounds for the R3 component of this state space:
-    ob::RealVectorBounds bounds(6);
+    ob::RealVectorBounds bounds(7);
     bounds.setLow(-3.14159265);
     bounds.setHigh(3.14159265);
 
@@ -59,6 +59,7 @@ int main(int argc, char **argv)
     start[3] = 0.0;
     start[4] = 0.0;
     start[5] = 0.0;
+    start[6] = 0.0;
     //And a random goal state:
     ob::ScopedState<> goal(space);
     goal[0] = 1.3;
@@ -67,6 +68,7 @@ int main(int argc, char **argv)
     goal[3] = 0.0;
     goal[4] = 0.0;
     goal[5] = 0.0;
+    goal[6] = 0.0;
 
     my_class_ptr->insertStartAndGoal(start, goal);
     my_class_ptr->doVis();
