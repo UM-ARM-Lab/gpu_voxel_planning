@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <iostream>
 using namespace std;
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
@@ -18,6 +19,27 @@ using namespace std;
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
+std::shared_ptr<VictorValidator> vv_ptr;
+
+// We define exit handlers to quit the program:
+void ctrlchandler(int)
+{
+    // TODO: Find what is actually holding onto the ptr
+
+    // Something here is holding onto the shared_ptr stored in vv_ptr, thus
+    // even when quitting the program, memory stays allocated.
+    // explicitly calling the destructor frees the memory, but this should instead
+    // be done when all references to the shared_ptr leave.
+
+    vv_ptr->~VictorValidator();
+    exit(EXIT_SUCCESS);
+}
+void killhandler(int)
+{
+    // TODO: Find what is actually holding onto the ptr
+    vv_ptr->~VictorValidator();
+    exit(EXIT_SUCCESS);
+}
 
 
 
@@ -25,6 +47,10 @@ int main(int argc, char **argv)
 {
     // Always initialize our logging framework as a first step, with the CLI arguments:
     icl_core::logging::initialize(argc, argv);
+    
+    signal(SIGINT, ctrlchandler);
+    signal(SIGTERM, killhandler);
+
 
     PERF_MON_INITIALIZE(100, 1000);
     PERF_MON_ENABLE("planning");
@@ -42,12 +68,12 @@ int main(int argc, char **argv)
     //Create an instance of ompl::base::SpaceInformation for the state space
     auto si(std::make_shared<ob::SpaceInformation>(space));
     //Set the state validity checker
-    std::shared_ptr<VictorValidator> my_class_ptr(std::make_shared<VictorValidator>(si));
+    vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si));
 
     og::PathSimplifier simp(si);
 
-    si->setStateValidityChecker(my_class_ptr->getptr());
-    si->setMotionValidator(my_class_ptr->getptr());
+    si->setStateValidityChecker(vv_ptr->getptr());
+    si->setMotionValidator(vv_ptr->getptr());
     si->setup();
 
 
@@ -70,8 +96,8 @@ int main(int argc, char **argv)
     goal[5] = 0.0;
     goal[6] = 0.0;
 
-    my_class_ptr->insertStartAndGoal(start, goal);
-    my_class_ptr->doVis();
+    vv_ptr->insertStartAndGoal(start, goal);
+    vv_ptr->doVis();
 
 
     //Create an instance of ompl::base::ProblemDefinition
@@ -93,7 +119,7 @@ int main(int argc, char **argv)
 
     for(size_t n = 0; n < 5; ++n)
     {
-        my_class_ptr->moveObstacle();
+        vv_ptr->moveObstacle();
 
         //We can now try to solve the problem. This call returns a value from ompl::base::PlannerStatus which describes whether a solution has been found within the specified amount of time (in seconds). If this value can be cast to true, a solution was found.
         PERF_MON_START("planner");
@@ -120,7 +146,7 @@ int main(int argc, char **argv)
             // print the path to screen
             path->print(std::cout);
 
-            my_class_ptr->visualizeSolution(path);
+            vv_ptr->visualizeSolution(path);
 
         }else{
             std::cout << "No solution could be found" << std::endl;
@@ -136,7 +162,7 @@ int main(int argc, char **argv)
     // keep the visualization running:
     while(true)
     {
-        my_class_ptr->doVis();
+        vv_ptr->doVis();
         usleep(30000);
     }
 
