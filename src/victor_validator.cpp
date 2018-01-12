@@ -34,7 +34,7 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     assert(stateSpace_ != nullptr);
 
     gvl = gpu_voxels::GpuVoxels::getInstance();
-    gvl->initialize(150, 100, 100, 0.02);
+    gvl->initialize(150, 200, 100, 0.02);
 
     // We add maps with objects, to collide them
     gvl->addMap(MT_PROBAB_VOXELMAP,"victor");
@@ -43,7 +43,7 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     gvl->addMap(MT_PROBAB_VOXELMAP,"query");
     std::cout << "Adding robot\n";
 
-    gvl->addRobot("victor", "/home/bradsaund/catkin_ws/src/kuka_iiwa_interface/victor_description/urdf/victor.urdf", false);  
+    gvl->addRobot("victor", "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);  
 
     gvl->visualizeMap("env");
 
