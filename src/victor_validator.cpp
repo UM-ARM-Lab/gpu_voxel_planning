@@ -15,7 +15,14 @@
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 using namespace gpu_voxels;
+using namespace vvhelpers;
 namespace bfs = boost::filesystem;
+
+
+std::vector<std::string> right_arm_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
+        "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5",
+        "victor_right_arm_joint_6", "victor_right_arm_joint_7"};
+
 
 VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     : ob::StateValidityChecker(si)
@@ -27,7 +34,7 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     assert(stateSpace_ != nullptr);
 
     gvl = gpu_voxels::GpuVoxels::getInstance();
-    gvl->initialize(150, 150, 100, 0.02);
+    gvl->initialize(150, 100, 100, 0.02);
 
     // We add maps with objects, to collide them
     gvl->addMap(MT_PROBAB_VOXELMAP,"victor");
@@ -86,7 +93,7 @@ void VictorValidator::visualizeSolution(ob::PathPtr path)
     PERF_MON_SUMMARY_PREFIX_INFO("motion_check");
     PERF_MON_SUMMARY_PREFIX_INFO("motion_check_lv");
 
-    std::cout << "Robot consists of " << gvl->getRobot("myUrdfRobot")->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
+    std::cout << "Robot consists of " << gvl->getRobot("victor")->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
 
     og::PathGeometric* solution = path->as<og::PathGeometric>();
     solution->interpolate();
@@ -96,56 +103,38 @@ void VictorValidator::visualizeSolution(ob::PathPtr path)
     {
 
         const double *values = solution->getState(step)->as<ob::RealVectorStateSpace::StateType>()->values;
-
-        robot::JointValueMap state_joint_values;
-        state_joint_values["shoulder_pan_joint"] = values[0];
-        state_joint_values["shoulder_lift_joint"] = values[1];
-        state_joint_values["elbow_joint"] = values[2];
-        state_joint_values["wrist_1_joint"] = values[3];
-        state_joint_values["wrist_2_joint"] = values[4];
-        state_joint_values["wrist_3_joint"] = values[5];
+        
+        robot::JointValueMap state_joint_values = toRightJointValueMap<const double*>(values);
 
         // update the robot joints:
-        gvl->setRobotConfiguration("myUrdfRobot", state_joint_values);
+        gvl->setRobotConfiguration("victor", state_joint_values);
         // insert the robot into the map:
-        gvl->insertRobotIntoMap("myUrdfRobot", "solutions", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + (step % 249) ));
+        gvl->insertRobotIntoMap("victor", "solutions", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + (step % 249) ));
     }
 
     gvl->visualizeMap("solutions");
 
 }
 
-void VictorValidator::insertStartAndGoal(const ompl::base::ScopedState<> &start, const ompl::base::ScopedState<> &goal) const
+void VictorValidator::insertStartAndGoal(const ob::ScopedState<> &start, const ob::ScopedState<> &goal) const
 {
 
     gvl->clearMap("query");
-
-    robot::JointValueMap state_joint_values;
-    state_joint_values["shoulder_pan_joint"] = start[0];
-    state_joint_values["shoulder_lift_joint"] = start[1];
-    state_joint_values["elbow_joint"] = start[2];
-    state_joint_values["wrist_1_joint"] = start[3];
-    state_joint_values["wrist_2_joint"] = start[4];
-    state_joint_values["wrist_3_joint"] = start[5];
+    robot::JointValueMap state_joint_values = toRightJointValueMap<ob::ScopedState<>>(start);
 
     // update the robot joints:
-    gvl->setRobotConfiguration("myUrdfRobot", state_joint_values);
-    gvl->insertRobotIntoMap("myUrdfRobot", "query", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START));
+    gvl->setRobotConfiguration("victor", state_joint_values);
+    gvl->insertRobotIntoMap("victor", "query", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START));
 
-    state_joint_values["shoulder_pan_joint"] = goal[0];
-    state_joint_values["shoulder_lift_joint"] = goal[1];
-    state_joint_values["elbow_joint"] = goal[2];
-    state_joint_values["wrist_1_joint"] = goal[3];
-    state_joint_values["wrist_2_joint"] = goal[4];
-    state_joint_values["wrist_3_joint"] = goal[5];
+    state_joint_values = toRightJointValueMap<ob::ScopedState<>>(goal);
 
     // update the robot joints:
-    gvl->setRobotConfiguration("myUrdfRobot", state_joint_values);
-    gvl->insertRobotIntoMap("myUrdfRobot", "query", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START+1));
+    gvl->setRobotConfiguration("victor", state_joint_values);
+    gvl->insertRobotIntoMap("victor", "query", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START+1));
 
 }
 
-bool VictorValidator::isValid(const ompl::base::State *state) const
+bool VictorValidator::isValid(const ob::State *state) const
 {
 
     PERF_MON_START("inserting");
@@ -156,18 +145,14 @@ bool VictorValidator::isValid(const ompl::base::State *state) const
 
     const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
 
-    robot::JointValueMap state_joint_values;
-    state_joint_values["shoulder_pan_joint"] = values[0];
-    state_joint_values["shoulder_lift_joint"] = values[1];
-    state_joint_values["elbow_joint"] = values[2];
-    state_joint_values["wrist_1_joint"] = values[3];
-    state_joint_values["wrist_2_joint"] = values[4];
-    state_joint_values["wrist_3_joint"] = values[5];
+    
+    robot::JointValueMap state_joint_values = toRightJointValueMap<const double*>(values);
+
 
     // update the robot joints:
-    gvl->setRobotConfiguration("myUrdfRobot", state_joint_values);
+    gvl->setRobotConfiguration("victor", state_joint_values);
     // insert the robot into the map:
-    gvl->insertRobotIntoMap("myUrdfRobot", "victor", eBVM_OCCUPIED);
+    gvl->insertRobotIntoMap("victor", "victor", eBVM_OCCUPIED);
 
     PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Pose Insertion", "pose_check");
 
@@ -180,8 +165,8 @@ bool VictorValidator::isValid(const ompl::base::State *state) const
     return num_colls_pc == 0;
 }
 
-bool VictorValidator::checkMotion(const ompl::base::State *s1, const ompl::base::State *s2,
-                                       std::pair< ompl::base::State*, double > & lastValid) const
+bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
+                                       std::pair< ob::State*, double > & lastValid) const
 {
 
     //    std::cout << "LongestValidSegmentFraction = " << stateSpace_->getLongestValidSegmentFraction() << std::endl;
@@ -249,8 +234,8 @@ bool VictorValidator::checkMotion(const ompl::base::State *s1, const ompl::base:
 
 
 
-//bool VictorValidator::checkMotion(const ompl::base::State *s1, const ompl::base::State *s2,
-//                                  std::pair< ompl::base::State*, double > & lastValid) const
+//bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
+//                                  std::pair< ob::State*, double > & lastValid) const
 //{
 
 //    std::lock_guard<std::mutex> lock(g_j_mutex);
@@ -293,9 +278,9 @@ bool VictorValidator::checkMotion(const ompl::base::State *s1, const ompl::base:
 //            state_joint_values["wrist_3_joint"] = values[5];
 
 //            // update the robot joints:
-//            gvl->setRobotConfiguration("myUrdfRobot", state_joint_values);
+//            gvl->setRobotConfiguration("victor", state_joint_values);
 //            // insert the robot into the map:
-//            gvl->insertRobotIntoMap("myUrdfRobot", "victor", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + j));
+//            gvl->insertRobotIntoMap("victor", "victor", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + j));
 
 //        }
 //        PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check_lv");
@@ -379,7 +364,7 @@ bool VictorValidator::checkMotion(const ompl::base::State *s1, const ompl::base:
 
 
 
-bool VictorValidator::checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const
+bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) const
 {
     std::lock_guard<std::mutex> lock(g_i_mutex);
     gvl->clearMap("victor");
@@ -426,9 +411,9 @@ bool VictorValidator::checkMotion(const ompl::base::State *s1, const ompl::base:
             state_joint_values["wrist_3_joint"] = values[5];
 
             // update the robot joints:
-            gvl->setRobotConfiguration("myUrdfRobot", state_joint_values);
+            gvl->setRobotConfiguration("victor", state_joint_values);
             // insert the robot into the map:
-            gvl->insertRobotIntoMap("myUrdfRobot", "victor", eBVM_OCCUPIED);
+            gvl->insertRobotIntoMap("victor", "victor", eBVM_OCCUPIED);
 
         }
         PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check");
@@ -457,4 +442,16 @@ bool VictorValidator::checkMotion(const ompl::base::State *s1, const ompl::base:
     return result;
 
 
+}
+
+
+template<typename T>
+robot::JointValueMap vvhelpers::toRightJointValueMap(const T values)
+{
+    robot::JointValueMap jvm;
+    for(size_t i=0; i<right_arm_names.size(); i++)
+    {
+        jvm[right_arm_names[i]] = values[i];
+    }
+    return jvm;
 }

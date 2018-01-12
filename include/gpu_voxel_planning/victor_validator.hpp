@@ -47,6 +47,10 @@ private:
     mutable std::mutex g_j_mutex;
 };
 
+namespace vvhelpers{
+    template<typename T>
+    robot::JointValueMap toRightJointValueMap(const T values);
+}
 
 
 #endif
