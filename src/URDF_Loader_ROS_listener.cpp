@@ -38,9 +38,15 @@
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Pose.h>
+#include "collision_detection.hpp"
 
 using namespace gpu_voxels;
 namespace bfs = boost::filesystem;
+
+std::vector<std::string> left_arm_names{"victor_left_arm_joint_1",  "victor_left_arm_joint_2",  "victor_left_arm_joint_3",  "victor_left_arm_joint_4",  "victor_left_arm_joint_5",  "victor_left_arm_joint_6",  "victor_left_arm_joint_7"};
+
+std::vector<std::string> right_arm_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2", "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5", "victor_right_arm_joint_6", "victor_right_arm_joint_7"};
+
 
 GpuVoxelsSharedPtr gvl;
 
@@ -66,11 +72,45 @@ void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
     myRobotJointValues[msg->name[i]] = msg->position[i];
   }
   // update the robot joints:
-  gvl->setRobotConfiguration("victorUrdf", myRobotJointValues);
+  gvl->setRobotConfiguration("victor", myRobotJointValues);
   // insert the robot into the map:
-  gvl->insertRobotIntoMap("victorUrdf", "victorCurrentVoxels", eBVM_OCCUPIED);
-  gvl->insertRobotIntoMap("victorUrdf", "victorSweptVoxels", eBVM_SWEPT_VOLUME_START);
+  // gvl->insertRobotIntoMap("victor", "victorCurrentVoxels", eBVM_OCCUPIED);
+  gvl->insertRobotIntoMap("victor", "victorCurrentVoxels", gpu_voxels::eBVM_COLLISION);
+
+
+  //Equivalent? ways to insert into swept volume map
+  gvl->insertRobotIntoMap("victor", "victorSweptVoxels", eBVM_SWEPT_VOLUME_START);
+  // BitVoxelMeaning swept = eBVM_SWEPT_VOLUME_START;
+  // gvl->getMap("victorSweptVoxels")->merge(gvl->getMap("victorCurrentVoxels"), Vector3f(), &swept);
   
+  gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap("possibleObstacles");
+  voxellist::BitVectorVoxelList* obstacles = obstacles_ptr->as<voxellist::BitVectorVoxelList>();
+  
+  obstacles->subtract(gvl->getMap("victorSweptVoxels")->as<voxellist::BitVectorVoxelList>(), Vector3f());
+  
+}
+
+void checkCollisionCallback(victor_hardware_interface::MotionStatus::ConstPtr motion_msg)
+{
+    CollisionInformation c = checkCollision(motion_msg);
+    if(c.collision)
+    {
+        robot::JointValueMap robot_joints;
+        for(size_t i = 0; i < c.joints.size(); i++)
+        {
+            myRobotJointValues[right_arm_names[i]] = c.joints[i] + 0.05 * c.dirs[i];
+            // std::cout << 0.05 * c.dirs[i] << ", ";
+            std::cout << c.joints[i] << ", ";
+        }
+        std::cout << "\n";
+        
+        voxellist::BitVectorVoxelList* obstacles = gvl->getMap("possibleObstacles")->
+            as<voxellist::BitVectorVoxelList>();
+        gvl->setRobotConfiguration("victor", myRobotJointValues);
+        gvl->insertRobotIntoMap("victor", "possibleObstacles", eBVM_OCCUPIED);
+        obstacles->subtract(gvl->getMap("victorSweptVoxels")->as<voxellist::BitVectorVoxelList>(), Vector3f());
+
+    }
 }
 
 void obstaclePoseCallback(const geometry_msgs::Pose::ConstPtr& msg)
@@ -92,6 +132,7 @@ int main(int argc, char* argv[])
   signal(SIGTERM, killhandler);
 
   ros::init(argc, argv, "gpu_voxels");
+  
 
   icl_core::logging::initialize(argc, argv);
 
@@ -103,40 +144,46 @@ int main(int argc, char* argv[])
    * Voxelmap will always require the full memory.
    */
   gvl = GpuVoxels::getInstance();
-  gvl->initialize(200, 200, 200, 0.01); // ==> 200 Voxels, each one is 1 mm in size so the map represents 20x20x20 centimeter
+  gvl->initialize(300, 200, 200, 0.01); // ==> 200 Voxels, each one is 1 mm in size so the map represents 20x20x20 centimeter
 
   // Add a map:
   // gvl->addMap(MT_PROBAB_VOXELMAP, "myObjectVoxelmap");
   
   gvl->addMap(MT_BITVECTOR_VOXELLIST, "victorCurrentVoxels");
   gvl->addMap(MT_BITVECTOR_VOXELLIST, "victorSweptVoxels");
-  gvl->addMap(gpu_voxels::MT_PROBAB_VOXELMAP, "possibleObstacles");              // 3D-Array of probabilistic Voxels (identified by their Voxelmap-like Pointer adress) that hold a Probability
+  // gvl->addMap(MT_PROBAB_VOXELMAP, "possibleObstacles");
+    // 3D-Array of probabilistic Voxels (identified by their Voxelmap-like Pointer adress)
+    //that hold a Probability
+  gvl->addMap(MT_BITVECTOR_VOXELLIST, "possibleObstacles");
+  gvl->addMap(MT_BITVECTOR_VOXELLIST, "testMap");
 
+  
   /*
    * At this point we can add geometries to the maps in different ways.
    *
    * We can add a simple box.
    */
-  gpu_voxels::Vector3f center_box1_min(1.0,2.5,1.5);
-  gpu_voxels::Vector3f center_box1_max(1.1,2.6,1.6);
-  gvl->insertBoxIntoMap(center_box1_min,center_box1_max, "possibleObstacles", gpu_voxels::eBVM_OCCUPIED);
+  // gpu_voxels::Vector3f center_box1_min(2.0,0.9,1.2);
+  // gpu_voxels::Vector3f center_box1_max(2.1,1.0,1.4);
+  // gvl->insertBoxIntoMap(center_box1_min,center_box1_max, "possibleObstacles", gpu_voxels::eBVM_OCCUPIED);
+  // gvl->insertBoxIntoMap(center_box1_min,center_box1_max, "possibleObstacles", gpu_voxels::eBVM_UNKNOWN);
+  // gpu_voxels::GpuVoxelsMapSharedPtr map = gvl->getMap("possibleObstacles");
 
 
+  
   // And a robot, generated from a ROS URDF file:
-  gvl->addRobot("victorUrdf", "/home/bradsaund/catkin_ws/src/kuka_iiwa_interface/victor_description/urdf/victor.urdf", false);  
+  gvl->addRobot("victor", "/home/bradsaund/catkin_ws/src/kuka_iiwa_interface/victor_description/urdf/victor.urdf", false);  
 
   ros::NodeHandle n;
   ros::Subscriber sub1 = n.subscribe("joint_states", 1, jointStateCallback);
+  ros::Subscriber collision_sub = n.subscribe("right_arm/motion_status", 1, checkCollisionCallback);
   
-  // ros::Subscriber sub2 = n.subscribe("obstacle_pose", 1, obstaclePoseCallback);
 
-  // A an obstacle that can be moved with the ROS callback
-  // gvl->insertPointCloudFromFile("myObjectVoxelmap", "hals_vereinfacht.binvox", true,
-  //                               eBVM_OCCUPIED, false, object_position, 0.3);
+
   // update the robot joints:
-  gvl->setRobotConfiguration("victorUrdf", myRobotJointValues);
+  gvl->setRobotConfiguration("victor", myRobotJointValues);
   // insert the robot into the map:
-  gvl->insertRobotIntoMap("victorUrdf", "victorCurrentVoxels", eBVM_OCCUPIED);
+  gvl->insertRobotIntoMap("victor", "victorCurrentVoxels", eBVM_OCCUPIED);
   /*
    * Now we start the main loop, that will read ROS messages and update the Robot.
    */
@@ -155,6 +202,7 @@ int main(int argc, char* argv[])
     gvl->visualizeMap("victorCurrentVoxels");
     gvl->visualizeMap("victorSweptVoxels");
     gvl->visualizeMap("possibleObstacles");
+    // gvl->visualizeMap("testMap");
     
     // gvl->visualizeMap("myObjectVoxelmap");
 

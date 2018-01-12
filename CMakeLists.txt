@@ -6,6 +6,7 @@ project(gpu_voxel_planning)
 
 set(CATKIN_PACKAGES
   roscpp
+  victor_hardware_interface
   )
 
 ## Find catkin macros and libraries
@@ -15,7 +16,10 @@ find_package(catkin REQUIRED REQUIRED COMPONENTS ${CATKIN_PACKAGES})
 FIND_PACKAGE(icl_core REQUIRED )
 FIND_PACKAGE(gpu_voxels REQUIRED)
 FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
+FIND_PACKAGE(CUDA REQUIRED)
+FIND_PACKAGE(ompl REQUIRED)
 
+FIND_PACKAGE(orocos_kdl REQUIRED)
 
 
 # This is a quirk and should be removed in upcoming versions
@@ -23,7 +27,8 @@ FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 # FIND_PACKAGE(orocos_kdl REQUIRED)
 
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+
 
 # Also we have to inherit some Environment definitions required for our base libs:
 add_definitions(
@@ -55,11 +60,14 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  # include
+  include
+  include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${gpu_voxels_INCLUDE_DIRS}
-  # ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
+  ${CUDA_INCLUDE_DIRS}
+  ${OMPL_INCLUDE_DIRS}
+  ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
 
 )
 
@@ -71,5 +79,19 @@ target_link_libraries (urdf_test
   ${Boost_SYSTEM_LIBRARY}
   ${icl_core_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
-)
+  )
+
+add_library(victor_validator src/victor_validator.cpp)
+
+
+
+add_executable(victor_planning src/victor_planning.cpp)
+target_link_libraries(victor_planning
+  victor_validator
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  ${OMPL_LIBRARIES}
+  )
 
