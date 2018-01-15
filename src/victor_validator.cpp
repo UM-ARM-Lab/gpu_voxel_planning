@@ -34,7 +34,7 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     assert(stateSpace_ != nullptr);
 
     gvl = gpu_voxels::GpuVoxels::getInstance();
-    gvl->initialize(150, 200, 100, 0.02);
+    gvl->initialize(200, 200, 100, 0.02);
 
     // We add maps with objects, to collide them
     gvl->addMap(MT_PROBAB_VOXELMAP,"victor");

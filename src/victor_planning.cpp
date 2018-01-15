@@ -1,23 +1,24 @@
+#include "victor_planning.hpp"
+
 #include <signal.h>
 #include <iostream>
-using namespace std;
+
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 
 #define IC_PERFORMANCE_MONITOR
 #include <icl_core_performance_monitor/PerformanceMonitor.h>
 
-#include <ompl/geometric/planners/sbl/SBL.h>
-#include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
 
 #include <ompl/geometric/PathSimplifier.h>
 
-#include "victor_validator.hpp"
 #include <stdlib.h>
 
 #include <memory>
 
+
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
+using namespace gpu_voxels_planner;
 
 std::shared_ptr<VictorValidator> vv_ptr;
 
@@ -41,6 +42,69 @@ void killhandler(int)
     exit(EXIT_SUCCESS);
 }
 
+VictorPlanner::VictorPlanner()
+{
+    space = std::make_shared<ob::RealVectorStateSpace>(7);
+
+    ob::RealVectorBounds bounds(7);
+    bounds.setLow(-3.14159265);
+    bounds.setHigh(3.14159265);
+    space->setBounds(bounds);
+    si = std::make_shared<ob::SpaceInformation>(space);
+    vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si));
+
+    simp = std::make_shared<og::PathSimplifier>(si);
+    si->setStateValidityChecker(vv_ptr->getptr());
+    si->setMotionValidator(vv_ptr->getptr());
+    si->setup();
+
+
+    pdef = std::make_shared<ob::ProblemDefinition>(si);
+    planner = std::make_shared<og::LBKPIECE1>(si);
+}
+
+ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> goal)
+{
+    pdef->setStartAndGoalStates(start, goal);
+    planner->setProblemDefinition(pdef);
+    planner->setup();
+    
+    PERF_MON_START("planner");
+    planner->clear(); // this clears all roadmaps
+    ob::PlannerStatus solved = planner->ob::Planner::solve(20.0);
+    PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("planner", "Planning time", "planning");
+    ob::PathPtr path;
+
+    //If a solution has been found, we simplify and display it.
+    if (solved)
+    {
+        // get the goal representation from the problem definition (not the same as the goal state)
+        // and inquire about the found path
+        path = pdef->getSolutionPath();
+        std::cout << "Found solution:" << std::endl;
+        // print the path to screen
+        path->print(std::cout);
+
+        PERF_MON_START("simplify");
+        simp->simplifyMax(*(path->as<og::PathGeometric>()));
+        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("simplify", "Simplification time", "planning");
+
+        std::cout << "Simplified solution:" << std::endl;
+        // print the path to screen
+        path->print(std::cout);
+
+        vv_ptr->visualizeSolution(path);
+
+    }else{
+        std::cout << "No solution could be found" << std::endl;
+    }
+
+    
+    PERF_MON_SUMMARY_PREFIX_INFO("planning");
+
+    return path;
+}
+
 
 
 int main(int argc, char **argv)
@@ -62,7 +126,6 @@ int main(int argc, char **argv)
     bounds.setLow(-3.14159265);
     bounds.setHigh(3.14159265);
 
-    bounds.setHigh(1, 0.0);
 
     space->setBounds(bounds);
     //Create an instance of ompl::base::SpaceInformation for the state space
@@ -75,6 +138,8 @@ int main(int argc, char **argv)
     si->setStateValidityChecker(vv_ptr->getptr());
     si->setMotionValidator(vv_ptr->getptr());
     si->setup();
+
+    VictorPlanner vpln = VictorPlanner();
 
 
     //Create a random start state:
@@ -137,6 +202,7 @@ int main(int argc, char **argv)
             std::cout << "Found solution:" << std::endl;
             // print the path to screen
             path->print(std::cout);
+
 
             PERF_MON_START("simplify");
             simp.simplifyMax(*(path->as<og::PathGeometric>()));
