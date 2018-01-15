@@ -7,6 +7,7 @@ project(gpu_voxel_planning)
 set(CATKIN_PACKAGES
   roscpp
   victor_hardware_interface
+  victor_motion_planner
   )
 
 ## Find catkin macros and libraries
