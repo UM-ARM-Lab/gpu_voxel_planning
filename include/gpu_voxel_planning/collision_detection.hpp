@@ -1,4 +1,9 @@
+#ifndef COLLISION_DETECTION_HPP
+#define COLLISION_DETECTION_HPP
+
 #include <victor_hardware_interface/MotionStatus.h>
+
+
 
 double torque_collision_limit = 4;
 
@@ -52,3 +57,4 @@ CollisionInformation checkCollision(victor_hardware_interface::MotionStatus::Con
     return c;
     
 };
+#endif

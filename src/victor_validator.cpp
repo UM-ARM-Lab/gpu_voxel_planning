@@ -37,8 +37,10 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     gvl->initialize(200, 200, 100, 0.02);
 
     // We add maps with objects, to collide them
-    gvl->addMap(MT_PROBAB_VOXELMAP,"victor");
+    gvl->addMap(MT_PROBAB_VOXELMAP,"victor_tmp"); //map for queries on victor validity
+    gvl->addMap(MT_PROBAB_VOXELMAP,"victor"); //map for victors current state
     gvl->addMap(MT_PROBAB_VOXELMAP,"env");
+    // gvl->addMap(MT_BITVECTOR_VOXELMAP, "env");
     gvl->addMap(MT_BITVECTOR_VOXELLIST,"solutions");
     gvl->addMap(MT_PROBAB_VOXELMAP,"query");
     std::cout << "Adding robot\n";
@@ -57,34 +59,66 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
 
 VictorValidator::~VictorValidator()
 {
+    std::cout << "Reset called\n";
     gvl.reset(); // Not even required, as we use smart pointers.
 }
 
 void VictorValidator::moveObstacle()
 {
     gvl->clearMap("env");
-    static float x(1.0);
 
     // use this to animate a single moving box obstacle
     //gvl->insertBoxIntoMap(Vector3f(2.0, x ,0.0), Vector3f(2.2, x + 0.2 ,1.2), "env", eBVM_OCCUPIED, 2);
-    x += 0.1;
 
     gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2), "env", eBVM_OCCUPIED, 2);
     // gvl->insertBoxIntoMap(Vector3f(1.8,1.8,0.0), Vector3f(2.0,2.0,1.2), "env", eBVM_OCCUPIED, 2);
     // gvl->insertBoxIntoMap(Vector3f(1.1,1.1,1.2), Vector3f(1.9,1.9,1.3), "env", eBVM_OCCUPIED, 2);
     // gvl->insertBoxIntoMap(Vector3f(0.0,0.0,0.0), Vector3f(3.0,3.0,0.01), "env", eBVM_OCCUPIED, 2);
     gvl->visualizeMap("env");
-    
 }
+
+void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
+{
+    gvl->clearMap("victor");
+    gvl->setRobotConfiguration("victor_robot", joint_positions);
+    // gvl->insertRobotIntoMap("victor_robot", "victor", eBVM_OCCUPIED);
+    gvl->insertRobotIntoMap("victor_robot", "victor", BitVoxelMeaning(255));
+
+}
+
+
+void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
+{
+    if(collision_info.collision)
+    {
+        robot::JointValueMap cur_joints, extended_joints;
+        for(size_t i = 0; i < collision_info.joints.size(); i++)
+        {
+            cur_joints[right_arm_names[i]] = collision_info.joints[i];
+            extended_joints[right_arm_names[i]] = collision_info.joints[i] + 0.05 * collision_info.dirs[i];
+            // std::cout << 0.05 * c.dirs[i] << ", ";
+            // std::cout << c.joints[i] << ", ";
+        }
+        // std::cout << "\n";
+        
+        gvl->setRobotConfiguration("victor_robot", extended_joints);
+        gvl->insertRobotIntoMap("victor_robot", "env", BitVoxelMeaning(255));
+        gvl->setRobotConfiguration("victor_robot", cur_joints);
+        gvl->insertRobotIntoMap("victor_robot", "env", BitVoxelMeaning(1));
+    }
+}
+
+
 
 void VictorValidator::doVis()
 {
 
     // tell the visualier that the map has changed:
-    gvl->visualizeMap("victor");
+    // gvl->visualizeMap("victor_tmp");
+    // gvl->visualizeMap("victor");
     gvl->visualizeMap("env");
     gvl->visualizeMap("solutions");
-    gvl->visualizeMap("query");
+    // gvl->visualizeMap("query");
 }
 
 void VictorValidator::visualizeSolution(ob::PathPtr path)
@@ -143,7 +177,7 @@ bool VictorValidator::isValid(const ob::State *state) const
 
     std::lock_guard<std::mutex> lock(g_i_mutex);
 
-    gvl->clearMap("victor");
+    gvl->clearMap("victor_tmp");
 
     const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
 
@@ -154,12 +188,12 @@ bool VictorValidator::isValid(const ob::State *state) const
     // update the robot joints:
     gvl->setRobotConfiguration("victor_robot", state_joint_values);
     // insert the robot into the map:
-    gvl->insertRobotIntoMap("victor_robot", "victor", eBVM_OCCUPIED);
+    gvl->insertRobotIntoMap("victor_robot", "victor_tmp", eBVM_OCCUPIED);
 
     PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Pose Insertion", "pose_check");
 
     PERF_MON_START("coll_test");
-    size_t num_colls_pc = gvl->getMap("victor")->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap("env")->as<voxelmap::ProbVoxelMap>());
+    size_t num_colls_pc = gvl->getMap("victor_tmp")->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap("env")->as<voxelmap::ProbVoxelMap>());
     PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "pose_check");
 
     //std::cout << "Validity check on state ["  << values[0] << ", " << values[1] << ", " << values[2] << ", " << values[3] << ", " << values[4] << ", " << values[5] << "] resulting in " <<  num_colls_pc << " colls." << std::endl;
@@ -177,7 +211,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
 
 
     std::lock_guard<std::mutex> lock(g_j_mutex);
-    gvl->clearMap("victor");
+    gvl->clearMap("victor_tmp");
 
     /* assume motion starts in a valid configuration so s1 is valid */
 
@@ -241,7 +275,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
 //{
 
 //    std::lock_guard<std::mutex> lock(g_j_mutex);
-//    gvl->clearMap("victor");
+//    gvl->clearMap("victor_tmp");
 
 //    /* assume motion starts in a valid configuration so s1 is valid */
 
@@ -280,25 +314,25 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
 //            state_joint_values["wrist_3_joint"] = values[5];
 
 //            // update the robot joints:
-//            gvl->setRobotConfiguration("victor", state_joint_values);
+//            gvl->setRobotConfiguration("victor_tmp", state_joint_values);
 //            // insert the robot into the map:
-//            gvl->insertRobotIntoMap("victor", "victor", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + j));
+//            gvl->insertRobotIntoMap("victor_robot", "victor_tmp", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + j));
 
 //        }
 //        PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check_lv");
-//        //PERF_MON_ADD_DATA_NONTIME_P("Num Voxels in Robot Voxellist after insertion of motion", float(gvl->getMap("victor")->getDimensions().x), "motion_check_lv");
+//        //PERF_MON_ADD_DATA_NONTIME_P("Num Voxels in Robot Voxellist after insertion of motion", float(gvl->getMap("victor_tmp")->getDimensions().x), "motion_check_lv");
 
 //        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Motion Insertion", "motion_check_lv");
 
 
-//        //gvl->visualizeMap("victor");
+//        //gvl->visualizeMap("victor_tmp");
 //        PERF_MON_START("coll_test");
 
 //        BitVectorVoxel bits_in_collision;
 
 //        size_t num_colls;
 
-//        num_colls = gvl->getMap("victor")->as<voxelmap::BitVectorVoxelMap>()->collideWithTypes(gvl->getMap("env")->as<voxelmap::ProbVoxelMap>(), bits_in_collision);
+//        num_colls = gvl->getMap("victor_tmp")->as<voxelmap::BitVectorVoxelMap>()->collideWithTypes(gvl->getMap("env")->as<voxelmap::ProbVoxelMap>(), bits_in_collision);
 
 ////        std::cout << "Detected " << num_colls << " collisions " << std::endl;
 ////        std::cout << "with bits \n" << bits_in_collision << std::endl;
@@ -369,7 +403,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
 bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) const
 {
     std::lock_guard<std::mutex> lock(g_i_mutex);
-    gvl->clearMap("victor");
+    gvl->clearMap("victor_tmp");
 
 
     //        std::cout << "LongestValidSegmentFraction = " << stateSpace_->getLongestValidSegmentFraction() << std::endl;
@@ -410,7 +444,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
             // update the robot joints:
             gvl->setRobotConfiguration("victor_robot", state_joint_values);
             // insert the robot into the map:
-            gvl->insertRobotIntoMap("victor_robot", "victor", eBVM_OCCUPIED);
+            gvl->insertRobotIntoMap("victor_robot", "victor_tmp", eBVM_OCCUPIED);
 
         }
         PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check");
@@ -419,9 +453,9 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
 
         PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Motion Insertion", "motion_check");
 
-        //gvl->visualizeMap("victor");
+        //gvl->visualizeMap("victor_tmp");
         PERF_MON_START("coll_test");
-        size_t num_colls_pc = gvl->getMap("victor")->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap("env")->as<voxelmap::ProbVoxelMap>());
+        size_t num_colls_pc = gvl->getMap("victor_tmp")->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap("env")->as<voxelmap::ProbVoxelMap>());
         //std::cout << "CheckMotion1 for " << nd << " segments. Resulting in " << num_colls_pc << " colls." << std::endl;
         PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "motion_check");
 

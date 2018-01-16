@@ -72,21 +72,9 @@ include_directories(
 
 )
 
-
-
-add_executable(urdf_test src/URDF_Loader_ROS_listener.cpp)
-target_link_libraries (urdf_test
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  )
-
 add_library(victor_validator src/victor_validator.cpp)
 
-
-
-add_executable(victor_planning src/victor_planning.cpp)
+add_library(victor_planning src/victor_planning.cpp)
 target_link_libraries(victor_planning
   victor_validator
   ${catkin_LIBRARIES}
@@ -95,4 +83,15 @@ target_link_libraries(victor_planning
   ${gpu_voxels_LIBRARIES}
   ${OMPL_LIBRARIES}
   )
+
+
+add_executable(collision_test src/collision_test.cpp)
+target_link_libraries (collision_test
+  victor_planning
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  )
+
 

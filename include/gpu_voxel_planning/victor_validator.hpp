@@ -1,7 +1,9 @@
-#ifndef GVL_LINKAGE_TEST_LIB_H_INCLUDED
-#define GVL_LINKAGE_TEST_LIB_H_INCLUDED
+#ifndef VICTOR_VALIDATOR_INCLUDED
+#define VICTOR_VALIDATOR_INCLUDED
 
 #include <gpu_voxels/GpuVoxels.h>
+
+#include "collision_detection.hpp"
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/spaces/SE3StateSpace.h>
@@ -35,6 +37,8 @@ public:
     void visualizeSolution(ompl::base::PathPtr path);
     void doVis();
     void moveObstacle();
+    void setVictorPosition(robot::JointValueMap joint_positions);
+    void addCollisionPoints(CollisionInformation collision_info);
 
 private:
 
