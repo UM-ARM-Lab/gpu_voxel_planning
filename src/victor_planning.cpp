@@ -59,7 +59,7 @@ VictorPlanner::VictorPlanner()
     si->setup();
 
 
-    pdef = std::make_shared<ob::ProblemDefinition>(si);
+
     planner = std::make_shared<og::LBKPIECE1>(si);
 }
 
@@ -67,7 +67,7 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
 {
     vv_ptr->insertStartAndGoal(start, goal);
     vv_ptr->doVis();
-
+    pdef = std::make_shared<ob::ProblemDefinition>(si);
     pdef->setStartAndGoalStates(start, goal);
     planner->setProblemDefinition(pdef);
     planner->setup();

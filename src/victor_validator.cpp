@@ -19,6 +19,9 @@ using namespace vvhelpers;
 namespace bfs = boost::filesystem;
 
 
+#define PROB_OCCUPIED BitVoxelMeaning(255)
+
+
 std::vector<std::string> right_arm_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
         "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5",
         "victor_right_arm_joint_6", "victor_right_arm_joint_7"};
@@ -42,6 +45,7 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     gvl->addMap(MT_PROBAB_VOXELMAP,"env");
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, "env");
     gvl->addMap(MT_BITVECTOR_VOXELLIST,"solutions");
+    gvl->addMap(MT_PROBAB_VOXELMAP,"victor_swept_volume");
     gvl->addMap(MT_PROBAB_VOXELMAP,"query");
     std::cout << "Adding robot\n";
 
@@ -82,8 +86,15 @@ void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
     gvl->clearMap("victor");
     gvl->setRobotConfiguration("victor_robot", joint_positions);
     // gvl->insertRobotIntoMap("victor_robot", "victor", eBVM_OCCUPIED);
-    gvl->insertRobotIntoMap("victor_robot", "victor", BitVoxelMeaning(127));
+    gvl->insertRobotIntoMap("victor_robot", "victor", PROB_OCCUPIED);
+    gvl->insertRobotIntoMap("victor_robot", "victor_swept_volume", PROB_OCCUPIED);
 
+    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap("env");
+    voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
+  
+    obstacles->subtract(gvl->getMap("victor_swept_volume")->as<voxelmap::ProbVoxelMap>());
+
+    
 }
 
 
@@ -102,9 +113,12 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
         // std::cout << "\n";
         
         gvl->setRobotConfiguration("victor_robot", extended_joints);
-        gvl->insertRobotIntoMap("victor_robot", "env", BitVoxelMeaning(255));
-        gvl->setRobotConfiguration("victor_robot", cur_joints);
-        gvl->insertRobotIntoMap("victor_robot", "env", BitVoxelMeaning(1));
+        gvl->insertRobotIntoMap("victor_robot", "env", PROB_OCCUPIED);
+        gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap("env");
+        voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
+  
+        obstacles->subtract(gvl->getMap("victor_swept_volume")->as<voxelmap::ProbVoxelMap>());
+                
     }
 }
 

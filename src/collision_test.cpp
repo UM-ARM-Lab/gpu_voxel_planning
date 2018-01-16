@@ -28,11 +28,10 @@
 
 #include "victor_planning.hpp"
 
+#include "victor_hardware_interface/victor_utils.hpp"
+
 #include <cstdlib>
 #include <signal.h>
-
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 
 #include <gpu_voxels/GpuVoxels.h>
 #include <gpu_voxels/helpers/MetaPointCloud.h>
@@ -43,9 +42,12 @@
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Pose.h>
 
+#include "gpu_voxel_planning/PlanPath.h"
+
 
 using namespace gpu_voxels;
 namespace bfs = boost::filesystem;
+namespace vu = victor_utils;
 
 std::vector<std::string> left_arm_names{"victor_left_arm_joint_1",  "victor_left_arm_joint_2",  "victor_left_arm_joint_3",  "victor_left_arm_joint_4",  "victor_left_arm_joint_5",  "victor_left_arm_joint_6",  "victor_left_arm_joint_7"};
 
@@ -74,7 +76,7 @@ void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
   {
     joint_positions[msg->name[i]] = msg->position[i];
   }
-  std::cout << "Callback\n";
+  // std::cout << "Callback\n";
   vpln->vv_ptr->setVictorPosition(joint_positions);
   
 }
@@ -86,6 +88,25 @@ void checkCollisionCallback(victor_hardware_interface::MotionStatus::ConstPtr mo
     {
         vpln->vv_ptr->addCollisionPoints(c);
     }
+}
+
+bool planPath(gpu_voxel_planning::PlanPath::Request &req,
+              gpu_voxel_planning::PlanPath::Response &res)
+{
+    ompl::base::PathPtr path = vpln->planPath(vu::jvqToVector(req.start),
+                                              vu::jvqToVector(req.goal));
+    ompl::geometric::PathGeometric* sol = path->as<ompl::geometric::PathGeometric>();
+    for(size_t step = 0; step < sol->getStateCount(); step++)
+    {
+        const double *values = sol->getState(step)->as<ompl::base::RealVectorStateSpace::StateType>()->values;
+        std::vector<float> angles(7);
+        for(size_t i = 0; i < angles.size(); i++)
+        {
+            angles[i] = values[i];
+        }
+        res.path.values.push_back(vu::vectorToJvq(angles));
+    }
+    return true;
 }
 
 
@@ -106,7 +127,7 @@ int main(int argc, char* argv[])
   ros::NodeHandle n;
   ros::Subscriber sub1 = n.subscribe("joint_states", 1, jointStateCallback);
   ros::Subscriber collision_sub = n.subscribe("right_arm/motion_status", 1, checkCollisionCallback);
-  
+  ros::ServiceServer planing_srv = n.advertiseService("plan_path", planPath);
   
 
   while(ros::ok())

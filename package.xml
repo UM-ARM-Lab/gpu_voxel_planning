@@ -36,8 +36,13 @@
   <!--   Note that this is equivalent to the following: -->
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
+
   <depend>victor_hardware_interface</depend>
   <depend>victor_motion_planner</depend>
+
+  <depend>message_generation</depend>
+  <exec_depend>message_runtime</exec_depend>
+
   <!--   <exec_depend>roscpp</exec_depend> -->
   <!-- Use build_depend for packages you need at compile time: -->
   <!--   <build_depend>message_generation</build_depend> -->
