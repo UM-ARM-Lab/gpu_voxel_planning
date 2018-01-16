@@ -95,3 +95,10 @@ target_link_libraries (collision_test
   )
 
 
+add_executable(urdf_test src/URDF_Loader_ROS_listener.cpp)
+target_link_libraries (urdf_test
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  )

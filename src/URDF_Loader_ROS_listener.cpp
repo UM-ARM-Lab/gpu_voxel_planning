@@ -163,16 +163,16 @@ int main(int argc, char* argv[])
    *
    * We can add a simple box.
    */
-  // gpu_voxels::Vector3f center_box1_min(2.0,0.9,1.2);
-  // gpu_voxels::Vector3f center_box1_max(2.1,1.0,1.4);
-  // gvl->insertBoxIntoMap(center_box1_min,center_box1_max, "possibleObstacles", gpu_voxels::eBVM_OCCUPIED);
+  gpu_voxels::Vector3f center_box1_min(2.0,1.9,1.2);
+  gpu_voxels::Vector3f center_box1_max(2.1,2.0,1.4);
+  gvl->insertBoxIntoMap(center_box1_min,center_box1_max, "possibleObstacles", gpu_voxels::eBVM_OCCUPIED);
   // gvl->insertBoxIntoMap(center_box1_min,center_box1_max, "possibleObstacles", gpu_voxels::eBVM_UNKNOWN);
   // gpu_voxels::GpuVoxelsMapSharedPtr map = gvl->getMap("possibleObstacles");
 
 
   
   // And a robot, generated from a ROS URDF file:
-  gvl->addRobot("victor", "/home/bradsaund/catkin_ws/src/kuka_iiwa_interface/victor_description/urdf/victor.urdf", false);  
+  gvl->addRobot("victor", "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);  
 
   ros::NodeHandle n;
   ros::Subscriber sub1 = n.subscribe("joint_states", 1, jointStateCallback);

@@ -82,7 +82,7 @@ void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
     gvl->clearMap("victor");
     gvl->setRobotConfiguration("victor_robot", joint_positions);
     // gvl->insertRobotIntoMap("victor_robot", "victor", eBVM_OCCUPIED);
-    gvl->insertRobotIntoMap("victor_robot", "victor", BitVoxelMeaning(255));
+    gvl->insertRobotIntoMap("victor_robot", "victor", BitVoxelMeaning(127));
 
 }
 
@@ -115,7 +115,7 @@ void VictorValidator::doVis()
 
     // tell the visualier that the map has changed:
     // gvl->visualizeMap("victor_tmp");
-    // gvl->visualizeMap("victor");
+    gvl->visualizeMap("victor");
     gvl->visualizeMap("env");
     gvl->visualizeMap("solutions");
     // gvl->visualizeMap("query");
