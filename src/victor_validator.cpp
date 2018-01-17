@@ -37,7 +37,7 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     assert(stateSpace_ != nullptr);
 
     gvl = gpu_voxels::GpuVoxels::getInstance();
-    gvl->initialize(200, 200, 100, 0.02);
+    gvl->initialize(200, 200, 200, 0.02);
 
     // We add maps with objects, to collide them
     gvl->addMap(MT_PROBAB_VOXELMAP,"victor_tmp"); //map for queries on victor validity
@@ -74,7 +74,8 @@ void VictorValidator::moveObstacle()
     // use this to animate a single moving box obstacle
     //gvl->insertBoxIntoMap(Vector3f(2.0, x ,0.0), Vector3f(2.2, x + 0.2 ,1.2), "env", eBVM_OCCUPIED, 2);
 
-    gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2), "env", eBVM_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2), "env", PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(1.8,1.8,0.8), Vector3f(2.0,2.0,1.2), "env", PROB_OCCUPIED, 2);
     // gvl->insertBoxIntoMap(Vector3f(1.8,1.8,0.0), Vector3f(2.0,2.0,1.2), "env", eBVM_OCCUPIED, 2);
     // gvl->insertBoxIntoMap(Vector3f(1.1,1.1,1.2), Vector3f(1.9,1.9,1.3), "env", eBVM_OCCUPIED, 2);
     // gvl->insertBoxIntoMap(Vector3f(0.0,0.0,0.0), Vector3f(3.0,3.0,0.01), "env", eBVM_OCCUPIED, 2);
@@ -126,10 +127,10 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
 
 void VictorValidator::doVis()
 {
-
     // tell the visualier that the map has changed:
+
     // gvl->visualizeMap("victor_tmp");
-    gvl->visualizeMap("victor");
+    // gvl->visualizeMap("victor");
     gvl->visualizeMap("env");
     gvl->visualizeMap("solutions");
     // gvl->visualizeMap("query");
@@ -162,7 +163,7 @@ void VictorValidator::visualizeSolution(ob::PathPtr path)
         gvl->insertRobotIntoMap("victor_robot", "solutions", BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + (step % 249) ));
     }
 
-    gvl->visualizeMap("solutions");
+    // gvl->visualizeMap("solutions");
 
 }
 
@@ -202,7 +203,7 @@ bool VictorValidator::isValid(const ob::State *state) const
     // update the robot joints:
     gvl->setRobotConfiguration("victor_robot", state_joint_values);
     // insert the robot into the map:
-    gvl->insertRobotIntoMap("victor_robot", "victor_tmp", eBVM_OCCUPIED);
+    gvl->insertRobotIntoMap("victor_robot", "victor_tmp", PROB_OCCUPIED);
 
     PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Pose Insertion", "pose_check");
 
@@ -458,7 +459,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
             // update the robot joints:
             gvl->setRobotConfiguration("victor_robot", state_joint_values);
             // insert the robot into the map:
-            gvl->insertRobotIntoMap("victor_robot", "victor_tmp", eBVM_OCCUPIED);
+            gvl->insertRobotIntoMap("victor_robot", "victor_tmp", PROB_OCCUPIED);
 
         }
         PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check");
