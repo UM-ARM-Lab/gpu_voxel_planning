@@ -33,7 +33,7 @@ CollisionInformation checkCollision(victor_hardware_interface::MotionStatus::Con
     for(auto ext_torque: jvqToVector(motion_msg->estimated_external_torque))
     {
 
-        if(ext_torque > torque_collision_limit)
+        if(fabs(ext_torque) > torque_collision_limit)
         {
             c.collision = true;
         }

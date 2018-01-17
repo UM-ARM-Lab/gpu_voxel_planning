@@ -110,14 +110,14 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
 
 ob::PathPtr VictorPlanner::planPath(std::vector<float> start, std::vector<float> goal)
 {
-        ob::ScopedState<> start_ss(space);
-        ob::ScopedState<> goal_ss(space);
-        for(size_t i=0; i<start.size(); i++)
-        {
-            start_ss[i] = start[i];
-            goal_ss[i] = goal[i];
-        }
-        return planPath(start_ss, goal_ss);
+    ob::ScopedState<> start_ss(space);
+    ob::ScopedState<> goal_ss(space);
+    for(size_t i=0; i<start.size(); i++)
+    {
+        start_ss[i] = start[i];
+        goal_ss[i] = goal[i];
+    }
+    return planPath(start_ss, goal_ss);
 }
 
 int main(int argc, char **argv)
@@ -131,6 +131,11 @@ int main(int argc, char **argv)
 
     PERF_MON_INITIALIZE(100, 1000);
     PERF_MON_ENABLE("planning");
+
+    // std::cout << "Prob: " << uint32_t(BitVoxelMeaning(255)) << "\n";
+    std::cout << "Prob: " << (int) MAX_PROBABILITY << "\n";
+    std::cout << "Prob: " << (int) Probability (int32_t((const uint32_t)BitVoxelMeaning(255))+int32_t(UNKNOWN_PROBABILITY)) << "\n";
+    std::cout << "Equal?: " << (MAX_PROBABILITY == Probability (int32_t(BitVoxelMeaning(255))+int32_t(UNKNOWN_PROBABILITY))) << "\n";
 
 
     VictorPlanner vpln = VictorPlanner();
@@ -160,15 +165,15 @@ int main(int argc, char **argv)
     vpln.vv_ptr->moveObstacle();
 
     PERF_MON_START("planner");
-    vpln.planPath(start, goal);
 
+    vpln.planPath(start, goal);
 
     PERF_MON_SUMMARY_PREFIX_INFO("planning");
 
     // keep the visualization running:
     while(true)
     {
-        vv_ptr->doVis();
+        vpln.vv_ptr->doVis();
         usleep(30000);
     }
 

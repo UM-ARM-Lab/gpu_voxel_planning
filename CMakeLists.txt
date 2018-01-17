@@ -98,6 +98,16 @@ target_link_libraries(victor_planning
   ${OMPL_LIBRARIES}
   )
 
+add_executable(victor_planning_exec src/victor_planning.cpp)
+target_link_libraries(victor_planning_exec
+  victor_validator
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  ${OMPL_LIBRARIES}
+  )
+
 
 add_executable(collision_test src/collision_test.cpp)
 target_link_libraries (collision_test
