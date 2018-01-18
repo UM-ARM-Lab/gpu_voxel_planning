@@ -22,9 +22,22 @@ namespace bfs = boost::filesystem;
 #define PROB_OCCUPIED BitVoxelMeaning(255)
 
 
-std::vector<std::string> right_arm_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
+std::vector<std::string> right_arm_joint_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
         "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5",
         "victor_right_arm_joint_6", "victor_right_arm_joint_7"};
+
+std::vector<std::string> right_arm_collision_link_names{"victor_right_arm_link_5",
+        "victor_right_arm_link_6",
+        "victor_right_arm_link_7",
+        "victor_right_gripper_palm",
+        "victor_right_gripper_mounting_bracket",
+        "victor_right_gripper_fingerA_base", "victor_right_gripper_fingerA_dist",
+        "victor_right_gripper_fingerA_med", "victor_right_gripper_fingerA_prox",
+        "victor_right_gripper_fingerB_base", "victor_right_gripper_fingerB_dist",
+        "victor_right_gripper_fingerB_med", "victor_right_gripper_fingerB_prox",
+        "victor_right_gripper_fingerC_base", "victor_right_gripper_fingerC_dist",
+        "victor_right_gripper_fingerC_med", "victor_right_gripper_fingerC_prox"
+        };
 
 
 VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
@@ -106,15 +119,34 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
         robot::JointValueMap cur_joints, extended_joints;
         for(size_t i = 0; i < collision_info.joints.size(); i++)
         {
-            cur_joints[right_arm_names[i]] = collision_info.joints[i];
-            extended_joints[right_arm_names[i]] = collision_info.joints[i] + 0.05 * collision_info.dirs[i];
+            cur_joints[right_arm_joint_names[i]] = collision_info.joints[i];
+            extended_joints[right_arm_joint_names[i]] = collision_info.joints[i] + 0.05 * collision_info.dirs[i];
             // std::cout << 0.05 * c.dirs[i] << ", ";
             // std::cout << c.joints[i] << ", ";
         }
         // std::cout << "\n";
         
         gvl->setRobotConfiguration("victor_robot", extended_joints);
-        gvl->insertRobotIntoMap("victor_robot", "env", PROB_OCCUPIED);
+        
+        // gvl->insertRobotIntoMap("victor_robot", "env", PROB_OCCUPIED);
+
+        RobotInterfaceSharedPtr rob = gvl->getRobot("victor_robot");
+        const MetaPointCloud* clouds = rob->getTransformedClouds();
+        // clouds->syncToHost();
+        rob->syncToHost();
+
+
+        for(auto collision_link_name: right_arm_collision_link_names)
+        {
+            // std::cout << collision_link_name << "\n";
+            int16_t cloud_num = clouds->getCloudNumber(collision_link_name);
+            uint32_t cloud_size = clouds->getPointcloudSizes()[cloud_num];
+            const gpu_voxels::Vector3f* cloud_ptr = clouds->getPointCloud(cloud_num);
+            const std::vector<gpu_voxels::Vector3f> cloud(cloud_ptr, cloud_ptr + cloud_size);
+            gvl->insertPointCloudIntoMap(cloud, "env", PROB_OCCUPIED);
+        }
+            
+        
         gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap("env");
         voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
   
@@ -495,9 +527,9 @@ template<typename T>
 robot::JointValueMap vvhelpers::toRightJointValueMap(const T values)
 {
     robot::JointValueMap jvm;
-    for(size_t i=0; i<right_arm_names.size(); i++)
+    for(size_t i=0; i<right_arm_joint_names.size(); i++)
     {
-        jvm[right_arm_names[i]] = values[i];
+        jvm[right_arm_joint_names[i]] = values[i];
     }
     return jvm;
 }

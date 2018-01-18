@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
   icl_core::logging::initialize(argc, argv);
 
   vpln = std::make_shared<gpu_voxels_planner::VictorPlanner>();
-  vpln->vv_ptr->moveObstacle();
+  // vpln->vv_ptr->moveObstacle();
 
 
   ros::NodeHandle n;
