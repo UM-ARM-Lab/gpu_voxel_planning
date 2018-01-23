@@ -9,6 +9,8 @@
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <thread>
 
+#include <chrono>
+
 #define IC_PERFORMANCE_MONITOR
 #include <icl_core_performance_monitor/PerformanceMonitor.h>
 
@@ -60,6 +62,7 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     gvl->addMap(MT_BITVECTOR_VOXELLIST,"solutions");
     gvl->addMap(MT_PROBAB_VOXELMAP,"victor_swept_volume");
     gvl->addMap(MT_PROBAB_VOXELMAP,"query");
+    gvl->addMap(MT_DISTANCE_VOXELMAP, "distancemap");
     std::cout << "Adding robot\n";
 
     gvl->addRobot("victor_robot", "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);  
@@ -112,6 +115,8 @@ void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
 }
 
 
+
+
 void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
 {
     if(collision_info.collision)
@@ -146,11 +151,47 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
             gvl->insertPointCloudIntoMap(cloud, "env", PROB_OCCUPIED);
         }
             
-        
+
         gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap("env");
-        voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
+        // boost::shared_ptr<voxelmap::ProbVoxelMap> obstacles(obstacles_ptr->as<voxelmap::ProbVoxelMap>());
+        // voxelmap::ProbVoxelMap* obstacles(obstacles_ptr->as<voxelmap::ProbVoxelMap>());
+        boost::shared_ptr<voxelmap::ProbVoxelMap> obstacles = boost::dynamic_pointer_cast<voxelmap::ProbVoxelMap>(obstacles_ptr);
   
         obstacles->subtract(gvl->getMap("victor_swept_volume")->as<voxelmap::ProbVoxelMap>());
+
+
+        // boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map(gvl->getMap("distancemap")->as<voxelmap::DistanceVoxelMap>());
+        
+        boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap("distancemap"));
+
+
+
+        std::cout << "Obstacle dist: " << dist_map->getObstacleDistance(Vector3ui(10,100,100)) << "\n";
+
+        // auto start = std::chrono::steady_clock::now();
+        dist_map->clearMap();
+        dist_map->mergeOccupied(obstacles);
+        dist_map->jumpFlood3D(cMAX_THREADS_PER_BLOCK, 0, false);
+        // auto end = std::chrono::steady_clock::now();
+
+        // std::cout << "Elapsed time: "
+        //           << std::chrono::duration_cast<std::chrono::microseconds>(end-start).count() << "us \n";
+
+        // for(int i=0; i<200; i++)
+        // {
+        //     for(int j=0; j<200; j++)
+        //     {
+        //         for(int k=0; k<200; k++)
+        //         {
+        //             float dist = dist_map->getObstacleDistance(Vector3ui(i,j,k));
+        //             if(dist < 10000)
+        //             {
+        //                 std::cout << "(" <<i << ", " << j << ", " << k << "): " << dist<<"\n";
+        //             }
+        //         }
+        //     }
+        // }
+
                 
     }
 }
@@ -162,7 +203,7 @@ void VictorValidator::doVis()
     // tell the visualier that the map has changed:
 
     // gvl->visualizeMap("victor_tmp");
-    // gvl->visualizeMap("victor");
+    gvl->visualizeMap("victor");
     gvl->visualizeMap("env");
     gvl->visualizeMap("solutions");
     // gvl->visualizeMap("query");
