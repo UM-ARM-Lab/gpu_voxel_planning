@@ -116,10 +116,11 @@ void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
     
 }
 
-typedef thrust::tuple<ProbabilisticVoxel, DistanceVoxel, uint32_t> ProbDist;
+
 
 struct CompareProbDist
 {
+    typedef thrust::tuple<ProbabilisticVoxel, uint32_t> ProbDist;
     Vector3ui dims;
     CompareProbDist(const Vector3ui &map_dims)
         {
@@ -136,13 +137,14 @@ struct CompareProbDist
     __host__ __device__
     bool operator()(ProbDist lhs, ProbDist rhs)
         {
-            Vector3i pos = linearIndexToCoordinates(thrust::get<2>(lhs), dims);
+            return true;
+            // Vector3i pos = linearIndexToCoordinates(thrust::get<2>(lhs), dims);
             
                 
-            return (thrust::get<0>(lhs).getOccupancy() == MAX_PROBABILITY) &&
-                ((thrust::get<0>(rhs).getOccupancy() != MAX_PROBABILITY) ||
-                 (thrust::get<1>(lhs).squaredObstacleDistance(pos) <
-                  thrust::get<1>(rhs).squaredObstacleDistance(pos)));
+            // return (thrust::get<0>(lhs).getOccupancy() == MAX_PROBABILITY) &&
+            //     ((thrust::get<0>(rhs).getOccupancy() != MAX_PROBABILITY) ||
+            //      (thrust::get<1>(lhs).squaredObstacleDistance(pos) <
+            //       thrust::get<1>(rhs).squaredObstacleDistance(pos)));
         }
 
 };
@@ -155,13 +157,11 @@ void VictorValidator::determineVictorDist()
 
     thrust::counting_iterator<uint32_t> count(0);
     uint32_t s = dist_map->getVoxelMapSize();
-    ProbDist* min_probdist = thrust::min_element(
+    thrust::min_element(
         thrust::device_system_tag(),
         thrust::make_zip_iterator(thrust::make_tuple(victor->getDeviceDataPtr(),
-                                                     dist_map->getDeviceDataPtr(),
                                                      count)),
         thrust::make_zip_iterator(thrust::make_tuple(victor->getDeviceDataPtr() + s,
-                                                     dist_map->getDeviceDataPtr() + s,
                                                      count + s)),
         CompareProbDist(dist_map->getDimensions())
         );
