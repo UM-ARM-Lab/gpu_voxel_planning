@@ -7,8 +7,10 @@
 #include <gpu_voxels/helpers/MetaPointCloud.h>
 #include <gpu_voxels/robot/urdf_robot/urdf_robot.h>
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
-#include <thread>
 
+#include <thrust/extrema.h>
+
+#include <thread>
 #include <chrono>
 
 #define IC_PERFORMANCE_MONITOR
@@ -112,6 +114,60 @@ void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
     obstacles->subtract(gvl->getMap("victor_swept_volume")->as<voxelmap::ProbVoxelMap>());
 
     
+}
+
+typedef thrust::tuple<ProbabilisticVoxel, DistanceVoxel, uint32_t> ProbDist;
+
+struct CompareProbDist
+{
+    Vector3ui dims;
+    CompareProbDist(const Vector3ui &map_dims)
+        {
+            dims = map_dims;
+        }
+    
+
+    /*
+     *Returns true if lhs < rhs
+     * i.e lhs is occupied
+     * if rhs is occupied, the distance value is lower
+     *
+     */
+    __host__ __device__
+    bool operator()(ProbDist lhs, ProbDist rhs)
+        {
+            Vector3i pos = linearIndexToCoordinates(thrust::get<2>(lhs), dims);
+            
+                
+            return (thrust::get<0>(lhs).getOccupancy() == MAX_PROBABILITY) &&
+                ((thrust::get<0>(rhs).getOccupancy() != MAX_PROBABILITY) ||
+                 (thrust::get<1>(lhs).squaredObstacleDistance(pos) <
+                  thrust::get<1>(rhs).squaredObstacleDistance(pos)));
+        }
+
+};
+
+void VictorValidator::determineVictorDist()
+{
+    boost::shared_ptr<voxelmap::ProbVoxelMap> victor = boost::dynamic_pointer_cast<voxelmap::ProbVoxelMap>(gvl->getMap("victor"));
+
+    boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap("distancemap"));
+
+    thrust::counting_iterator<uint32_t> count(0);
+    uint32_t s = dist_map->getVoxelMapSize();
+    ProbDist* min_probdist = thrust::min_element(
+        thrust::device_system_tag(),
+        thrust::make_zip_iterator(thrust::make_tuple(victor->getDeviceDataPtr(),
+                                                     dist_map->getDeviceDataPtr(),
+                                                     count)),
+        thrust::make_zip_iterator(thrust::make_tuple(victor->getDeviceDataPtr() + s,
+                                                     dist_map->getDeviceDataPtr() + s,
+                                                     count + s)),
+        CompareProbDist(dist_map->getDimensions())
+        );
+
+    // Vector3i pos = linearIndexToCoordinates(thrust::get<2>(*min_probdist)
+    // std::cout << "min dist is " << thrust::get<1>
 }
 
 
