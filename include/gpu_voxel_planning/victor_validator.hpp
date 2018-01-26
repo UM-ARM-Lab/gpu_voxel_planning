@@ -22,6 +22,7 @@ public:
     VictorValidator(const ompl::base::SpaceInformationPtr &si);
     ~VictorValidator();
 
+    bool isCurrentlyValid() const;
     virtual bool isValid(const ompl::base::State *state) const;
     virtual bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2,
                              std::pair< ompl::base::State*, double > & lastValid) const;

@@ -117,6 +117,7 @@ void VictorValidator::testObstacle()
     gvl->visualizeMap(ENV_MAP);
 }
 
+
 void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
 {
     gvl->clearMap(VICTOR_ACTUAL_MAP);
@@ -129,9 +130,6 @@ void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
     voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
   
     obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
-
-
-    determineVictorDist();
 }
 
 
@@ -155,6 +153,7 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
 {
     if(!collision_info.collision)
     {
+        std::cout << "Asked to add collision, but provided CollisionInformation indicates no collision\n";
         return;
     }
     robot::JointValueMap cur_joints, extended_joints;
@@ -178,7 +177,12 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
             
 
         
-        
+
+
+    // Update robot to be slightly into collision object.
+    // Insert only the last few links (heuristic to avoid adding too many points)
+
+    
     gvl->setRobotConfiguration(VICTOR_ROBOT, extended_joints);
         
     // gvl->insertRobotIntoMap(VICTOR_ROBOT, ENV_MAP, PROB_OCCUPIED);
@@ -288,6 +292,14 @@ void VictorValidator::insertStartAndGoal(const ob::ScopedState<> &start, const o
     gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_PATH_ENDPOINTS_MAP, BitVoxelMeaning(eBVM_SWEPT_VOLUME_START+1));
 
+}
+
+/*
+ *  checks if VICTOR_ACTUAL_MAP is currently in collision with known obstacles
+ */
+bool VictorValidator::isCurrentlyValid() const
+{
+    return gvl->getMap(VICTOR_ACTUAL_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>()) == 0;
 }
 
 bool VictorValidator::isValid(const ob::State *state) const
@@ -474,3 +486,4 @@ robot::JointValueMap vvhelpers::toRightJointValueMap(const T values)
     }
     return jvm;
 }
+

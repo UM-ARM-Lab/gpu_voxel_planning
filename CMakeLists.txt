@@ -118,6 +118,15 @@ target_link_libraries (collision_test
   ${gpu_voxels_LIBRARIES}
   )
 
+add_executable(validator_timing src/validator_timing.cpp)
+target_link_libraries (validator_timing
+  victor_planning
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  )
+
 
 add_executable(urdf_test src/URDF_Loader_ROS_listener.cpp)
 target_link_libraries (urdf_test
