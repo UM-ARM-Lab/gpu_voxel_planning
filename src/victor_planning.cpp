@@ -162,7 +162,7 @@ int main(int argc, char **argv)
     std::vector<float> start{-1.3, -0.2, 0.0, 0.0, 0.0, 0.0, 0.0};
     std::vector<float> goal{1.3, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-    vpln.vv_ptr->moveObstacle();
+    vpln.vv_ptr->testObstacle();
 
     PERF_MON_START("planner");
 

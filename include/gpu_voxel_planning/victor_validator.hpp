@@ -36,7 +36,7 @@ public:
     void insertStartAndGoal(const ompl::base::ScopedState<> &start, const ompl::base::ScopedState<> &goal) const;
     void visualizeSolution(ompl::base::PathPtr path);
     void doVis();
-    void moveObstacle();
+    void testObstacle();
     void setVictorPosition(robot::JointValueMap joint_positions);
     void addCollisionPoints(CollisionInformation collision_info);
 
