@@ -40,7 +40,7 @@ public:
     void setVictorPosition(robot::JointValueMap joint_positions);
     void addCollisionPoints(CollisionInformation collision_info);
 
-    void determineVictorDist();
+    int determineVictorDist();
 
 private:
 

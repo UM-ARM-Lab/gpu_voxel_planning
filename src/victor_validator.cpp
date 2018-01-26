@@ -48,7 +48,6 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     : ob::StateValidityChecker(si)
     , ob::MotionValidator(si)
 {
-
     si_ = si;
     stateSpace_ = si_->getStateSpace().get();
     assert(stateSpace_ != nullptr);
@@ -113,61 +112,22 @@ void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
   
     obstacles->subtract(gvl->getMap("victor_swept_volume")->as<voxelmap::ProbVoxelMap>());
 
-    
+
+    determineVictorDist();
 }
 
-typedef thrust::tuple<ProbabilisticVoxel, DistanceVoxel, uint32_t> ProbDist;
 
-struct CompareProbDist
-{
-    Vector3ui dims;
-    CompareProbDist(const Vector3ui &map_dims)
-        {
-            dims = map_dims;
-        }
-    
-
-    /*
-     *Returns true if lhs < rhs
-     * i.e lhs is occupied
-     * if rhs is occupied, the distance value is lower
-     *
-     */
-    __host__ __device__
-    bool operator()(ProbDist lhs, ProbDist rhs)
-        {
-            Vector3i pos = linearIndexToCoordinates(thrust::get<2>(lhs), dims);
-            
-                
-            return (thrust::get<0>(lhs).getOccupancy() == MAX_PROBABILITY) &&
-                ((thrust::get<0>(rhs).getOccupancy() != MAX_PROBABILITY) ||
-                 (thrust::get<1>(lhs).squaredObstacleDistance(pos) <
-                  thrust::get<1>(rhs).squaredObstacleDistance(pos)));
-        }
-
-};
-
-void VictorValidator::determineVictorDist()
+/**
+ *  Return the number of cells victor is from the nearest obstacle
+ */
+int VictorValidator::determineVictorDist()
 {
     boost::shared_ptr<voxelmap::ProbVoxelMap> victor = boost::dynamic_pointer_cast<voxelmap::ProbVoxelMap>(gvl->getMap("victor"));
 
     boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap("distancemap"));
 
-    thrust::counting_iterator<uint32_t> count(0);
-    uint32_t s = dist_map->getVoxelMapSize();
-    ProbDist* min_probdist = thrust::min_element(
-        thrust::device_system_tag(),
-        thrust::make_zip_iterator(thrust::make_tuple(victor->getDeviceDataPtr(),
-                                                     dist_map->getDeviceDataPtr(),
-                                                     count)),
-        thrust::make_zip_iterator(thrust::make_tuple(victor->getDeviceDataPtr() + s,
-                                                     dist_map->getDeviceDataPtr() + s,
-                                                     count + s)),
-        CompareProbDist(dist_map->getDimensions())
-        );
-
-    // Vector3i pos = linearIndexToCoordinates(thrust::get<2>(*min_probdist)
-    // std::cout << "min dist is " << thrust::get<1>
+    // std::cout << "closest victor dist: " << dist_map->getClosestObstacleDistance(victor) << "\n";
+    return int(dist_map->getClosestObstacleDistance(victor));
 }
 
 
@@ -186,6 +146,19 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
             // std::cout << c.joints[i] << ", ";
         }
         // std::cout << "\n";
+        gvl->setRobotConfiguration("victor_robot", cur_joints);
+
+            gvl->clearMap("victor");
+        gvl->insertRobotIntoMap("victor_robot", "victor", PROB_OCCUPIED);
+        int dist = determineVictorDist();
+        if(dist <= 1)
+        {
+            std::cout << "Already knew victor would be in collision. Skipping\n";
+            return;
+        }
+            
+
+        
         
         gvl->setRobotConfiguration("victor_robot", extended_joints);
         
@@ -222,12 +195,13 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
 
 
 
-        std::cout << "Obstacle dist: " << dist_map->getObstacleDistance(Vector3ui(10,100,100)) << "\n";
+        // std::cout << "Obstacle dist: " << dist_map->getObstacleDistance(Vector3ui(10,100,100)) << "\n";
 
         // auto start = std::chrono::steady_clock::now();
         dist_map->clearMap();
         dist_map->mergeOccupied(obstacles);
         dist_map->jumpFlood3D(cMAX_THREADS_PER_BLOCK, 0, false);
+        // determineVictorDist();
         // auto end = std::chrono::steady_clock::now();
 
         // std::cout << "Elapsed time: "
