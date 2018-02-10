@@ -108,7 +108,7 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     return path;
 }
 
-ob::PathPtr VictorPlanner::planPath(std::vector<float> start, std::vector<float> goal)
+ob::PathPtr VictorPlanner::planPath(std::vector<double> start, std::vector<double> goal)
 {
     ob::ScopedState<> start_ss(space);
     ob::ScopedState<> goal_ss(space);
@@ -159,8 +159,8 @@ int main(int argc, char **argv)
     // goal[4] = 0.0;
     // goal[5] = 0.0;
     // goal[6] = 0.0;
-    std::vector<float> start{-1.3, -0.2, 0.0, 0.0, 0.0, 0.0, 0.0};
-    std::vector<float> goal{1.3, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0};
+    std::vector<double> start{-1.3, -0.2, 0.0, 0.0, 0.0, 0.0, 0.0};
+    std::vector<double> goal{1.3, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     vpln.vv_ptr->testObstacle();
 

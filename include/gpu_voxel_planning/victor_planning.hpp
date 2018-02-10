@@ -14,7 +14,7 @@ namespace gpu_voxels_planner
         VictorPlanner();
         ompl::base::PathPtr planPath(ompl::base::ScopedState<> start,
                                      ompl::base::ScopedState<> goal);
-        ompl::base::PathPtr planPath(std::vector<float> start, std::vector<float> goal);
+        ompl::base::PathPtr planPath(std::vector<double> start, std::vector<double> goal);
         std::shared_ptr<VictorValidator> vv_ptr;
         std::shared_ptr<ompl::base::RealVectorStateSpace> space;
     private:

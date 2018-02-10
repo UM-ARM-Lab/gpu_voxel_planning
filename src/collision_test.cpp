@@ -41,6 +41,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Pose.h>
+#include <trajectory_msgs/JointTrajectory.h>
 
 #include "gpu_voxel_planning/PlanPath.h"
 
@@ -81,6 +82,25 @@ void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
   
 }
 
+trajectory_msgs::JointTrajectory toTrajectoryMessage(ompl::geometric::PathGeometric* sol)
+{
+    trajectory_msgs::JointTrajectory path;
+    size_t num_points = sol->getStateCount();
+    path.points.resize(num_points);
+    for(size_t step = 0; step < num_points; step++)
+    {
+        const double *values = sol->getState(step)->as<ompl::base::RealVectorStateSpace::StateType>()->values;
+        std::vector<double> angles(7);
+        for(size_t i = 0; i < angles.size(); i++)
+        {
+            angles[i] = values[i];
+        }
+        path.points[step].positions = angles;
+    }
+
+    return path;
+}
+
 void checkCollisionCallback(victor_hardware_interface::MotionStatus::ConstPtr motion_msg)
 {
     CollisionInformation c = checkCollision(motion_msg);
@@ -96,18 +116,11 @@ bool planPath(gpu_voxel_planning::PlanPath::Request &req,
     ompl::base::PathPtr path = vpln->planPath(vu::jvqToVector(req.start),
                                               vu::jvqToVector(req.goal));
     ompl::geometric::PathGeometric* sol = path->as<ompl::geometric::PathGeometric>();
-    for(size_t step = 0; step < sol->getStateCount(); step++)
-    {
-        const double *values = sol->getState(step)->as<ompl::base::RealVectorStateSpace::StateType>()->values;
-        std::vector<float> angles(7);
-        for(size_t i = 0; i < angles.size(); i++)
-        {
-            angles[i] = values[i];
-        }
-        res.path.values.push_back(vu::vectorToJvq(angles));
-    }
+    res.path = toTrajectoryMessage(sol);
     return true;
 }
+
+
 
 
 int main(int argc, char* argv[])

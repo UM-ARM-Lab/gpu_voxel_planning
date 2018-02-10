@@ -6,6 +6,7 @@ import victor_motion_planner.openrave_planner
 import victor_motion_planner.msg as vmmsg
 import gpu_voxel_planning.srv as gvpsrv
 from victor_hardware_interface import victor_utils as vu
+from victor_hardware_interface.msg import *
 import rospy
 import IPython
 
@@ -73,6 +74,8 @@ if __name__ == "__main__":
 
     vm = victor_motion_planner.openrave_planner.Planner()
     vm.set_manipulator("right_arm")
+    vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
+
 
 
     

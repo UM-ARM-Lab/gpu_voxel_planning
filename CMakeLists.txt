@@ -8,6 +8,7 @@ set(CATKIN_PACKAGES
   roscpp
   victor_hardware_interface
   victor_motion_planner
+  trajectory_msgs
   )
 
 ## Find catkin macros and libraries
@@ -45,7 +46,7 @@ add_service_files(
 
 generate_messages(
   DEPENDENCIES
-  victor_motion_planner
+  trajectory_msgs
   victor_hardware_interface
 )
 
