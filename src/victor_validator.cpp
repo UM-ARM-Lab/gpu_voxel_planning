@@ -31,7 +31,8 @@ namespace bfs = boost::filesystem;
  */
 
 
-#define PROB_OCCUPIED BitVoxelMeaning(255)
+// #define PROB_OCCUPIED BitVoxelMeaning(255)
+#define PROB_OCCUPIED eBVM_OCCUPIED
 
 #define VICTOR_ACTUAL_MAP "victor_actual_map"
 #define VICTOR_QUERY_MAP "victor_query_map"
