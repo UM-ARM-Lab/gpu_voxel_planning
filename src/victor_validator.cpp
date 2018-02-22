@@ -2,6 +2,8 @@
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/thread/lock_guard.hpp>
+#include <boost/thread/locks.hpp>
 
 #include <gpu_voxels/GpuVoxels.h>
 #include <gpu_voxels/helpers/MetaPointCloud.h>
@@ -121,6 +123,7 @@ void VictorValidator::testObstacle()
 
 void VictorValidator::setVictorPosition(robot::JointValueMap joint_positions)
 {
+    std::lock_guard<boost::recursive_timed_mutex> g(gvl->getMap(VICTOR_ACTUAL_MAP)->m_mutex);
     gvl->clearMap(VICTOR_ACTUAL_MAP);
     gvl->setRobotConfiguration(VICTOR_ROBOT, joint_positions);
     // gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, eBVM_OCCUPIED);
@@ -152,6 +155,7 @@ int VictorValidator::determineVictorDist()
 
 void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
 {
+    std::lock_guard<boost::recursive_timed_mutex> g(gvl->getMap(VICTOR_ACTUAL_MAP)->m_mutex);
     if(!collision_info.collision)
     {
         std::cout << "Asked to add collision, but provided CollisionInformation indicates no collision\n";
@@ -176,9 +180,6 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
         return;
     }
             
-
-        
-
 
     // Update robot to be slightly into collision object.
     // Insert only the last few links (heuristic to avoid adding too many points)
@@ -212,8 +213,6 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
   
     obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
 
-
-    // boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map(gvl->getMap(OBSTACLE_DISTANCE_MAP)->as<voxelmap::DistanceVoxelMap>());
         
     boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap(OBSTACLE_DISTANCE_MAP));
 
@@ -240,10 +239,12 @@ void VictorValidator::doVis()
     // tell the visualier that the map has changed:
 
     // gvl->visualizeMap(VICTOR_QUERY_MAP);
+
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
     gvl->visualizeMap(ENV_MAP);
-    gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
+    // gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
     // gvl->visualizeMap(VICTOR_PATH_ENDPOINTS_MAP);
+    usleep(100000);
 }
 
 void VictorValidator::visualizeSolution(ob::PathPtr path)
