@@ -1,9 +1,8 @@
 #! /usr/bin/env python
 
 from openravepy import *
-import victor_motion_planner.openrave_planner
+import or_victor.motion
 # import victor_hardware_interface.msg as vhimsg
-import victor_motion_planner.msg as vmmsg
 import gpu_voxel_planning.srv as gvpsrv
 from victor_hardware_interface import victor_utils as vu
 from victor_hardware_interface.msg import *
@@ -20,14 +19,6 @@ right_two = [-0.467, 1.115, 0.129, -0.595, 1.323, 0.677, -0.164]
 
 hit_torque_limit = False
 
-def get_jvq_path():
-    path = vmmsg.Path()
-    path.values.append(vu.list_to_jvq(right_two))
-    path.values.append(vu.list_to_jvq(right_one))
-    path.values.append(vu.list_to_jvq(right_two))
-    path.values.append(vu.list_to_jvq(right_one))
-    return path
-
 
 def execute_path(vm, path):
     """
@@ -35,8 +26,8 @@ def execute_path(vm, path):
     Torque limits will cause Victor to stop and back up
 
     Paramters:
-    vm (openrave_planner.Planner): victor motion
-    path (victor_motion_planner.msg.Path): path to attempt to follow
+    vm (motion.MotionEnabledVictor): victor motion
+    path (or_victor.msg.Path): path to attempt to follow
     """
     global hit_torque_limit
 
@@ -72,7 +63,7 @@ def execute_path(vm, path):
 if __name__ == "__main__":
     rospy.init_node("basic_motion")
 
-    vm = victor_motion_planner.openrave_planner.Planner()
+    vm = or_victor.motion.MotionEnabledVictor()
     vm.set_manipulator("right_arm")
     vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
 
@@ -94,7 +85,6 @@ if __name__ == "__main__":
     except rospy.ServiceException as exc:
         print("Service did not process request: " + str(exc))
 
-    # path = get_jvq_path()
     success = execute_path(vm, plan_resp.path)
     
 
