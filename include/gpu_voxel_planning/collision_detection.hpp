@@ -2,7 +2,7 @@
 #define COLLISION_DETECTION_HPP
 
 #include <victor_hardware_interface/MotionStatus.h>
-
+#include <string>
 
 
 double torque_collision_limit = 4;
@@ -15,6 +15,7 @@ struct CollisionInformation
     std::vector<double> torques;
     std::vector<int> dirs;
     std::vector<double> joints;
+    std::vector<std::string> links_in_contact;
 };
 
 std::vector<double> jvqToVector(victor_hardware_interface::JointValueQuantity jvq)

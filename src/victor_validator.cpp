@@ -39,6 +39,8 @@ namespace bfs = boost::filesystem;
 #define VICTOR_ACTUAL_MAP "victor_actual_map"
 #define VICTOR_QUERY_MAP "victor_query_map"
 #define ENV_MAP "env_map"
+// bitmap for red visualization
+#define ENV_MAP_RED "env_map_red"
 #define VICTOR_SWEPT_VOLUME_MAP "victor_swept_volume_map"
 #define VICTOR_PATH_ENDPOINTS_MAP "victor_path_endpoints_map"
 #define VICTOR_PATH_SOLUTION_MAP "victor_path_solutions_map"
@@ -51,7 +53,10 @@ std::vector<std::string> right_arm_joint_names{"victor_right_arm_joint_1", "vict
         "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5",
         "victor_right_arm_joint_6", "victor_right_arm_joint_7"};
 
-std::vector<std::string> right_arm_collision_link_names{"victor_right_arm_link_5",
+std::vector<std::string> right_arm_collision_link_names{
+    "victor_right_arm_link_3",
+        "victor_right_arm_link_4",
+        "victor_right_arm_link_5",
         "victor_right_arm_link_6",
         "victor_right_arm_link_7",
         "victor_right_gripper_palm",
@@ -82,6 +87,8 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     gvl->addMap(MT_PROBAB_VOXELMAP, ENV_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_BITVECTOR_VOXELLIST,VICTOR_PATH_SOLUTION_MAP);
+    // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP_RED);
+    gvl->addMap(MT_DISTANCE_VOXELMAP, ENV_MAP_RED);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_PATH_ENDPOINTS_MAP);
     gvl->addMap(MT_DISTANCE_VOXELMAP, OBSTACLE_DISTANCE_MAP);
@@ -89,7 +96,6 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
 
     gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);  
 
-    gvl->visualizeMap(ENV_MAP);
 
     PERF_MON_ENABLE("pose_check");
     PERF_MON_ENABLE("motion_check");
@@ -117,7 +123,7 @@ void VictorValidator::testObstacle()
     // gvl->insertBoxIntoMap(Vector3f(1.8,1.8,0.0), Vector3f(2.0,2.0,1.2), ENV_MAP, eBVM_OCCUPIED, 2);
     // gvl->insertBoxIntoMap(Vector3f(1.1,1.1,1.2), Vector3f(1.9,1.9,1.3), ENV_MAP, eBVM_OCCUPIED, 2);
     // gvl->insertBoxIntoMap(Vector3f(0.0,0.0,0.0), Vector3f(3.0,3.0,0.01), ENV_MAP, eBVM_OCCUPIED, 2);
-    gvl->visualizeMap(ENV_MAP);
+
 }
 
 
@@ -174,11 +180,11 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, PROB_OCCUPIED);
     
     int dist = determineVictorDist();
-    if(dist <= 1)
-    {
-        std::cout << "Already knew victor would be in collision. Skipping\n";
-        return;
-    }
+    // if(dist <= 1)
+    // {
+    //     std::cout << "Already knew victor would be in collision. Skipping\n";
+    //     return;
+    // }
             
 
     // Update robot to be slightly into collision object.
@@ -195,7 +201,9 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
     rob->syncToHost();
 
 
-    for(auto collision_link_name: right_arm_collision_link_names)
+    // Add only the links in collision
+    // for(auto collision_link_name: right_arm_collision_link_names)
+    for(auto collision_link_name: collision_info.links_in_contact)
     {
         // std::cout << collision_link_name << "\n";
         int16_t cloud_num = clouds->getCloudNumber(collision_link_name);
@@ -206,6 +214,7 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
     }
             
 
+    //Add voxels to map
     gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(ENV_MAP);
     // boost::shared_ptr<voxelmap::ProbVoxelMap> obstacles(obstacles_ptr->as<voxelmap::ProbVoxelMap>());
     // voxelmap::ProbVoxelMap* obstacles(obstacles_ptr->as<voxelmap::ProbVoxelMap>());
@@ -240,8 +249,15 @@ void VictorValidator::doVis()
 
     // gvl->visualizeMap(VICTOR_QUERY_MAP);
 
+    // BitVoxelMeaning col = eBVM_COLLISION;
+    // boost::shared_ptr<voxelmap::DistanceVoxelMap> env_map_red = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap(ENV_MAP_RED));
+
+    // env_map_red->mergeOccupied(gvl->getMap(ENV_MAP), Vector3f(), &col);
+
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
     gvl->visualizeMap(ENV_MAP);
+    // gvl->visualizeMap(ENV_MAP_RED);
+
     // gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
     // gvl->visualizeMap(VICTOR_PATH_ENDPOINTS_MAP);
     usleep(100000);

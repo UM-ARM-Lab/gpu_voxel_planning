@@ -42,6 +42,7 @@
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Pose.h>
 #include <trajectory_msgs/JointTrajectory.h>
+#include <gazebo_victor/GetContactLinks.h>
 
 #include "gpu_voxel_planning/PlanPath.h"
 
@@ -57,6 +58,7 @@ std::vector<std::string> right_arm_names{"victor_right_arm_joint_1", "victor_rig
 
 std::shared_ptr<gpu_voxels_planner::VictorPlanner> vpln;
 
+ros::ServiceClient* col_links_client;
 
 void ctrlchandler(int)
 {
@@ -106,6 +108,9 @@ void checkCollisionCallback(victor_hardware_interface::MotionStatus::ConstPtr mo
     CollisionInformation c = checkCollision(motion_msg);
     if(c.collision)
     {
+        gazebo_victor::GetContactLinks srv_msg;
+        col_links_client->call(srv_msg);
+        c.links_in_contact = srv_msg.response.links_in_contact;
         vpln->vv_ptr->addCollisionPoints(c);
     }
 }
@@ -141,7 +146,10 @@ int main(int argc, char* argv[])
   ros::Subscriber sub1 = n.subscribe("joint_states", 1, jointStateCallback);
   ros::Subscriber collision_sub = n.subscribe("right_arm/motion_status", 1, checkCollisionCallback);
   ros::ServiceServer planing_srv = n.advertiseService("plan_path", planPath);
-  
+
+  //ONly valid in simulation
+  ros::ServiceClient tmp = n.serviceClient<gazebo_victor::GetContactLinks>("simulation/right_arm/get_contact_links");
+  col_links_client = &tmp;
 
   while(ros::ok())
   {

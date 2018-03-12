@@ -14,12 +14,13 @@ set(CATKIN_PACKAGES
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation)
+find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation gazebo_victor)
 FIND_PACKAGE(icl_core REQUIRED )
 FIND_PACKAGE(gpu_voxels REQUIRED)
 FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 FIND_PACKAGE(CUDA REQUIRED)
 FIND_PACKAGE(ompl REQUIRED)
+
 
 FIND_PACKAGE(orocos_kdl REQUIRED)
 

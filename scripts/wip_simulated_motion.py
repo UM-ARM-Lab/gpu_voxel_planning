@@ -8,14 +8,14 @@ from victor_hardware_interface import victor_utils as vu
 from victor_hardware_interface.msg import *
 import rospy
 import IPython
+from arc_utilities import path_utils as pu
+
+import time
 
 
 
-right_up_pose   = [0.284, -0.058, 0.631, -1.203, 0.547, 0.719, -0.753]
-right_down_pose = [0.052, 0.173, 0.256, -1.299, 0.516, 0.742, -0.753]
-
-right_one = [-0.588, 0.552, 0.291, -0.397, 1.835, 0.442, 0.17]
-right_two = [-0.467, 1.115, 0.129, -0.595, 1.323, 0.677, -0.164]
+right_one = [-1.69, 1.0, 0.0, -0.5, -0.5, 0.5, 0.0]
+right_two = [0, 1.0, 0.0, -0.5, -0.5, 0.5, 0.0]
 
 hit_torque_limit = False
 
@@ -44,16 +44,26 @@ def execute_path(vm, path):
 
     vm.action_terminate_check_callback = stop
 
-    traj = vm.traj_from_path(plan_resp.path)
+    traj = vm.traj_from_path_msg(plan_resp.path)
     vm.execute_trajectory(traj)
 
     vm.action_terminate_check_callback = None
 
+
     print("Checking torque limit")
     print hit_torque_limit
     if hit_torque_limit:
-        # vm.plan_to_configuration(right_one, execute=True)
-        print "Hit torque limit: Stopping"
+
+        print "Hit torque limit: Backing off"
+        # IPython.embed()
+        cur = vu.jvq_to_list(vm.active_arm_motion_status().measured_joint_position)
+        # IPython.embed()
+        path = [p.positions for p in plan_resp.path.points]
+        backup_path = pu.travel_along(path, -0.3, cur)
+        vm.execute_trajectory(vm.traj_from_path(backup_path))
+
+
+        
 
 
     return (not hit_torque_limit)
@@ -72,19 +82,16 @@ def wiggle(vm):
 if __name__ == "__main__":
     rospy.init_node("basic_motion")
 
+
+
     vm = or_victor.motion.MotionEnabledVictor()
     vm.set_manipulator("right_arm")
     vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
 
-
-    print("Planning right arm to configuration")
-    vm.plan_to_configuration(right_one, execute=True)
-
-    
-    
+    print("Planning path")
     rospy.wait_for_service("plan_path")
     gpu_path = rospy.ServiceProxy("plan_path", gvpsrv.PlanPath)
-
+    
     req = gvpsrv.PlanPathRequest()
     req.start = vu.list_to_jvq(right_one)
     req.goal = vu.list_to_jvq(right_two)
@@ -96,6 +103,7 @@ if __name__ == "__main__":
     except rospy.ServiceException as exc:
         print("Service did not process request: " + str(exc))
 
+    print("Executing path")
     success = execute_path(vm, plan_resp.path)
 
 
@@ -115,7 +123,7 @@ if __name__ == "__main__":
 
         execute_path(vm, plan_resp.path)
     else:
-        wiggle(vm)
+        pass
 
     
     
