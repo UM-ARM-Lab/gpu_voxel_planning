@@ -72,10 +72,10 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     planner->setProblemDefinition(pdef);
     planner->setup();
     
-    PERF_MON_START("planner");
+    // PERF_MON_START("planner");
     planner->clear(); // this clears all roadmaps
     ob::PlannerStatus solved = planner->ob::Planner::solve(20.0);
-    PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("planner", "Planning time", "planning");
+    // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("planner", "Planning time", "planning");
     ob::PathPtr path;
 
     //If a solution has been found, we simplify and display it.
@@ -86,15 +86,15 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
         path = pdef->getSolutionPath();
         std::cout << "Found solution:" << std::endl;
         // print the path to screen
-        path->print(std::cout);
+        // path->print(std::cout);
 
-        PERF_MON_START("simplify");
+        // PERF_MON_START("simplify");
         simp->simplifyMax(*(path->as<og::PathGeometric>()));
-        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("simplify", "Simplification time", "planning");
+        // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("simplify", "Simplification time", "planning");
 
-        std::cout << "Simplified solution:" << std::endl;
+        // std::cout << "Simplified solution:" << std::endl;
         // print the path to screen
-        path->print(std::cout);
+        // path->print(std::cout);
 
         vv_ptr->visualizeSolution(path);
 
@@ -103,7 +103,7 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     }
 
     
-    PERF_MON_SUMMARY_PREFIX_INFO("planning");
+    // PERF_MON_SUMMARY_PREFIX_INFO("planning");
 
     return path;
 }
@@ -129,8 +129,8 @@ int main(int argc, char **argv)
     signal(SIGTERM, killhandler);
 
 
-    PERF_MON_INITIALIZE(100, 1000);
-    PERF_MON_ENABLE("planning");
+    // PERF_MON_INITIALIZE(100, 1000);
+    // PERF_MON_ENABLE("planning");
 
     // std::cout << "Prob: " << uint32_t(BitVoxelMeaning(255)) << "\n";
     std::cout << "Prob: " << (int) MAX_PROBABILITY << "\n";
@@ -164,11 +164,11 @@ int main(int argc, char **argv)
 
     vpln.vv_ptr->testObstacle();
 
-    PERF_MON_START("planner");
+    // PERF_MON_START("planner");
 
     vpln.planPath(start, goal);
 
-    PERF_MON_SUMMARY_PREFIX_INFO("planning");
+    // PERF_MON_SUMMARY_PREFIX_INFO("planning");
 
     // keep the visualization running:
     while(true)

@@ -88,7 +88,7 @@ if __name__ == "__main__":
     vm.set_manipulator("right_arm")
     vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
 
-    print("Planning path")
+
     rospy.wait_for_service("plan_path")
     gpu_path = rospy.ServiceProxy("plan_path", gvpsrv.PlanPath)
     
@@ -96,15 +96,18 @@ if __name__ == "__main__":
     req.start = vu.list_to_jvq(right_one)
     req.goal = vu.list_to_jvq(right_two)
 
-    
-    try:
-        plan_resp = gpu_path(req)
+    success = False
+    while success is False:
+        try:
+            print("Planning path")
+            plan_resp = gpu_path(req)
 
-    except rospy.ServiceException as exc:
-        print("Service did not process request: " + str(exc))
+        except rospy.ServiceException as exc:
+            print("Service did not process request: " + str(exc))
+            assert False
 
-    print("Executing path")
-    success = execute_path(vm, plan_resp.path)
+        print("Executing path")
+        success = execute_path(vm, plan_resp.path)
 
 
     

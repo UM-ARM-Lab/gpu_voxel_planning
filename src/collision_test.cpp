@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
   ros::ServiceServer planing_srv = n.advertiseService("plan_path", planPath);
 
   //ONly valid in simulation
-  ros::ServiceClient tmp = n.serviceClient<gazebo_victor::GetContactLinks>("simulation/right_arm/get_contact_links");
+  ros::ServiceClient tmp = n.serviceClient<gazebo_victor::GetContactLinks>("simulation/right_arm/get_last_contact_links");
   col_links_client = &tmp;
 
   while(ros::ok())

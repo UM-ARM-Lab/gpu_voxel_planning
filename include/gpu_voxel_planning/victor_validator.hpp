@@ -57,6 +57,9 @@ private:
 namespace vvhelpers{
     template<typename T>
     robot::JointValueMap toRightJointValueMap(const T values);
+
+    bool isInJointLimits(const double *values);
+
 }
 
 

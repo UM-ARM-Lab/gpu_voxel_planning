@@ -97,9 +97,9 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);  
 
 
-    PERF_MON_ENABLE("pose_check");
-    PERF_MON_ENABLE("motion_check");
-    PERF_MON_ENABLE("motion_check_lv");
+    // PERF_MON_ENABLE("pose_check");
+    // PERF_MON_ENABLE("motion_check");
+    // PERF_MON_ENABLE("motion_check_lv");
 }
 
 
@@ -203,8 +203,10 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
 
     // Add only the links in collision
     // for(auto collision_link_name: right_arm_collision_link_names)
+    std::cout << "Collided with ";
     for(auto collision_link_name: collision_info.links_in_contact)
     {
+        std::cout << collision_link_name << ", ";
         // std::cout << collision_link_name << "\n";
         int16_t cloud_num = clouds->getCloudNumber(collision_link_name);
         uint32_t cloud_size = clouds->getPointcloudSizes()[cloud_num];
@@ -212,6 +214,7 @@ void VictorValidator::addCollisionPoints(CollisionInformation collision_info)
         const std::vector<gpu_voxels::Vector3f> cloud(cloud_ptr, cloud_ptr + cloud_size);
         gvl->insertPointCloudIntoMap(cloud, ENV_MAP, PROB_OCCUPIED);
     }
+    std::cout << "\n";
             
 
     //Add voxels to map
@@ -267,11 +270,11 @@ void VictorValidator::visualizeSolution(ob::PathPtr path)
 {
     gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
 
-    PERF_MON_SUMMARY_PREFIX_INFO("pose_check");
-    PERF_MON_SUMMARY_PREFIX_INFO("motion_check");
-    PERF_MON_SUMMARY_PREFIX_INFO("motion_check_lv");
+    // PERF_MON_SUMMARY_PREFIX_INFO("pose_check");
+    // PERF_MON_SUMMARY_PREFIX_INFO("motion_check");
+    // PERF_MON_SUMMARY_PREFIX_INFO("motion_check_lv");
 
-    std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
+    // std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
 
     og::PathGeometric* solution = path->as<og::PathGeometric>();
     solution->interpolate();
@@ -320,19 +323,29 @@ bool VictorValidator::isCurrentlyValid() const
     return gvl->getMap(VICTOR_ACTUAL_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>()) == 0;
 }
 
+
 bool VictorValidator::isValid(const ob::State *state) const
 {
 
-    PERF_MON_START("inserting");
+    // PERF_MON_START("inserting");
 
     std::lock_guard<std::mutex> lock(g_i_mutex);
+    const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
+    robot::JointValueMap state_joint_values = toRightJointValueMap<const double*>(values);
+
+    if (!vvhelpers::isInJointLimits(values))
+    {
+        return false;
+    }
+
+ 
+    
 
     gvl->clearMap(VICTOR_QUERY_MAP);
 
-    const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
 
     
-    robot::JointValueMap state_joint_values = toRightJointValueMap<const double*>(values);
+
 
 
     // update the robot joints:
@@ -340,11 +353,11 @@ bool VictorValidator::isValid(const ob::State *state) const
     // insert the robot into the map:
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_QUERY_MAP, PROB_OCCUPIED);
 
-    PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Pose Insertion", "pose_check");
+    // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Pose Insertion", "pose_check");
 
-    PERF_MON_START("coll_test");
+    // PERF_MON_START("coll_test");
     size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>());
-    PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "pose_check");
+    // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "pose_check");
 
     //std::cout << "Validity check on state ["  << values[0] << ", " << values[1] << ", " << values[2] << ", " << values[3] << ", " << values[4] << ", " << values[5] << "] resulting in " <<  num_colls_pc << " colls." << std::endl;
 
@@ -372,7 +385,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
 
     //std::cout << "Called interpolating motion_check_lv to evaluate " << nd << " segments" << std::endl;
 
-    PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check_lv");
+    // PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check_lv");
     if (nd > 1)
     {
         /* temporary storage for the checked state */
@@ -444,7 +457,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
 
     if (nd > 1)
     {
-        PERF_MON_START("inserting");
+        // PERF_MON_START("inserting");
 
         /* temporary storage for the checked state */
         ob::State *test = si_->allocState();
@@ -465,17 +478,17 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
             gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_QUERY_MAP, PROB_OCCUPIED);
 
         }
-        PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check");
+        // PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check");
 
         si_->freeState(test);
 
-        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Motion Insertion", "motion_check");
+        // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Motion Insertion", "motion_check");
 
         //gvl->visualizeMap(VICTOR_QUERY_MAP);
-        PERF_MON_START("coll_test");
+        // PERF_MON_START("coll_test");
         size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>());
         //std::cout << "CheckMotion1 for " << nd << " segments. Resulting in " << num_colls_pc << " colls." << std::endl;
-        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "motion_check");
+        // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "motion_check");
 
         result = (num_colls_pc == 0);
 
@@ -505,3 +518,25 @@ robot::JointValueMap vvhelpers::toRightJointValueMap(const T values)
     return jvm;
 }
 
+
+/*
+ *  Checks if values are in joint limits. Currently assuems values is a list of right joint values (length 7).
+ */
+bool vvhelpers::isInJointLimits(const double *values)
+{
+    // TODO: Remove hardcoded joint limits:
+    std::vector<double> right_joint_lower_deg = {-170, -120, -170, -120, -170, -120, -175};
+    std::vector<double> right_joint_upper_deg = {170, 120,  170,  120,  170,  120,  175};
+
+    for(int i=0; i<7; i++)
+    {
+        if (values[i] < (right_joint_lower_deg[i] * 3.1415/180)){
+            return false;
+        }
+        if (values[i] > (right_joint_upper_deg[i] * 3.1415/180)){
+            return false;
+        }
+    }
+    return true;
+    
+}
