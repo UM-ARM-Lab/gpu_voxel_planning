@@ -31,6 +31,7 @@ def execute_path(vm, path):
     """
     global hit_torque_limit
 
+    hit_torque_limit = False
     
     def stop():
         global hit_torque_limit
@@ -50,8 +51,6 @@ def execute_path(vm, path):
     vm.action_terminate_check_callback = None
 
 
-    print("Checking torque limit")
-    print hit_torque_limit
     if hit_torque_limit:
 
         print "Hit torque limit: Backing off"
@@ -100,6 +99,8 @@ if __name__ == "__main__":
     while success is False:
         try:
             print("Planning path")
+            # IPython.embed()
+            req.start = vm.active_arm_motion_status().measured_joint_position
             plan_resp = gpu_path(req)
 
         except rospy.ServiceException as exc:
@@ -110,27 +111,28 @@ if __name__ == "__main__":
         success = execute_path(vm, plan_resp.path)
 
 
+    print "Goal reached! Finished for now."
     
 
-    if success:
-        req = gvpsrv.PlanPathRequest()
-        req.start = vu.list_to_jvq(right_two)
-        req.goal = vu.list_to_jvq(right_one)
+    # if success:
+    #     req = gvpsrv.PlanPathRequest()
+    #     req.start = vu.list_to_jvq(right_two)
+    #     req.goal = vu.list_to_jvq(right_one)
 
     
-        try:
-            plan_resp = gpu_path(req)
-        except rospy.ServiceException as exc:
-            print("Service did not process request: " + str(exc))
+    #     try:
+    #         plan_resp = gpu_path(req)
+    #     except rospy.ServiceException as exc:
+    #         print("Service did not process request: " + str(exc))
 
 
-        execute_path(vm, plan_resp.path)
-    else:
-        pass
+    #     execute_path(vm, plan_resp.path)
+    # else:
+    #     pass
 
     
     
-    print("Finished")
-    print("")
+    # print("Finished")
+    # print("")
     
     

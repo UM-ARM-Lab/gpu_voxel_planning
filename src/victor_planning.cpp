@@ -60,6 +60,7 @@ VictorPlanner::VictorPlanner()
 
 
 
+    // planner = std::make_shared<og::LBKPIECE1>(si);
     planner = std::make_shared<og::LBKPIECE1>(si);
 }
 
@@ -70,12 +71,12 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     pdef = std::make_shared<ob::ProblemDefinition>(si);
     pdef->setStartAndGoalStates(start, goal);
     planner->setProblemDefinition(pdef);
-    planner->setup();
+    // planner->setup();
     
-    // PERF_MON_START("planner");
+    PERF_MON_START("planner");
     planner->clear(); // this clears all roadmaps
     ob::PlannerStatus solved = planner->ob::Planner::solve(20.0);
-    // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("planner", "Planning time", "planning");
+    PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("planner", "Planning time", "planning");
     ob::PathPtr path;
 
     //If a solution has been found, we simplify and display it.
@@ -84,13 +85,13 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
         // get the goal representation from the problem definition (not the same as the goal state)
         // and inquire about the found path
         path = pdef->getSolutionPath();
-        std::cout << "Found solution:" << std::endl;
+        std::cout << "Found solution. Simplifying..." << std::endl;
         // print the path to screen
         // path->print(std::cout);
 
-        // PERF_MON_START("simplify");
+        PERF_MON_START("simplify");
         simp->simplifyMax(*(path->as<og::PathGeometric>()));
-        // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("simplify", "Simplification time", "planning");
+        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("simplify", "Simplification time", "planning");
 
         // std::cout << "Simplified solution:" << std::endl;
         // print the path to screen
@@ -103,7 +104,7 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     }
 
     
-    // PERF_MON_SUMMARY_PREFIX_INFO("planning");
+    PERF_MON_SUMMARY_PREFIX_INFO("planning");
 
     return path;
 }
@@ -112,11 +113,14 @@ ob::PathPtr VictorPlanner::planPath(std::vector<double> start, std::vector<doubl
 {
     ob::ScopedState<> start_ss(space);
     ob::ScopedState<> goal_ss(space);
+    std::cout << "start: ";
     for(size_t i=0; i<start.size(); i++)
     {
+        std::cout << start[i] << ", ";
         start_ss[i] = start[i];
         goal_ss[i] = goal[i];
     }
+    std::cout << "\n";
     return planPath(start_ss, goal_ss);
 }
 
@@ -129,7 +133,7 @@ int main(int argc, char **argv)
     signal(SIGTERM, killhandler);
 
 
-    // PERF_MON_INITIALIZE(100, 1000);
+    PERF_MON_INITIALIZE(100, 1000);
     // PERF_MON_ENABLE("planning");
 
     // std::cout << "Prob: " << uint32_t(BitVoxelMeaning(255)) << "\n";
@@ -164,11 +168,11 @@ int main(int argc, char **argv)
 
     vpln.vv_ptr->testObstacle();
 
-    // PERF_MON_START("planner");
+    PERF_MON_START("planner");
 
     vpln.planPath(start, goal);
 
-    // PERF_MON_SUMMARY_PREFIX_INFO("planning");
+    PERF_MON_SUMMARY_PREFIX_INFO("planning");
 
     // keep the visualization running:
     while(true)

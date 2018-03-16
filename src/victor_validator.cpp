@@ -97,9 +97,9 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
     gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);  
 
 
-    // PERF_MON_ENABLE("pose_check");
-    // PERF_MON_ENABLE("motion_check");
-    // PERF_MON_ENABLE("motion_check_lv");
+    PERF_MON_ENABLE("pose_check");
+    PERF_MON_ENABLE("motion_check");
+    PERF_MON_ENABLE("motion_check_lv");
 }
 
 
@@ -270,9 +270,9 @@ void VictorValidator::visualizeSolution(ob::PathPtr path)
 {
     gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
 
-    // PERF_MON_SUMMARY_PREFIX_INFO("pose_check");
-    // PERF_MON_SUMMARY_PREFIX_INFO("motion_check");
-    // PERF_MON_SUMMARY_PREFIX_INFO("motion_check_lv");
+    PERF_MON_SUMMARY_PREFIX_INFO("pose_check");
+    PERF_MON_SUMMARY_PREFIX_INFO("motion_check");
+    PERF_MON_SUMMARY_PREFIX_INFO("motion_check_lv");
 
     // std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
 
@@ -327,7 +327,7 @@ bool VictorValidator::isCurrentlyValid() const
 bool VictorValidator::isValid(const ob::State *state) const
 {
 
-    // PERF_MON_START("inserting");
+    PERF_MON_START("inserting");
 
     std::lock_guard<std::mutex> lock(g_i_mutex);
     const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
@@ -353,11 +353,11 @@ bool VictorValidator::isValid(const ob::State *state) const
     // insert the robot into the map:
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_QUERY_MAP, PROB_OCCUPIED);
 
-    // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Pose Insertion", "pose_check");
+    PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Pose Insertion", "pose_check");
 
-    // PERF_MON_START("coll_test");
+    PERF_MON_START("coll_test");
     size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>());
-    // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "pose_check");
+    PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "pose_check");
 
     //std::cout << "Validity check on state ["  << values[0] << ", " << values[1] << ", " << values[2] << ", " << values[3] << ", " << values[4] << ", " << values[5] << "] resulting in " <<  num_colls_pc << " colls." << std::endl;
 
@@ -385,7 +385,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
 
     //std::cout << "Called interpolating motion_check_lv to evaluate " << nd << " segments" << std::endl;
 
-    // PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check_lv");
+    PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check_lv");
     if (nd > 1)
     {
         /* temporary storage for the checked state */
@@ -457,7 +457,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
 
     if (nd > 1)
     {
-        // PERF_MON_START("inserting");
+        PERF_MON_START("inserting");
 
         /* temporary storage for the checked state */
         ob::State *test = si_->allocState();
@@ -478,17 +478,17 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
             gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_QUERY_MAP, PROB_OCCUPIED);
 
         }
-        // PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check");
+        PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check");
 
         si_->freeState(test);
 
-        // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Motion Insertion", "motion_check");
+        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Motion Insertion", "motion_check");
 
         //gvl->visualizeMap(VICTOR_QUERY_MAP);
-        // PERF_MON_START("coll_test");
+        PERF_MON_START("coll_test");
         size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>());
         //std::cout << "CheckMotion1 for " << nd << " segments. Resulting in " << num_colls_pc << " colls." << std::endl;
-        // PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "motion_check");
+        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "motion_check");
 
         result = (num_colls_pc == 0);
 
