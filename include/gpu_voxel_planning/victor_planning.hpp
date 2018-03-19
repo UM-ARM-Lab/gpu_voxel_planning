@@ -5,6 +5,7 @@
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
+#include <ompl/geometric/planners/rrt/TRRT.h>
 
 namespace gpu_voxels_planner
 {
@@ -22,7 +23,8 @@ namespace gpu_voxels_planner
         std::shared_ptr<ompl::base::SpaceInformation> si;
         std::shared_ptr<ompl::geometric::PathSimplifier> simp;
         std::shared_ptr<ompl::base::ProblemDefinition> pdef;
-        std::shared_ptr<ompl::geometric::LBKPIECE1> planner;
+        // std::shared_ptr<ompl::geometric::LBKPIECE1> planner;
+        std::shared_ptr<ompl::geometric::TRRT> planner;
     };
 }
         

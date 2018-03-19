@@ -112,6 +112,7 @@ if __name__ == "__main__":
 
 
     print "Goal reached! Finished for now."
+    IPython.embed()
     
 
     # if success:

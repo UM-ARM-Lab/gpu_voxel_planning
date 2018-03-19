@@ -11,6 +11,7 @@
 
 #include <ompl/geometric/PathSimplifier.h>
 
+
 #include <stdlib.h>
 
 #include <memory>
@@ -61,7 +62,7 @@ VictorPlanner::VictorPlanner()
 
 
     // planner = std::make_shared<og::LBKPIECE1>(si);
-    planner = std::make_shared<og::LBKPIECE1>(si);
+    planner = std::make_shared<og::TRRT>(si);
 }
 
 ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> goal)
@@ -70,7 +71,11 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     vv_ptr->doVis();
     pdef = std::make_shared<ob::ProblemDefinition>(si);
     pdef->setStartAndGoalStates(start, goal);
+    // pdef->setOptimizationObjective();
+
+    planner->clear();        
     planner->setProblemDefinition(pdef);
+
     // planner->setup();
     
     PERF_MON_START("planner");
