@@ -14,8 +14,9 @@ import time
 
 
 
-right_one = [-1.69, 1.0, 0.0, -0.5, -0.5, 0.5, 0.0]
-right_two = [0, 1.0, 0.0, -0.5, -0.5, 0.5, 0.0]
+# right_one = [-1.69, 1.0, 0.0, -0.5, -0.5, 0.5, 0.0]
+# right_two = [0, 1.0, 0.0, -0.5, -0.5, 0.5, 0.0]
+right_two = [-.02, 1.0, 0.0, -0.5, 0, 0.9, 0.0]
 
 hit_torque_limit = False
 
@@ -92,7 +93,7 @@ if __name__ == "__main__":
     gpu_path = rospy.ServiceProxy("plan_path", gvpsrv.PlanPath)
     
     req = gvpsrv.PlanPathRequest()
-    req.start = vu.list_to_jvq(right_one)
+    # req.start = vu.list_to_jvq(right_one)
     req.goal = vu.list_to_jvq(right_two)
 
     success = False
@@ -112,6 +113,7 @@ if __name__ == "__main__":
 
 
     print "Goal reached! Finished for now."
+    IPython.embed()
     
 
     # if success:
