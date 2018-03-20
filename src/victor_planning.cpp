@@ -68,19 +68,13 @@ VictorPlanner::VictorPlanner()
 
 ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
-    vv_ptr->insertStartAndGoal(start, goal);
-    vv_ptr->doVis();
-    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
-    pdef_->setStartAndGoalStates(start, goal);
     // pdef_->setOptimizationObjective();
-
-    planner_->clear();        
-    planner_->setProblemDefinition(pdef_);
+    prepare_planner(start, goal);
 
     // planner_->setup();
     
     PERF_MON_START("planner");
-    planner_->clear(); // this clears all roadmaps
+
     ob::PlannerStatus solved = planner_->ob::Planner::solve(20.0);
     PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("planner", "Planning time", "planning");
     ob::PathPtr path;
