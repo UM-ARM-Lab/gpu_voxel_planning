@@ -26,7 +26,8 @@
 //----------------------------------------------------------------------
 #include "collision_detection.hpp"
 
-#include "victor_planning.hpp"
+
+#include "victor_lbkpiece.hpp"
 
 #include "victor_hardware_interface/victor_utils.hpp"
 
@@ -138,7 +139,7 @@ int main(int argc, char* argv[])
 
   icl_core::logging::initialize(argc, argv);
 
-  vpln = std::make_shared<gpu_voxels_planner::VictorPlanner>();
+  vpln = std::make_shared<gpu_voxels_planner::VictorLBKPiece>();
   // vpln->vv_ptr->moveObstacle();
 
 

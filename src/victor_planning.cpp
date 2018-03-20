@@ -51,36 +51,37 @@ VictorPlanner::VictorPlanner()
     bounds.setLow(-3.14159265);
     bounds.setHigh(3.14159265);
     space->setBounds(bounds);
-    si = std::make_shared<ob::SpaceInformation>(space);
-    vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si));
+    si_ = std::make_shared<ob::SpaceInformation>(space);
+    vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si_));
 
-    simp = std::make_shared<og::PathSimplifier>(si);
-    si->setStateValidityChecker(vv_ptr->getptr());
-    si->setMotionValidator(vv_ptr->getptr());
-    si->setup();
+    simp_ = std::make_shared<og::PathSimplifier>(si_);
+    si_->setStateValidityChecker(vv_ptr->getptr());
+    si_->setMotionValidator(vv_ptr->getptr());
+    si_->setup();
 
 
 
-    // planner = std::make_shared<og::LBKPIECE1>(si);
-    planner = std::make_shared<og::TRRT>(si);
+    // planner = std::make_shared<og::LBKPIECE1>(si_);
+    // planner = std::make_shared<og::TRRT>(si_);
+    // setup_planner(si_);
 }
 
 ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
     vv_ptr->insertStartAndGoal(start, goal);
     vv_ptr->doVis();
-    pdef = std::make_shared<ob::ProblemDefinition>(si);
-    pdef->setStartAndGoalStates(start, goal);
-    // pdef->setOptimizationObjective();
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
+    pdef_->setStartAndGoalStates(start, goal);
+    // pdef_->setOptimizationObjective();
 
-    planner->clear();        
-    planner->setProblemDefinition(pdef);
+    planner_->clear();        
+    planner_->setProblemDefinition(pdef_);
 
-    // planner->setup();
+    // planner_->setup();
     
     PERF_MON_START("planner");
-    planner->clear(); // this clears all roadmaps
-    ob::PlannerStatus solved = planner->ob::Planner::solve(20.0);
+    planner_->clear(); // this clears all roadmaps
+    ob::PlannerStatus solved = planner_->ob::Planner::solve(20.0);
     PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("planner", "Planning time", "planning");
     ob::PathPtr path;
 
@@ -89,13 +90,13 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     {
         // get the goal representation from the problem definition (not the same as the goal state)
         // and inquire about the found path
-        path = pdef->getSolutionPath();
+        path = pdef_->getSolutionPath();
         std::cout << "Found solution. Simplifying..." << std::endl;
         // print the path to screen
         // path->print(std::cout);
 
         PERF_MON_START("simplify");
-        simp->simplifyMax(*(path->as<og::PathGeometric>()));
+        simp_->simplifyMax(*(path->as<og::PathGeometric>()));
         PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("simplify", "Simplification time", "planning");
 
         // std::cout << "Simplified solution:" << std::endl;
@@ -129,62 +130,5 @@ ob::PathPtr VictorPlanner::planPath(std::vector<double> start, std::vector<doubl
     return planPath(start_ss, goal_ss);
 }
 
-int main(int argc, char **argv)
-{
-    // Always initialize our logging framework as a first step, with the CLI arguments:
-    icl_core::logging::initialize(argc, argv);
-    
-    signal(SIGINT, ctrlchandler);
-    signal(SIGTERM, killhandler);
 
 
-    PERF_MON_INITIALIZE(100, 1000);
-    // PERF_MON_ENABLE("planning");
-
-    // std::cout << "Prob: " << uint32_t(BitVoxelMeaning(255)) << "\n";
-    std::cout << "Prob: " << (int) MAX_PROBABILITY << "\n";
-    std::cout << "Prob: " << (int) Probability (int32_t((const uint32_t)BitVoxelMeaning(255))+int32_t(UNKNOWN_PROBABILITY)) << "\n";
-    std::cout << "Equal?: " << (MAX_PROBABILITY == Probability (int32_t(BitVoxelMeaning(255))+int32_t(UNKNOWN_PROBABILITY))) << "\n";
-
-
-    VictorPlanner vpln = VictorPlanner();
-
-
-    //Create a random start state:
-    // ob::ScopedState<> start(vpln.space);
-    // start[0] = -1.3;
-    // start[1] = -0.2;
-    // start[2] = 0.0;
-    // start[3] = 0.0;
-    // start[4] = 0.0;
-    // start[5] = 0.0;
-    // start[6] = 0.0;
-    // //And a random goal state:
-    // ob::ScopedState<> goal(vpln.space);
-    // goal[0] = 1.3;
-    // goal[1] = -0.5;
-    // goal[2] = 0.0;
-    // goal[3] = 0.0;
-    // goal[4] = 0.0;
-    // goal[5] = 0.0;
-    // goal[6] = 0.0;
-    std::vector<double> start{-1.3, -0.2, 0.0, 0.0, 0.0, 0.0, 0.0};
-    std::vector<double> goal{1.3, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0};
-
-    vpln.vv_ptr->testObstacle();
-
-    PERF_MON_START("planner");
-
-    vpln.planPath(start, goal);
-
-    PERF_MON_SUMMARY_PREFIX_INFO("planning");
-
-    // keep the visualization running:
-    while(true)
-    {
-        vpln.vv_ptr->doVis();
-        usleep(30000);
-    }
-
-    return 1;
-}

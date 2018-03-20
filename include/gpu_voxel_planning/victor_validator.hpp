@@ -43,12 +43,14 @@ public:
 
     int determineVictorDist();
 
+public:
+    ompl::base::SpaceInformationPtr si_;
 private:
 
     gpu_voxels::GpuVoxelsSharedPtr gvl;
 
     ompl::base::StateSpace *stateSpace_;
-    ompl::base::SpaceInformationPtr si_;
+
 
     mutable std::mutex g_i_mutex;
     mutable std::mutex g_j_mutex;

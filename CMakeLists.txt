@@ -90,18 +90,8 @@ include_directories(
 
 add_library(victor_validator src/victor_validator.cpp)
 
-add_library(victor_planning src/victor_planning.cpp)
-target_link_libraries(victor_planning
-  victor_validator
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  ${OMPL_LIBRARIES}
-  )
-
-add_executable(victor_planning_exec src/victor_planning.cpp)
-target_link_libraries(victor_planning_exec
+add_library(victor_planning_base src/victor_planning.cpp)
+target_link_libraries(victor_planning_base
   victor_validator
   ${catkin_LIBRARIES}
   ${Boost_SYSTEM_LIBRARY}
@@ -111,23 +101,29 @@ target_link_libraries(victor_planning_exec
   )
 
 
-add_executable(collision_test src/collision_test.cpp)
-target_link_libraries (collision_test
-  victor_planning
+
+add_library(victor_lbkpiece src/victor_lbkpiece.cpp)
+target_link_libraries(victor_lbkpiece
+  victor_planning_base)
+
+
+add_executable(ros_planning_node src/ros_planner.cpp)
+target_link_libraries (ros_planning_node
+  victor_lbkpiece
   ${catkin_LIBRARIES}
   ${Boost_SYSTEM_LIBRARY}
   ${icl_core_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
   )
 
-add_executable(validator_timing src/validator_timing.cpp)
-target_link_libraries (validator_timing
-  victor_planning
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  )
+# add_executable(validator_timing src/validator_timing.cpp)
+# target_link_libraries (validator_timing
+#   victor_planning_lbkpiece
+#   ${catkin_LIBRARIES}
+#   ${Boost_SYSTEM_LIBRARY}
+#   ${icl_core_LIBRARIES}
+#   ${gpu_voxels_LIBRARIES}
+#   )
 
 
 add_executable(urdf_test src/URDF_Loader_ROS_listener.cpp)
@@ -136,4 +132,5 @@ target_link_libraries (urdf_test
   ${Boost_SYSTEM_LIBRARY}
   ${icl_core_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
+  
   )

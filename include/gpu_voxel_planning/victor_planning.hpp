@@ -18,13 +18,19 @@ namespace gpu_voxels_planner
         ompl::base::PathPtr planPath(std::vector<double> start, std::vector<double> goal);
         std::shared_ptr<VictorValidator> vv_ptr;
         std::shared_ptr<ompl::base::RealVectorStateSpace> space;
-    private:
 
-        std::shared_ptr<ompl::base::SpaceInformation> si;
-        std::shared_ptr<ompl::geometric::PathSimplifier> simp;
-        std::shared_ptr<ompl::base::ProblemDefinition> pdef;
-        // std::shared_ptr<ompl::geometric::LBKPIECE1> planner;
-        std::shared_ptr<ompl::geometric::TRRT> planner;
+    protected:
+        virtual void setup_planner() = 0;
+        virtual void prepare_planner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal) = 0;
+        
+    protected:
+
+        std::shared_ptr<ompl::base::SpaceInformation> si_;
+        std::shared_ptr<ompl::geometric::PathSimplifier> simp_;
+        std::shared_ptr<ompl::base::ProblemDefinition> pdef_;
+        // std::shared_ptr<ompl::geometric::LBKPIECE1> planner_;
+        // std::shared_ptr<ompl::geometric::TRRT> planner_;
+        std::shared_ptr<ompl::base::Planner> planner_;
     };
 }
         
