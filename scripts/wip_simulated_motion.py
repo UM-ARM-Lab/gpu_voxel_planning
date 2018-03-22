@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
 
 
-    vm = or_victor.motion.MotionEnabledVictor()
+    vm = or_victor.motion.MotionEnabledVictor(viewer=False)
     vm.set_manipulator("right_arm")
     vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
 

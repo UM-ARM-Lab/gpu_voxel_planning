@@ -15,8 +15,9 @@
 #include <thread>
 #include <chrono>
 
-#define IC_PERFORMANCE_MONITOR
-#include <icl_core_performance_monitor/PerformanceMonitor.h>
+#define ENABLE_PROFILING
+#include <arc_utilities/timing.hpp>
+
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
@@ -24,6 +25,13 @@ using namespace gpu_voxels;
 using namespace vvhelpers;
 namespace bfs = boost::filesystem;
 
+const std::string ISVALID_INSERTION = "isValid insertion";
+const std::string QUERY_INSERTION = "query insertion";
+const std::string ISVALID_COLLISION_TEST = "isValid collision test";
+const std::string CHECK_MOTION_SIMPLE_INSERTION = "checkMotion (simple) insertion";
+const std::string CHECK_MOTION_SIMPLE_COLLISION_TEST = "checkMotion (simple) collision test";
+const std::string CHECK_MOTION_SIMPLE_CHECK = "checkMotion (simple) full check";
+const std::string CHECK_MOTION_COMP_CHECK = "checkMotion (complicated) full check";
 
 /*
  *
@@ -96,10 +104,6 @@ VictorValidator::VictorValidator(const ob::SpaceInformationPtr &si)
 
     gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);  
 
-
-    PERF_MON_ENABLE("pose_check");
-    PERF_MON_ENABLE("motion_check");
-    PERF_MON_ENABLE("motion_check_lv");
 }
 
 
@@ -270,10 +274,6 @@ void VictorValidator::visualizeSolution(ob::PathPtr path)
 {
     gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
 
-    PERF_MON_SUMMARY_PREFIX_INFO("pose_check");
-    PERF_MON_SUMMARY_PREFIX_INFO("motion_check");
-    PERF_MON_SUMMARY_PREFIX_INFO("motion_check_lv");
-
     // std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
 
     og::PathGeometric* solution = path->as<og::PathGeometric>();
@@ -327,7 +327,7 @@ bool VictorValidator::isCurrentlyValid() const
 bool VictorValidator::isValid(const ob::State *state) const
 {
 
-    PERF_MON_START("inserting");
+
 
     std::lock_guard<std::mutex> lock(g_i_mutex);
     const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
@@ -340,26 +340,29 @@ bool VictorValidator::isValid(const ob::State *state) const
 
  
     
-
-    gvl->clearMap(VICTOR_QUERY_MAP);
-
-
+    PROFILE_START(ISVALID_INSERTION);
+    PROFILE_START(QUERY_INSERTION);
     
-
-
+    gvl->clearMap(VICTOR_QUERY_MAP);
 
     // update the robot joints:
     gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
     // insert the robot into the map:
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_QUERY_MAP, PROB_OCCUPIED);
 
-    PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Pose Insertion", "pose_check");
+    PROFILE_RECORD(ISVALID_INSERTION);
+    PROFILE_RECORD(QUERY_INSERTION);
 
-    PERF_MON_START("coll_test");
+
+    PROFILE_START(ISVALID_COLLISION_TEST);
+
     size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>());
-    PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "pose_check");
 
+
+    PROFILE_RECORD(ISVALID_COLLISION_TEST);
     //std::cout << "Validity check on state ["  << values[0] << ", " << values[1] << ", " << values[2] << ", " << values[3] << ", " << values[4] << ", " << values[5] << "] resulting in " <<  num_colls_pc << " colls." << std::endl;
+
+    
 
     return num_colls_pc == 0;
 }
@@ -373,6 +376,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
     //    std::cout << "LongestValidSegmentFraction = " << stateSpace_->getLongestValidSegmentFraction() << std::endl;
     //    std::cout << "getLongestValidSegmentLength = " << stateSpace_->getLongestValidSegmentLength() << std::endl;
     //    std::cout << "getMaximumExtent = " << stateSpace_->getMaximumExtent() << std::endl;
+    PROFILE_START(CHECK_MOTION_COMP_CHECK);
 
 
     std::lock_guard<std::mutex> lock(g_j_mutex);
@@ -385,7 +389,8 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
 
     //std::cout << "Called interpolating motion_check_lv to evaluate " << nd << " segments" << std::endl;
 
-    PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check_lv");
+    // PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check_lv");
+
     if (nd > 1)
     {
         /* temporary storage for the checked state */
@@ -410,6 +415,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
 
     }
 
+
     if (result)
         if (!si_->isValid(s2))
         {
@@ -425,7 +431,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
     else
         invalid_++;
 
-
+    PROFILE_RECORD(CHECK_MOTION_COMP_CHECK);
     return result;
 }
 
@@ -433,6 +439,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
 
 bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) const
 {
+    PROFILE_START(CHECK_MOTION_SIMPLE_CHECK);
     std::lock_guard<std::mutex> lock(g_i_mutex);
     gvl->clearMap(VICTOR_QUERY_MAP);
 
@@ -440,6 +447,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
     //        std::cout << "LongestValidSegmentFraction = " << stateSpace_->getLongestValidSegmentFraction() << std::endl;
     //        std::cout << "getLongestValidSegmentLength = " << stateSpace_->getLongestValidSegmentLength() << std::endl;
     //        std::cout << "getMaximumExtent = " << stateSpace_->getMaximumExtent() << std::endl;
+
 
 
 
@@ -457,7 +465,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
 
     if (nd > 1)
     {
-        PERF_MON_START("inserting");
+
 
         /* temporary storage for the checked state */
         ob::State *test = si_->allocState();
@@ -472,23 +480,26 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
             
             robot::JointValueMap state_joint_values = toRightJointValueMap<const double*>(values);
 
+            PROFILE_START(CHECK_MOTION_SIMPLE_INSERTION);
             // update the robot joints:
             gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
             // insert the robot into the map:
             gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_QUERY_MAP, PROB_OCCUPIED);
+            PROFILE_RECORD(CHECK_MOTION_SIMPLE_INSERTION);
+            
 
         }
-        PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check");
+        // PERF_MON_ADD_DATA_NONTIME_P("Num poses in motion", float(nd), "motion_check");
 
         si_->freeState(test);
 
-        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("insert", "Motion Insertion", "motion_check");
 
         //gvl->visualizeMap(VICTOR_QUERY_MAP);
-        PERF_MON_START("coll_test");
+        PROFILE_START(CHECK_MOTION_SIMPLE_COLLISION_TEST);
         size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>());
         //std::cout << "CheckMotion1 for " << nd << " segments. Resulting in " << num_colls_pc << " colls." << std::endl;
-        PERF_MON_SILENT_MEASURE_AND_RESET_INFO_P("coll_test", "Pose Collsion", "motion_check");
+        PROFILE_RECORD(CHECK_MOTION_SIMPLE_COLLISION_TEST);
+
 
         result = (num_colls_pc == 0);
 
@@ -500,7 +511,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
     else
         invalid_++;
 
-
+    PROFILE_RECORD(CHECK_MOTION_SIMPLE_CHECK);
     return result;
 
 
