@@ -22,6 +22,7 @@ namespace gpu_voxels_planner
     protected:
         virtual void setup_planner() = 0;
         virtual void prepare_planner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal) = 0;
+        virtual void post_planning_actions(ompl::base::PathPtr path) {(void) path;};
         
     protected:
 

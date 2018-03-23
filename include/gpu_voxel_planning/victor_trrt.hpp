@@ -1,17 +1,18 @@
-#ifndef VICTOR_LBKPIECE_HPP
-#define VICTOR_LBKPIECE_HPP
+#ifndef VICTOR_TRRT_HPP
+#define VICTOR_TRRT_HPP
 
 #include "victor_planning.hpp"
 
 namespace gpu_voxels_planner
 {
-    class VictorLBKPiece: public VictorPlanner
+    class VictorTrrt: public VictorPlanner
     {
     public:
-        VictorLBKPiece();
+        VictorTrrt();
         virtual void setup_planner();
         
         virtual void prepare_planner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
+        virtual void post_planning_actions(ompl::base::PathPtr path);
     };
 }
 

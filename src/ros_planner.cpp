@@ -28,6 +28,7 @@
 
 
 #include "victor_lbkpiece.hpp"
+#include "victor_trrt.hpp"
 
 #include "victor_hardware_interface/victor_utils.hpp"
 
@@ -134,16 +135,40 @@ int main(int argc, char* argv[])
   // signal(SIGINT, ctrlchandler);
   // signal(SIGTERM, killhandler);
 
-  ros::init(argc, argv, "gpu_voxels");
+  ros::init(argc, argv, "gpu_voxels_ros_planner");
   
+  ros::NodeHandle n;
+  ros::NodeHandle private_n("~");
 
   icl_core::logging::initialize(argc, argv);
 
-  vpln = std::make_shared<gpu_voxels_planner::VictorLBKPiece>();
-  // vpln->vv_ptr->moveObstacle();
 
 
-  ros::NodeHandle n;
+  std::string arg;
+  private_n.getParam("planner", arg);
+
+
+  
+  if(arg.length() == 0)
+  {
+      ROS_INFO("Using Default LBKPiece Planner");
+      vpln = std::make_shared<gpu_voxels_planner::VictorLBKPiece>();
+  }
+  if(arg == "lbkpiece")
+  {
+      ROS_INFO("Using LBKPiece Planner");
+      vpln = std::make_shared<gpu_voxels_planner::VictorLBKPiece>();
+  }
+  if(arg == "trrt")
+  {
+      ROS_INFO("Using TRRT Planner");
+      vpln = std::make_shared<gpu_voxels_planner::VictorTrrt>();
+  }
+
+  
+
+
+
   ros::Subscriber sub1 = n.subscribe("joint_states", 1, jointStateCallback);
   ros::Subscriber collision_sub = n.subscribe("right_arm/motion_status", 1, checkCollisionCallback);
   ros::ServiceServer planing_srv = n.advertiseService("plan_path", planPath);
