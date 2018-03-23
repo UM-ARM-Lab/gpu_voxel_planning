@@ -32,6 +32,7 @@ const std::string CHECK_MOTION_SIMPLE_INSERTION = "checkMotion (simple) insertio
 const std::string CHECK_MOTION_SIMPLE_COLLISION_TEST = "checkMotion (simple) collision test";
 const std::string CHECK_MOTION_SIMPLE_CHECK = "checkMotion (simple) full check";
 const std::string CHECK_MOTION_COMP_CHECK = "checkMotion (complicated) full check";
+const std::string INSERT_VIZ_SOLUTION = "insert into viz solution";
 
 /*
  *
@@ -282,7 +283,7 @@ void VictorValidator::visualizeSolution(ob::PathPtr path)
 
     for(size_t step = 0; step < solution->getStateCount(); ++step)
     {
-
+        PROFILE_START(INSERT_VIZ_SOLUTION);
         const double *values = solution->getState(step)->as<ob::RealVectorStateSpace::StateType>()->values;
         
         robot::JointValueMap state_joint_values = toRightJointValueMap<const double*>(values);
@@ -291,6 +292,7 @@ void VictorValidator::visualizeSolution(ob::PathPtr path)
         gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
         // insert the robot into the map:
         gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_PATH_SOLUTION_MAP, BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + (step % 249) ));
+        PROFILE_RECORD(INSERT_VIZ_SOLUTION);
     }
 
     // gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);

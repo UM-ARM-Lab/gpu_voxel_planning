@@ -21,9 +21,13 @@ namespace og = ompl::geometric;
 using namespace gpu_voxels_planner;
 
 
-const std::string FULL_PLANNING_NAME = "Full Planning";
-const std::string PLANNING_NAME = "unsmoothed planning";
-const std::string SMOOTHING_NAME = "smoothing";
+const std::string FULL_PLANNING = "Full Planning";
+const std::string PLANNING = "unsmoothed planning";
+const std::string POST_PROCESSING = "post processing";
+const std::string SMOOTHING = "smoothing";
+const std::string VISUALIZE_SOLUTION = "visualize solution";
+
+const std::string INSERT_VIZ_SOLUTION = "insert into viz solution";
 
 const std::string ISVALID_INSERTION = "isValid insertion";
 const std::string QUERY_INSERTION = "query insertion";
@@ -87,16 +91,13 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
 
     // planner_->setup();
 
-    PROFILE_START(FULL_PLANNING_NAME);
-    PROFILE_START(PLANNING_NAME);
+    PROFILE_START(FULL_PLANNING);
+    PROFILE_START(PLANNING);
     
-
-    // ob::PlannerStatus solved = planner_->ob::Planner::solve(20.0);
     ob::PlannerStatus solved = planner_->solve(10);
 
-    
-    PROFILE_RECORD(PLANNING_NAME);
-
+    PROFILE_RECORD(PLANNING);
+    PROFILE_START(POST_PROCESSING);
     
     ob::PathPtr path;
 
@@ -106,41 +107,54 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
         // get the goal representation from the problem definition (not the same as the goal state)
         // and inquire about the found path
         path = pdef_->getSolutionPath();
-        std::cout << "Found solution. Simplifying..." << std::endl;
+        // std::cout << "Found solution. Simplifying..." << std::endl;
         // print the path to screen
         // path->print(std::cout);
 
-        PROFILE_START(SMOOTHING_NAME);
+        PROFILE_START(SMOOTHING);
         simp_->simplifyMax(*(path->as<og::PathGeometric>()));
-        PROFILE_RECORD(SMOOTHING_NAME);
+        PROFILE_RECORD(SMOOTHING);
 
         // std::cout << "Simplified solution:" << std::endl;
         // print the path to screen
         // path->print(std::cout);
-
+        PROFILE_START(VISUALIZE_SOLUTION);
         vv_ptr->visualizeSolution(path);
+        PROFILE_RECORD(VISUALIZE_SOLUTION);
+
+        std::cout << "Calling post planning actions\n";
+        post_planning_actions(path);
 
     }else{
         std::cout << "No solution could be found" << std::endl;
     }
     
-    PROFILE_RECORD(FULL_PLANNING_NAME);
+    PROFILE_RECORD(POST_PROCESSING);
+    PROFILE_RECORD(FULL_PLANNING);
 
     std::vector<std::string> summary_names = {
-        FULL_PLANNING_NAME,
-        PLANNING_NAME,
-        SMOOTHING_NAME,
+        FULL_PLANNING,
+        "~~~~~~~~~~~~",
+        PLANNING,
+        POST_PROCESSING,
+        "~~~~~~~~~~~~",
+        SMOOTHING,
+        VISUALIZE_SOLUTION,
+        INSERT_VIZ_SOLUTION,
+        "~~~~~~~~~~~~",
         ISVALID_INSERTION,
         ISVALID_COLLISION_TEST,
+        "~~~~~~~~~~~~",
+        CHECK_MOTION_SIMPLE_CHECK,
         CHECK_MOTION_SIMPLE_INSERTION,
         CHECK_MOTION_SIMPLE_COLLISION_TEST,
-        CHECK_MOTION_SIMPLE_CHECK,
+        "~~~~~~~~~~~~",
         CHECK_MOTION_COMP_CHECK};
         
     PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
-    // PROFILE_PRINT_SUMMARY_FOR_SINGLE(FULL_PLANNING_NAME);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(PLANNING_NAME);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(SMOOTHING_NAME);
+    // PROFILE_PRINT_SUMMARY_FOR_SINGLE(FULL_PLANNING);
+    // PROFILE_PRINT_SUMMARY_FOR_GROUP(PLANNING);
+    // PROFILE_PRINT_SUMMARY_FOR_GROUP(SMOOTHING);
     // PROFILE_PRINT_SUMMARY_FOR_GROUP(ISVALID_INSERTION);
     // PROFILE_PRINT_SUMMARY_FOR_GROUP(QUERY_INSERTION);
     // PROFILE_PRINT_SUMMARY_FOR_GROUP(ISVALID_COLLISION_TEST);
