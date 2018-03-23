@@ -74,7 +74,7 @@ VictorPlanner::VictorPlanner()
 
 
 
-    PROFILE_RESET_ALL(10,1000);
+    PROFILE_REINITIALIZE(10,1000);
     // planner = std::make_shared<og::LBKPIECE1>(si_);
     // planner = std::make_shared<og::TRRT>(si_);
     // setup_planner(si_);
@@ -150,7 +150,7 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     // PROFILE_PRINT_SUMMARY_FOR_GROUP(CHECK_MOTION_COMP_CHECK);
 
     
-    PROFILE_RESET_ALL(10,1000);
+    PROFILE_REINITIALIZE(10,1000);
 
     return path;
 }
