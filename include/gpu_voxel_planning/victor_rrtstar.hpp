@@ -1,15 +1,15 @@
-#ifndef VICTOR_TRRT_HPP
-#define VICTOR_TRRT_HPP
+#ifndef VICTOR_RRTSTAR_HPP
+#define VICTOR_RRTSTAR_HPP
 
 #include "victor_planning.hpp"
-#include <ompl/geometric/planners/rrt/TRRT.h>
+#include <ompl/geometric/planners/rrt/RRTstar.h>
 
 namespace gpu_voxels_planner
 {
-    class VictorTrrt: public VictorPlanner
+    class VictorRrtStar: public VictorPlanner
     {
     public:
-        VictorTrrt();
+        VictorRrtStar();
         virtual void setup_planner();
         
         virtual void prepare_planner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);

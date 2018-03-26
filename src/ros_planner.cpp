@@ -29,6 +29,7 @@
 
 #include "victor_lbkpiece.hpp"
 #include "victor_trrt.hpp"
+#include "victor_rrtstar.hpp"
 
 #include "victor_hardware_interface/victor_utils.hpp"
 
@@ -163,6 +164,11 @@ int main(int argc, char* argv[])
   {
       ROS_INFO("Using TRRT Planner");
       vpln = std::make_shared<gpu_voxels_planner::VictorTrrt>();
+  }
+  if(arg == "rrtstar")
+  {
+      ROS_INFO("Using RRTstar Planner");
+      vpln = std::make_shared<gpu_voxels_planner::VictorRrtStar>();
   }
 
   

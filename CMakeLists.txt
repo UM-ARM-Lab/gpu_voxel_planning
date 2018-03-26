@@ -110,11 +110,16 @@ add_library(victor_trrt src/victor_trrt.cpp)
 target_link_libraries(victor_trrt
   victor_planning_base)
 
+add_library(victor_rrtstar src/victor_rrtstar.cpp)
+target_link_libraries(victor_rrtstar
+  victor_planning_base)
+
 
 add_executable(ros_planning_node src/ros_planner.cpp)
 target_link_libraries (ros_planning_node
   victor_lbkpiece
   victor_trrt
+  victor_rrtstar
   ${catkin_LIBRARIES}
   ${Boost_SYSTEM_LIBRARY}
   ${icl_core_LIBRARIES}

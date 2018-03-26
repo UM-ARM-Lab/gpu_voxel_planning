@@ -5,7 +5,7 @@
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
-#include <ompl/geometric/planners/rrt/TRRT.h>
+
 
 namespace gpu_voxels_planner
 {

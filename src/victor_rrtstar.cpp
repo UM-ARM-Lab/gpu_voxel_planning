@@ -1,4 +1,4 @@
-#include "victor_trrt.hpp"
+#include "victor_rrtstar.hpp"
 
 
 using namespace gpu_voxels_planner;
@@ -7,18 +7,18 @@ namespace og = ompl::geometric;
 
 
 
-VictorTrrt::VictorTrrt()
+VictorRrtStar::VictorRrtStar()
 {
     setup_planner();
 }
 
-void VictorTrrt::setup_planner()
+void VictorRrtStar::setup_planner()
 {
-    planner_ = std::make_shared<og::TRRT>(si_);
+    planner_ = std::make_shared<og::RRTstar>(si_);
     planner_->setup();
 }
 
-void VictorTrrt::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> goal)
+void VictorRrtStar::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
     planner_->clear();
     vv_ptr->insertStartAndGoal(start, goal);
@@ -31,7 +31,7 @@ void VictorTrrt::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> goal
 }
 
 
-void VictorTrrt::post_planning_actions(ompl::base::PathPtr path)
+void VictorRrtStar::post_planning_actions(ompl::base::PathPtr path)
 {
     og::PathGeometric* sol = path->as<ompl::geometric::PathGeometric>();
     std::cout << "Path starts at:\n ";

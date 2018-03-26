@@ -94,13 +94,13 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     PROFILE_START(FULL_PLANNING);
     PROFILE_START(PLANNING);
     
-    ob::PlannerStatus solved = planner_->solve(10);
+    ob::PlannerStatus solved = planner_->solve(30);
 
     PROFILE_RECORD(PLANNING);
     PROFILE_START(POST_PROCESSING);
     
     ob::PathPtr path;
-
+    std::cout << solved << "\n";
     //If a solution has been found, we simplify and display it.
     if (solved)
     {
@@ -179,6 +179,12 @@ ob::PathPtr VictorPlanner::planPath(std::vector<double> start, std::vector<doubl
         std::cout << start[i] << ", ";
         start_ss[i] = start[i];
         goal_ss[i] = goal[i];
+    }
+    std::cout << "\n";
+    std::cout << "goal: ";
+    for(size_t i=0; i<start.size(); i++)
+    {
+        std::cout << goal[i] << ", ";
     }
     std::cout << "\n";
     return planPath(start_ss, goal_ss);
