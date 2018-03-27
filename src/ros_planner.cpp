@@ -26,6 +26,7 @@
 //----------------------------------------------------------------------
 #include "collision_detection.hpp"
 
+#include "gpu_voxels_victor.hpp"
 
 #include "victor_lbkpiece.hpp"
 #include "victor_trrt.hpp"
@@ -60,6 +61,7 @@ std::vector<std::string> right_arm_names{"victor_right_arm_joint_1", "victor_rig
 
 
 std::shared_ptr<gpu_voxels_planner::VictorPlanner> vpln;
+std::shared_ptr<GpuVoxelsVictor> victor_model;
 
 ros::ServiceClient* col_links_client;
 
@@ -83,7 +85,7 @@ void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
     joint_positions[msg->name[i]] = msg->position[i];
   }
   // std::cout << "Callback\n";
-  vpln->vv_ptr->setVictorPosition(joint_positions);
+  victor_model->updateVictorPosition(joint_positions);
   
 }
 
@@ -114,7 +116,7 @@ void checkCollisionCallback(victor_hardware_interface::MotionStatus::ConstPtr mo
         gazebo_victor::GetContactLinks srv_msg;
         col_links_client->call(srv_msg);
         c.links_in_contact = srv_msg.response.links_in_contact;
-        vpln->vv_ptr->addCollisionPoints(c);
+        victor_model->addCollisionPoints(c);
     }
 }
 
@@ -149,26 +151,28 @@ int main(int argc, char* argv[])
   private_n.getParam("planner", arg);
 
 
+
+  victor_model = std::make_shared<GpuVoxelsVictor>();
   
   if(arg.length() == 0)
   {
       ROS_INFO("Using Default LBKPiece Planner");
-      vpln = std::make_shared<gpu_voxels_planner::VictorLBKPiece>();
+      vpln = std::make_shared<gpu_voxels_planner::VictorLBKPiece>(victor_model);
   }
   if(arg == "lbkpiece")
   {
       ROS_INFO("Using LBKPiece Planner");
-      vpln = std::make_shared<gpu_voxels_planner::VictorLBKPiece>();
+      vpln = std::make_shared<gpu_voxels_planner::VictorLBKPiece>(victor_model);
   }
   if(arg == "trrt")
   {
       ROS_INFO("Using TRRT Planner");
-      vpln = std::make_shared<gpu_voxels_planner::VictorTrrt>();
+      vpln = std::make_shared<gpu_voxels_planner::VictorTrrt>(victor_model);
   }
   if(arg == "rrtstar")
   {
       ROS_INFO("Using RRTstar Planner");
-      vpln = std::make_shared<gpu_voxels_planner::VictorRrtStar>();
+      vpln = std::make_shared<gpu_voxels_planner::VictorRrtStar>(victor_model);
   }
 
   
@@ -186,7 +190,7 @@ int main(int argc, char* argv[])
   while(ros::ok())
   {
     ros::spinOnce();
-    vpln->vv_ptr->doVis();
+    victor_model->doVis();
 
     usleep(30000);
   }

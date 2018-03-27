@@ -7,7 +7,8 @@ namespace og = ompl::geometric;
 
 
 
-VictorTrrt::VictorTrrt()
+VictorTrrt::VictorTrrt(std::shared_ptr<GpuVoxelsVictor> victor_model)
+    : VictorPlanner(victor_model)
 {
     setup_planner();
 }

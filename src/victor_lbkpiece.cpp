@@ -7,7 +7,8 @@ namespace og = ompl::geometric;
 
 
 
-VictorLBKPiece::VictorLBKPiece()
+VictorLBKPiece::VictorLBKPiece(std::shared_ptr<GpuVoxelsVictor> victor_model)
+    : VictorPlanner(victor_model)
 {
     setup_planner();
 }

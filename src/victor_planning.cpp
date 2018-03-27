@@ -4,6 +4,7 @@
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
 
+
 #include <signal.h>
 #include <iostream>
 
@@ -59,7 +60,7 @@ void killhandler(int)
     exit(EXIT_SUCCESS);
 }
 
-VictorPlanner::VictorPlanner()
+VictorPlanner::VictorPlanner(std::shared_ptr<GpuVoxelsVictor> victor_model)
 {
     space = std::make_shared<ob::RealVectorStateSpace>(7);
 
@@ -68,7 +69,7 @@ VictorPlanner::VictorPlanner()
     bounds.setHigh(3.14159265);
     space->setBounds(bounds);
     si_ = std::make_shared<ob::SpaceInformation>(space);
-    vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si_));
+    vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si_, victor_model));
 
     simp_ = std::make_shared<og::PathSimplifier>(si_);
     si_->setStateValidityChecker(vv_ptr->getptr());
@@ -118,7 +119,9 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
         // print the path to screen
         // path->print(std::cout);
         PROFILE_START(VISUALIZE_SOLUTION);
-        vv_ptr->visualizeSolution(path);
+        
+        // victor_model->visualizeSolution(path);
+        
         PROFILE_RECORD(VISUALIZE_SOLUTION);
 
         std::cout << "Calling post planning actions\n";

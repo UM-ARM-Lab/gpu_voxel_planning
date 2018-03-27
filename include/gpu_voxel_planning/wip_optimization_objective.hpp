@@ -4,7 +4,7 @@
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/OptimizationObjective.h>
-#include <gpu_voxels/GpuVoxels.h>
+#include "gpu_voxels_victor.hpp"
 
 
 
@@ -12,15 +12,17 @@ class WipOptimizationObjective : public ompl::base::OptimizationObjective
 {
 public:
     WipOptimizationObjective(ompl::base::SpaceInformationPtr si,
-                             gpu_voxels::GpuVoxelsSharedPtr gvl);
+                             std::shared_ptr<GpuVoxelsVictor> victor_model);
 
 
     virtual ompl::base::Cost stateCost(const ompl::base::State *s) const;
     
     virtual ompl::base::Cost motionCost(const ompl::base::State *s1,
                                         const ompl::base::State *s2) const;
-
-    gpu_voxels::GpuVoxelsSharedPtr gvl_;
+    
+private:
+    std::shared_ptr<GpuVoxelsVictor> victor_model_;
+    
 };
 
 

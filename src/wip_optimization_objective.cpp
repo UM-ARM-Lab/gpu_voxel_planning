@@ -4,10 +4,10 @@ namespace ob = ompl::base;
 // namespace og = ompl::geometric;
 
 WipOptimizationObjective::WipOptimizationObjective(ompl::base::SpaceInformationPtr si,
-                                                   gpu_voxels::GpuVoxelsSharedPtr gvl)
+                                                   std::shared_ptr<GpuVoxelsVictor> victor_model)
     : ob::OptimizationObjective(si)
 {
-    gvl_ = gvl;
+    victor_model_ = victor_model;
 }
 
 

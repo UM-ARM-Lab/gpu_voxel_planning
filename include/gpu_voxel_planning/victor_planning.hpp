@@ -12,7 +12,7 @@ namespace gpu_voxels_planner
     class VictorPlanner
     {
     public:
-        VictorPlanner();
+        VictorPlanner(std::shared_ptr<GpuVoxelsVictor> victor_model);
         ompl::base::PathPtr planPath(ompl::base::ScopedState<> start,
                                      ompl::base::ScopedState<> goal);
         ompl::base::PathPtr planPath(std::vector<double> start, std::vector<double> goal);

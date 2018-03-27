@@ -8,7 +8,7 @@ namespace gpu_voxels_planner
     class VictorLBKPiece: public VictorPlanner
     {
     public:
-        VictorLBKPiece();
+        VictorLBKPiece(std::shared_ptr<GpuVoxelsVictor> victor_model);
         virtual void setup_planner() override;
 
 

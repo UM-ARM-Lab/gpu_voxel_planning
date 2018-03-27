@@ -9,7 +9,7 @@ namespace gpu_voxels_planner
     class VictorTrrt: public VictorPlanner
     {
     public:
-        VictorTrrt();
+        VictorTrrt(std::shared_ptr<GpuVoxelsVictor> victor_model);
         virtual void setup_planner() override;
 
         virtual void prepare_planner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal) override;

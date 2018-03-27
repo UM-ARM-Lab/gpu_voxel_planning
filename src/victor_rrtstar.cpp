@@ -7,16 +7,18 @@ namespace og = ompl::geometric;
 
 
 
-VictorRrtStar::VictorRrtStar()
+VictorRrtStar::VictorRrtStar(std::shared_ptr<GpuVoxelsVictor> victor_model)
+    :VictorPlanner(victor_model)
 {
     setup_planner();
+    objective_ = std::make_shared<WipOptimizationObjective>(si_, victor_model);
 }
 
 void VictorRrtStar::setup_planner()
 {
     planner_ = std::make_shared<og::RRTstar>(si_);
     planner_->setup();
-    objective_ = std::make_shared<WipOptimizationObjective>(si_, vv_ptr->gvl);
+
     pdef_->setOptimizationObjective(objective_);
     
 }
