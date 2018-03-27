@@ -28,7 +28,6 @@ public:
                              std::pair< ompl::base::State*, double > & lastValid) const;
     virtual bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const;
 
-    void plan();
 
     std::shared_ptr<VictorValidator> getptr() {
         return shared_from_this();
@@ -45,12 +44,10 @@ public:
 
 public:
     ompl::base::SpaceInformationPtr si_;
-private:
-
     gpu_voxels::GpuVoxelsSharedPtr gvl;
-
+    
+private:
     ompl::base::StateSpace *stateSpace_;
-
 
     mutable std::mutex g_i_mutex;
     mutable std::mutex g_j_mutex;

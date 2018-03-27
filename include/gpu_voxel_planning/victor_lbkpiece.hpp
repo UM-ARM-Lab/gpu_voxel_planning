@@ -9,9 +9,11 @@ namespace gpu_voxels_planner
     {
     public:
         VictorLBKPiece();
-        virtual void setup_planner();
-        
-        virtual void prepare_planner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
+        virtual void setup_planner() override;
+
+
+        virtual void prepare_planner(ompl::base::ScopedState<> start,
+                                     ompl::base::ScopedState<> goal) override final;
     };
 }
 

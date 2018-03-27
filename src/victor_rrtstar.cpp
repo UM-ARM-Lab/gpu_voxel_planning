@@ -1,5 +1,5 @@
 #include "victor_rrtstar.hpp"
-
+#include "wip_optimization_objective.hpp"
 
 using namespace gpu_voxels_planner;
 namespace ob = ompl::base;
@@ -16,6 +16,9 @@ void VictorRrtStar::setup_planner()
 {
     planner_ = std::make_shared<og::RRTstar>(si_);
     planner_->setup();
+    objective_ = std::make_shared<WipOptimizationObjective>(si_, vv_ptr->gvl);
+    pdef_->setOptimizationObjective(objective_);
+    
 }
 
 void VictorRrtStar::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> goal)

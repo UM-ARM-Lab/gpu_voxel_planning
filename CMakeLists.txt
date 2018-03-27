@@ -112,7 +112,13 @@ target_link_libraries(victor_trrt
 
 add_library(victor_rrtstar src/victor_rrtstar.cpp)
 target_link_libraries(victor_rrtstar
-  victor_planning_base)
+  victor_planning_base
+  wip_optimization_objective
+)
+
+add_library(wip_optimization_objective src/wip_optimization_objective.cpp)
+# target_link_libraries(wip_optimization_objective
+#   victor_planning_base)
 
 
 add_executable(ros_planning_node src/ros_planner.cpp)

@@ -1,15 +1,14 @@
 #include "victor_planning.hpp"
 
-#include <signal.h>
-#include <iostream>
-
-#include <gpu_voxels/logging/logging_gpu_voxels.h>
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
 
-#include <ompl/geometric/PathSimplifier.h>
+#include <signal.h>
+#include <iostream>
 
+#include <gpu_voxels/logging/logging_gpu_voxels.h>
+#include <ompl/geometric/PathSimplifier.h>
 
 #include <stdlib.h>
 

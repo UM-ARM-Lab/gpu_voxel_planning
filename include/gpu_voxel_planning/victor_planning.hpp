@@ -19,8 +19,8 @@ namespace gpu_voxels_planner
         std::shared_ptr<VictorValidator> vv_ptr;
         std::shared_ptr<ompl::base::RealVectorStateSpace> space;
 
-    protected:
         virtual void setup_planner() = 0;
+
         virtual void prepare_planner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal) = 0;
         virtual void post_planning_actions(ompl::base::PathPtr path) {(void) path;};
         
@@ -31,6 +31,7 @@ namespace gpu_voxels_planner
         std::shared_ptr<ompl::base::ProblemDefinition> pdef_;
         // std::shared_ptr<ompl::geometric::LBKPIECE1> planner_;
         // std::shared_ptr<ompl::geometric::TRRT> planner_;
+        std::shared_ptr<ompl::base::OptimizationObjective> objective_;
         std::shared_ptr<ompl::base::Planner> planner_;
     };
 }
