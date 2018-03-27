@@ -14,15 +14,16 @@ set(CATKIN_PACKAGES
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation gazebo_victor)
+find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation gazebo_victor arc_utilities)
 FIND_PACKAGE(icl_core REQUIRED )
 FIND_PACKAGE(gpu_voxels REQUIRED)
 FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 FIND_PACKAGE(CUDA REQUIRED)
 FIND_PACKAGE(ompl REQUIRED)
-
-
 FIND_PACKAGE(orocos_kdl REQUIRED)
+
+find_package(GTest)
+
 
 
 # This is a quirk and should be removed in upcoming versions
@@ -65,9 +66,9 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES gpu_voxel_planning
+ LIBRARIES gpu_voxel_planning
  CATKIN_DEPENDS ${CATKIN_PACKAGES}
-#  DEPENDS system_lib
+ DEPENDS arc_utilities
 )
 
 ###########
@@ -164,3 +165,29 @@ target_link_libraries (urdf_test
   ${gpu_voxels_LIBRARIES}
   
   )
+
+
+
+###########
+## Tests ##
+###########
+
+# To build tests, install google's testing framework
+# https://github.com/google/googletest/
+
+IF(GTEST_FOUND)
+  MESSAGE("-----------------------")
+  MESSAGE("${ARC_UTILITIES_LIBRARIES}")
+  MESSAGE("-----------------------")
+  include_directories(${GTEST_INCLUDE_DIRS})
+  add_executable(test_gpu_voxels_victor tests/gpu_voxels_victor_test.cpp)
+  target_link_libraries(test_gpu_voxels_victor
+    victor_model
+    ${gpu_voxels_LIBRARIES}
+    ${Boost_SYSTEM_LIBRARY}
+    ${catkin_LIBRARIES}
+    ${icl_core_LIBRARIES}
+    ${GTEST_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+    )
+ENDIF(GTEST_FOUND)

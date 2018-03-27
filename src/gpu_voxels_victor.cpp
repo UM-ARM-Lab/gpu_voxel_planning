@@ -17,8 +17,7 @@
 #define VICTOR_ACTUAL_MAP "victor_actual_map"
 #define VICTOR_QUERY_MAP "victor_query_map"
 #define ENV_MAP "env_map"
-// bitmap for red visualization
-#define ENV_MAP_RED "env_map_red"
+
 #define VICTOR_SWEPT_VOLUME_MAP "victor_swept_volume_map"
 #define VICTOR_PATH_ENDPOINTS_MAP "victor_path_endpoints_map"
 #define VICTOR_PATH_SOLUTION_MAP "victor_path_solutions_map"
@@ -62,7 +61,6 @@ GpuVoxelsVictor::GpuVoxelsVictor()
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_BITVECTOR_VOXELLIST,VICTOR_PATH_SOLUTION_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP_RED);
-    gvl->addMap(MT_DISTANCE_VOXELMAP, ENV_MAP_RED);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_PATH_ENDPOINTS_MAP);
     gvl->addMap(MT_DISTANCE_VOXELMAP, OBSTACLE_DISTANCE_MAP);
@@ -250,56 +248,25 @@ void GpuVoxelsVictor::doVis()
 
 
 
+// void GpuVoxelsVictor::visualizeSolution(ob::PathPtr path)
+void GpuVoxelsVictor::visualizeSolution(const std::vector<robot::JointValueMap> &joint_maps)
+{
+    gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
 
+    // std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
+    for(size_t step = 0; step < joint_maps.size(); step++)
+    {
+        PROFILE_START(INSERT_VIZ_SOLUTION);
+        auto &state_joint_values = joint_maps[step];
+        // update the robot joints:
+        gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
+        // insert the robot into the map:
+        gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_PATH_SOLUTION_MAP, BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + (step % 249) ));
+        PROFILE_RECORD(INSERT_VIZ_SOLUTION);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// void VictorValidator::visualizeSolution(ob::PathPtr path)
-// {
-//     gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
-
-//     // std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
-
-//     og::PathGeometric* solution = path->as<og::PathGeometric>();
-//     solution->interpolate();
-
-
-//     for(size_t step = 0; step < solution->getStateCount(); ++step)
-//     {
-//         PROFILE_START(INSERT_VIZ_SOLUTION);
-//         const double *values = solution->getState(step)->as<ob::RealVectorStateSpace::StateType>()->values;
-        
-//         robot::JointValueMap state_joint_values = toRightJointValueMap<const double*>(values);
-
-//         // update the robot joints:
-//         gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
-//         // insert the robot into the map:
-//         gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_PATH_SOLUTION_MAP, BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + (step % 249) ));
-//         PROFILE_RECORD(INSERT_VIZ_SOLUTION);
-//     }
-
-//     // gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
-
-// }
+    gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
+}
 
 
 

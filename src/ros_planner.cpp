@@ -125,8 +125,24 @@ bool planPath(gpu_voxel_planning::PlanPath::Request &req,
 {
     ompl::base::PathPtr path = vpln->planPath(vu::jvqToVector(req.start),
                                               vu::jvqToVector(req.goal));
+
     ompl::geometric::PathGeometric* sol = path->as<ompl::geometric::PathGeometric>();
+
+    
+    sol->interpolate();
+    std::vector<robot::JointValueMap> joint_maps;
+    for(size_t step = 0; step < sol->getStateCount(); ++step)
+    {
+        const double *values = sol->getState(step)->as<ompl::base::RealVectorStateSpace::StateType>()->values;
+        robot::JointValueMap state_joint_values = victor_model->toRightJointValueMap(values);
+        joint_maps.push_back(state_joint_values);
+    }
+    victor_model->visualizeSolution(joint_maps);
+
+        
+    
     res.path = toTrajectoryMessage(sol);
+
     return true;
 }
 

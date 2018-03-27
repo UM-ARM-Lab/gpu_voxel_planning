@@ -31,6 +31,7 @@ public:
     int determineVictorDist();
 
     void doVis();
+    void visualizeSolution(const std::vector<robot::JointValueMap> &joint_maps);
     
     gpu_voxels::GpuVoxelsSharedPtr gvl;
 };
