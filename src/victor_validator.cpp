@@ -71,10 +71,7 @@ bool VictorValidator::isValid(const ob::State *state) const
     }
     // robot::JointValueMap state_joint_values = victor_model_->toRightJointValueMap<const double*>(values);
     robot::JointValueMap state_joint_values = victor_model_->toRightJointValueMap(values);
-    bool col_free = victor_model_->queryFreeConfiguration(state_joint_values);
-    if(!col_free)
-        std::cout << "Invalid configuration sampled\n";
-    return col_free;
+    return victor_model_->queryFreeConfiguration(state_joint_values);
 }
 
 
@@ -124,8 +121,7 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2,
         invalid_++;
 
     PROFILE_RECORD(CHECK_MOTION_COMP_CHECK);
-    if(!result)
-        std::cout << "Fancy check motion failed\n";
+
     return result;
 }
 
@@ -178,8 +174,6 @@ bool VictorValidator::checkMotion(const ob::State *s1, const ob::State *s2) cons
         invalid_++;
 
     PROFILE_RECORD(CHECK_MOTION_SIMPLE_CHECK);
-    if(!result)
-        std::cout << "Regular check motion failed\n";
 
     return result;
 }
