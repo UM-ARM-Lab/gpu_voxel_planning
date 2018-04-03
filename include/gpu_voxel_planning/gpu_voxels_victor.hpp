@@ -15,6 +15,12 @@ public:
 
     void addCollisionPoints(CollisionInformation collision_info);
 
+    void resetQuery();
+
+    void addQueryState(const robot::JointValueMap &joint_values_map);
+
+    size_t countNumCollisions();
+
     size_t countNumCollisions(const robot::JointValueMap &joint_values_map);
 
     /* Returns true if Victor is not in collision at this config */

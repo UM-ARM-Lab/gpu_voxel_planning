@@ -4,6 +4,7 @@
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/OptimizationObjective.h>
+#include <ompl/base/objectives/StateCostIntegralObjective.h>
 #include "gpu_voxels_victor.hpp"
 
 
@@ -22,6 +23,7 @@ public:
     
 private:
     std::shared_ptr<GpuVoxelsVictor> victor_model_;
+    ompl::base::SpaceInformationPtr si_;
     
 };
 

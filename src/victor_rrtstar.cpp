@@ -1,5 +1,6 @@
 #include "victor_rrtstar.hpp"
 #include "wip_optimization_objective.hpp"
+#include "optimization_objectives.hpp"
 
 using namespace gpu_voxels_planner;
 namespace ob = ompl::base;
@@ -10,18 +11,29 @@ namespace og = ompl::geometric;
 VictorRrtStar::VictorRrtStar(std::shared_ptr<GpuVoxelsVictor> victor_model)
     :VictorPlanner(victor_model)
 {
-    setup_planner();
     objective_ = std::make_shared<WipOptimizationObjective>(si_, victor_model);
+    setup_planner();
+    
 }
 
 void VictorRrtStar::setup_planner()
 {
-    planner_ = std::make_shared<og::RRTstar>(si_);
-    planner_->setup();
+    setupSpaceInformation();
 
-    pdef_->setOptimizationObjective(objective_);
-    
+        
+    planner_ = std::make_shared<og::RRTstar>(si_);
+
+    // pdef_->setOptimizationObjective(objective_);
 }
+
+void VictorRrtStar::setupSpaceInformation()
+{
+    std::cout << "calling dummy setupSpaceInformation\n";
+    // si_->setStateValidityChecker(vv_ptr->getptr());
+    // si_->setMotionValidator(vv_ptr->getptr());
+    si_->setup();
+}
+
 
 void VictorRrtStar::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
@@ -30,7 +42,10 @@ void VictorRrtStar::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> g
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
     pdef_->setStartAndGoalStates(start, goal);
 
+    pdef_->setOptimizationObjective(objective_);
     planner_->setProblemDefinition(pdef_);
+    planner_->setup();
+    
     // ob::GoalPtr goal_ptr = ((og::TRRT*)(planner_.get()) )->getGoal();
 
 }

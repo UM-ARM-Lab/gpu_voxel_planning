@@ -37,6 +37,10 @@ const std::string CHECK_MOTION_SIMPLE_COLLISION_TEST = "checkMotion (simple) col
 const std::string CHECK_MOTION_SIMPLE_CHECK = "checkMotion (simple) full check";
 const std::string CHECK_MOTION_COMP_CHECK = "checkMotion (complicated) full check";
 
+const std::string STATE_COST = "stateCost";
+const std::string MOTION_COST = "motionCost";
+
+
 
 std::shared_ptr<VictorValidator> vv_ptr;
 
@@ -69,19 +73,25 @@ VictorPlanner::VictorPlanner(std::shared_ptr<GpuVoxelsVictor> victor_model)
     bounds.setHigh(3.14159265);
     space->setBounds(bounds);
     si_ = std::make_shared<ob::SpaceInformation>(space);
-    vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si_, victor_model));
+    // vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si_, victor_model));
+
+    vv_ptr = std::make_shared<VictorValidator>(si_, victor_model);
 
     simp_ = std::make_shared<og::PathSimplifier>(si_);
-    si_->setStateValidityChecker(vv_ptr->getptr());
-    si_->setMotionValidator(vv_ptr->getptr());
-    si_->setup();
-
-
 
     PROFILE_REINITIALIZE(10,1000);
+    
     // planner = std::make_shared<og::LBKPIECE1>(si_);
     // planner = std::make_shared<og::TRRT>(si_);
     // setup_planner(si_);
+}
+
+void VictorPlanner::setupSpaceInformation()
+{
+    std::cout << "using original setupSpaceInformation\n";
+    si_->setStateValidityChecker(vv_ptr->getptr());
+    si_->setMotionValidator(vv_ptr->getptr());
+    si_->setup();
 }
 
 ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> goal)
@@ -94,13 +104,20 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     PROFILE_START(FULL_PLANNING);
     PROFILE_START(PLANNING);
     
-    ob::PlannerStatus solved = planner_->solve(30);
+    ob::PlannerStatus solved = planner_->solve(3);
 
     PROFILE_RECORD(PLANNING);
     PROFILE_START(POST_PROCESSING);
     
-    ob::PathPtr path;
+
+    while(solved == ob::PlannerStatus::APPROXIMATE_SOLUTION)
+    {
+        std::cout << "Approximate solution, replanning\n";
+        solved = planner_->solve(3*60);
+    }
+    
     std::cout << solved << "\n";
+    ob::PathPtr path;    
     //If a solution has been found, we simplify and display it.
     if (solved)
     {
@@ -151,7 +168,11 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
         CHECK_MOTION_SIMPLE_INSERTION,
         CHECK_MOTION_SIMPLE_COLLISION_TEST,
         "~~~~~~~~~~~~",
-        CHECK_MOTION_COMP_CHECK};
+        CHECK_MOTION_COMP_CHECK,
+        "~~~~~~~~~",
+        STATE_COST,
+        MOTION_COST};
+    
         
     PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
     // PROFILE_PRINT_SUMMARY_FOR_SINGLE(FULL_PLANNING);

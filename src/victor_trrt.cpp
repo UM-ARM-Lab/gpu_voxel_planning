@@ -15,6 +15,9 @@ VictorTrrt::VictorTrrt(std::shared_ptr<GpuVoxelsVictor> victor_model)
 
 void VictorTrrt::setup_planner()
 {
+    setupSpaceInformation();
+
+
     planner_ = std::make_shared<og::TRRT>(si_);
     planner_->setup();
 }

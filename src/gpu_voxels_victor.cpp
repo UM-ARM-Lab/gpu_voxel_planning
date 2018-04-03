@@ -88,23 +88,26 @@ void GpuVoxelsVictor::updateVictorPosition(robot::JointValueMap joint_positions)
     obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
 }
 
-
-size_t GpuVoxelsVictor::countNumCollisions(const robot::JointValueMap &joint_values_map)
+void GpuVoxelsVictor::resetQuery()
 {
-    PROFILE_START(ISVALID_INSERTION);
-    PROFILE_START(QUERY_INSERTION);
-    
     gvl->clearMap(VICTOR_QUERY_MAP);
+}
 
+void GpuVoxelsVictor::addQueryState(const robot::JointValueMap &joint_values_map)
+{
     // update the robot joints:
     gvl->setRobotConfiguration(VICTOR_ROBOT, joint_values_map);
     // insert the robot into the map:
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_QUERY_MAP, PROB_OCCUPIED);
 
-    PROFILE_RECORD(ISVALID_INSERTION);
-    PROFILE_RECORD(QUERY_INSERTION);
+}
 
-
+/*
+ *  Count collisions between query and env maps
+ *  addQueryState should probably be run at least once first
+ */
+size_t GpuVoxelsVictor::countNumCollisions()
+{
     PROFILE_START(ISVALID_COLLISION_TEST);
 
     size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>());
@@ -113,6 +116,21 @@ size_t GpuVoxelsVictor::countNumCollisions(const robot::JointValueMap &joint_val
     PROFILE_RECORD(ISVALID_COLLISION_TEST);
     return num_colls_pc;
 
+}
+
+
+size_t GpuVoxelsVictor::countNumCollisions(const robot::JointValueMap &joint_values_map)
+{
+    PROFILE_START(ISVALID_INSERTION);
+    PROFILE_START(QUERY_INSERTION);
+    
+    resetQuery();
+
+    addQueryState(joint_values_map);
+
+    PROFILE_RECORD(ISVALID_INSERTION);
+    PROFILE_RECORD(QUERY_INSERTION);
+    return countNumCollisions();
 }
 
 
@@ -274,7 +292,6 @@ void GpuVoxelsVictor::visualizeSolution(const std::vector<robot::JointValueMap> 
         PROFILE_RECORD(INSERT_VIZ_SOLUTION);
     }
 
-    std::cout << "visualizing solution\n";
     gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP, true);
 }
 

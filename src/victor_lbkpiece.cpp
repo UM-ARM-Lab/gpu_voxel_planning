@@ -15,6 +15,9 @@ VictorLBKPiece::VictorLBKPiece(std::shared_ptr<GpuVoxelsVictor> victor_model)
 
 void VictorLBKPiece::setup_planner()
 {
+    setupSpaceInformation();
+
+
     planner_ = std::make_shared<og::LBKPIECE1>(si_);
     planner_->setup();
 }
