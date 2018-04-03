@@ -88,6 +88,15 @@ include_directories(
   ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
   )
 
+add_executable(box_world src/box_world.cpp)
+target_link_libraries(box_world
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  ${OMPL_LIBRARIES}
+  )
+
 add_library(victor_model src/gpu_voxels_victor.cpp)
 target_link_libraries(victor_model
   ${gpu_voxels_LIBRARIES}
