@@ -4,6 +4,8 @@
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
 
+#include <arc_utilities/arc_helpers.hpp>
+
 
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/locks.hpp>
@@ -237,13 +239,15 @@ void GpuVoxelsVictor::doVis()
 
     // env_map_red->mergeOccupied(gvl->getMap(ENV_MAP), Vector3f(), &col);
 
-    gvl->visualizeMap(VICTOR_ACTUAL_MAP);
-    gvl->visualizeMap(ENV_MAP);
+    
+    arc_helpers::DoNotOptimize<bool>(gvl->visualizeMap(VICTOR_ACTUAL_MAP, true));
+    gvl->visualizeMap(ENV_MAP, true);
     // gvl->visualizeMap(ENV_MAP_RED);
 
     // gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
     // gvl->visualizeMap(VICTOR_PATH_ENDPOINTS_MAP);
-    usleep(100000);
+    // usleep(100000);
+    // std::cout << "Doing Vis\n";
 }
 
 
@@ -252,7 +256,7 @@ void GpuVoxelsVictor::doVis()
 void GpuVoxelsVictor::visualizeSolution(const std::vector<robot::JointValueMap> &joint_maps)
 {
     gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
-
+    
     // std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
     for(size_t step = 0; step < joint_maps.size(); step++)
     {
@@ -265,7 +269,18 @@ void GpuVoxelsVictor::visualizeSolution(const std::vector<robot::JointValueMap> 
         PROFILE_RECORD(INSERT_VIZ_SOLUTION);
     }
 
-    gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
+    std::cout << "visualizing solution\n";
+    gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP, true);
+}
+
+
+void GpuVoxelsVictor::hideSolution()
+{
+    visualizeSolution(std::vector<robot::JointValueMap>());
+    // std::cout << "Hiding solution\n";
+    // gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
+    // arc_helpers::DoNotOptimize<bool>(gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP, true));
+    // usleep(300000);
 }
 
 

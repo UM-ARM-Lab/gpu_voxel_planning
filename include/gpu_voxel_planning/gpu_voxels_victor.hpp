@@ -32,6 +32,7 @@ public:
 
     void doVis();
     void visualizeSolution(const std::vector<robot::JointValueMap> &joint_maps);
+    void hideSolution();
     
     gpu_voxels::GpuVoxelsSharedPtr gvl;
 };

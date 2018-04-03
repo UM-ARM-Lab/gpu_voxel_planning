@@ -21,6 +21,7 @@ void VictorLBKPiece::setup_planner()
 
 void VictorLBKPiece::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
+    planner_->clear();
     vv_ptr->insertStartAndGoal(start, goal);
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
     pdef_->setStartAndGoalStates(start, goal);

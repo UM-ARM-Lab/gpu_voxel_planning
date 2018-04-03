@@ -123,6 +123,11 @@ void checkCollisionCallback(victor_hardware_interface::MotionStatus::ConstPtr mo
 bool planPath(gpu_voxel_planning::PlanPath::Request &req,
               gpu_voxel_planning::PlanPath::Response &res)
 {
+    victor_model->hideSolution();
+    
+    victor_model->updateVictorPosition(
+        victor_model->toRightJointValueMap(vu::jvqToVector(req.start).data()));
+    
     ompl::base::PathPtr path = vpln->planPath(vu::jvqToVector(req.start),
                                               vu::jvqToVector(req.goal));
 
@@ -202,6 +207,8 @@ int main(int argc, char* argv[])
   //ONly valid in simulation
   ros::ServiceClient tmp = n.serviceClient<gazebo_victor::GetContactLinks>("simulation/right_arm/get_last_contact_links");
   col_links_client = &tmp;
+
+  victor_model->hideSolution();
 
   while(ros::ok())
   {
