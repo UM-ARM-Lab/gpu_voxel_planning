@@ -123,7 +123,7 @@ public:
 
     BoxWorld* box_world_ptr;
 
-    ompl::base::Planner* planner;
+    std::shared_ptr<ompl::base::Planner> planner;
     std::shared_ptr<ompl::base::RealVectorStateSpace> space;
     ompl::base::SpaceInformationPtr si_ptr;
     std::shared_ptr<BoxValidator> v_ptr;
