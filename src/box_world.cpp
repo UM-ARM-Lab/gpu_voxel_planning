@@ -1,7 +1,8 @@
+
 #include "box_world.hpp"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <ompl/base/spaces/SE3StateSpace.h>
-
+#include <csignal>
 #include <vector>
 
 
@@ -12,6 +13,7 @@ namespace og = ompl::geometric;
 #define BOX_WIDTH 0.15
 
 
+std::shared_ptr<BoxWorld> boxWorld;
 
 /***********************************************
  **                BOX WORLD                  **
@@ -26,6 +28,11 @@ BoxWorld::BoxWorld()
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_QUERY_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_ACTUAL_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_SEEN_MAP);
+}
+
+BoxWorld::~BoxWorld()
+{
+    gvl.reset();
 }
 
 
@@ -87,7 +94,7 @@ void BoxWorld::initializeObstacles()
 void BoxWorld::doVis()
 {
     gvl->visualizeMap(BOX_ACTUAL_MAP, true);
-    std::cout << "Visualizing!!\n";
+    // std::cout << "Visualizing!!\n";
 }
 
 
@@ -111,7 +118,7 @@ BoxValidator::BoxValidator(const ob::SpaceInformationPtr &si,
     ob::StateValidityChecker(si),
     ob::MotionValidator(si)
 {
-    si_ptr = si;
+    spi_ptr = si;
     box_world_ptr = box_world;
 }
 
@@ -124,10 +131,10 @@ bool BoxValidator::checkMotion(const ompl::base::State *s1, const ompl::base::St
                                std::pair< ompl::base::State*, double > & lastValid) const
 {
     bool result = true;
-    ob::StateSpace *stateSpace = si_ptr->getStateSpace().get();
+    ob::StateSpace *stateSpace = spi_ptr->getStateSpace().get();
     int nd = stateSpace->validSegmentCount(s1, s2);
 
-    ob::State *test = si_ptr->allocState();
+    ob::State *test = spi_ptr->allocState();
     for(int j = 1; j<=nd; j++)
     {
         stateSpace->interpolate(s1, s2, (double)j / (double)nd, test);
@@ -140,7 +147,7 @@ bool BoxValidator::checkMotion(const ompl::base::State *s1, const ompl::base::St
             break;
         }
     }
-    si_ptr->freeState(test);
+    spi_ptr->freeState(test);
 
 
     if(result)
@@ -176,14 +183,14 @@ BoxPlanner::BoxPlanner(BoxWorld* box_world)
     bounds.setHigh(1.0 - BOX_WIDTH);
     
     space->setBounds(bounds);
-    si_ptr = std::make_shared<ob::SpaceInformation>(space);
-    v_ptr = std::make_shared<BoxValidator>(si_ptr, box_world);
-    simp_ = std::make_shared<og::PathSimplifier>(si_ptr);
+    spi_ptr = std::make_shared<ob::SpaceInformation>(space);
+    v_ptr = std::make_shared<BoxValidator>(spi_ptr, box_world);
+    simp_ = std::make_shared<og::PathSimplifier>(spi_ptr);
 
-    si_ptr->setStateValidityChecker(v_ptr);
-    si_ptr->setMotionValidator(v_ptr);
+    spi_ptr->setStateValidityChecker(v_ptr);
+    spi_ptr->setMotionValidator(v_ptr);
     
-    planner = std::make_shared<og::LBKPIECE1>(si_ptr);
+    planner = std::make_shared<og::LBKPIECE1>(spi_ptr);
     planner->setup();
 
 }
@@ -192,7 +199,7 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
 {
 
     size_t n = path->getStateCount();
-    ob::StateSpace *stateSpace = si_ptr->getStateSpace().get();
+    ob::StateSpace *stateSpace = spi_ptr->getStateSpace().get();
     std::cout << "Executing path\n";
 
     for(size_t step = 0; step < n-1; step++)
@@ -203,7 +210,7 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
 
 
 
-        ob::State *showState = si_ptr->allocState();
+        ob::State *showState = spi_ptr->allocState();
         for(int j = 1; j<nd; j++)
         {
 
@@ -223,7 +230,7 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
 
         }
 
-        si_ptr->freeState(showState);
+        spi_ptr->freeState(showState);
 
     }
 }
@@ -277,7 +284,7 @@ ob::PathPtr BoxPlanner::planPath(ompl::base::ScopedState<> start,
 void BoxPlanner::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
     planner->clear();
-    pdef_ = std::make_shared<ob::ProblemDefinition>(si_ptr);
+    pdef_ = std::make_shared<ob::ProblemDefinition>(spi_ptr);
     pdef_->setStartAndGoalStates(start, goal);
     planner->setProblemDefinition(pdef_);
 
@@ -293,19 +300,41 @@ void BoxPlanner::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
  **                   MAIN                    **
  ***********************************************/
 
+// // We define exit handlers to quit the program:
+void ctrlchandler(int)
+{
+    std::cout << "Resetting\n";
+    boxWorld->gvl.reset();
+    exit(EXIT_SUCCESS);
+}
+void killhandler(int)
+{
+    std::cout << "Resetting\n";
+    boxWorld->gvl.reset();
+    exit(EXIT_SUCCESS);
+}
+
 
 int main(int argc, char* argv[])
 {
+    
     icl_core::logging::initialize(argc, argv);
 
-    BoxWorld boxWorld;
-    boxWorld.initializeObstacles();
-    boxWorld.updateActual(Box(0,0,0,0.1));
+    boxWorld = std::make_shared<BoxWorld>();
+    signal(SIGINT, ctrlchandler);
+    signal(SIGTERM, killhandler);
+
+
+    
+    boxWorld->updateActual(Box(0,0,0,0.1));
+    boxWorld->doVis();
+
+    boxWorld->initializeObstacles();
 
     int unused;
     std::cin >> unused;
 
-    BoxPlanner planner(&boxWorld);
+    BoxPlanner planner(boxWorld.get());
 
     std::vector<double> start = {0.2, 0.2, 0.2};
     std::vector<double> goal = {0.2, 0.8, 0.2};
@@ -314,9 +343,9 @@ int main(int argc, char* argv[])
     planner.executePath(path->as<og::PathGeometric>());
 
     
-    while(true)
-    {
-        boxWorld.doVis();
-        usleep(10000);
-    }
+    // while(true)
+    // {
+    //     boxWorld.doVis();
+    //     usleep(10000);
+    // }
 }
