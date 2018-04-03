@@ -256,6 +256,11 @@ void GpuVoxelsVictor::doVis()
 void GpuVoxelsVictor::visualizeSolution(const std::vector<robot::JointValueMap> &joint_maps)
 {
     gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
+
+    // Some new voxels seem to be needed to force the map to refresh in the visualizer
+    gvl->insertBoxIntoMap(Vector3f(0.0,0.0,0.0), Vector3f(0.02,0.02,0.02),
+                          VICTOR_PATH_SOLUTION_MAP, PROB_OCCUPIED, 2);
+        
     
     // std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
     for(size_t step = 0; step < joint_maps.size(); step++)
@@ -277,10 +282,6 @@ void GpuVoxelsVictor::visualizeSolution(const std::vector<robot::JointValueMap> 
 void GpuVoxelsVictor::hideSolution()
 {
     visualizeSolution(std::vector<robot::JointValueMap>());
-    // std::cout << "Hiding solution\n";
-    // gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
-    // arc_helpers::DoNotOptimize<bool>(gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP, true));
-    // usleep(300000);
 }
 
 
