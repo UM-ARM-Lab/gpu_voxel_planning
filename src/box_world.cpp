@@ -7,6 +7,7 @@
 
 
 
+
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
@@ -48,6 +49,7 @@ bool BoxWorld::updateActual(const Box &b)
 {
     gvl->clearMap(BOX_ACTUAL_MAP);
     gvl->insertBoxIntoMap(b.lower(), b.upper(), BOX_ACTUAL_MAP, PROB_OCCUPIED);
+    gvl->visualizeMap(BOX_ACTUAL_MAP);
     if(isActualCollision())
     {
         gvl->insertBoxIntoMap(b.lower(), b.upper(), OBSTACLES_SEEN_MAP, PROB_OCCUPIED);
@@ -255,11 +257,6 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
                 return false;
             }
             box_world_ptr->doVis();
-            // for(int i=0; i<100; i++)
-            // {
-
-            //     usleep(1000);
-            // }
             usleep(100000);
 
         }
@@ -270,8 +267,8 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
     return true;
 }
 
-ob::PathPtr BoxPlanner::planPath(std::vector<double> start,
-                                 std::vector<double> goal)
+Maybe::Maybe<ob::PathPtr> BoxPlanner::planPath(std::vector<double> start,
+                                               std::vector<double> goal)
 {
     ob::ScopedState<> start_ss(space);
     ob::ScopedState<> goal_ss(space);
@@ -293,8 +290,9 @@ ob::PathPtr BoxPlanner::planPath(std::vector<double> start,
 
 }
 
-ob::PathPtr BoxPlanner::planPath(ompl::base::ScopedState<> start,
-                                 ompl::base::ScopedState<> goal)
+
+Maybe::Maybe<ob::PathPtr> BoxPlanner::planPath(ompl::base::ScopedState<> start,
+                                               ompl::base::ScopedState<> goal)
 {
     preparePlanner(start, goal);
     ob::PathPtr path;
@@ -305,13 +303,13 @@ ob::PathPtr BoxPlanner::planPath(ompl::base::ScopedState<> start,
     {
         path = pdef_->getSolutionPath();
         simp_->simplifyMax(*(path->as<og::PathGeometric>()));
-        return path;
+        return Maybe::Maybe<ob::PathPtr>(path);
     }
     else
     {
         std::cout << "No solution could be found" << std::endl;
         //this will probably cause a segfault?
-        return path;
+        return Maybe::Maybe<ob::PathPtr>();
     }
 }
 
@@ -379,11 +377,17 @@ int main(int argc, char* argv[])
     while(!reached_goal)
     {
         boxWorld->updateActual(Box(start[0], start[1], start[2], BOX_WIDTH));
-        ob::PathPtr path= planner.planPath(start, goal);
-        reached_goal = planner.executePath(path->as<og::PathGeometric>());
+        Maybe::Maybe<ob::PathPtr> path = planner.planPath(start, goal);
+        if(!path.Valid())
+        {
+            std::cout << "Path planning failed\n";
+            break;
+        }
+        reached_goal = planner.executePath(path.Get()->as<og::PathGeometric>());
     }
 
-    std::cout << "REACHED GOAL!\n";
+    if(reached_goal)
+        std::cout << "REACHED GOAL!\n";
 
     
     // while(true)

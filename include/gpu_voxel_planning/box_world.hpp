@@ -11,6 +11,9 @@
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/geometric/PathSimplifier.h>
 #include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
+
+#include <arc_utilities/maybe.hpp>
+
 #include <string>
 
 
@@ -116,11 +119,11 @@ public:
     
     bool executePath(ompl::geometric::PathGeometric* path);
 
-    ompl::base::PathPtr planPath(ompl::base::ScopedState<> start,
-                                 ompl::base::ScopedState<> goal);
+    Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
+                                               ompl::base::ScopedState<> goal);
 
-    ompl::base::PathPtr planPath(std::vector<double> start,
-                                 std::vector<double> goal);
+    Maybe::Maybe<ompl::base::PathPtr> planPath(std::vector<double> start,
+                                               std::vector<double> goal);
 
     virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
 
