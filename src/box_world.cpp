@@ -26,8 +26,13 @@ BoxWorld::BoxWorld()
     gvl->initialize(100,100,100, 0.01);
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_ACTUAL_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_QUERY_MAP);
+    gvl->addMap(MT_PROBAB_VOXELMAP, BOX_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_ACTUAL_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_SEEN_MAP);
+
+    gvl->visualizeMap(OBSTACLES_SEEN_MAP);
+    gvl->visualizeMap(BOX_ACTUAL_MAP);
+    gvl->visualizeMap(OBSTACLES_ACTUAL_MAP);    
 }
 
 BoxWorld::~BoxWorld()
@@ -36,10 +41,33 @@ BoxWorld::~BoxWorld()
 }
 
 
-void BoxWorld::updateActual(const Box &b)
+/*
+ * Returns true if there is a collision 
+ */
+bool BoxWorld::updateActual(const Box &b)
 {
     gvl->clearMap(BOX_ACTUAL_MAP);
     gvl->insertBoxIntoMap(b.lower(), b.upper(), BOX_ACTUAL_MAP, PROB_OCCUPIED);
+    if(isActualCollision())
+    {
+        gvl->insertBoxIntoMap(b.lower(), b.upper(), OBSTACLES_SEEN_MAP, PROB_OCCUPIED);
+        gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(OBSTACLES_SEEN_MAP);
+        voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
+        
+        obstacles->subtract(gvl->getMap(BOX_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
+
+        gvl->visualizeMap(OBSTACLES_SEEN_MAP);
+        return true;
+    }
+    
+    gvl->insertBoxIntoMap(b.lower(), b.upper(), BOX_SWEPT_VOLUME_MAP, PROB_OCCUPIED);
+    return false;
+}
+
+bool BoxWorld::isActualCollision()
+{
+    size_t num_colls = gvl->getMap(BOX_ACTUAL_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(OBSTACLES_ACTUAL_MAP)->as<voxelmap::ProbVoxelMap>());
+    return num_colls > 0;
 }
 
 
@@ -73,10 +101,10 @@ size_t BoxWorld::countSeenCollisionsInQuery()
 void BoxWorld::initializeObstacles()
 {
     std::vector<Box> boxes;
-    double sl = 0.2;
-    for(double x=0; x+sl < 1; x+=0.4)
+    double sl = 0.17;
+    for(double x=0; x+sl < 1; x+=sl+BOX_WIDTH+0.05)
     {
-        for(double z=0; z+sl<1; z+= 0.4)
+        for(double z=0; z+sl<1; z+= sl+BOX_WIDTH+0.05)
         {
             boxes.emplace_back(x,0.5,z,sl);
         }
@@ -195,6 +223,9 @@ BoxPlanner::BoxPlanner(BoxWorld* box_world)
 
 }
 
+/*
+ * Returns true if the path succeeded
+ */
 bool BoxPlanner::executePath(og::PathGeometric* path)
 {
 
@@ -219,7 +250,10 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
             stateSpace->interpolate(s1, s2, (double)j / (double)nd, showState);
             
             Box b = box_world_ptr->stateToBox(showState);
-            box_world_ptr->updateActual(b);
+            if(box_world_ptr->updateActual(b))
+            {
+                return false;
+            }
             box_world_ptr->doVis();
             // for(int i=0; i<100; i++)
             // {
@@ -233,6 +267,7 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
         spi_ptr->freeState(showState);
 
     }
+    return true;
 }
 
 ob::PathPtr BoxPlanner::planPath(std::vector<double> start,
@@ -326,7 +361,7 @@ int main(int argc, char* argv[])
 
 
     
-    boxWorld->updateActual(Box(0,0,0,0.1));
+    // boxWorld->updateActual(Box(0,0,0,0.1));
     boxWorld->doVis();
 
     boxWorld->initializeObstacles();
@@ -336,11 +371,19 @@ int main(int argc, char* argv[])
 
     BoxPlanner planner(boxWorld.get());
 
-    std::vector<double> start = {0.2, 0.2, 0.2};
-    std::vector<double> goal = {0.2, 0.8, 0.2};
+    std::vector<double> start = {0.5, 0.2, 0.5};
+    std::vector<double> goal = {0.5, 0.8, 0.5};
 
-    ob::PathPtr path= planner.planPath(start, goal);
-    planner.executePath(path->as<og::PathGeometric>());
+    bool reached_goal = false;
+
+    while(!reached_goal)
+    {
+        boxWorld->updateActual(Box(start[0], start[1], start[2], BOX_WIDTH));
+        ob::PathPtr path= planner.planPath(start, goal);
+        reached_goal = planner.executePath(path->as<og::PathGeometric>());
+    }
+
+    std::cout << "REACHED GOAL!\n";
 
     
     // while(true)

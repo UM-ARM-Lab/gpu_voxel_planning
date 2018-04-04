@@ -17,8 +17,10 @@
 
 const std::string BOX_ACTUAL_MAP = "box_actual";
 const std::string BOX_QUERY_MAP = "box_query";
+const std::string BOX_SWEPT_VOLUME_MAP = "box_swept_volume";
 const std::string OBSTACLES_ACTUAL_MAP = "actual_obstacles";
 const std::string OBSTACLES_SEEN_MAP = "seen_obstacles";
+
 
 #define PROB_OCCUPIED eBVM_OCCUPIED
 
@@ -60,7 +62,9 @@ public:
     BoxWorld();
     ~BoxWorld();
     
-    void updateActual(const Box &b);
+    bool updateActual(const Box &b);
+
+    bool isActualCollision();
 
     bool querySeenState(const Box &b);
 

@@ -20,7 +20,7 @@ To get a darker version of the color add "dark" infront of the name
 
 
 <!--  The parameter for the voxel map 0 -->
-<box_actual_map>
+<box_actual>
   <!-- only voxels with an occupancy >= occupancy_threshold will be drawn. Has to be in the range of 1 to 255 -->
   <occupancy_threshold> 1 </occupancy_threshold>
 
@@ -36,9 +36,9 @@ To get a darker version of the color add "dark" infront of the name
   <!-- type DYNAMIC  -->
   <all_types>
     <rgba>
-      <r> .8 </r>
+      <r> 0.0 </r>
       <g> .8 </g>
-      <b> .8 </b>
+      <b> 0.0 </b>
     </rgba>
     
   </all_types>
@@ -61,7 +61,7 @@ To get a darker version of the color add "dark" infront of the name
   <type_3>
     magenta
   </type_3>
-</box_actual_map>
+</box_actual>
 
 
 
@@ -72,19 +72,19 @@ To get a darker version of the color add "dark" infront of the name
 
 <!-- ============- The parameter for the voxel map 1====== -->
 
-<obstacles_actual_map>
+<actual_obstacles>
   <occupancy_threshold> 1 </occupancy_threshold>
   <all_types>
     <rgba>
-      <r> 1.0 </r>
-      <g> 0.3 </g>
-      <b> 0.3 </b>
+      <r> 0.7 </r>
+      <g> 0.7 </g>
+      <b> 0.7 </b>
     </rgba>
     
   </all_types>
-</obstacles_actual_map>
+</actual_obstacles>
 
-<obstacles_seen_map>
+<seen_obstacles>
   <occupancy_threshold> 1 </occupancy_threshold>
   <all_types>
     <rgba>
@@ -94,7 +94,8 @@ To get a darker version of the color add "dark" infront of the name
     </rgba>
     
   </all_types>
-</obstacles_seen_map>
+</seen_obstacles>
+
 
 
 
