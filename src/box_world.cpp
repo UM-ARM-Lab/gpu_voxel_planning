@@ -12,6 +12,7 @@ namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 #define BOX_WIDTH 0.15
+#define NUM_SETS 100
 
 
 std::shared_ptr<BoxWorld> boxWorld;
@@ -20,20 +21,31 @@ std::shared_ptr<BoxWorld> boxWorld;
  **                BOX WORLD                  **
  ***********************************************/
 
-BoxWorld::BoxWorld()
+BoxWorld::BoxWorld():
+    num_observed_sets(0)
 {
     gvl = gpu_voxels::GpuVoxels::getInstance();
+
+
 
     gvl->initialize(100,100,100, 0.01);
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_ACTUAL_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_QUERY_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_ACTUAL_MAP);
-    gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_SEEN_MAP);
+    // gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_SEEN_MAP);
 
-    gvl->visualizeMap(OBSTACLES_SEEN_MAP);
-    gvl->visualizeMap(BOX_ACTUAL_MAP);
-    gvl->visualizeMap(OBSTACLES_ACTUAL_MAP);    
+    SEEN_OBSTACLE_SETS.resize(NUM_SETS);
+    for(int i=0; i < NUM_SETS; i++)
+    {
+        SEEN_OBSTACLE_SETS[i] = "seen_obstacles_" + std::to_string(i);
+        gvl->addMap(MT_PROBAB_VOXELMAP, SEEN_OBSTACLE_SETS[i]);
+        gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
+    }
+
+    // gvl->visualizeMap(OBSTACLES_SEEN_MAP);
+    // gvl->visualizeMap(BOX_ACTUAL_MAP);
+    gvl->visualizeMap(OBSTACLES_ACTUAL_MAP);
 }
 
 BoxWorld::~BoxWorld()
@@ -52,13 +64,15 @@ bool BoxWorld::updateActual(const Box &b)
     gvl->visualizeMap(BOX_ACTUAL_MAP);
     if(isActualCollision())
     {
-        gvl->insertBoxIntoMap(b.lower(), b.upper(), OBSTACLES_SEEN_MAP, PROB_OCCUPIED);
-        gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(OBSTACLES_SEEN_MAP);
+        int ind = num_observed_sets;
+        gvl->insertBoxIntoMap(b.lower(), b.upper(), SEEN_OBSTACLE_SETS[ind], PROB_OCCUPIED);
+        gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(SEEN_OBSTACLE_SETS[ind]);
         voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
         
         obstacles->subtract(gvl->getMap(BOX_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
 
-        gvl->visualizeMap(OBSTACLES_SEEN_MAP);
+        gvl->visualizeMap(SEEN_OBSTACLE_SETS[ind]);
+        num_observed_sets++;
         return true;
     }
     
@@ -94,10 +108,14 @@ void BoxWorld::resetQuery()
 
 size_t BoxWorld::countSeenCollisionsInQuery()
 {
-    
-    size_t num_colls_pc = gvl->getMap(BOX_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(OBSTACLES_SEEN_MAP)->as<voxelmap::ProbVoxelMap>());
+    size_t total_col = 0;
+    for(int i=0; i < num_observed_sets; i++)
+    {
+        size_t num_colls_pc = gvl->getMap(BOX_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(SEEN_OBSTACLE_SETS[i])->as<voxelmap::ProbVoxelMap>());
+        total_col += num_colls_pc;
+    }
 
-    return num_colls_pc;
+    return total_col;
 }
 
 void BoxWorld::initializeObstacles()

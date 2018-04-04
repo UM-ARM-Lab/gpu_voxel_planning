@@ -22,7 +22,9 @@ const std::string BOX_ACTUAL_MAP = "box_actual";
 const std::string BOX_QUERY_MAP = "box_query";
 const std::string BOX_SWEPT_VOLUME_MAP = "box_swept_volume";
 const std::string OBSTACLES_ACTUAL_MAP = "actual_obstacles";
-const std::string OBSTACLES_SEEN_MAP = "seen_obstacles";
+// const std::string OBSTACLES_SEEN_MAP = "seen_obstacles";
+
+std::vector<std::string> SEEN_OBSTACLE_SETS;
 
 
 #define PROB_OCCUPIED eBVM_OCCUPIED
@@ -88,6 +90,7 @@ public:
 
 public:
     gpu_voxels::GpuVoxelsSharedPtr gvl;
+    int num_observed_sets;
 };
 
 
@@ -103,8 +106,6 @@ public:
                              std::pair< ompl::base::State*, double > & lastValid) const;
     virtual bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const;
 
-
-    
     BoxWorld* box_world_ptr;
     ompl::base::SpaceInformationPtr spi_ptr;
         
