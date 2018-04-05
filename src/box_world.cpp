@@ -64,15 +64,19 @@ bool BoxWorld::updateActual(const Box &b)
     gvl->visualizeMap(BOX_ACTUAL_MAP);
     if(isActualCollision())
     {
-        int ind = num_observed_sets;
-        gvl->insertBoxIntoMap(b.lower(), b.upper(), SEEN_OBSTACLE_SETS[ind], PROB_OCCUPIED);
-        gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(SEEN_OBSTACLE_SETS[ind]);
-        voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
-        
-        obstacles->subtract(gvl->getMap(BOX_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
 
-        gvl->visualizeMap(SEEN_OBSTACLE_SETS[ind]);
+        gvl->insertBoxIntoMap(b.lower(), b.upper(), SEEN_OBSTACLE_SETS[num_observed_sets], PROB_OCCUPIED);
         num_observed_sets++;
+
+        for(int ind = 0; ind < num_observed_sets; ind++)
+        {
+            gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(SEEN_OBSTACLE_SETS[ind]);
+            voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
+        
+            obstacles->subtract(gvl->getMap(BOX_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
+            gvl->visualizeMap(SEEN_OBSTACLE_SETS[ind]);
+        }
+
         return true;
     }
     
@@ -213,6 +217,46 @@ bool BoxValidator::checkMotion(const ompl::base::State *s1, const ompl::base::St
 }
 
 
+/***********************************************
+ **           Box MinVox Objective            **
+ ***********************************************/
+
+BoxMinVoxObjective::BoxMinVoxObjective(ompl::base::SpaceInformationPtr si,
+                                       BoxWorld* box_world) :
+    ob::OptimizationObjective(si)
+{
+    spi_ptr = si;
+    box_world_ptr = box_world;
+}
+
+ob::Cost BoxMinVoxObjective::stateCost(const ob::State *state) const
+{
+    box_world_ptr->resetQuery();
+    box_world_ptr->addQueryState(box_world_ptr->stateToBox(state));
+    return ob::Cost(box_world_ptr->countSeenCollisionsInQuery());
+}
+
+ob::Cost BoxMinVoxObjective::motionCost(const ob::State *s1,
+                                        const ob::State *s2) const
+{
+    ompl::base::StateSpace *stateSpace_ = spi_ptr->getStateSpace().get();
+    assert(stateSpace_ != nullptr);
+
+    box_world_ptr->resetQuery();
+    int nd = stateSpace_->validSegmentCount(s1, s2);
+    ob::State *test = spi_ptr->allocState();
+    for(int j = 0; j < nd; j++)
+    {
+        stateSpace_->interpolate(s1, s2, (double)j / (double)nd, test);
+        box_world_ptr->addQueryState(box_world_ptr->stateToBox(test));
+    }
+        
+    spi_ptr->freeState(test);
+    // std::cout << "Motion cost is " << box_world_ptr->countSeenCollisionsInQuery() << "\n";
+    return ob::Cost(box_world_ptr->countSeenCollisionsInQuery());
+}
+
+
 
 
 
@@ -235,11 +279,6 @@ BoxPlanner::BoxPlanner(BoxWorld* box_world)
     v_ptr = std::make_shared<BoxValidator>(spi_ptr, box_world);
     simp_ = std::make_shared<og::PathSimplifier>(spi_ptr);
 
-    spi_ptr->setStateValidityChecker(v_ptr);
-    spi_ptr->setMotionValidator(v_ptr);
-    
-    planner = std::make_shared<og::LBKPIECE1>(spi_ptr);
-    planner->setup();
 
 }
 
@@ -275,7 +314,7 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
                 return false;
             }
             box_world_ptr->doVis();
-            usleep(100000);
+            usleep(50000);
 
         }
 
@@ -314,21 +353,34 @@ Maybe::Maybe<ob::PathPtr> BoxPlanner::planPath(ompl::base::ScopedState<> start,
 {
     preparePlanner(start, goal);
     ob::PathPtr path;
-    ob::PlannerStatus solved = planner->solve(3);
-    
-    
-    if (solved)
+    int planning_time = 3;
+    ob::PlannerStatus solved = planner->solve(planning_time);
+
+    while(solved == ob::PlannerStatus::APPROXIMATE_SOLUTION)
     {
-        path = pdef_->getSolutionPath();
-        simp_->simplifyMax(*(path->as<og::PathGeometric>()));
-        return Maybe::Maybe<ob::PathPtr>(path);
+        planning_time *= 2;
+
+        if(planning_time > 60*10)
+        {
+            "Failed to find a solution in 10 minutes. Giving up\n";
+            return Maybe::Maybe<ob::PathPtr>();
+        }
+        
+        std::cout << "Approximate solution, replanning for " << planning_time << " seconds\n";
+        solved = planner->solve(planning_time);
     }
-    else
+
+    
+    if (!solved)
     {
         std::cout << "No solution could be found" << std::endl;
-        //this will probably cause a segfault?
         return Maybe::Maybe<ob::PathPtr>();
     }
+    
+    path = pdef_->getSolutionPath();
+    
+    postPlan(path);
+    return Maybe::Maybe<ob::PathPtr>(path);
 }
 
 
@@ -341,6 +393,63 @@ void BoxPlanner::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
 
 }
 
+
+
+/***********************************************
+ **               Box LBKPIECE                **
+ ***********************************************/
+
+BoxLBKPIECE::BoxLBKPIECE(BoxWorld* box_world) :
+    BoxPlanner(box_world)
+{
+    initializePlanner();
+}
+
+void BoxLBKPIECE::initializePlanner()
+{
+    spi_ptr->setStateValidityChecker(v_ptr);
+    spi_ptr->setMotionValidator(v_ptr);
+    
+    planner = std::make_shared<og::LBKPIECE1>(spi_ptr);
+    planner->setup();
+}
+
+void BoxLBKPIECE::postPlan(ob::PathPtr path)
+{
+    simp_->simplifyMax(*(path->as<og::PathGeometric>()));
+}
+
+
+
+/***********************************************
+ **               Box RRTStar                 **
+ ***********************************************/
+
+BoxRRTstar::BoxRRTstar(BoxWorld* box_world) :
+    BoxPlanner(box_world)
+{
+    initializePlanner();
+    objective_ptr = std::make_shared<BoxMinVoxObjective>(spi_ptr, box_world);
+}
+
+void BoxRRTstar::initializePlanner()
+{
+    // spi_ptr->setStateValidityChecker(v_ptr);
+    // spi_ptr->setMotionValidator(v_ptr);
+    
+    planner = std::make_shared<og::RRTstar>(spi_ptr);
+    planner->setup();
+}
+
+void BoxRRTstar::preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal)
+{
+    planner->clear();
+    pdef_ = std::make_shared<ob::ProblemDefinition>(spi_ptr);
+    pdef_->setStartAndGoalStates(start, goal);
+    pdef_->setOptimizationObjective(objective_ptr);
+    planner->setProblemDefinition(pdef_);
+
+}
 
 
 
@@ -385,7 +494,9 @@ int main(int argc, char* argv[])
     int unused;
     std::cin >> unused;
 
-    BoxPlanner planner(boxWorld.get());
+    // BoxPlanner planner(boxWorld.get());
+    // BoxLBKPIECE planner(boxWorld.get());
+    BoxRRTstar planner(boxWorld.get());
 
     std::vector<double> start = {0.5, 0.2, 0.5};
     std::vector<double> goal = {0.5, 0.8, 0.5};
@@ -407,6 +518,7 @@ int main(int argc, char* argv[])
     if(reached_goal)
         std::cout << "REACHED GOAL!\n";
 
+    boxWorld->gvl.reset();
     
     // while(true)
     // {

@@ -11,6 +11,7 @@
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/geometric/PathSimplifier.h>
 #include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
+#include <ompl/geometric/planners/rrt/RRTstar.h>
 
 #include <arc_utilities/maybe.hpp>
 
@@ -112,6 +113,20 @@ public:
 };
 
 
+class BoxMinVoxObjective : public ompl::base::OptimizationObjective
+{
+public:
+    BoxMinVoxObjective(ompl::base::SpaceInformationPtr si,
+                       BoxWorld* box_world);
+    virtual ompl::base::Cost motionCost(const ompl::base::State *s1,
+                                        const ompl::base::State *s2) const;
+    virtual ompl::base::Cost stateCost(const ompl::base::State *state) const; 
+    
+private:
+    BoxWorld* box_world_ptr;
+    ompl::base::SpaceInformationPtr spi_ptr;
+};
+
 
 class BoxPlanner
 {
@@ -126,7 +141,11 @@ public:
     Maybe::Maybe<ompl::base::PathPtr> planPath(std::vector<double> start,
                                                std::vector<double> goal);
 
+    virtual void initializePlanner() = 0;
+
     virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
+
+    virtual void postPlan(ompl::base::PathPtr) {};
 
 public:
 
@@ -139,5 +158,25 @@ public:
     std::shared_ptr<ompl::geometric::PathSimplifier> simp_;
     std::shared_ptr<ompl::base::ProblemDefinition> pdef_;
 };
+
+class BoxLBKPIECE : public BoxPlanner
+{
+public:
+    BoxLBKPIECE(BoxWorld* box_world);
+    virtual void initializePlanner();
+    virtual void postPlan(ompl::base::PathPtr path);
+};
+
+class BoxRRTstar : public BoxPlanner
+{
+public:
+    BoxRRTstar(BoxWorld* box_world);
+    virtual void initializePlanner();
+    virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
+private:
+    std::shared_ptr<BoxMinVoxObjective> objective_ptr;
+};
+
+
 
 #endif
