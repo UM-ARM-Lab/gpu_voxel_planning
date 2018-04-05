@@ -23,6 +23,7 @@ const std::string BOX_ACTUAL_MAP = "box_actual";
 const std::string BOX_QUERY_MAP = "box_query";
 const std::string BOX_SWEPT_VOLUME_MAP = "box_swept_volume";
 const std::string OBSTACLES_ACTUAL_MAP = "actual_obstacles";
+const std::string FULL_MAP = "full_map";
 // const std::string OBSTACLES_SEEN_MAP = "seen_obstacles";
 
 std::vector<std::string> SEEN_OBSTACLE_SETS;
@@ -31,15 +32,6 @@ std::vector<std::string> SEEN_OBSTACLE_SETS;
 #define PROB_OCCUPIED eBVM_OCCUPIED
 
 
-struct Position
-{
-    double x;
-    double y;
-    double z;
-    Position(double x_, double y_, double z_) : x(x_), y(y_), z(z_)
-        {
-        }
-};
 
 class Box
 {
@@ -81,6 +73,10 @@ public:
     void resetQuery();
 
     size_t countSeenCollisionsInQuery();
+
+    std::vector<size_t> countSeenCollisionsInQueryForEach();
+
+    std::vector<size_t> seenSizes();
 
     void initializeObstacles();
 
@@ -128,6 +124,20 @@ private:
 };
 
 
+class BoxMinColProbObjective : public ompl::base::OptimizationObjective
+{
+    public:
+    BoxMinColProbObjective(ompl::base::SpaceInformationPtr si,
+                           BoxWorld* box_world);
+    virtual ompl::base::Cost motionCost(const ompl::base::State *s1,
+                                        const ompl::base::State *s2) const;
+    virtual ompl::base::Cost stateCost(const ompl::base::State *state) const; 
+    
+private:
+    BoxWorld* box_world_ptr;
+    ompl::base::SpaceInformationPtr spi_ptr;
+};
+
 class BoxPlanner
 {
 public:
@@ -167,6 +177,7 @@ public:
     virtual void postPlan(ompl::base::PathPtr path);
 };
 
+template <class T>
 class BoxRRTstar : public BoxPlanner
 {
 public:
@@ -174,7 +185,7 @@ public:
     virtual void initializePlanner();
     virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
 private:
-    std::shared_ptr<BoxMinVoxObjective> objective_ptr;
+    std::shared_ptr<ompl::base::OptimizationObjective> objective_ptr;
 };
 
 

@@ -33,6 +33,9 @@ BoxWorld::BoxWorld():
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_QUERY_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_ACTUAL_MAP);
+    gvl->addMap(MT_PROBAB_VOXELMAP, FULL_MAP);
+
+    gvl->insertBoxIntoMap(Vector3f(0,0,0), Vector3f(1,1,1), FULL_MAP, PROB_OCCUPIED);
     // gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_SEEN_MAP);
 
     SEEN_OBSTACLE_SETS.resize(NUM_SETS);
@@ -62,20 +65,21 @@ bool BoxWorld::updateActual(const Box &b)
     gvl->clearMap(BOX_ACTUAL_MAP);
     gvl->insertBoxIntoMap(b.lower(), b.upper(), BOX_ACTUAL_MAP, PROB_OCCUPIED);
     gvl->visualizeMap(BOX_ACTUAL_MAP);
+    for(int ind = 0; ind < num_observed_sets; ind++)
+    {
+        gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(SEEN_OBSTACLE_SETS[ind]);
+        voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
+        
+        obstacles->subtract(gvl->getMap(BOX_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
+        gvl->visualizeMap(SEEN_OBSTACLE_SETS[ind]);
+    }
+
+
     if(isActualCollision())
     {
 
         gvl->insertBoxIntoMap(b.lower(), b.upper(), SEEN_OBSTACLE_SETS[num_observed_sets], PROB_OCCUPIED);
         num_observed_sets++;
-
-        for(int ind = 0; ind < num_observed_sets; ind++)
-        {
-            gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(SEEN_OBSTACLE_SETS[ind]);
-            voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
-        
-            obstacles->subtract(gvl->getMap(BOX_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
-            gvl->visualizeMap(SEEN_OBSTACLE_SETS[ind]);
-        }
 
         return true;
     }
@@ -113,13 +117,38 @@ void BoxWorld::resetQuery()
 size_t BoxWorld::countSeenCollisionsInQuery()
 {
     size_t total_col = 0;
+    std::vector<size_t> query_collisions = countSeenCollisionsInQueryForEach();
+    for(auto cols: query_collisions)
+    {
+        total_col += cols;
+    }
+    return total_col;
+}
+
+std::vector<size_t> BoxWorld::countSeenCollisionsInQueryForEach()
+{
+    std::vector<size_t> query_collisions;
+    query_collisions.resize(num_observed_sets);
     for(int i=0; i < num_observed_sets; i++)
     {
-        size_t num_colls_pc = gvl->getMap(BOX_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(SEEN_OBSTACLE_SETS[i])->as<voxelmap::ProbVoxelMap>());
-        total_col += num_colls_pc;
+        query_collisions[i] = gvl->getMap(BOX_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(SEEN_OBSTACLE_SETS[i])->as<voxelmap::ProbVoxelMap>());
     }
+    return query_collisions;
+}
 
-    return total_col;
+/*
+ *  Returns the number of voxels in each seen collision map
+ */
+std::vector<size_t> BoxWorld::seenSizes()
+{
+    std::vector<size_t> seen_sizes;
+    seen_sizes.resize(num_observed_sets);
+    for(int i=0; i < num_observed_sets; i++)
+    {
+        seen_sizes[i] = gvl->getMap(FULL_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(SEEN_OBSTACLE_SETS[i])->as<voxelmap::ProbVoxelMap>());
+    }
+    return seen_sizes;
+
 }
 
 void BoxWorld::initializeObstacles()
@@ -258,6 +287,62 @@ ob::Cost BoxMinVoxObjective::motionCost(const ob::State *s1,
 
 
 
+/***********************************************
+ **       Box Collision Prob Objective        **
+ ***********************************************/
+
+BoxMinColProbObjective::BoxMinColProbObjective(ompl::base::SpaceInformationPtr si,
+                                               BoxWorld* box_world) :
+    ob::OptimizationObjective(si)
+{
+    spi_ptr = si;
+    box_world_ptr = box_world;
+}
+
+ob::Cost BoxMinColProbObjective::stateCost(const ob::State *state) const
+{
+    box_world_ptr->resetQuery();
+    box_world_ptr->addQueryState(box_world_ptr->stateToBox(state));
+    return ob::Cost(box_world_ptr->countSeenCollisionsInQuery());
+}
+
+ob::Cost BoxMinColProbObjective::motionCost(const ob::State *s1,
+                                        const ob::State *s2) const
+{
+    ompl::base::StateSpace *stateSpace_ = spi_ptr->getStateSpace().get();
+    assert(stateSpace_ != nullptr);
+
+    box_world_ptr->resetQuery();
+    int nd = stateSpace_->validSegmentCount(s1, s2);
+    ob::State *test = spi_ptr->allocState();
+    for(int j = 0; j < nd; j++)
+    {
+        stateSpace_->interpolate(s1, s2, (double)j / (double)nd, test);
+        box_world_ptr->addQueryState(box_world_ptr->stateToBox(test));
+    }
+        
+    spi_ptr->freeState(test);
+    // std::cout << "Motion cost is " << box_world_ptr->countSeenCollisionsInQuery() << "\n";
+    std::vector<size_t> seen_col_voxels = box_world_ptr->countSeenCollisionsInQueryForEach();
+    std::vector<size_t> seen_sizes = box_world_ptr->seenSizes();
+
+    std::vector<double> p_no_collision;
+    p_no_collision.resize(seen_col_voxels.size());
+    double p_no_col = 1.0;
+
+    for(size_t i=0; i < seen_sizes.size(); i++)
+    {
+        p_no_collision[i] = 1.0 - (double)seen_col_voxels[i] / (double)seen_sizes[i];
+        assert(p_no_collision[i] <= 1.0);
+        p_no_col *= p_no_collision[i];
+    }
+
+    // std::cout << "Col Prob " << 1.0 - p_no_col << "\n";
+    return ob::Cost(1.0-p_no_col);
+}
+
+
+
 
 
 /***********************************************
@@ -369,16 +454,14 @@ Maybe::Maybe<ob::PathPtr> BoxPlanner::planPath(ompl::base::ScopedState<> start,
         std::cout << "Approximate solution, replanning for " << planning_time << " seconds\n";
         solved = planner->solve(planning_time);
     }
-
     
     if (!solved)
     {
         std::cout << "No solution could be found" << std::endl;
         return Maybe::Maybe<ob::PathPtr>();
     }
-    
+
     path = pdef_->getSolutionPath();
-    
     postPlan(path);
     return Maybe::Maybe<ob::PathPtr>(path);
 }
@@ -425,14 +508,17 @@ void BoxLBKPIECE::postPlan(ob::PathPtr path)
  **               Box RRTStar                 **
  ***********************************************/
 
-BoxRRTstar::BoxRRTstar(BoxWorld* box_world) :
+template <class T>
+BoxRRTstar<T>::BoxRRTstar(BoxWorld* box_world) :
     BoxPlanner(box_world)
 {
     initializePlanner();
-    objective_ptr = std::make_shared<BoxMinVoxObjective>(spi_ptr, box_world);
+    objective_ptr = std::make_shared<T>(spi_ptr, box_world);
+    objective_ptr -> setCostThreshold(ob::Cost(0.01));
 }
 
-void BoxRRTstar::initializePlanner()
+template <class T>
+void BoxRRTstar<T>::initializePlanner()
 {
     // spi_ptr->setStateValidityChecker(v_ptr);
     // spi_ptr->setMotionValidator(v_ptr);
@@ -441,7 +527,8 @@ void BoxRRTstar::initializePlanner()
     planner->setup();
 }
 
-void BoxRRTstar::preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal)
+template <class T>
+void BoxRRTstar<T>::preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal)
 {
     planner->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(spi_ptr);
@@ -496,7 +583,8 @@ int main(int argc, char* argv[])
 
     // BoxPlanner planner(boxWorld.get());
     // BoxLBKPIECE planner(boxWorld.get());
-    BoxRRTstar planner(boxWorld.get());
+    // BoxRRTstar<BoxMinVoxObjective> planner(boxWorld.get());
+    BoxRRTstar<BoxMinColProbObjective> planner(boxWorld.get());
 
     std::vector<double> start = {0.5, 0.2, 0.5};
     std::vector<double> goal = {0.5, 0.8, 0.5};
