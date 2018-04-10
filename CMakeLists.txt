@@ -97,6 +97,25 @@ target_link_libraries(box_world
   ${OMPL_LIBRARIES}
   )
 
+add_library(box_world_lib src/box_world.cpp)
+target_link_libraries(box_world_lib
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  ${OMPL_LIBRARIES}
+  )
+
+add_executable(box_world_recorder src/box_world_recorder.cpp)
+target_link_libraries(box_world_recorder
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  ${OMPL_LIBRARIES}
+  box_world_lib
+  )
+
 add_library(victor_model src/gpu_voxels_victor.cpp)
 target_link_libraries(victor_model
   ${gpu_voxels_LIBRARIES}

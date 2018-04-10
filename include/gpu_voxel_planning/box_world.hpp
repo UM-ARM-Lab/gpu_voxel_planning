@@ -12,6 +12,8 @@
 #include <ompl/geometric/PathSimplifier.h>
 #include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
 #include <ompl/geometric/planners/rrt/RRTstar.h>
+#include <ompl/geometric/planners/rrt/RRTsharp.h>
+#include <ompl/geometric/planners/rrt/TRRT.h>
 
 #include <arc_utilities/maybe.hpp>
 
@@ -60,7 +62,7 @@ public:
     BoxWorld();
     ~BoxWorld();
     
-    bool updateActual(const Box &b);
+    bool updateActual(const Box &b, bool create_obstacle = true);
 
     bool isActualCollision();
 
@@ -75,6 +77,10 @@ public:
     size_t countSeenCollisionsInQuery();
 
     std::vector<size_t> countSeenCollisionsInQueryForEach();
+
+    size_t getNumOccupiedVoxels(const std::string& map_name);
+
+    size_t countIntersect(const std::string& map_1, const std::string& map_2);
 
     std::vector<size_t> seenSizes();
 
@@ -138,6 +144,23 @@ private:
     ompl::base::SpaceInformationPtr spi_ptr;
 };
 
+
+class BoxMinColProbSweptObjective : public ompl::base::OptimizationObjective
+{
+    public:
+    BoxMinColProbSweptObjective(ompl::base::SpaceInformationPtr si,
+                           BoxWorld* box_world);
+    virtual ompl::base::Cost motionCost(const ompl::base::State *s1,
+                                        const ompl::base::State *s2) const;
+    virtual ompl::base::Cost stateCost(const ompl::base::State *state) const; 
+    
+private:
+    BoxWorld* box_world_ptr;
+    ompl::base::SpaceInformationPtr spi_ptr;
+};
+
+
+
 class BoxPlanner
 {
 public:
@@ -145,11 +168,13 @@ public:
     
     bool executePath(ompl::geometric::PathGeometric* path);
 
-    Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
-                                               ompl::base::ScopedState<> goal);
+    void probeAround(const Box &b, double delta);
+
+    virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
+                                                       ompl::base::ScopedState<> goal);
 
     Maybe::Maybe<ompl::base::PathPtr> planPath(std::vector<double> start,
-                                               std::vector<double> goal);
+                                                       std::vector<double> goal);
 
     virtual void initializePlanner() = 0;
 
@@ -185,6 +210,18 @@ public:
     virtual void initializePlanner();
     virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
 private:
+    std::shared_ptr<ompl::base::OptimizationObjective> objective_ptr;
+};
+
+template <class T>
+class BoxTRRT : public BoxPlanner
+{
+public:
+    BoxTRRT(BoxWorld* box_world);
+    virtual void initializePlanner();
+    virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
+private:
+
     std::shared_ptr<ompl::base::OptimizationObjective> objective_ptr;
 };
 
