@@ -64,6 +64,7 @@ BoxWorld::~BoxWorld()
  */
 bool BoxWorld::updateActual(const Box &b, bool create_obstacle)
 {
+    std::cout << "Updating actual\n";
     gvl->clearMap(BOX_ACTUAL_MAP);
     gvl->insertBoxIntoMap(b.lower(), b.upper(), BOX_ACTUAL_MAP, PROB_OCCUPIED);
     gvl->visualizeMap(BOX_ACTUAL_MAP);
@@ -82,14 +83,16 @@ bool BoxWorld::updateActual(const Box &b, bool create_obstacle)
 
         if(create_obstacle)
         {
+            std::cout << "Createing obstacle...";
             gvl->insertBoxIntoMap(b.lower(), b.upper(), SEEN_OBSTACLE_SETS[num_observed_sets], PROB_OCCUPIED);
 
-            if(num_observed_sets > NUM_SETS)
+            if(num_observed_sets >= NUM_SETS)
             {
                 std::cout << "Reached set limit, not adding any more\n";
                 return true;
             }
 
+            std::cout << "Done\n";
             num_observed_sets++;
         }
 
@@ -98,6 +101,7 @@ bool BoxWorld::updateActual(const Box &b, bool create_obstacle)
     }
     
     gvl->insertBoxIntoMap(b.lower(), b.upper(), BOX_SWEPT_VOLUME_MAP, PROB_OCCUPIED);
+    std::cout << "finished updating actual\n";
     return false;
 }
 
@@ -234,6 +238,7 @@ bool BoxValidator::isValid(const ob::State *state) const
 bool BoxValidator::checkMotion(const ompl::base::State *s1, const ompl::base::State *s2,
                                std::pair< ompl::base::State*, double > & lastValid) const
 {
+    std::cout << "Checking motion...";
     bool result = true;
     ob::StateSpace *stateSpace = spi_ptr->getStateSpace().get();
     int nd = stateSpace->validSegmentCount(s1, s2);
@@ -258,6 +263,7 @@ bool BoxValidator::checkMotion(const ompl::base::State *s1, const ompl::base::St
         valid_++;
     else
         invalid_++;
+    std::cout << "Done\n";
 
     return result;
 }
@@ -375,10 +381,12 @@ BoxMinColProbSweptObjective::BoxMinColProbSweptObjective(ompl::base::SpaceInform
 {
     spi_ptr = si;
     box_world_ptr = box_world;
+    std::cout << "Creating optimizationobjective\n";
 }
 
 ob::Cost BoxMinColProbSweptObjective::stateCost(const ob::State *state) const
 {
+    std::cout << "State cost\n";
     box_world_ptr->resetQuery();
     box_world_ptr->addQueryState(box_world_ptr->stateToBox(state));
     return ob::Cost(box_world_ptr->countSeenCollisionsInQuery());
@@ -387,6 +395,7 @@ ob::Cost BoxMinColProbSweptObjective::stateCost(const ob::State *state) const
 ob::Cost BoxMinColProbSweptObjective::motionCost(const ob::State *s1,
                                         const ob::State *s2) const
 {
+    std::cout << "starting swept objective\n";
     ompl::base::StateSpace *stateSpace_ = spi_ptr->getStateSpace().get();
     assert(stateSpace_ != nullptr);
 
@@ -416,6 +425,7 @@ ob::Cost BoxMinColProbSweptObjective::motionCost(const ob::State *s1,
     }
 
 
+    std::cout << "staring count intersection\n";
     size_t path_size = box_world_ptr->countIntersect(FULL_MAP, BOX_QUERY_MAP);
     size_t total_size = box_world_ptr->countIntersect(FULL_MAP, FULL_MAP);
     size_t known_free_size = box_world_ptr->countIntersect(BOX_SWEPT_VOLUME_MAP, BOX_QUERY_MAP);
@@ -423,7 +433,7 @@ ob::Cost BoxMinColProbSweptObjective::motionCost(const ob::State *s1,
     double num_occupied = (double)(path_size - known_free_size);
     double frac_occupied = num_occupied / (double) total_size;
     
-    double p_no_col_unseen = std::pow(1.0 - frac_occupied, 30);
+    double p_no_col_unseen = std::pow(1.0 - frac_occupied, 10);
 
     
 
@@ -431,6 +441,7 @@ ob::Cost BoxMinColProbSweptObjective::motionCost(const ob::State *s1,
     // std::cout << "p_no_col_unseen: " << p_no_col_unseen << "\n";
     // std::cout << "Col Prob " << 1.0 - p_no_col_seen * p_no_col_unseen << "\n";
     // return ob::Cost(1.0 - p_no_col_seen * p_no_col_unseen);
+    std::cout << "ending swept objective\n";
     return ob::Cost(1.0 - p_no_col_seen * p_no_col_unseen);
 }
 
@@ -538,20 +549,20 @@ Maybe::Maybe<ob::PathPtr> BoxPlanner::planPath(std::vector<double> start,
 {
     ob::ScopedState<> start_ss(space);
     ob::ScopedState<> goal_ss(space);
-    std::cout << "start: ";
+    // std::cout << "start: ";
     for(size_t i=0; i<start.size(); i++)
     {
-        std::cout << start[i] << ", ";
+        // std::cout << start[i] << ", ";
         start_ss[i] = start[i];
         goal_ss[i] = goal[i];
     }
-    std::cout << "\n";
-    std::cout << "goal: ";
+    // std::cout << "\n";
+    // std::cout << "goal: ";
     for(size_t i=0; i<start.size(); i++)
     {
-        std::cout << goal[i] << ", ";
+        // std::cout << goal[i] << ", ";
     }
-    std::cout << "\n";
+    // std::cout << "\n";
     return planPath(start_ss, goal_ss);
 
 }
@@ -665,40 +676,6 @@ void BoxRRTstar<T>::preparePlanner(ompl::base::ScopedState<> start, ompl::base::
 
 
 
-/***********************************************
- **               Box TRRT                    **
- ***********************************************/
-
-template <class T>
-BoxTRRT<T>::BoxTRRT(BoxWorld* box_world) :
-    BoxPlanner(box_world)
-{
-    initializePlanner();
-    objective_ptr = std::make_shared<T>(spi_ptr, box_world);
-    objective_ptr -> setCostThreshold(ob::Cost(0.01));
-}
-
-template <class T>
-void BoxTRRT<T>::initializePlanner()
-{
-    // spi_ptr->setStateValidityChecker(v_ptr);
-    // spi_ptr->setMotionValidator(v_ptr);
-    
-    // planner = std::make_shared<og::RRTstar>(spi_ptr);
-    planner = std::make_shared<og::TRRT>(spi_ptr);
-    planner->setup();
-}
-
-template <class T>
-void BoxTRRT<T>::preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal)
-{
-    planner->clear();
-    pdef_ = std::make_shared<ob::ProblemDefinition>(spi_ptr);
-    pdef_->setStartAndGoalStates(start, goal);
-    pdef_->setOptimizationObjective(objective_ptr);
-    planner->setProblemDefinition(pdef_);
-
-}
 
 
 
@@ -743,6 +720,7 @@ int main(int argc, char* argv[])
     boxWorld->initializeObstacles();
 
     int unused;
+    std::cout << "Waiting for user input to start...\n";
     std::cin >> unused;
 
     // BoxPlanner planner(boxWorld.get());
@@ -752,7 +730,8 @@ int main(int argc, char* argv[])
     BoxRRTstar<BoxMinColProbSweptObjective> planner_unused3(boxWorld.get());
     BoxTRRT<BoxMinColProbSweptObjective> planner_unused4(boxWorld.get());
 
-    BoxRRTstar<BoxMinColProbSweptObjective> planner(boxWorld.get());
+    // BoxRRTstar<BoxMinColProbSweptObjective> planner_unused3(boxWorld.get());
+    BoxTRRT<BoxMinColProbSweptObjective> planner(boxWorld.get());
 
     std::vector<double> start = {0.5, 0.2, 0.5};
     std::vector<double> goal = {0.5, 0.8, 0.5};

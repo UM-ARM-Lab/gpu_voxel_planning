@@ -221,9 +221,47 @@ public:
     virtual void initializePlanner();
     virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
 private:
-
     std::shared_ptr<ompl::base::OptimizationObjective> objective_ptr;
 };
+
+
+
+
+
+/***********************************************
+ **               Box TRRT                    **
+ ***********************************************/
+
+template <class T>
+BoxTRRT<T>::BoxTRRT(BoxWorld* box_world) :
+    BoxPlanner(box_world)
+{
+    initializePlanner();
+    objective_ptr = std::make_shared<T>(spi_ptr, box_world);
+    objective_ptr -> setCostThreshold(ompl::base::Cost(0.01));
+}
+
+template <class T>
+void BoxTRRT<T>::initializePlanner()
+{
+    // spi_ptr->setStateValidityChecker(v_ptr);
+    // spi_ptr->setMotionValidator(v_ptr);
+    
+    // planner = std::make_shared<og::RRTstar>(spi_ptr);
+    planner = std::make_shared<ompl::geometric::TRRT>(spi_ptr);
+    planner->setup();
+}
+
+template <class T>
+void BoxTRRT<T>::preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal)
+{
+    planner->clear();
+    pdef_ = std::make_shared<ompl::base::ProblemDefinition>(spi_ptr);
+    pdef_->setStartAndGoalStates(start, goal);
+    pdef_->setOptimizationObjective(objective_ptr);
+    planner->setProblemDefinition(pdef_);
+
+}
 
 
 

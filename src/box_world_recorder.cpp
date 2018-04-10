@@ -88,6 +88,7 @@ bool testPlanner(std::string logger)
     boxWorld->gvl.reset();
     if(success)
         PROFILE_RECORD(logger);
+    std::cout << "Finished " << logger << "\n";
     return success;
 
 }
@@ -95,74 +96,27 @@ bool testPlanner(std::string logger)
 
 bool testLBKPIECE()
 {
-    std::string logger = LBKPIECE_TIME;
-    std::cout << "Starting " << logger << "\n";
-    setupWorld();
-    PROFILE_START(logger);
-    BoxLBKPIECE planner(boxWorld.get());
-    bool success = plan(planner, logger);
-    boxWorld->gvl.reset();
-    if(success)
-        PROFILE_RECORD(logger);
-    return success;
+    return testPlanner<BoxLBKPIECE>(LBKPIECE_TIME);
 }
 
 bool testMinVoxRRTstar()
 {
-    std::string logger = RRTSTAR_MINVOX_TIME;
-    std::cout << "Starting " << logger << "\n";
-    setupWorld();
-    PROFILE_START(logger);
-    BoxRRTstar<BoxMinVoxObjective> planner(boxWorld.get());
-    bool success = plan(planner, logger);
-    boxWorld->gvl.reset();
-    if(success)
-        PROFILE_RECORD(logger);
-    return success;
+    return testPlanner<BoxRRTstar<BoxMinVoxObjective>>(RRTSTAR_MINVOX_TIME);
 }
 
 bool testMinColProbRRTstar()
 {
-    std::string logger = RRTSTAR_MINPROB_TIME;
-    std::cout << "Starting " << logger << "\n";
-
-    setupWorld();
-    PROFILE_START(logger);
-    BoxRRTstar<BoxMinColProbObjective> planner(boxWorld.get());
-    bool success = plan(planner, logger);
-    boxWorld->gvl.reset();
-    if(success)
-        PROFILE_RECORD(logger);
-    return success;
+    return testPlanner<BoxRRTstar<BoxMinColProbObjective>>(RRTSTAR_MINPROB_TIME);
 }
 
 bool testMinColProbSweptRRTstar()
 {
-    std::string logger = RRTSTAR_MINPROB_SWEPT_TIME;
-    std::cout << "Starting " << logger << "\n";
-    setupWorld();
-    PROFILE_START(logger);
-    BoxRRTstar<BoxMinColProbSweptObjective> planner(boxWorld.get());
-    bool success = plan(planner, logger);
-    boxWorld->gvl.reset();
-    if(success)
-        PROFILE_RECORD(logger);
-    return success;
+    return testPlanner<BoxRRTstar<BoxMinColProbSweptObjective>>(RRTSTAR_MINPROB_SWEPT_TIME);
 }
 
 bool testMinColProbSweptTRRT()
 {
-    std::string logger = TRRT_MINPROB_SWEPT_TIME;
-    std::cout << "Starting " << logger << "\n";
-
-    setupWorld();
-    PROFILE_START(logger);
-    BoxTRRT<BoxMinColProbSweptObjective> planner(boxWorld.get());
-    bool success = plan(planner, logger);
-    boxWorld->gvl.reset();
-    if(success)
-        PROFILE_RECORD(logger);
-    return success;
+    return testPlanner<BoxTRRT<BoxMinColProbSweptObjective>>(TRRT_MINPROB_SWEPT_TIME);
 }
 
 
@@ -183,7 +137,7 @@ int main(int argc, char* argv[])
     // BoxRRTstar<BoxMinVoxObjective> planner2(boxWorld.get());
     // BoxRRTstar<BoxMinColProbObjective> planner3(boxWorld.get());
 
-    int num_tests = 1;
+    int num_tests = 20;
     std::cout << "Running " << num_tests << " trials\n";
 
     for(int i=0; i<num_tests; i++)
