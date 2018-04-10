@@ -4,6 +4,10 @@
 
 #include <gpu_voxels/GpuVoxels.h>
 
+#include "path_validator.h"
+#include "lazyrrt_fullpath.h"
+
+
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
@@ -111,7 +115,20 @@ public:
 
     BoxWorld* box_world_ptr;
     ompl::base::SpaceInformationPtr spi_ptr;
-        
+};
+
+class BoxPathValidator : public ompl::geometric::PathValidator
+{
+public:
+    BoxPathValidator(ompl::base::SpaceInformationPtr si,
+                     BoxWorld* box_world);
+    virtual bool checkPath(const std::vector<ompl::base::State*> path,
+                           size_t &collision_index);
+    void setProbabilityThreshold(double th);
+
+protected:
+    BoxWorld* box_world_ptr;
+    double threshold;
 };
 
 
@@ -173,8 +190,8 @@ public:
     virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
                                                        ompl::base::ScopedState<> goal);
 
-    Maybe::Maybe<ompl::base::PathPtr> planPath(std::vector<double> start,
-                                                       std::vector<double> goal);
+    Maybe::Maybe<ompl::base::PathPtr> planPathDouble(std::vector<double> start,
+                                                     std::vector<double> goal);
 
     virtual void initializePlanner() = 0;
 
@@ -211,6 +228,18 @@ public:
     virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
 private:
     std::shared_ptr<ompl::base::OptimizationObjective> objective_ptr;
+};
+
+
+class BoxLazyRRTF : public BoxPlanner
+{
+public:
+    BoxLazyRRTF(BoxWorld* box_world);
+    virtual void initializePlanner();
+    virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
+                                                       ompl::base::ScopedState<> goal);
+protected:
+    std::shared_ptr<BoxPathValidator> pv_;
 };
 
 template <class T>

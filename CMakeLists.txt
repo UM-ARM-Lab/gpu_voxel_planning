@@ -88,6 +88,13 @@ include_directories(
   ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
   )
 
+
+add_library(lazyrrtf src/lazyrrt_fullpath.cpp)
+target_link_libraries(lazyrrtf
+  ${OMPL_LIBRARIES}
+  )
+
+
 add_executable(box_world src/box_world.cpp)
 target_link_libraries(box_world
   ${catkin_LIBRARIES}
@@ -95,6 +102,7 @@ target_link_libraries(box_world
   ${icl_core_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
   ${OMPL_LIBRARIES}
+  lazyrrtf
   )
 
 add_library(box_world_lib src/box_world.cpp)
@@ -104,6 +112,7 @@ target_link_libraries(box_world_lib
   ${icl_core_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
   ${OMPL_LIBRARIES}
+  lazyrrtf
   )
 
 add_executable(box_world_recorder src/box_world_recorder.cpp)

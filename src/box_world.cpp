@@ -64,7 +64,7 @@ BoxWorld::~BoxWorld()
  */
 bool BoxWorld::updateActual(const Box &b, bool create_obstacle)
 {
-    std::cout << "Updating actual\n";
+    // std::cout << "Updating actual\n";
     gvl->clearMap(BOX_ACTUAL_MAP);
     gvl->insertBoxIntoMap(b.lower(), b.upper(), BOX_ACTUAL_MAP, PROB_OCCUPIED);
     gvl->visualizeMap(BOX_ACTUAL_MAP);
@@ -275,6 +275,101 @@ bool BoxValidator::checkMotion(const ompl::base::State *s1, const ompl::base::St
 }
 
 
+
+
+
+/***********************************************
+ **            PATH VALIDATOR                 **
+ ***********************************************/
+BoxPathValidator::BoxPathValidator(ob::SpaceInformationPtr si,
+                                   BoxWorld* box_world) :
+    PathValidator(si)
+{
+    box_world_ptr = box_world;
+}
+
+void BoxPathValidator::setProbabilityThreshold(double th)
+{
+    threshold = th;
+}
+
+bool BoxPathValidator::checkPath(const std::vector<ompl::base::State*> path,
+                                 size_t &collision_index)
+{
+    std::cout << "Checking path...";
+
+    
+    ompl::base::StateSpace *stateSpace_ = si_->getStateSpace().get();
+    assert(stateSpace_ != nullptr);
+
+    box_world_ptr->resetQuery();
+    ob::State *test = si_->allocState();
+
+    double prob_col = 0.0;
+        
+    for(collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
+    {
+        const ob::State *s1 = path[collision_index];
+        const ob::State *s2 = path[collision_index + 1];
+        int nd = stateSpace_->validSegmentCount(s1, s2);
+
+        for(int j = 0; j < nd; j++)
+        {
+            stateSpace_->interpolate(s1, s2, (double)j / (double)nd, test);
+            box_world_ptr->addQueryState(box_world_ptr->stateToBox(test));
+        }
+        std::vector<size_t> seen_col_voxels = box_world_ptr->countSeenCollisionsInQueryForEach();
+        std::vector<size_t> seen_sizes = box_world_ptr->seenSizes();
+        std::vector<double> p_no_collision;
+        p_no_collision.resize(seen_col_voxels.size());
+        double p_no_col_seen = 1.0;
+
+        for(size_t i=0; i < seen_sizes.size(); i++)
+        {
+            p_no_collision[i] = 1.0 - (double)seen_col_voxels[i] / (double)seen_sizes[i];
+            assert(p_no_collision[i] <= 1.0);
+            p_no_col_seen *= p_no_collision[i];
+        }
+
+        size_t path_size = box_world_ptr->countIntersect(FULL_MAP, BOX_QUERY_MAP);
+        size_t total_size = box_world_ptr->countIntersect(FULL_MAP, FULL_MAP);
+        size_t known_free_size = box_world_ptr->countIntersect(BOX_SWEPT_VOLUME_MAP, BOX_QUERY_MAP);
+
+        double num_occupied = (double)(path_size - known_free_size);
+        double frac_occupied = num_occupied / (double) total_size;
+        
+        double p_no_col_unseen = std::pow(1.0 - frac_occupied, 30);
+
+        prob_col = 1.0 - p_no_col_seen * p_no_col_unseen;
+
+        if (prob_col <= 1.0)
+        {
+            std::cout << "Prob_col " << prob_col;
+            std::cout << "p_no_col_seen " << p_no_col_seen;
+            std::cout << "p_no_col_unseen " << p_no_col_unseen;
+            assert (prob_col <= 1.0);
+        }
+
+        
+        if(prob_col > threshold)
+        {
+            break;
+        }
+    }
+    si_->freeState(test);
+    
+
+    std::cout << "Finished\n";
+    std::cout << "pathsize " << path.size();
+    std::cout << " col index " << collision_index << "\n";
+    std::cout << "Threshold " << threshold << "\n";
+    return prob_col <= threshold;
+}
+
+
+
+
+
 /***********************************************
  **           Box MinVox Objective            **
  ***********************************************/
@@ -437,11 +532,14 @@ ob::Cost BoxMinColProbSweptObjective::motionCost(const ob::State *s1,
 
     
 
-    // std::cout << "num_occupied:  " << num_occupied << "\n";
-    // std::cout << "p_no_col_unseen: " << p_no_col_unseen << "\n";
-    // std::cout << "Col Prob " << 1.0 - p_no_col_seen * p_no_col_unseen << "\n";
-    // return ob::Cost(1.0 - p_no_col_seen * p_no_col_unseen);
+    std::cout << "num_occupied:  " << num_occupied << "\n";
+    std::cout << "p_no_col_unseen: " << p_no_col_unseen << "\n";
+    std::cout << "Col Prob " << 1.0 - p_no_col_seen * p_no_col_unseen << "\n";
+    std::cout << "num_observed sets " << box_world_ptr->num_observed_sets << "\n";
     std::cout << "ending swept objective\n";
+
+    
+    // return ob::Cost(1.0 - p_no_col_seen);
     return ob::Cost(1.0 - p_no_col_seen * p_no_col_unseen);
 }
 
@@ -508,7 +606,7 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
 
     size_t n = path->getStateCount();
     ob::StateSpace *stateSpace = spi_ptr->getStateSpace().get();
-    // std::cout << "Executing path\n";
+    std::cout << "Executing path\n";
 
     for(size_t step = 0; step < n-1; step++)
     {
@@ -544,8 +642,8 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
     return true;
 }
 
-Maybe::Maybe<ob::PathPtr> BoxPlanner::planPath(std::vector<double> start,
-                                               std::vector<double> goal)
+Maybe::Maybe<ob::PathPtr> BoxPlanner::planPathDouble(std::vector<double> start,
+                                                     std::vector<double> goal)
 {
     ob::ScopedState<> start_ss(space);
     ob::ScopedState<> goal_ss(space);
@@ -636,6 +734,63 @@ void BoxLBKPIECE::postPlan(ob::PathPtr path)
 {
     simp_->simplifyMax(*(path->as<og::PathGeometric>()));
 }
+
+
+
+
+/***********************************************
+ **               Box LazyRRTF                **
+ ***********************************************/
+
+BoxLazyRRTF::BoxLazyRRTF(BoxWorld* box_world) :
+    BoxPlanner(box_world)
+{
+    initializePlanner();
+}
+
+void BoxLazyRRTF::initializePlanner()
+{
+    // spi_ptr->setStateValidityChecker(v_ptr);
+    // spi_ptr->setMotionValidator(v_ptr);
+    std::shared_ptr<og::LazyRRTF> lrrtf = std::make_shared<og::LazyRRTF>(spi_ptr);
+    pv_ = std::make_shared<BoxPathValidator>(spi_ptr, box_world_ptr);
+    lrrtf->setPathValidator(pv_);
+    planner = lrrtf;
+    planner->setup();
+}
+
+Maybe::Maybe<ob::PathPtr> BoxLazyRRTF::planPath(ompl::base::ScopedState<> start,
+                                                ompl::base::ScopedState<> goal)
+{
+    preparePlanner(start, goal);
+    ob::PathPtr path;
+    int planning_time = 2;
+    double threshold = 0.5;
+    pv_->setProbabilityThreshold(threshold);
+    ob::PlannerStatus solved = planner->solve(planning_time);
+
+    while(!solved)
+    {
+        threshold += 0.1;
+        pv_->setProbabilityThreshold(threshold);
+        solved = planner->solve(planning_time);
+        if(threshold > 1.0){
+            break;
+        }
+    }
+
+    
+    if (!solved)
+    {
+        std::cout << "No solution could be found" << std::endl;
+        return Maybe::Maybe<ob::PathPtr>();
+    }
+
+    path = pdef_->getSolutionPath();
+    postPlan(path);
+    return Maybe::Maybe<ob::PathPtr>(path);
+}
+
 
 
 
@@ -731,7 +886,8 @@ int main(int argc, char* argv[])
     BoxTRRT<BoxMinColProbSweptObjective> planner_unused4(boxWorld.get());
 
     // BoxRRTstar<BoxMinColProbSweptObjective> planner_unused3(boxWorld.get());
-    BoxTRRT<BoxMinColProbSweptObjective> planner(boxWorld.get());
+    // BoxTRRT<BoxMinColProbSweptObjective> planner(boxWorld.get());
+    BoxLazyRRTF planner(boxWorld.get());
 
     std::vector<double> start = {0.5, 0.2, 0.5};
     std::vector<double> goal = {0.5, 0.8, 0.5};
@@ -741,7 +897,7 @@ int main(int argc, char* argv[])
     while(!reached_goal)
     {
         boxWorld->updateActual(Box(start[0], start[1], start[2], BOX_WIDTH));
-        Maybe::Maybe<ob::PathPtr> path = planner.planPath(start, goal);
+        Maybe::Maybe<ob::PathPtr> path = planner.planPathDouble(start, goal);
         if(!path.Valid())
         {
             std::cout << "Path planning failed\n";

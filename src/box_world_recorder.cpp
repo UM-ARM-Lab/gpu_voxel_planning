@@ -17,6 +17,7 @@ const std::string RRTSTAR_MINVOX_TIME = "RRTstar(minvox)";
 const std::string RRTSTAR_MINPROB_TIME = "RRTstar(minprob)";
 const std::string RRTSTAR_MINPROB_SWEPT_TIME = "RRTstar(sweptprob)";
 const std::string TRRT_MINPROB_SWEPT_TIME = "TRRT(sweptprob)";
+const std::string LazyRRTF_TIME = "LRRTF";
 const std::string ALL_COUNTS = "All counts";
 
 
@@ -53,7 +54,8 @@ bool plan(BoxPlanner &planner, const std::string &name)
     {
         boxWorld->updateActual(Box(start[0], start[1], start[2], BOX_WIDTH));
         PROFILE_START(name + " plan");
-        Maybe::Maybe<ob::PathPtr> path = planner.planPath(start, goal);
+        Maybe::Maybe<ob::PathPtr> path = planner.planPathDouble(start, goal);
+        std::cout << "Solution found\n";
         PROFILE_RECORD(name + " plan");
         if(!path.Valid())
         {
@@ -97,6 +99,11 @@ bool testPlanner(std::string logger)
 bool testLBKPIECE()
 {
     return testPlanner<BoxLBKPIECE>(LBKPIECE_TIME);
+}
+
+bool testLRRTF()
+{
+    return testPlanner<BoxLazyRRTF>(LazyRRTF_TIME);
 }
 
 bool testMinVoxRRTstar()
@@ -146,8 +153,9 @@ int main(int argc, char* argv[])
         PROFILE_RECORD(ALL_COUNTS);
         // testLBKPIECE();
         // testMinVoxRRTstar();
-        testMinColProbRRTstar();
-        testMinColProbSweptRRTstar();
+        // testMinColProbRRTstar();
+        // testMinColProbSweptRRTstar();
+        testLRRTF();
         // testMinColProbSweptTRRT();
     }
 
@@ -169,6 +177,9 @@ int main(int argc, char* argv[])
         RRTSTAR_MINPROB_SWEPT_TIME,
         RRTSTAR_MINPROB_SWEPT_TIME + " plan",
         RRTSTAR_MINPROB_SWEPT_TIME + " execute",
+        LazyRRTF_TIME,
+        LazyRRTF_TIME + " plan",
+        LazyRRTF_TIME + " execute",
         TRRT_MINPROB_SWEPT_TIME,
         TRRT_MINPROB_SWEPT_TIME + " plan",
         TRRT_MINPROB_SWEPT_TIME + " execute",
