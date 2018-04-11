@@ -56,6 +56,8 @@ bool plan(BoxPlanner &planner, const std::string &name)
         PROFILE_START(name + " plan");
         Maybe::Maybe<ob::PathPtr> path = planner.planPathDouble(start, goal);
         std::cout << "Solution found\n";
+        sleep(1);
+        std::cout << "Getting ready to execute path\n";
         PROFILE_RECORD(name + " plan");
         if(!path.Valid())
         {
@@ -144,7 +146,7 @@ int main(int argc, char* argv[])
     // BoxRRTstar<BoxMinVoxObjective> planner2(boxWorld.get());
     // BoxRRTstar<BoxMinColProbObjective> planner3(boxWorld.get());
 
-    int num_tests = 20;
+    int num_tests = 5;
     std::cout << "Running " << num_tests << " trials\n";
 
     for(int i=0; i<num_tests; i++)

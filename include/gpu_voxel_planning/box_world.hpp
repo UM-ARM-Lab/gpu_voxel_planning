@@ -238,8 +238,10 @@ public:
     virtual void initializePlanner();
     virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
                                                        ompl::base::ScopedState<> goal);
+    virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal);
 protected:
     std::shared_ptr<BoxPathValidator> pv_;
+    double threshold;
 };
 
 template <class T>

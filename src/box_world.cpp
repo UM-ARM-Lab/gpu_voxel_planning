@@ -9,12 +9,13 @@
 
 
 
+
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 #define BOX_WIDTH 0.15
 #define NUM_SETS 100
-
+#define EXPLORE_SLEEP_TIME 100000
 
 std::shared_ptr<BoxWorld> boxWorld;
 
@@ -83,7 +84,7 @@ bool BoxWorld::updateActual(const Box &b, bool create_obstacle)
 
         if(create_obstacle)
         {
-            std::cout << "Createing obstacle...";
+            // std::cout << "Createing obstacle...";
             gvl->insertBoxIntoMap(b.lower(), b.upper(), SEEN_OBSTACLE_SETS[num_observed_sets], PROB_OCCUPIED);
 
             if(num_observed_sets >= NUM_SETS)
@@ -92,7 +93,7 @@ bool BoxWorld::updateActual(const Box &b, bool create_obstacle)
                 return true;
             }
 
-            std::cout << "Done\n";
+            // std::cout << "Done\n";
             num_observed_sets++;
         }
 
@@ -101,7 +102,7 @@ bool BoxWorld::updateActual(const Box &b, bool create_obstacle)
     }
     
     gvl->insertBoxIntoMap(b.lower(), b.upper(), BOX_SWEPT_VOLUME_MAP, PROB_OCCUPIED);
-    std::cout << "finished updating actual\n";
+    // std::cout << "finished updating actual\n";
     return false;
 }
 
@@ -296,7 +297,7 @@ void BoxPathValidator::setProbabilityThreshold(double th)
 bool BoxPathValidator::checkPath(const std::vector<ompl::base::State*> path,
                                  size_t &collision_index)
 {
-    std::cout << "Checking path...";
+    // std::cout << "Checking path...";
 
     
     ompl::base::StateSpace *stateSpace_ = si_->getStateSpace().get();
@@ -342,12 +343,12 @@ bool BoxPathValidator::checkPath(const std::vector<ompl::base::State*> path,
 
         prob_col = 1.0 - p_no_col_seen * p_no_col_unseen;
 
-        if (prob_col <= 1.0)
+        if (prob_col > 1.0)
         {
             std::cout << "Prob_col " << prob_col;
-            std::cout << "p_no_col_seen " << p_no_col_seen;
-            std::cout << "p_no_col_unseen " << p_no_col_unseen;
-            assert (prob_col <= 1.0);
+            std::cout << ", p_no_col_seen " << p_no_col_seen;
+            std::cout << ", p_no_col_unseen " << p_no_col_unseen;
+            // assert (prob_col <= 1.0);
         }
 
         
@@ -359,10 +360,10 @@ bool BoxPathValidator::checkPath(const std::vector<ompl::base::State*> path,
     si_->freeState(test);
     
 
-    std::cout << "Finished\n";
-    std::cout << "pathsize " << path.size();
-    std::cout << " col index " << collision_index << "\n";
-    std::cout << "Threshold " << threshold << "\n";
+    // std::cout << "Finished\n";
+    // std::cout << "pathsize " << path.size();
+    // std::cout << " col index " << collision_index << "\n";
+    // std::cout << "Threshold " << threshold << "\n";
     return prob_col <= threshold;
 }
 
@@ -574,27 +575,28 @@ BoxPlanner::BoxPlanner(BoxWorld* box_world)
  */
 void BoxPlanner::probeAround(const Box &b, double delta)
 {
+    
     double x = b.x, y = b.y, z = b.z;
     std::cout << x << ", " << y << ", " << z << "\n";
     double sl = b.sl;
     box_world_ptr->updateActual(Box(x+delta,y,z,sl));
     box_world_ptr->doVis();
-    usleep(200000);
+    usleep(EXPLORE_SLEEP_TIME);
     box_world_ptr->updateActual(Box(x-delta,y,z,sl));
     box_world_ptr->doVis();
-    usleep(200000);
+    usleep(EXPLORE_SLEEP_TIME);
     box_world_ptr->updateActual(Box(x,y+delta,z,sl));
     box_world_ptr->doVis();
-    usleep(200000);
+    usleep(EXPLORE_SLEEP_TIME);
     box_world_ptr->updateActual(Box(x,y-delta,z,sl));
     box_world_ptr->doVis();
-    usleep(200000);
+    usleep(EXPLORE_SLEEP_TIME);
     box_world_ptr->updateActual(Box(x,y,z+delta,sl));
     box_world_ptr->doVis();
-    usleep(200000);
+    usleep(EXPLORE_SLEEP_TIME);
     box_world_ptr->updateActual(Box(x,y,z-delta,sl));
     box_world_ptr->doVis();
-    usleep(200000);
+    usleep(EXPLORE_SLEEP_TIME);
 }
 
 
@@ -606,7 +608,7 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
 
     size_t n = path->getStateCount();
     ob::StateSpace *stateSpace = spi_ptr->getStateSpace().get();
-    std::cout << "Executing path\n";
+    std::cout << "Executing path...";
 
     for(size_t step = 0; step < n-1; step++)
     {
@@ -625,10 +627,11 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
             stateSpace->interpolate(s1, s2, (double)j / (double)nd, showState);
             
             Box b = box_world_ptr->stateToBox(showState);
-            if(box_world_ptr->updateActual(b, false))
+            if(box_world_ptr->updateActual(b, true))
             {
                 stateSpace->interpolate(s1, s2, (double)(j-1) / (double)nd, showState);
                 probeAround(box_world_ptr->stateToBox(showState), 0.02);
+                std::cout << "Added collision sets\n";
                 return false;
             }
             box_world_ptr->doVis();
@@ -639,6 +642,7 @@ bool BoxPlanner::executePath(og::PathGeometric* path)
         spi_ptr->freeState(showState);
 
     }
+    std::cout << "Path success!\n";
     return true;
 }
 
@@ -757,6 +761,7 @@ void BoxLazyRRTF::initializePlanner()
     lrrtf->setPathValidator(pv_);
     planner = lrrtf;
     planner->setup();
+    threshold = 0.5;
 }
 
 Maybe::Maybe<ob::PathPtr> BoxLazyRRTF::planPath(ompl::base::ScopedState<> start,
@@ -764,20 +769,22 @@ Maybe::Maybe<ob::PathPtr> BoxLazyRRTF::planPath(ompl::base::ScopedState<> start,
 {
     preparePlanner(start, goal);
     ob::PathPtr path;
-    int planning_time = 2;
-    double threshold = 0.5;
+    int planning_time = 5;
+
     pv_->setProbabilityThreshold(threshold);
     ob::PlannerStatus solved = planner->solve(planning_time);
 
     while(!solved)
     {
         threshold += 0.1;
+        std::cout << "threshold " << threshold << "\n";
         pv_->setProbabilityThreshold(threshold);
         solved = planner->solve(planning_time);
-        if(threshold > 1.0){
+        if(threshold > 1.2){
             break;
         }
     }
+    threshold -= 0.1;
 
     
     if (!solved)
@@ -789,6 +796,15 @@ Maybe::Maybe<ob::PathPtr> BoxLazyRRTF::planPath(ompl::base::ScopedState<> start,
     path = pdef_->getSolutionPath();
     postPlan(path);
     return Maybe::Maybe<ob::PathPtr>(path);
+}
+
+
+void BoxLazyRRTF::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
+{
+    pdef_ = std::make_shared<ob::ProblemDefinition>(spi_ptr);
+    pdef_->setStartAndGoalStates(start, goal);
+    planner->setProblemDefinition(pdef_);
+
 }
 
 
