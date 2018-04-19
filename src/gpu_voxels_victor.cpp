@@ -24,8 +24,10 @@
 #define VICTOR_PATH_ENDPOINTS_MAP "victor_path_endpoints_map"
 #define VICTOR_PATH_SOLUTION_MAP "victor_path_solutions_map"
 #define OBSTACLE_DISTANCE_MAP "obstacle_distance_map"
-#define VICTOR_ROBOT "victor_robot"
 
+#define SIM_OBSTACLES_MAP "sim_obstacles_map"
+#define VICTOR_ROBOT "victor_robot"
+#define NUM_SETS 100
 
 
 
@@ -51,7 +53,8 @@ std::vector<std::string> right_arm_collision_link_names{
 
 
 
-GpuVoxelsVictor::GpuVoxelsVictor()
+GpuVoxelsVictor::GpuVoxelsVictor():
+    num_observed_sets(0)
 {
     gvl = gpu_voxels::GpuVoxels::getInstance();
     gvl->initialize(200, 200, 200, 0.02);
@@ -67,17 +70,31 @@ GpuVoxelsVictor::GpuVoxelsVictor()
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_PATH_ENDPOINTS_MAP);
     gvl->addMap(MT_DISTANCE_VOXELMAP, OBSTACLE_DISTANCE_MAP);
     
-    gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);  
+    gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);
+    
+    SEEN_OBSTACLE_SETS.resize(NUM_SETS);
+    for(int i=0; i < NUM_SETS; i++)
+    {
+        SEEN_OBSTACLE_SETS[i] = "seen_obstacles_" + std::to_string(i);
+        gvl->addMap(MT_PROBAB_VOXELMAP, SEEN_OBSTACLE_SETS[i]);
+        gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
+    }
+
 
 
 }
 
-
-void GpuVoxelsVictor::updateVictorPosition(robot::JointValueMap joint_positions)
+void GpuVoxelsVictor::insertVictorIntoMap(const VictorConfig &c, const std::string &map_name)
 {
-    std::lock_guard<boost::recursive_timed_mutex> g(gvl->getMap(VICTOR_ACTUAL_MAP)->m_mutex);
+    gvl->setRobotConfiguration(VICTOR_ROBOT, c);
+    gvl->insertRobotIntoMap(VICTOR_ROBOT, map_name, PROB_OCCUPIED);
+}
+
+
+void GpuVoxelsVictor::updateActual(const VictorConfig &c)
+{
     gvl->clearMap(VICTOR_ACTUAL_MAP);
-    gvl->setRobotConfiguration(VICTOR_ROBOT, joint_positions);
+    gvl->setRobotConfiguration(VICTOR_ROBOT, c);
     // gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, eBVM_OCCUPIED);
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, PROB_OCCUPIED);
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_SWEPT_VOLUME_MAP, PROB_OCCUPIED);
@@ -93,13 +110,9 @@ void GpuVoxelsVictor::resetQuery()
     gvl->clearMap(VICTOR_QUERY_MAP);
 }
 
-void GpuVoxelsVictor::addQueryState(const robot::JointValueMap &joint_values_map)
+void GpuVoxelsVictor::addQueryState(const VictorConfig &c)
 {
-    // update the robot joints:
-    gvl->setRobotConfiguration(VICTOR_ROBOT, joint_values_map);
-    // insert the robot into the map:
-    gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_QUERY_MAP, PROB_OCCUPIED);
-
+    insertVictorIntoMap(c, VICTOR_QUERY_MAP);
 }
 
 /*
@@ -119,14 +132,14 @@ size_t GpuVoxelsVictor::countNumCollisions()
 }
 
 
-size_t GpuVoxelsVictor::countNumCollisions(const robot::JointValueMap &joint_values_map)
+size_t GpuVoxelsVictor::countNumCollisions(const VictorConfig &c)
 {
     PROFILE_START(ISVALID_INSERTION);
     PROFILE_START(QUERY_INSERTION);
     
     resetQuery();
 
-    addQueryState(joint_values_map);
+    addQueryState(c);
 
     PROFILE_RECORD(ISVALID_INSERTION);
     PROFILE_RECORD(QUERY_INSERTION);
@@ -134,9 +147,9 @@ size_t GpuVoxelsVictor::countNumCollisions(const robot::JointValueMap &joint_val
 }
 
 
-bool GpuVoxelsVictor::queryFreeConfiguration(const robot::JointValueMap &joint_values_map)
+bool GpuVoxelsVictor::queryFreeConfiguration(const VictorConfig &c)
 {
-    return countNumCollisions(joint_values_map) == 0;
+    return countNumCollisions(c) == 0;
 }
 
 
@@ -154,7 +167,7 @@ void GpuVoxelsVictor::addCollisionPoints(CollisionInformation collision_info)
         std::cout << "Asked to add collision, but provided CollisionInformation indicates no collision\n";
         return;
     }
-    robot::JointValueMap cur_joints, extended_joints;
+    VictorConfig cur_joints, extended_joints;
     for(size_t i = 0; i < collision_info.joints.size(); i++)
     {
         cur_joints[right_arm_joint_names[i]] = collision_info.joints[i];
@@ -177,57 +190,34 @@ void GpuVoxelsVictor::addCollisionPoints(CollisionInformation collision_info)
     // Update robot to be slightly into collision object.
     // Insert only the last few links (heuristic to avoid adding too many points)
 
-    
-    gvl->setRobotConfiguration(VICTOR_ROBOT, extended_joints);
-        
-    // gvl->insertRobotIntoMap(VICTOR_ROBOT, ENV_MAP, PROB_OCCUPIED);
 
+    addCollisionLinks(extended_joints, collision_info.links_in_contact, ENV_MAP);
+}
+
+
+void GpuVoxelsVictor::addCollisionLinks(const VictorConfig &c,
+                                        const std::vector<std::string> &collision_links,
+                                        const std::string &map_name)
+{
+    gvl->setRobotConfiguration(VICTOR_ROBOT, c);
     RobotInterfaceSharedPtr rob = gvl->getRobot(VICTOR_ROBOT);
     const MetaPointCloud* clouds = rob->getTransformedClouds();
     // clouds->syncToHost();
     rob->syncToHost();
 
-
-    // Add only the links in collision
-    // for(auto collision_link_name: right_arm_collision_link_names)
-    std::cout << "Collided with ";
-    for(auto collision_link_name: collision_info.links_in_contact)
+    for(auto collision_link_name: collision_links)
     {
-        std::cout << collision_link_name << ", ";
-        // std::cout << collision_link_name << "\n";
         int16_t cloud_num = clouds->getCloudNumber(collision_link_name);
         uint32_t cloud_size = clouds->getPointcloudSizes()[cloud_num];
         const gpu_voxels::Vector3f* cloud_ptr = clouds->getPointCloud(cloud_num);
         const std::vector<gpu_voxels::Vector3f> cloud(cloud_ptr, cloud_ptr + cloud_size);
-        gvl->insertPointCloudIntoMap(cloud, ENV_MAP, PROB_OCCUPIED);
+        gvl->insertPointCloudIntoMap(cloud, map_name, PROB_OCCUPIED);
     }
-    std::cout << "\n";
-            
 
-    //Add voxels to map
-    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(ENV_MAP);
-    // boost::shared_ptr<voxelmap::ProbVoxelMap> obstacles(obstacles_ptr->as<voxelmap::ProbVoxelMap>());
-    // voxelmap::ProbVoxelMap* obstacles(obstacles_ptr->as<voxelmap::ProbVoxelMap>());
+    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(map_name);
     boost::shared_ptr<voxelmap::ProbVoxelMap> obstacles = boost::dynamic_pointer_cast<voxelmap::ProbVoxelMap>(obstacles_ptr);
   
     obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
-
-        
-    boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap(OBSTACLE_DISTANCE_MAP));
-
-
-
-    // std::cout << "Obstacle dist: " << dist_map->getObstacleDistance(Vector3ui(10,100,100)) << "\n";
-
-    // auto start = std::chrono::steady_clock::now();
-    dist_map->clearMap();
-    dist_map->mergeOccupied(obstacles);
-    dist_map->jumpFlood3D(cMAX_THREADS_PER_BLOCK, 0, false);
-    // determineVictorDist();
-    // auto end = std::chrono::steady_clock::now();
-
-    // std::cout << "Elapsed time: "
-    //           << std::chrono::duration_cast<std::chrono::microseconds>(end-start).count() << "us \n";
 
 }
 
@@ -248,30 +238,13 @@ int GpuVoxelsVictor::determineVictorDist()
 
 void GpuVoxelsVictor::doVis()
 {
-    // tell the visualier that the map has changed:
-
-    // gvl->visualizeMap(VICTOR_QUERY_MAP);
-
-    // BitVoxelMeaning col = eBVM_COLLISION;
-    // boost::shared_ptr<voxelmap::DistanceVoxelMap> env_map_red = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap(ENV_MAP_RED));
-
-    // env_map_red->mergeOccupied(gvl->getMap(ENV_MAP), Vector3f(), &col);
-
-    
-    arc_helpers::DoNotOptimize<bool>(gvl->visualizeMap(VICTOR_ACTUAL_MAP, true));
     gvl->visualizeMap(ENV_MAP, true);
-    // gvl->visualizeMap(ENV_MAP_RED);
-
-    // gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
-    // gvl->visualizeMap(VICTOR_PATH_ENDPOINTS_MAP);
-    // usleep(100000);
-    // std::cout << "Doing Vis\n";
 }
 
 
 
 // void GpuVoxelsVictor::visualizeSolution(ob::PathPtr path)
-void GpuVoxelsVictor::visualizeSolution(const std::vector<robot::JointValueMap> &joint_maps)
+void GpuVoxelsVictor::visualizeSolution(const std::vector<VictorConfig> &configs)
 {
     gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
 
@@ -281,10 +254,10 @@ void GpuVoxelsVictor::visualizeSolution(const std::vector<robot::JointValueMap> 
         
     
     // std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
-    for(size_t step = 0; step < joint_maps.size(); step++)
+    for(size_t step = 0; step < configs.size(); step++)
     {
         PROFILE_START(INSERT_VIZ_SOLUTION);
-        auto &state_joint_values = joint_maps[step];
+        auto &state_joint_values = configs[step];
         // update the robot joints:
         gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
         // insert the robot into the map:
@@ -298,7 +271,7 @@ void GpuVoxelsVictor::visualizeSolution(const std::vector<robot::JointValueMap> 
 
 void GpuVoxelsVictor::hideSolution()
 {
-    visualizeSolution(std::vector<robot::JointValueMap>());
+    visualizeSolution(std::vector<VictorConfig>());
 }
 
 
@@ -307,7 +280,7 @@ void GpuVoxelsVictor::hideSolution()
 // {
 
 //     gvl->clearMap(VICTOR_PATH_ENDPOINTS_MAP);
-//     robot::JointValueMap state_joint_values = toRightJointValueMap<ob::ScopedState<>>(start);
+//     VictorConfig state_joint_values = toRightJointValueMap<ob::ScopedState<>>(start);
 
 //     // update the robot joints:
 //     gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
@@ -346,10 +319,9 @@ bool GpuVoxelsVictor::isInJointLimits(const double *values)
 }
 
 
-
-robot::JointValueMap GpuVoxelsVictor::toRightJointValueMap(const double* values)
+VictorConfig GpuVoxelsVictor::toRightJointValueMap(const double* values)
 {
-    robot::JointValueMap jvm;
+    VictorConfig jvm;
     for(size_t i=0; i<right_arm_joint_names.size(); i++)
     {
         jvm[right_arm_joint_names[i]] = values[i];
@@ -358,3 +330,21 @@ robot::JointValueMap GpuVoxelsVictor::toRightJointValueMap(const double* values)
 }
 
 
+
+
+
+
+/*************************************
+ **       SIM OBSTACLES             **
+ ************************************/
+SimWorld::SimWorld()
+{
+    victor_model = GpuVoxelsVictor();
+    gvl = gpu_voxels::GpuVoxels::getInstance();
+    gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
+    gvl->visualizeMap(SIM_OBSTACLES_MAP);
+}
+
+void SimWorld::initializeObstacles()
+{
+}

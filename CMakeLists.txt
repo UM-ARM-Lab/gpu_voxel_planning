@@ -9,12 +9,13 @@ set(CATKIN_PACKAGES
   victor_hardware_interface
   or_victor
   trajectory_msgs
+  arc_utilities
   )
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation gazebo_victor arc_utilities)
+find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation gazebo_victor)
 FIND_PACKAGE(icl_core REQUIRED )
 FIND_PACKAGE(gpu_voxels REQUIRED)
 FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
@@ -95,6 +96,8 @@ target_link_libraries(lazyrrtf
   )
 
 
+
+
 add_executable(box_world src/box_world.cpp)
 target_link_libraries(box_world
   ${catkin_LIBRARIES}
@@ -127,62 +130,87 @@ target_link_libraries(box_world_recorder
 
 add_library(victor_model src/gpu_voxels_victor.cpp)
 target_link_libraries(victor_model
+  ${catkin_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
   )
 
-add_library(victor_validator src/victor_validator.cpp)
-target_link_libraries(victor_validator
-  victor_model)
-
-add_library(victor_planning_base src/victor_planning.cpp)
-target_link_libraries(victor_planning_base
-  victor_validator
-  victor_model
+add_executable(wip_victor_sim src/wip_victor_sim.cpp)
+target_link_libraries(wip_victor_sim
   ${catkin_LIBRARIES}
   ${Boost_SYSTEM_LIBRARY}
   ${icl_core_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
   ${OMPL_LIBRARIES}
+  lazyrrtf
+  victor_model
   )
 
 
-
-add_library(victor_lbkpiece src/victor_lbkpiece.cpp)
-target_link_libraries(victor_lbkpiece
-  victor_planning_base
-  victor_model)
-
-add_library(victor_trrt src/victor_trrt.cpp)
-target_link_libraries(victor_trrt
-  victor_planning_base
-  victor_model)
-
-add_library(victor_rrtstar src/victor_rrtstar.cpp)
-target_link_libraries(victor_rrtstar
-  victor_planning_base
-  wip_optimization_objective
-  victor_model
-)
-
-add_library(wip_optimization_objective src/wip_optimization_objective.cpp)
-target_link_libraries(wip_optimization_objective
-  victor_model
-  # victor_planning_base
-  )
+# add_executable(victor_sim_world src/victor_sim_world.cpp)
+# target_link_libraries(victor_sim_world
+#   ${catkin_LIBRARIES}
+#   ${Boost_SYSTEM_LIBRARY}
+#   ${icl_core_LIBRARIES}
+#   ${gpu_voxels_LIBRARIES}
+#   ${OMPL_LIBRARIES}
+#   lazyrrtf
+#   victor_model
+#   )
 
 
+# add_library(victor_validator src/victor_validator.cpp)
+# target_link_libraries(victor_validator
+#   victor_model)
 
-add_executable(ros_planning_node src/ros_planner.cpp)
-target_link_libraries (ros_planning_node
-  victor_lbkpiece
-  victor_trrt
-  victor_rrtstar
-  victor_model
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  )
+# add_library(victor_planning_base src/victor_planning.cpp)
+# target_link_libraries(victor_planning_base
+#   victor_validator
+#   victor_model
+#   ${catkin_LIBRARIES}
+#   ${Boost_SYSTEM_LIBRARY}
+#   ${icl_core_LIBRARIES}
+#   ${gpu_voxels_LIBRARIES}
+#   ${OMPL_LIBRARIES}
+#   )
+
+
+
+# add_library(victor_lbkpiece src/victor_lbkpiece.cpp)
+# target_link_libraries(victor_lbkpiece
+#   victor_planning_base
+#   victor_model)
+
+# add_library(victor_trrt src/victor_trrt.cpp)
+# target_link_libraries(victor_trrt
+#   victor_planning_base
+#   victor_model)
+
+# add_library(victor_rrtstar src/victor_rrtstar.cpp)
+# target_link_libraries(victor_rrtstar
+#   victor_planning_base
+#   wip_optimization_objective
+#   victor_model
+# )
+
+# add_library(wip_optimization_objective src/wip_optimization_objective.cpp)
+# target_link_libraries(wip_optimization_objective
+#   victor_model
+#   # victor_planning_base
+#   )
+
+
+
+# add_executable(ros_planning_node src/ros_planner.cpp)
+# target_link_libraries (ros_planning_node
+#   victor_lbkpiece
+#   victor_trrt
+#   victor_rrtstar
+#   victor_model
+#   ${catkin_LIBRARIES}
+#   ${Boost_SYSTEM_LIBRARY}
+#   ${icl_core_LIBRARIES}
+#   ${gpu_voxels_LIBRARIES}
+#   )
 
 # add_executable(validator_timing src/validator_timing.cpp)
 # target_link_libraries (validator_timing
