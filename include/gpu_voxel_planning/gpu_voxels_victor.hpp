@@ -8,6 +8,7 @@
 
 std::vector<std::string> SEEN_OBSTACLE_SETS;
 
+
 typedef robot::JointValueMap VictorConfig;
 
 class GpuVoxelsVictor
@@ -39,7 +40,7 @@ public:
 
     bool isInJointLimits(const double *values);
 
-    VictorConfig toRightJointValueMap(const double* values);
+    VictorConfig toVictorConfig(const double* values);
 
     // template<typename T>
     // robot::JointValueMap toRightJointValueMap(const T values);
@@ -65,10 +66,10 @@ public:
     SimWorld();
     void initializeObstacles();
 
+
 public:    
     gpu_voxels::GpuVoxelsSharedPtr gvl;
     GpuVoxelsVictor victor_model;
-
 };
 
 

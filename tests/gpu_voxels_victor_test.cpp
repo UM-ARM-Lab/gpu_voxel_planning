@@ -11,7 +11,7 @@ TEST(GpuVoxelVictor, collisions)
 
     GpuVoxelsVictor victor_model;
     double angles[] = {0,0,0,0,0,0,0};
-    robot::JointValueMap map = victor_model.toRightJointValueMap(angles);
+    robot::JointValueMap map = victor_model.toVictorConfig(angles);
     bool is_valid = victor_model.queryFreeConfiguration(map);
     size_t col_count = victor_model.countNumCollisions(map);
     EXPECT_EQ(0, col_count) << "Victor at initial position has collisions";

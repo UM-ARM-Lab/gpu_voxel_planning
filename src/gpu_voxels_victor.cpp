@@ -56,6 +56,7 @@ std::vector<std::string> right_arm_collision_link_names{
 GpuVoxelsVictor::GpuVoxelsVictor():
     num_observed_sets(0)
 {
+    std::cout << "Initializing gpu voxels victor\n";
     gvl = gpu_voxels::GpuVoxels::getInstance();
     gvl->initialize(200, 200, 200, 0.02);
 
@@ -79,7 +80,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
         gvl->addMap(MT_PROBAB_VOXELMAP, SEEN_OBSTACLE_SETS[i]);
         gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
     }
-
+    gvl->visualizeMap(VICTOR_ACTUAL_MAP);
 
 
 }
@@ -280,13 +281,13 @@ void GpuVoxelsVictor::hideSolution()
 // {
 
 //     gvl->clearMap(VICTOR_PATH_ENDPOINTS_MAP);
-//     VictorConfig state_joint_values = toRightJointValueMap<ob::ScopedState<>>(start);
+//     VictorConfig state_joint_values = toVictorConfig<ob::ScopedState<>>(start);
 
 //     // update the robot joints:
 //     gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
 //     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_PATH_ENDPOINTS_MAP, BitVoxelMeaning(eBVM_SWEPT_VOLUME_START));
 
-//     state_joint_values = toRightJointValueMap<ob::ScopedState<>>(goal);
+//     state_joint_values = toVictorConfig<ob::ScopedState<>>(goal);
 
 //     // update the robot joints:
 //     gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
@@ -319,7 +320,7 @@ bool GpuVoxelsVictor::isInJointLimits(const double *values)
 }
 
 
-VictorConfig GpuVoxelsVictor::toRightJointValueMap(const double* values)
+VictorConfig GpuVoxelsVictor::toVictorConfig(const double* values)
 {
     VictorConfig jvm;
     for(size_t i=0; i<right_arm_joint_names.size(); i++)
@@ -339,12 +340,39 @@ VictorConfig GpuVoxelsVictor::toRightJointValueMap(const double* values)
  ************************************/
 SimWorld::SimWorld()
 {
-    victor_model = GpuVoxelsVictor();
+    std::cout << "Creating sim world\n";
     gvl = gpu_voxels::GpuVoxels::getInstance();
     gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
+
+    double init_angles[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    VictorConfig init_config = victor_model.toVictorConfig(init_angles);
+    victor_model.updateActual(init_config);
 }
 
 void SimWorld::initializeObstacles()
 {
+    Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
+    Vector3f tc(1.5, 1.6, 0.9); //table corner
+    Vector3f tld(.033, 0.033, tc.z); //table leg dims
+    
+    gvl->insertBoxIntoMap(tc, tc + td,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    
+
+    
+    gvl->visualizeMap(SIM_OBSTACLES_MAP);
+
 }
