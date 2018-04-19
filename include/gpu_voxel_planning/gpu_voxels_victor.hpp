@@ -10,6 +10,7 @@ std::vector<std::string> SEEN_OBSTACLE_SETS;
 
 
 typedef robot::JointValueMap VictorConfig;
+typedef std::vector<std::vector<double>> Path;
 
 class GpuVoxelsVictor
 {
@@ -65,11 +66,12 @@ class SimWorld
 public:
     SimWorld();
     void initializeObstacles();
-
+    bool executePath(const Path &path);
 
 public:    
     gpu_voxels::GpuVoxelsSharedPtr gvl;
     GpuVoxelsVictor victor_model;
+
 };
 
 

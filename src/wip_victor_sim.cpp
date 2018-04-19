@@ -1,11 +1,14 @@
 #include "gpu_voxels_victor.hpp"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
-#include <ompl/base/spaces/SE3StateSpace.h>
 #include <csignal>
 #include <vector>
 #include <cmath>
 
+
+
 std::shared_ptr<SimWorld> simWorld;
+
+
 
 
 /***********************************************
@@ -43,6 +46,14 @@ int main(int argc, char* argv[])
     int unused;
     std::cout << "Waiting for user input to start...\n";
     std::cin >> unused;
+
+    Path path;
+    for(double d = 0.0; d < 1.0; d+=0.02)
+    {
+        path.push_back(std::vector<double>(7,d));
+    }
+
+    simWorld->executePath(path);
 
     // VictorPlanner planner(simWorld.get());
     // VictorLBKPIECE planner_unused0(simWorld.get());

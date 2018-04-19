@@ -30,7 +30,6 @@
 #define NUM_SETS 100
 
 
-
 std::vector<std::string> right_arm_joint_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
         "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5",
         "victor_right_arm_joint_6", "victor_right_arm_joint_7"};
@@ -239,7 +238,7 @@ int GpuVoxelsVictor::determineVictorDist()
 
 void GpuVoxelsVictor::doVis()
 {
-    gvl->visualizeMap(ENV_MAP, true);
+    gvl->visualizeMap(VICTOR_ACTUAL_MAP, true);
 }
 
 
@@ -375,4 +374,18 @@ void SimWorld::initializeObstacles()
     
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
 
+}
+
+
+bool SimWorld::executePath(const Path &path)
+{
+    for(auto joint_angles: path)
+    {
+        VictorConfig c = victor_model.toVictorConfig(joint_angles.data());
+        victor_model.updateActual(c);
+        victor_model.doVis();
+        usleep(50000);
+    }
+    std::cout << "Path success!\n";
+    return true;
 }
