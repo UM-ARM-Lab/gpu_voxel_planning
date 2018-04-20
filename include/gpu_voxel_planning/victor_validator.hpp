@@ -16,11 +16,13 @@
 #include <mutex>
 
 
-class VictorValidator : public ompl::base::StateValidityChecker, public ompl::base::MotionValidator, public std::enable_shared_from_this<VictorValidator>
+class VictorValidator : public ompl::base::StateValidityChecker,
+                        public ompl::base::MotionValidator,
+                        public std::enable_shared_from_this<VictorValidator>
 {
 public:
     VictorValidator(const ompl::base::SpaceInformationPtr &si,
-                    std::shared_ptr<GpuVoxelsVictor> victor_model);
+                    GpuVoxelsVictor* victor_model);
     ~VictorValidator();
 
     // bool isCurrentlyValid() const;
@@ -34,20 +36,32 @@ public:
         return shared_from_this();
     }
 
-    void insertStartAndGoal(const ompl::base::ScopedState<> &start, const ompl::base::ScopedState<> &goal) const;
-
 
 public:
-    ompl::base::SpaceInformationPtr si_;
-
+    const ompl::base::SpaceInformationPtr si_;
     
-private:
+protected:
     ompl::base::StateSpace *stateSpace_;
+    GpuVoxelsVictor* victor_model_;
+};
 
-    mutable std::mutex g_i_mutex;
-    mutable std::mutex g_j_mutex;
 
-    std::shared_ptr<GpuVoxelsVictor> victor_model_;
+class VictorConservativeValidator : VictorValidator
+{
+public:
+    VictorConservativeValidator(const ompl::base::SpaceInformationPtr &si,
+                                GpuVoxelsVictor* victor_model);
+
+    virtual bool isValid(const ompl::base::State *state) const;
+};
+
+class VictorPathThresholdValidator : VictorValidator
+{
+public:
+    virtual bool isValid(const ompl::base::State *state) const;
+    virtual bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2,
+                             std::pair< ompl::base::State*, double > & lastValid) const;
+    virtual bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const;
 };
 
 

@@ -1,4 +1,5 @@
 #include "gpu_voxels_victor.hpp"
+#include "victor_planning.hpp"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <csignal>
 #include <vector>
@@ -9,6 +10,7 @@
 std::shared_ptr<SimWorld> sim_world;
 
 
+using namespace gpu_voxels_planner;
 
 
 /***********************************************
@@ -44,7 +46,7 @@ int main(int argc, char* argv[])
     sim_world->initializeObstacles();
 
     std::vector<double> start = {-1.4, 1.4, 1.4, -0.5, 0, 0, 0};
-    std::vector<double> end = {0, 1.2, 0, 0, 0, 0, 0};
+    std::vector<double> goal = {0, 1.2, 0, 0, 0, 0, 0};
 
     sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
     
@@ -52,62 +54,48 @@ int main(int argc, char* argv[])
     std::cout << "Waiting for user input to start...\n";
     std::cin >> unused;
 
+    
+    VictorLBKPiece planner(&(sim_world->victor_model));
+    
+    Maybe::Maybe<Path> maybe_path = planner.planPathDouble(start, goal);
 
-
-    Path path;
-    std::vector<double> cur = start;
-    for(int i=0; i<100; i++)
+    if(!maybe_path.Valid())
     {
-        for(size_t j=0; j<cur.size(); j++)
-        {
-            cur[j] += (end[j] - start[j])/100;
-        }
-        path.push_back(cur);
+        std::cout << "no path found\n";
+        return 0;
     }
+    std::cout << "Path found\n";
+    Path path = maybe_path.Get();
+
+    // Path path;
+    // std::vector<double> cur = start;
+    // for(int i=0; i<100; i++)
+    // {
+    //     for(size_t j=0; j<cur.size(); j++)
+    //     {
+    //         cur[j] += (goal[j] - start[j])/100;
+    //     }
+    //     path.push_back(cur);
+    // }
 
     size_t last_valid;
     if(!sim_world->executePath(path, last_valid))
     {
         std::cout << "backing up\n";
+        std::cout << last_valid << "\n";
         Path backup;
-        for(size_t i = last_valid; (i >= last_valid - 10) && (i != (size_t)-1); i--)
+        for(int i=0; i<30; i++)
         {
-            backup.push_back(path[i]);
+            backup.push_back(path[last_valid]);
+            if(last_valid == 0)
+            {
+                break;
+            }
+            last_valid--;
         }
         sim_world->executePath(backup, last_valid);
     }
 
-
-    // VictorPlanner planner(sim_world.get());
-    // VictorLBKPIECE planner_unused0(sim_world.get());
-    // VictorRRTstar<VictorMinVoxObjective> planner_unused1(sim_world.get());
-    // VictorRRTstar<VictorMinColProbObjective> planner_unused2(sim_world.get());
-    // VictorRRTstar<VictorMinColProbSweptObjective> planner_unused3(sim_world.get());
-    // VictorTRRT<VictorMinColProbSweptObjective> planner_unused4(sim_world.get());
-
-    // VictorRRTstar<VictorMinColProbSweptObjective> planner_unused3(sim_world.get());
-    // VictorTRRT<VictorMinColProbSweptObjective> planner(sim_world.get());
-    // VictorLazyRRTF planner(sim_world.get());
-
-    // std::vector<double> start = {0.5, 0.2, 0.5};
-    // std::vector<double> goal = {0.5, 0.8, 0.5};
-
-    // bool reached_goal = false;
-
-    // while(!reached_goal)
-    // {
-    //     sim_world->updateActual(Victor(start[0], start[1], start[2], VICTOR_WIDTH));
-    //     Maybe::Maybe<ob::PathPtr> path = planner.planPathDouble(start, goal);
-    //     if(!path.Valid())
-    //     {
-    //         std::cout << "Path planning failed\n";
-    //         break;
-    //     }
-    //     reached_goal = planner.executePath(path.Get()->as<og::PathGeometric>());
-    // }
-
-    // if(reached_goal)
-    //     std::cout << "REACHED GOAL!\n";
 
     sim_world->gvl.reset();
     

@@ -1,7 +1,7 @@
 #include "victor_planning.hpp"
 
 
-#define ENABLE_PROFILING
+// #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
 
 
@@ -42,29 +42,7 @@ const std::string MOTION_COST = "motionCost";
 
 
 
-std::shared_ptr<VictorValidator> vv_ptr;
-
-// We define exit handlers to quit the program:
-void ctrlchandler(int)
-{
-    // TODO: Find what is actually holding onto the ptr
-
-    // Something here is holding onto the shared_ptr stored in vv_ptr, thus
-    // even when quitting the program, memory stays allocated.
-    // explicitly calling the destructor frees the memory, but this should instead
-    // be done when all references to the shared_ptr leave.
-
-    vv_ptr->~VictorValidator();
-    exit(EXIT_SUCCESS);
-}
-void killhandler(int)
-{
-    // TODO: Find what is actually holding onto the ptr
-    vv_ptr->~VictorValidator();
-    exit(EXIT_SUCCESS);
-}
-
-VictorPlanner::VictorPlanner(std::shared_ptr<GpuVoxelsVictor> victor_model)
+VictorPlanner::VictorPlanner(GpuVoxelsVictor* victor_model)
 {
     space = std::make_shared<ob::RealVectorStateSpace>(7);
 
@@ -74,16 +52,10 @@ VictorPlanner::VictorPlanner(std::shared_ptr<GpuVoxelsVictor> victor_model)
     space->setBounds(bounds);
     si_ = std::make_shared<ob::SpaceInformation>(space);
     // vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si_, victor_model));
-
-    vv_ptr = std::make_shared<VictorValidator>(si_, victor_model);
-
     simp_ = std::make_shared<og::PathSimplifier>(si_);
+    victor_model_ = victor_model;
 
     PROFILE_REINITIALIZE(10,1000);
-    
-    // planner = std::make_shared<og::LBKPIECE1>(si_);
-    // planner = std::make_shared<og::TRRT>(si_);
-    // setup_planner(si_);
 }
 
 void VictorPlanner::setupSpaceInformation()
@@ -94,21 +66,10 @@ void VictorPlanner::setupSpaceInformation()
     si_->setup();
 }
 
-ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> goal)
+Maybe::Maybe<ob::PathPtr> VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
-    // pdef_->setOptimizationObjective();
     prepare_planner(start, goal);
-
-    // planner_->setup();
-
-    PROFILE_START(FULL_PLANNING);
-    PROFILE_START(PLANNING);
-    
     ob::PlannerStatus solved = planner_->solve(3);
-
-    PROFILE_RECORD(PLANNING);
-    PROFILE_START(POST_PROCESSING);
-    
 
     while(solved == ob::PlannerStatus::APPROXIMATE_SOLUTION)
     {
@@ -146,6 +107,7 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
 
     }else{
         std::cout << "No solution could be found" << std::endl;
+        return Maybe::Maybe<ob::PathPtr>();
     }
     
     PROFILE_RECORD(POST_PROCESSING);
@@ -175,24 +137,41 @@ ob::PathPtr VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> g
     
         
     PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
-    // PROFILE_PRINT_SUMMARY_FOR_SINGLE(FULL_PLANNING);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(PLANNING);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(SMOOTHING);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(ISVALID_INSERTION);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(QUERY_INSERTION);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(ISVALID_COLLISION_TEST);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(CHECK_MOTION_SIMPLE_INSERTION);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(CHECK_MOTION_SIMPLE_COLLISION_TEST);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(CHECK_MOTION_SIMPLE_CHECK);
-    // PROFILE_PRINT_SUMMARY_FOR_GROUP(CHECK_MOTION_COMP_CHECK);
-
     
     PROFILE_REINITIALIZE(10,1000);
 
-    return path;
+    return Maybe::Maybe<ob::PathPtr>(path);
 }
 
-ob::PathPtr VictorPlanner::planPath(std::vector<double> start, std::vector<double> goal)
+
+Path VictorPlanner::omplPathToDoublePath(og::PathGeometric* ompl_path)
+{
+    Path d_path;
+
+    ob::StateSpace *stateSpace = si_->getStateSpace().get();
+    ob::State *state = si_->allocState();
+    for(size_t step = 0; step < ompl_path->getStateCount() - 1; step++)
+    {
+        ob::State *s1 = ompl_path->getState(step);
+        ob::State *s2 = ompl_path->getState(step + 1);
+        int nd = stateSpace->validSegmentCount(s1, s2)*10;
+        
+        for(int j = 1; j<nd; j++)
+        {
+            stateSpace->interpolate(s1, s2, (double)j / (double)nd, state);
+            const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
+            std::vector<double> d_state;
+            d_state.insert(d_state.end(), &values[0], &values[6]);
+            d_path.push_back(d_state);
+        }
+    }
+    si_->freeState(state);
+    
+    return d_path;
+
+}
+
+Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std::vector<double> goal)
 {
     ob::ScopedState<> start_ss(space);
     ob::ScopedState<> goal_ss(space);
@@ -210,8 +189,47 @@ ob::PathPtr VictorPlanner::planPath(std::vector<double> start, std::vector<doubl
         std::cout << goal[i] << ", ";
     }
     std::cout << "\n";
-    return planPath(start_ss, goal_ss);
+    Maybe::Maybe<ob::PathPtr> ompl_path = planPath(start_ss, goal_ss);
+    if(!ompl_path.Valid())
+    {
+        return Maybe::Maybe<Path>();
+    }
+    return Maybe::Maybe<Path>(omplPathToDoublePath(ompl_path.Get()->as<og::PathGeometric>()));
 }
 
+
+
+
+
+/************************************
+ **        Victor LBKPICE          **
+ ***********************************/
+
+VictorLBKPiece::VictorLBKPiece(GpuVoxelsVictor* victor_model)
+    : VictorPlanner(victor_model)
+{
+    setup_planner();
+}
+
+void VictorLBKPiece::setup_planner()
+{
+    vv_ptr = std::make_shared<VictorValidator>(si_, victor_model_);
+    setupSpaceInformation();
+
+
+
+    planner_ = std::make_shared<og::LBKPIECE1>(si_);
+    planner_->setup();
+}
+
+void VictorLBKPiece::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> goal)
+{
+    planner_->clear();
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
+    pdef_->setStartAndGoalStates(start, goal);
+
+    planner_->setProblemDefinition(pdef_);
+
+}
 
 

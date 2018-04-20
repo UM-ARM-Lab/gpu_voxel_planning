@@ -248,6 +248,7 @@ void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
     {
         addCollisionLinks(c, collision_links, SEEN_OBSTACLE_SETS[num_observed_sets]);
     }
+    gvl->visualizeMap(SEEN_OBSTACLE_SETS[num_observed_sets]);
     num_observed_sets++;
 }
 
@@ -445,7 +446,7 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
             collision_links.push_back(col_link.Get());
 
             std::vector<VictorConfig> cs;
-            for(size_t j=last_valid; (j<last_valid+3) && j<path.size(); j++)
+            for(size_t j=last_valid; (j<last_valid+15) && j<path.size(); j++)
             {
                 cs.push_back(victor_model.toVictorConfig(path[j].data()));
             }
@@ -456,7 +457,7 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
             
         victor_model.updateActual(c);
         victor_model.doVis();
-        usleep(50000);
+        usleep(30000);
     }
     std::cout << "Path success!\n";
     return true;

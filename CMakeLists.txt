@@ -134,16 +134,6 @@ target_link_libraries(victor_model
   ${gpu_voxels_LIBRARIES}
   )
 
-add_executable(wip_victor_sim src/wip_victor_sim.cpp)
-target_link_libraries(wip_victor_sim
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  ${OMPL_LIBRARIES}
-  lazyrrtf
-  victor_model
-  )
 
 
 # add_executable(victor_sim_world src/victor_sim_world.cpp)
@@ -158,39 +148,35 @@ target_link_libraries(wip_victor_sim
 #   )
 
 
-# add_library(victor_validator src/victor_validator.cpp)
-# target_link_libraries(victor_validator
-#   victor_model)
+add_library(victor_validator src/victor_validator.cpp)
+target_link_libraries(victor_validator
+  victor_model)
 
-# add_library(victor_planning_base src/victor_planning.cpp)
-# target_link_libraries(victor_planning_base
-#   victor_validator
-#   victor_model
-#   ${catkin_LIBRARIES}
-#   ${Boost_SYSTEM_LIBRARY}
-#   ${icl_core_LIBRARIES}
-#   ${gpu_voxels_LIBRARIES}
-#   ${OMPL_LIBRARIES}
-#   )
+add_library(victor_planning src/victor_planning.cpp)
+target_link_libraries(victor_planning
+  victor_validator
+  victor_model
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  ${OMPL_LIBRARIES}
+  )
+
+add_executable(wip_victor_sim src/wip_victor_sim.cpp)
+target_link_libraries(wip_victor_sim
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  ${OMPL_LIBRARIES}
+  lazyrrtf
+  victor_model
+  victor_planning
+  victor_validator
+  )
 
 
-
-# add_library(victor_lbkpiece src/victor_lbkpiece.cpp)
-# target_link_libraries(victor_lbkpiece
-#   victor_planning_base
-#   victor_model)
-
-# add_library(victor_trrt src/victor_trrt.cpp)
-# target_link_libraries(victor_trrt
-#   victor_planning_base
-#   victor_model)
-
-# add_library(victor_rrtstar src/victor_rrtstar.cpp)
-# target_link_libraries(victor_rrtstar
-#   victor_planning_base
-#   wip_optimization_objective
-#   victor_model
-# )
 
 # add_library(wip_optimization_objective src/wip_optimization_objective.cpp)
 # target_link_libraries(wip_optimization_objective
