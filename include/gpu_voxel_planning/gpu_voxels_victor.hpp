@@ -5,6 +5,7 @@
 #include <gpu_voxels/GpuVoxels.h>
 #include "collision_detection.hpp"
 
+#include <arc_utilities/maybe.hpp>
 
 std::vector<std::string> SEEN_OBSTACLE_SETS;
 
@@ -28,11 +29,18 @@ public:
                            const std::vector<std::string> &collision_links,
                            const std::string &map_name);
 
+    void addCollisionSet(const std::vector<VictorConfig> &cs,
+                         const std::vector<std::string> &collision_links);
+    
+    void addQueryLink(const VictorConfig &c, const std::string &link_name);
+    
     void resetQuery();
 
     void addQueryState(const VictorConfig &c);
 
     size_t countNumCollisions();
+
+    size_t countNumCollisions(const std::string &map_name);
 
     size_t countNumCollisions(const VictorConfig &c);
 
@@ -66,7 +74,8 @@ class SimWorld
 public:
     SimWorld();
     void initializeObstacles();
-    bool executePath(const Path &path);
+    bool executePath(const Path &path, size_t &last_index);
+    Maybe::Maybe<std::string> getCollisionLink(const VictorConfig &c);
 
 public:    
     gpu_voxels::GpuVoxelsSharedPtr gvl;

@@ -1,5 +1,5 @@
 #include "gpu_voxels_victor.hpp"
-
+#include "common_names.hpp"
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
@@ -11,7 +11,8 @@
 #include <boost/thread/locks.hpp>
 #include <mutex>
 
-#include "common_names.hpp"
+
+
 
 // #define PROB_OCCUPIED BitVoxelMeaning(255)
 #define PROB_OCCUPIED eBVM_OCCUPIED
@@ -121,14 +122,18 @@ void GpuVoxelsVictor::addQueryState(const VictorConfig &c)
  */
 size_t GpuVoxelsVictor::countNumCollisions()
 {
-    PROFILE_START(ISVALID_COLLISION_TEST);
+    return countNumCollisions(ENV_MAP);
+}
 
-    size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(ENV_MAP)->as<voxelmap::ProbVoxelMap>());
 
-
-    PROFILE_RECORD(ISVALID_COLLISION_TEST);
+/*
+ *  Count collisions between query and env maps
+ *  addQueryState should probably be run at least once first
+ */
+size_t GpuVoxelsVictor::countNumCollisions(const std::string &map_name)
+{
+    size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(map_name)->as<voxelmap::ProbVoxelMap>());
     return num_colls_pc;
-
 }
 
 
@@ -194,6 +199,21 @@ void GpuVoxelsVictor::addCollisionPoints(CollisionInformation collision_info)
     addCollisionLinks(extended_joints, collision_info.links_in_contact, ENV_MAP);
 }
 
+void GpuVoxelsVictor::addQueryLink(const VictorConfig &c,
+                                   const std::string &link_name)
+{
+    gvl->setRobotConfiguration(VICTOR_ROBOT, c);
+    RobotInterfaceSharedPtr rob = gvl->getRobot(VICTOR_ROBOT);
+    const MetaPointCloud* clouds = rob->getTransformedClouds();
+    rob->syncToHost();
+
+    int16_t cloud_num = clouds->getCloudNumber(link_name);
+    uint32_t cloud_size = clouds->getPointcloudSizes()[cloud_num];
+    const gpu_voxels::Vector3f* cloud_ptr = clouds->getPointCloud(cloud_num);
+    const std::vector<gpu_voxels::Vector3f> cloud(cloud_ptr, cloud_ptr + cloud_size);
+    gvl->insertPointCloudIntoMap(cloud, VICTOR_QUERY_MAP, PROB_OCCUPIED);
+}
+
 
 void GpuVoxelsVictor::addCollisionLinks(const VictorConfig &c,
                                         const std::vector<std::string> &collision_links,
@@ -219,6 +239,16 @@ void GpuVoxelsVictor::addCollisionLinks(const VictorConfig &c,
   
     obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
 
+}
+
+void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
+                                      const std::vector<std::string> &collision_links)
+{
+    for(auto &c: cs)
+    {
+        addCollisionLinks(c, collision_links, SEEN_OBSTACLE_SETS[num_observed_sets]);
+    }
+    num_observed_sets++;
 }
 
 
@@ -352,7 +382,7 @@ SimWorld::SimWorld()
 void SimWorld::initializeObstacles()
 {
     Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
-    Vector3f tc(1.5, 1.6, 0.9); //table corner
+    Vector3f tc(1.5, 1.4, 0.9); //table corner
     Vector3f tld(.033, 0.033, tc.z); //table leg dims
     
     gvl->insertBoxIntoMap(tc, tc + td,
@@ -376,12 +406,54 @@ void SimWorld::initializeObstacles()
 
 }
 
-
-bool SimWorld::executePath(const Path &path)
+Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
 {
-    for(auto joint_angles: path)
+    victor_model.resetQuery();
+    victor_model.addQueryState(c);
+    if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) > 0)
     {
+        victor_model.resetQuery();
+        for(auto &link_name: right_arm_collision_link_names)
+        {
+            victor_model.addQueryLink(c, link_name);
+            if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) > 0)
+            {
+                std::cout << "Collides with " << link_name << "\n";
+                return Maybe::Maybe<std::string>(link_name);
+            }
+        }
+        std::cout << "Victor collides, but no links collide...\n";
+        assert(false);
+    }
+    return Maybe::Maybe<std::string>();
+}
+
+/*
+ *  Executes path until completion or collision.
+ */
+bool SimWorld::executePath(const Path &path, size_t &last_valid)
+{
+    for(last_valid = 0; last_valid < path.size(); last_valid++)
+    {
+        std::vector<double> joint_angles = path[last_valid];
         VictorConfig c = victor_model.toVictorConfig(joint_angles.data());
+        Maybe::Maybe<std::string> col_link = getCollisionLink(c);
+        if(col_link.Valid())
+        {
+            std::cout << "Collision while executing!\n";
+            std::vector<std::string> collision_links;
+            collision_links.push_back(col_link.Get());
+
+            std::vector<VictorConfig> cs;
+            for(size_t j=last_valid; (j<last_valid+3) && j<path.size(); j++)
+            {
+                cs.push_back(victor_model.toVictorConfig(path[j].data()));
+            }
+            victor_model.addCollisionSet(cs, collision_links);
+            last_valid--;
+            return false;
+        }
+            
         victor_model.updateActual(c);
         victor_model.doVis();
         usleep(50000);
