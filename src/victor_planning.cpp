@@ -68,13 +68,13 @@ void VictorPlanner::setupSpaceInformation()
 
 Maybe::Maybe<ob::PathPtr> VictorPlanner::planPath(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
-    prepare_planner(start, goal);
-    ob::PlannerStatus solved = planner_->solve(3);
+    preparePlanner(start, goal);
+    ob::PlannerStatus solved = planner_->solve(10);
 
     while(solved == ob::PlannerStatus::APPROXIMATE_SOLUTION)
     {
         std::cout << "Approximate solution, replanning\n";
-        solved = planner_->solve(3*60);
+        solved = planner_->solve(3*10);
     }
     
     std::cout << solved << "\n";
@@ -156,12 +156,12 @@ Path VictorPlanner::omplPathToDoublePath(og::PathGeometric* ompl_path)
         ob::State *s2 = ompl_path->getState(step + 1);
         int nd = stateSpace->validSegmentCount(s1, s2)*10;
         
-        for(int j = 1; j<nd; j++)
+        for(int j = 0; j<nd; j++)
         {
             stateSpace->interpolate(s1, s2, (double)j / (double)nd, state);
             const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
             std::vector<double> d_state;
-            d_state.insert(d_state.end(), &values[0], &values[6]);
+            d_state.insert(d_state.end(), &values[0], &values[7]);
             d_path.push_back(d_state);
         }
     }
@@ -169,6 +169,11 @@ Path VictorPlanner::omplPathToDoublePath(og::PathGeometric* ompl_path)
     
     return d_path;
 
+}
+
+Maybe::Maybe<Path> VictorPlanner::planPathConfig(VictorConfig start, VictorConfig goal)
+{
+    return planPathDouble(victor_model_->toValues(start), victor_model_->toValues(goal));
 }
 
 Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std::vector<double> goal)
@@ -208,12 +213,12 @@ Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std:
 VictorLBKPiece::VictorLBKPiece(GpuVoxelsVictor* victor_model)
     : VictorPlanner(victor_model)
 {
-    setup_planner();
+    initializePlanner();
 }
 
-void VictorLBKPiece::setup_planner()
+void VictorLBKPiece::initializePlanner()
 {
-    vv_ptr = std::make_shared<VictorValidator>(si_, victor_model_);
+    vv_ptr = std::make_shared<VictorConservativeValidator>(si_, victor_model_);
     setupSpaceInformation();
 
 
@@ -222,7 +227,7 @@ void VictorLBKPiece::setup_planner()
     planner_->setup();
 }
 
-void VictorLBKPiece::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> goal)
+void VictorLBKPiece::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
@@ -231,5 +236,75 @@ void VictorLBKPiece::prepare_planner(ob::ScopedState<> start, ob::ScopedState<> 
     planner_->setProblemDefinition(pdef_);
 
 }
+
+
+
+
+
+/***********************************************
+ **               Victor LazyRRTF                **
+ ***********************************************/
+
+VictorLazyRRTF::VictorLazyRRTF(GpuVoxelsVictor* victor_model)
+    : VictorPlanner(victor_model)
+{
+    initializePlanner();
+}
+
+void VictorLazyRRTF::initializePlanner()
+{
+    // spi_ptr->setStateValidityChecker(v_ptr);
+    // spi_ptr->setMotionValidator(v_ptr);
+    std::shared_ptr<og::LazyRRTF> lrrtf = std::make_shared<og::LazyRRTF>(si_);
+    pv_ = std::make_shared<VictorPathValidator>(si_, victor_model_);
+    lrrtf->setPathValidator(pv_);
+    planner_ = lrrtf;
+    planner_->setup();
+    threshold = 0.5;
+}
+
+Maybe::Maybe<ob::PathPtr> VictorLazyRRTF::planPath(ompl::base::ScopedState<> start,
+                                                   ompl::base::ScopedState<> goal)
+{
+    preparePlanner(start, goal);
+    ob::PathPtr path;
+    int planning_time = 5;
+
+    pv_->setProbabilityThreshold(threshold);
+    ob::PlannerStatus solved = planner_->solve(planning_time);
+
+    while(!solved)
+    {
+        threshold += 0.1;
+        std::cout << "threshold " << threshold << "\n";
+        pv_->setProbabilityThreshold(threshold);
+        solved = planner_->solve(planning_time);
+        if(threshold > 1.2){
+            break;
+        }
+    }
+    threshold -= 0.1;
+
+    
+    if (!solved)
+    {
+        std::cout << "No solution could be found" << std::endl;
+        return Maybe::Maybe<ob::PathPtr>();
+    }
+
+    path = pdef_->getSolutionPath();
+
+    return Maybe::Maybe<ob::PathPtr>(path);
+}
+
+
+void VictorLazyRRTF::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
+{
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
+    pdef_->setStartAndGoalStates(start, goal);
+    planner_->setProblemDefinition(pdef_);
+
+}
+
 
 

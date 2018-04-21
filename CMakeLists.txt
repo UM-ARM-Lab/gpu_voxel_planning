@@ -161,6 +161,7 @@ target_link_libraries(victor_planning
   ${icl_core_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
   ${OMPL_LIBRARIES}
+  lazyrrtf
   )
 
 add_executable(wip_victor_sim src/wip_victor_sim.cpp)

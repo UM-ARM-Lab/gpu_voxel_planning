@@ -5,6 +5,7 @@
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
+#include "lazyrrt_fullpath.h"
 
 
 namespace gpu_voxels_planner
@@ -14,9 +15,9 @@ namespace gpu_voxels_planner
     public:
         VictorPlanner(GpuVoxelsVictor* victor_model);
 
-        virtual void setup_planner() = 0;
+        virtual void initializePlanner() = 0;
 
-        virtual void prepare_planner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal) = 0;
+        virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal) = 0;
 
         virtual void setupSpaceInformation();
         
@@ -25,6 +26,9 @@ namespace gpu_voxels_planner
     public:
         Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
                                                    ompl::base::ScopedState<> goal);
+
+        Maybe::Maybe<Path> planPathConfig(VictorConfig start, VictorConfig goal);
+        
         Maybe::Maybe<Path> planPathDouble(std::vector<double> start, std::vector<double> goal);
 
         Path omplPathToDoublePath(ompl::geometric::PathGeometric* ompl_path);
@@ -50,12 +54,31 @@ namespace gpu_voxels_planner
     {
     public:
         VictorLBKPiece(GpuVoxelsVictor* victor_model);
-        virtual void setup_planner() override;
+        virtual void initializePlanner() override;
 
-        virtual void prepare_planner(ompl::base::ScopedState<> start,
-                                     ompl::base::ScopedState<> goal) override final;
+        virtual void preparePlanner(ompl::base::ScopedState<> start,
+                                     ompl::base::ScopedState<> goal) override;
     };
 
+
+
+
+    class VictorLazyRRTF : public VictorPlanner
+    {
+    public:
+        VictorLazyRRTF(GpuVoxelsVictor* victor_model);
+        virtual void initializePlanner() override;
+        virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
+                                                           ompl::base::ScopedState<> goal);
+        virtual void preparePlanner(ompl::base::ScopedState<> start,
+                                    ompl::base::ScopedState<> goal) override;
+    protected:
+        std::shared_ptr<VictorPathValidator> pv_;
+        double threshold;
+    };
+
+
 }
+
         
 #endif

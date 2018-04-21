@@ -194,24 +194,24 @@ ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTe
             //     }
 
             size_t collision_index;
-            std::cout << "Checking path...";
+            // std::cout << "Checking path...";
             solutionFound = path_validator_->checkPath(spath, collision_index);
-            std::cout << "done checking path\n";
+            // std::cout << "done checking path\n";
 
             if (solutionFound)
             {
-                std::cout << "Adding solution path...";
+                // std::cout << "Adding solution path...";
                 // set the solution path
                 auto path(std::make_shared<PathGeometric>(si_));
                 for (int i = mpath.size() - 1; i >= 0; --i)
                     path->append(mpath[i]->state);
 
                 pdef_->addSolutionPath(path, false, distsol, getName());
-                std::cout << "Done adding solution path\n";
+                // std::cout << "Done adding solution path\n";
             }
             else
             {
-                std::cout << "Removing Motion...";
+                // std::cout << "Removing Motion...";
                 // for (size_t i = collision_index + 2; i < mpath.size(); i++)
                 // {
                 size_t i = collision_index;
@@ -220,7 +220,7 @@ ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTe
                 removeMotion(mpath[i]);
                 // std::cout << "nn size " << nn_->size() << "\n";
                 lastGoalMotion_ = nullptr;
-                std::cout << "Done removing motion\n";
+                // std::cout << "Done removing motion\n";
                 // }
             }
             

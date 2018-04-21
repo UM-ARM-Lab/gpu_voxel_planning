@@ -17,17 +17,6 @@
 // #define PROB_OCCUPIED BitVoxelMeaning(255)
 #define PROB_OCCUPIED eBVM_OCCUPIED
 
-#define VICTOR_ACTUAL_MAP "victor_actual_map"
-#define VICTOR_QUERY_MAP "victor_query_map"
-#define ENV_MAP "env_map"
-
-#define VICTOR_SWEPT_VOLUME_MAP "victor_swept_volume_map"
-#define VICTOR_PATH_ENDPOINTS_MAP "victor_path_endpoints_map"
-#define VICTOR_PATH_SOLUTION_MAP "victor_path_solutions_map"
-#define OBSTACLE_DISTANCE_MAP "obstacle_distance_map"
-
-#define SIM_OBSTACLES_MAP "sim_obstacles_map"
-#define VICTOR_ROBOT "victor_robot"
 #define NUM_SETS 100
 
 
@@ -70,6 +59,8 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_PATH_ENDPOINTS_MAP);
     gvl->addMap(MT_DISTANCE_VOXELMAP, OBSTACLE_DISTANCE_MAP);
+    gvl->addMap(MT_PROBAB_VOXELMAP, FULL_MAP);
+    gvl->insertBoxIntoMap(Vector3f(0,0,0), Vector3f(200*0.02,200*0.02,200*0.02), FULL_MAP, PROB_OCCUPIED);
     
     gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);
     
@@ -104,6 +95,7 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
     voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
   
     obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
+    cur_config = c;
 }
 
 void GpuVoxelsVictor::resetQuery()
@@ -120,24 +112,37 @@ void GpuVoxelsVictor::addQueryState(const VictorConfig &c)
  *  Count collisions between query and env maps
  *  addQueryState should probably be run at least once first
  */
-size_t GpuVoxelsVictor::countNumCollisions()
+size_t GpuVoxelsVictor::countTotalNumCollisions()
 {
-    return countNumCollisions(ENV_MAP);
+    size_t total_col = 0;
+    for(auto cols: countSeenCollisionsInQueryForEach())
+    {
+        total_col += cols;
+    }
+    return total_col;
 }
 
+std::vector<size_t> GpuVoxelsVictor::countSeenCollisionsInQueryForEach()
+{
+    std::vector<size_t> collisions_in_seen;
+    for(int i=0; i<num_observed_sets; i++)
+    {
+        collisions_in_seen.push_back(countNumCollisions(SEEN_OBSTACLE_SETS[i]));
+    }
+    return collisions_in_seen;
+}
 
 /*
- *  Count collisions between query and env maps
+ *  Count collisions between query and a particular map
  *  addQueryState should probably be run at least once first
  */
 size_t GpuVoxelsVictor::countNumCollisions(const std::string &map_name)
 {
-    size_t num_colls_pc = gvl->getMap(VICTOR_QUERY_MAP)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(map_name)->as<voxelmap::ProbVoxelMap>());
-    return num_colls_pc;
+    return countIntersect(VICTOR_QUERY_MAP, map_name);
 }
 
 
-size_t GpuVoxelsVictor::countNumCollisions(const VictorConfig &c)
+size_t GpuVoxelsVictor::countTotalNumCollisionsForConfig(const VictorConfig &c)
 {
     PROFILE_START(ISVALID_INSERTION);
     PROFILE_START(QUERY_INSERTION);
@@ -148,16 +153,39 @@ size_t GpuVoxelsVictor::countNumCollisions(const VictorConfig &c)
 
     PROFILE_RECORD(ISVALID_INSERTION);
     PROFILE_RECORD(QUERY_INSERTION);
-    return countNumCollisions();
+    return countTotalNumCollisions();
+}
+
+/*
+ *  Returns the number of voxels in each seen collision map
+ */
+std::vector<size_t> GpuVoxelsVictor::seenSizes()
+{
+    std::vector<size_t> seen_sizes;
+    seen_sizes.resize(num_observed_sets);
+    for(int i=0; i < num_observed_sets; i++)
+    {
+        seen_sizes[i] = getNumOccupiedVoxels(SEEN_OBSTACLE_SETS[i]);
+    }
+    return seen_sizes;
+}
+
+size_t GpuVoxelsVictor::getNumOccupiedVoxels(const std::string& map_name)
+{
+    return countIntersect(FULL_MAP, map_name);
 }
 
 
 bool GpuVoxelsVictor::queryFreeConfiguration(const VictorConfig &c)
 {
-    return countNumCollisions(c) == 0;
+    return countTotalNumCollisionsForConfig(c) == 0;
 }
 
 
+size_t GpuVoxelsVictor::countIntersect(const std::string& map_1, const std::string& map_2)
+{
+    return gvl->getMap(map_1)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(map_2)->as<voxelmap::ProbVoxelMap>());
+}
 
 
 
@@ -250,6 +278,17 @@ void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
     }
     gvl->visualizeMap(SEEN_OBSTACLE_SETS[num_observed_sets]);
     num_observed_sets++;
+    
+    if(num_observed_sets >= NUM_SETS - 3)
+    {
+        std::cout << "Getting close to set limit\n";
+    }
+           
+    if(num_observed_sets >= NUM_SETS)
+    {
+        std::cout << "Set limit reached!. Everything now going in last set\n";
+        num_observed_sets--;
+    }
 }
 
 
@@ -360,6 +399,16 @@ VictorConfig GpuVoxelsVictor::toVictorConfig(const double* values)
     return jvm;
 }
 
+std::vector<double> GpuVoxelsVictor::toValues(VictorConfig config)
+{
+    std::vector<double> values;
+    for(auto &joint_name: right_arm_joint_names)
+    {
+        values.push_back(config[joint_name]);
+    }
+    return values;
+}
+
 
 
 
@@ -383,7 +432,7 @@ SimWorld::SimWorld()
 void SimWorld::initializeObstacles()
 {
     Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
-    Vector3f tc(1.5, 1.4, 0.9); //table corner
+    Vector3f tc(1.7, 1.4, 0.9); //table corner
     Vector3f tld(.033, 0.033, tc.z); //table leg dims
     
     gvl->insertBoxIntoMap(tc, tc + td,
@@ -402,6 +451,25 @@ void SimWorld::initializeObstacles()
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
     
 
+
+    Vector3f cavecorner(1.7, 2.0, 0.9);
+    Vector3f caveheight(0.0, 0.0, 0.4);
+    Vector3f cavetopd(0.4, 0.3, 0.033);
+    Vector3f cavesidedim(0.033, cavetopd.y, caveheight.z);
+    Vector3f cavesideoffset(cavetopd.x, 0.0, 0.0);
+
+    gvl->insertBoxIntoMap(cavecorner+caveheight,
+                          cavecorner+caveheight+cavetopd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(cavecorner,
+                          cavecorner+cavesidedim,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(cavecorner+cavesideoffset,
+                          cavecorner+cavesideoffset+cavesidedim,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+    
+    
     
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
 
@@ -462,3 +530,30 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
     std::cout << "Path success!\n";
     return true;
 }
+
+
+bool SimWorld::attemptPath(const Path &path)
+{
+    size_t last_valid;
+    if(executePath(path, last_valid))
+    {
+        return true;
+    }
+    
+
+    std::cout << "backing up\n";
+    std::cout << last_valid << "\n";
+    Path backup;
+    for(int i=0; i<30; i++)
+    {
+        backup.push_back(path[last_valid]);
+        if(last_valid == 0)
+        {
+            break;
+        }
+        last_valid--;
+    }
+    executePath(backup, last_valid);
+    return false;
+}
+

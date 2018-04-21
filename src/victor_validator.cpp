@@ -135,4 +135,114 @@ bool VictorConservativeValidator::isValid(const ob::State *state) const
     {
         return false;
     }
+    const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
+    VictorConfig config = victor_model_->toVictorConfig(values);
+    
+    return victor_model_->countTotalNumCollisionsForConfig(config) == 0;
 }
+
+
+
+
+
+
+/***********************************************
+ **            PATH VALIDATOR                 **
+ ***********************************************/
+VictorPathValidator::VictorPathValidator(const ob::SpaceInformationPtr &si,
+                                         GpuVoxelsVictor* victor_model) :
+    PathValidator(si)
+{
+    victor_model_ = victor_model;
+}
+
+void VictorPathValidator::setProbabilityThreshold(double th)
+{
+    threshold = th;
+}
+
+bool VictorPathValidator::checkPath(const std::vector<ompl::base::State*> path,
+                                    size_t &collision_index)
+{
+    // std::cout << "Checking path...";
+
+    
+    ompl::base::StateSpace *stateSpace_ = si_->getStateSpace().get();
+    assert(stateSpace_ != nullptr);
+
+    victor_model_->resetQuery();
+    ob::State *test = si_->allocState();
+
+    double prob_col = 0.0;
+        
+    for(collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
+    {
+        const ob::State *s1 = path[collision_index];
+        const ob::State *s2 = path[collision_index + 1];
+        int nd = stateSpace_->validSegmentCount(s1, s2);
+
+        for(int j = 0; j < nd; j++)
+        {
+            stateSpace_->interpolate(s1, s2, (double)j / (double)nd, test);
+            const double *values = test->as<ob::RealVectorStateSpace::StateType>()->values;
+            victor_model_->addQueryState(victor_model_->toVictorConfig(values));
+        }
+        std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
+        std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+        std::vector<double> p_no_collision;
+        p_no_collision.resize(seen_col_voxels.size());
+        double p_no_col_seen = 1.0;
+
+        for(size_t i=0; i < seen_sizes.size(); i++)
+        {
+            p_no_collision[i] = 1.0 - (double)seen_col_voxels[i] / (double)seen_sizes[i];
+            std::cout << "Seen col voxles[" << i << "]: " << seen_col_voxels[i] << "\n";
+            assert(p_no_collision[i] <= 1.0);
+            p_no_col_seen *= p_no_collision[i];
+        }
+
+        // victor_model_->gvl->visualizedMap(VICTOR_QUERY_MAP);
+        // std::cout << "p_no_col_seen: " << p_no_col_seen << "\n";
+        // int unused;
+        // std::cout << "Waiting for user input to start...\n";
+        // std::cin >> unused;
+
+
+        size_t path_size = victor_model_->countIntersect(FULL_MAP, VICTOR_QUERY_MAP);
+        size_t total_size = victor_model_->countIntersect(FULL_MAP, FULL_MAP);
+        size_t known_free_size = victor_model_->countIntersect(VICTOR_SWEPT_VOLUME_MAP, VICTOR_QUERY_MAP);
+
+        double num_occupied = (double)(path_size - known_free_size);
+        double frac_occupied = num_occupied / (double) total_size;
+        
+        double p_no_col_unseen = std::pow(1.0 - frac_occupied, 0);
+
+        prob_col = 1.0 - p_no_col_seen * p_no_col_unseen;
+
+        if (prob_col > 1.0)
+        {
+            std::cout << "Prob_col " << prob_col;
+            std::cout << ", p_no_col_seen " << p_no_col_seen;
+            std::cout << ", p_no_col_unseen " << p_no_col_unseen;
+            // assert (prob_col <= 1.0);
+        }
+
+        
+        if(prob_col > threshold)
+        {
+            break;
+        }
+    }
+    si_->freeState(test);
+    
+
+    // std::cout << "Finished\n";
+    // std::cout << "pathsize " << path.size();
+    // std::cout << " col index " << collision_index << "\n";
+    // std::cout << "Threshold " << threshold << "\n";
+    return prob_col <= threshold;
+}
+
+
+
+

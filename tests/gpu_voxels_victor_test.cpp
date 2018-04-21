@@ -13,7 +13,7 @@ TEST(GpuVoxelVictor, collisions)
     double angles[] = {0,0,0,0,0,0,0};
     robot::JointValueMap map = victor_model.toVictorConfig(angles);
     bool is_valid = victor_model.queryFreeConfiguration(map);
-    size_t col_count = victor_model.countNumCollisions(map);
+    size_t col_count = victor_model.countTotalNumCollisionsForConfig(map);
     EXPECT_EQ(0, col_count) << "Victor at initial position has collisions";
     EXPECT_TRUE(is_valid) << "Victor at initial position is in collision";
 
@@ -23,7 +23,7 @@ TEST(GpuVoxelVictor, collisions)
 
 
     is_valid = victor_model.queryFreeConfiguration(map);
-    col_count = victor_model.countNumCollisions(map);
+    col_count = victor_model.countTotalNumCollisionsForConfig(map);
     EXPECT_TRUE(col_count > 0) << "Victor with box obstacle has no collision";
     EXPECT_TRUE(!is_valid) << "Victor with box obstacle is not in collision";
 

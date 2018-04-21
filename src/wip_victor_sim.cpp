@@ -6,11 +6,15 @@
 #include <cmath>
 #include <limits>
 
+#include <iostream>
+#include <fstream>
+
 
 std::shared_ptr<SimWorld> sim_world;
 
 
 using namespace gpu_voxels_planner;
+namespace M = Maybe;
 
 
 /***********************************************
@@ -32,6 +36,53 @@ void killhandler(int)
 }
 
 
+bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
+{
+    VictorConfig goal_config = sim_world->victor_model.toVictorConfig(goal.data());
+
+    bool reached_goal = false;
+
+    while(!reached_goal)
+    {
+        M::Maybe<Path> maybe_path = planner.planPathConfig(sim_world->victor_model.cur_config,
+                                                    goal_config);
+        if(!maybe_path.Valid())
+        {
+            std::cout << "Path planning failed\n";
+            return false;
+        }
+        reached_goal = sim_world->attemptPath(maybe_path.Get());
+    }
+    return true;
+}
+
+
+
+void testAngles()
+{
+    
+    while(true)
+    {
+        int unused;
+        std::cout << "Waiting for user input to set position...\n";
+        std::cin >> unused;
+
+        std::ifstream myfile;
+        myfile.open("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/config/test_angles.txt");
+        std::cout << "file is open: " << myfile.is_open() << "\n";
+        std::vector<double> goal_tmp;
+        goal_tmp.resize(7);
+        for(int i=0; i<7; i++)
+        {
+            myfile >> goal_tmp[i];
+            std::cout << goal_tmp[i] << ", ";
+        }
+        std::cout << "\n";
+        myfile.close();
+        sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(goal_tmp.data()));
+        sim_world->victor_model.doVis();
+    }
+}
 
 
 int main(int argc, char* argv[])
@@ -44,57 +95,34 @@ int main(int argc, char* argv[])
     signal(SIGTERM, killhandler);
 
     sim_world->initializeObstacles();
-
-    std::vector<double> start = {-1.4, 1.4, 1.4, -0.5, 0, 0, 0};
-    std::vector<double> goal = {0, 1.2, 0, 0, 0, 0, 0};
+// 
+    std::vector<double> start = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
+    std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
 
     sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
-    
+
     int unused;
     std::cout << "Waiting for user input to start...\n";
     std::cin >> unused;
 
+    // testAngles();
     
-    VictorLBKPiece planner(&(sim_world->victor_model));
+    // VictorLBKPiece planner(&(sim_world->victor_model));
+    VictorLazyRRTF planner(&(sim_world->victor_model));
+
+    attemptGoal(planner, goal);
     
-    Maybe::Maybe<Path> maybe_path = planner.planPathDouble(start, goal);
+    // M::Maybe<Path> maybe_path = planner.planPathDouble(start, goal);
 
-    if(!maybe_path.Valid())
-    {
-        std::cout << "no path found\n";
-        return 0;
-    }
-    std::cout << "Path found\n";
-    Path path = maybe_path.Get();
-
-    // Path path;
-    // std::vector<double> cur = start;
-    // for(int i=0; i<100; i++)
+    // if(!maybe_path.Valid())
     // {
-    //     for(size_t j=0; j<cur.size(); j++)
-    //     {
-    //         cur[j] += (goal[j] - start[j])/100;
-    //     }
-    //     path.push_back(cur);
+    //     std::cout << "no path found\n";
+    //     return 0;
     // }
+    // std::cout << "Path found\n";
+    // Path path = maybe_path.Get();
+    // sim_world->attemptPath(path);
 
-    size_t last_valid;
-    if(!sim_world->executePath(path, last_valid))
-    {
-        std::cout << "backing up\n";
-        std::cout << last_valid << "\n";
-        Path backup;
-        for(int i=0; i<30; i++)
-        {
-            backup.push_back(path[last_valid]);
-            if(last_valid == 0)
-            {
-                break;
-            }
-            last_valid--;
-        }
-        sim_world->executePath(backup, last_valid);
-    }
 
 
     sim_world->gvl.reset();

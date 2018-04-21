@@ -7,6 +7,20 @@
 
 #include <arc_utilities/maybe.hpp>
 
+#define VICTOR_ACTUAL_MAP "victor_actual_map"
+#define VICTOR_QUERY_MAP "victor_query_map"
+#define ENV_MAP "env_map"
+
+#define VICTOR_SWEPT_VOLUME_MAP "victor_swept_volume_map"
+#define VICTOR_PATH_ENDPOINTS_MAP "victor_path_endpoints_map"
+#define VICTOR_PATH_SOLUTION_MAP "victor_path_solutions_map"
+#define OBSTACLE_DISTANCE_MAP "obstacle_distance_map"
+#define FULL_MAP "full_map"
+
+#define SIM_OBSTACLES_MAP "sim_obstacles_map"
+#define VICTOR_ROBOT "victor_robot"
+
+
 std::vector<std::string> SEEN_OBSTACLE_SETS;
 
 
@@ -38,18 +52,28 @@ public:
 
     void addQueryState(const VictorConfig &c);
 
-    size_t countNumCollisions();
+    size_t countTotalNumCollisions();
+
+    size_t countIntersect(const std::string& map_1, const std::string& map_2);
+    
+    std::vector<size_t> countSeenCollisionsInQueryForEach();
 
     size_t countNumCollisions(const std::string &map_name);
 
-    size_t countNumCollisions(const VictorConfig &c);
+    size_t countTotalNumCollisionsForConfig(const VictorConfig &c);
 
+    std::vector<size_t> seenSizes();
+
+    size_t getNumOccupiedVoxels(const std::string& map_name);
+    
     /* Returns true if Victor is not in collision at this config */
     bool queryFreeConfiguration(const VictorConfig &c);
 
     bool isInJointLimits(const double *values);
 
     VictorConfig toVictorConfig(const double* values);
+
+    std::vector<double> toValues(VictorConfig config);
 
     // template<typename T>
     // robot::JointValueMap toRightJointValueMap(const T values);
@@ -65,6 +89,7 @@ public:
     
     gpu_voxels::GpuVoxelsSharedPtr gvl;
     int num_observed_sets;
+    VictorConfig cur_config;
 };
 
 
@@ -75,6 +100,9 @@ public:
     SimWorld();
     void initializeObstacles();
     bool executePath(const Path &path, size_t &last_index);
+
+    bool attemptPath(const Path &path);
+
     Maybe::Maybe<std::string> getCollisionLink(const VictorConfig &c);
 
 public:    
