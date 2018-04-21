@@ -178,7 +178,7 @@ Maybe::Maybe<Path> VictorPlanner::planPathConfig(VictorConfig start, VictorConfi
 
 Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std::vector<double> goal)
 {
-    ob::ScopedState<> start_ss(space);
+    ob::ScopedState<ob::RealVectorStateSpace> start_ss(space);
     ob::ScopedState<> goal_ss(space);
     std::cout << "start: ";
     for(size_t i=0; i<start.size(); i++)
@@ -266,6 +266,7 @@ void VictorLazyRRTF::initializePlanner()
 Maybe::Maybe<ob::PathPtr> VictorLazyRRTF::planPath(ompl::base::ScopedState<> start,
                                                    ompl::base::ScopedState<> goal)
 {
+    std::cout << "Using this planner\n";
     preparePlanner(start, goal);
     ob::PathPtr path;
     int planning_time = 5;
