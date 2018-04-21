@@ -196,16 +196,15 @@ bool VictorPathValidator::checkPath(const std::vector<ompl::base::State*> path,
         for(size_t i=0; i < seen_sizes.size(); i++)
         {
             p_no_collision[i] = 1.0 - (double)seen_col_voxels[i] / (double)seen_sizes[i];
-            std::cout << "Seen col voxles[" << i << "]: " << seen_col_voxels[i] << "\n";
             assert(p_no_collision[i] <= 1.0);
             p_no_col_seen *= p_no_collision[i];
         }
 
         victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
-        std::cout << "p_no_col_seen: " << p_no_col_seen << "\n";
-        int unused;
-        std::cout << "Waiting for user input to start...\n";
-        std::cin >> unused;
+        // std::cout << "p_no_col_seen: " << p_no_col_seen << "\n";
+        // int unused;
+        // std::cout << "Waiting for user input to start...\n";
+        // std::cin >> unused;
 
 
         size_t path_size = victor_model_->countIntersect(FULL_MAP, VICTOR_QUERY_MAP);

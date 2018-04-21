@@ -178,7 +178,7 @@ Maybe::Maybe<Path> VictorPlanner::planPathConfig(VictorConfig start, VictorConfi
 
 Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std::vector<double> goal)
 {
-    ob::ScopedState<ob::RealVectorStateSpace> start_ss(space);
+    ob::ScopedState<> start_ss(space);
     ob::ScopedState<> goal_ss(space);
     std::cout << "start: ";
     for(size_t i=0; i<start.size(); i++)

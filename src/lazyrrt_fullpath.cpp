@@ -137,7 +137,10 @@ ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTe
         if ((goal_s != nullptr) && rng_.uniform01() < goalBias_ && goal_s->canSample())
             goal_s->sampleGoal(rstate);
         else
+        {
             sampler_->sampleUniform(rstate);
+            // std::cout << "Sampling state\n";
+        }
 
         /* find closest state in the tree */
         Motion *nmotion = nn_->nearest(rmotion);
