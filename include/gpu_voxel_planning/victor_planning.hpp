@@ -5,6 +5,7 @@
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
+#include <ompl/geometric/planners/prm/PRM.h>
 #include "lazyrrt_fullpath.h"
 
 
@@ -77,6 +78,20 @@ namespace gpu_voxels_planner
         std::shared_ptr<VictorPathValidator> pv_;
         double threshold;
     };
+
+
+
+
+    class VictorPRM: public VictorPlanner
+    {
+    public:
+        VictorPRM(GpuVoxelsVictor* victor_model);
+        virtual void initializePlanner() override;
+
+        virtual void preparePlanner(ompl::base::ScopedState<> start,
+                                     ompl::base::ScopedState<> goal) override;
+    };
+
 
 
 }

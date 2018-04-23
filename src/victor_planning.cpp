@@ -260,7 +260,10 @@ void VictorLazyRRTF::initializePlanner()
     lrrtf->setPathValidator(pv_);
     planner_ = lrrtf;
     planner_->setup();
-    threshold = 0.5;
+    threshold = 1.0;
+    
+    vv_ptr = std::make_shared<VictorValidator>(si_, victor_model_);
+    si_->setStateValidityChecker(vv_ptr->getptr());
 }
 
 Maybe::Maybe<ob::PathPtr> VictorLazyRRTF::planPath(ompl::base::ScopedState<> start,
@@ -269,25 +272,28 @@ Maybe::Maybe<ob::PathPtr> VictorLazyRRTF::planPath(ompl::base::ScopedState<> sta
     std::cout << "Using this planner\n";
     preparePlanner(start, goal);
     ob::PathPtr path;
-    int planning_time = 5;
+    int planning_time = 15;
 
+    threshold = 1.0;
     pv_->setProbabilityThreshold(threshold);
     ob::PlannerStatus solved = planner_->solve(planning_time);
+    
 
-    while(!solved)
+    while(solved)
     {
-        threshold += 0.1;
+        threshold -= 0.1;
+        if(threshold <= 0.0){
+            break;
+        }
+
         std::cout << "threshold " << threshold << "\n";
         pv_->setProbabilityThreshold(threshold);
         solved = planner_->solve(planning_time);
-        if(threshold > 1.2){
-            break;
-        }
+        
     }
-    threshold -= 0.1;
 
     
-    if (!solved)
+    if (threshold == 1.0)
     {
         std::cout << "No solution could be found" << std::endl;
         return Maybe::Maybe<ob::PathPtr>();
@@ -306,6 +312,48 @@ void VictorLazyRRTF::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> g
     planner_->setProblemDefinition(pdef_);
 
 }
+
+
+
+
+
+
+
+/************************************
+ **          Victor PRM            **
+ ***********************************/
+
+VictorPRM::VictorPRM(GpuVoxelsVictor* victor_model)
+    : VictorPlanner(victor_model)
+{
+    initializePlanner();
+}
+
+void VictorPRM::initializePlanner()
+{
+    vv_ptr = std::make_shared<VictorConservativeValidator>(si_, victor_model_);
+    setupSpaceInformation();
+
+
+
+    planner_ = std::make_shared<og::PRM>(si_);
+    planner_->setup();
+}
+
+void VictorPRM::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
+{
+    planner_->clear();
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
+    pdef_->setStartAndGoalStates(start, goal);
+
+    planner_->setProblemDefinition(pdef_);
+
+}
+
+
+
+
+
 
 
 

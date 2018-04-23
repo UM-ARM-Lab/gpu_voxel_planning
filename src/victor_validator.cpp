@@ -161,7 +161,7 @@ void VictorPathValidator::setProbabilityThreshold(double th)
     threshold = th;
 }
 
-bool VictorPathValidator::checkPath(const std::vector<ompl::base::State*> path,
+bool VictorPathValidator::checkPath(const std::vector<ob::State*> path,
                                     size_t &collision_index)
 {
     // std::cout << "Checking path...";
@@ -174,11 +174,17 @@ bool VictorPathValidator::checkPath(const std::vector<ompl::base::State*> path,
     ob::State *test = si_->allocState();
 
     double prob_col = 0.0;
+    double p_no_col_unseen;
+    double p_no_col_seen;
         
     for(collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
     {
         const ob::State *s1 = path[collision_index];
         const ob::State *s2 = path[collision_index + 1];
+        if(!si_->isValid(s1))
+        {
+            return false;
+        }
         int nd = stateSpace_->validSegmentCount(s1, s2);
 
         for(int j = 0; j < nd; j++)
@@ -191,7 +197,7 @@ bool VictorPathValidator::checkPath(const std::vector<ompl::base::State*> path,
         std::vector<size_t> seen_sizes = victor_model_->seenSizes();
         std::vector<double> p_no_collision;
         p_no_collision.resize(seen_col_voxels.size());
-        double p_no_col_seen = 1.0;
+        p_no_col_seen = 1.0;
 
         for(size_t i=0; i < seen_sizes.size(); i++)
         {
@@ -214,16 +220,17 @@ bool VictorPathValidator::checkPath(const std::vector<ompl::base::State*> path,
         double num_occupied = (double)(path_size - known_free_size);
         double frac_occupied = num_occupied / (double) total_size;
         
-        double p_no_col_unseen = std::pow(1.0 - frac_occupied, 0);
+        p_no_col_unseen = std::pow(1.0 - frac_occupied, 0);
 
         prob_col = 1.0 - p_no_col_seen * p_no_col_unseen;
-
+        
         if (prob_col > 1.0)
         {
             std::cout << "Prob_col " << prob_col;
             std::cout << ", p_no_col_seen " << p_no_col_seen;
             std::cout << ", p_no_col_unseen " << p_no_col_unseen;
-            // assert (prob_col <= 1.0);
+            std::cout << "\n";
+            assert (prob_col <= 1.0);
         }
 
         
@@ -233,12 +240,17 @@ bool VictorPathValidator::checkPath(const std::vector<ompl::base::State*> path,
         }
     }
     si_->freeState(test);
-    
+    // std::cout << "Prob_col " << prob_col;
+    // std::cout << ", p_no_col_seen " << p_no_col_seen;
+    // std::cout << ", p_no_col_unseen " << p_no_col_unseen;
+    // std::cout << "\n";
+
 
     // std::cout << "Finished\n";
     // std::cout << "pathsize " << path.size();
     // std::cout << " col index " << collision_index << "\n";
     // std::cout << "Threshold " << threshold << "\n";
+    // std::cout << "collision index: " << collision_index << "\n";
     return prob_col <= threshold;
 }
 

@@ -96,7 +96,8 @@ int main(int argc, char* argv[])
 
     sim_world->initializeObstacles();
 // 
-    std::vector<double> start = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
+    // std::vector<double> start = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
+    std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
     std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
 
     sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
@@ -108,6 +109,7 @@ int main(int argc, char* argv[])
     // testAngles();
     
     // VictorLBKPiece planner(&(sim_world->victor_model));
+    // VictorPRM planner(&(sim_world->victor_model));
     VictorLazyRRTF planner(&(sim_world->victor_model));
 
     attemptGoal(planner, goal);

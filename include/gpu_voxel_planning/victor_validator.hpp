@@ -74,7 +74,7 @@ public:
     VictorPathValidator(const ompl::base::SpaceInformationPtr &si,
                         GpuVoxelsVictor* victor_model);
     virtual bool checkPath(const std::vector<ompl::base::State*> path,
-                           size_t &collision_index);
+                           size_t &collision_index) override;
     void setProbabilityThreshold(double th);
 
 protected:

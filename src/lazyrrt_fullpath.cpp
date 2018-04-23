@@ -38,6 +38,8 @@
 #include "ompl/base/goals/GoalSampleableRegion.h"
 #include "ompl/tools/config/SelfConfig.h"
 #include <cassert>
+#include <algorithm>
+#include <ompl/base/spaces/SE3StateSpace.h>
 
 ompl::geometric::LazyRRTF::LazyRRTF(const base::SpaceInformationPtr &si) : base::Planner(si, "LazyRRTF")
 {
@@ -98,18 +100,32 @@ void ompl::geometric::LazyRRTF::freeMemory()
     }
 }
 
+void printState(ompl::base::State *s)
+{
+    const double *values = s->as<ompl::base::RealVectorStateSpace::StateType>()->values;
+    for(int i=0; i<7; i++)
+    {
+        std::cout << values[i] << ", ";
+    }
+    std::cout << "\n";
+}
+
 ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTerminationCondition &ptc)
 {
     checkValidity();
     base::Goal *goal = pdef_->getGoal().get();
     auto *goal_s = dynamic_cast<base::GoalSampleableRegion *>(goal);
-
+    base::State *start_state;
+    
     while (const base::State *st = pis_.nextStart())
     {
         auto *motion = new Motion(si_);
         si_->copyState(motion->state, st);
         motion->valid = true;
         nn_->add(motion);
+        start_state = motion->state;
+        std::cout << "Start state: ";
+        printState(motion->state);
     }
 
     if (nn_->size() == 0)
@@ -130,22 +146,41 @@ ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTe
     base::State *xstate = si_->allocState();
 
     bool solutionFound = false;
+    bool goalSampled;
 
     while (!ptc && !solutionFound)
     {
+        // goalBias_ = 0.001;
         /* sample random state (with goal biasing) */
         if ((goal_s != nullptr) && rng_.uniform01() < goalBias_ && goal_s->canSample())
+        {
             goal_s->sampleGoal(rstate);
+            goalSampled = true;
+            std::cout << "goal sampled\n";
+        }
         else
         {
             sampler_->sampleUniform(rstate);
+            goalSampled = false;
             // std::cout << "Sampling state\n";
         }
 
         /* find closest state in the tree */
+
         Motion *nmotion = nn_->nearest(rmotion);
         assert(nmotion != rmotion);
         base::State *dstate = rstate;
+        if(goalSampled)// && nmotion->state==start_state)
+        {
+            // std::cout << nmotion->state << "\n";
+            // std::cout << start_state << "\n";
+            // // std::cout << "Start state is nearest to goal\n";
+            // std::cout << "nn size: " << nn_->size() << "\n";
+            std::cout << "Nearest to goal\n";
+            printState(nmotion->state);
+            // std::cout << "start is nearest to goal\n";
+        }
+        
 
         /* find state to add */
         double d = si_->distance(nmotion->state, rstate);
@@ -154,6 +189,9 @@ ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTe
             si_->getStateSpace()->interpolate(nmotion->state, rstate, maxDistance_ / d, xstate);
             dstate = xstate;
         }
+
+        std::cout << "Adding motion to ";
+        printState(dstate);
 
         /* create a motion */
         auto *motion = new Motion(si_);
@@ -174,13 +212,24 @@ ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTe
             // construct the solution path
             std::vector<Motion *> mpath;
             std::vector<ompl::base::State*> spath;
+            // std::cout << "motion:\n";
             while (solution != nullptr)
             {
                 mpath.push_back(solution);
                 spath.push_back(solution->state);
                 solution = solution->parent;
+                // const double *values = solution->state->as<base::RealVectorStateSpace::StateType>()->values;
+                // for(int i=0; i<7; i++)
+                // {
+                //     std::cout << values[i] << ", ";
+                // }
+                // std::cout << "\n";
+
             }
 
+            std::reverse(std::begin(mpath), std::end(mpath));
+            std::reverse(std::begin(spath), std::end(spath));
+            
 
             // // check each segment along the path for validity
             // for (int i = mpath.size() - 1; i >= 0 && solutionFound; --i)
@@ -198,6 +247,8 @@ ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTe
 
             size_t collision_index;
             // std::cout << "Checking path...";
+            // std::cout << "nn_size: " << nn_->size() << "\n";
+            // std::cout << "mpath size: " << mpath.size() << "\n";
             solutionFound = path_validator_->checkPath(spath, collision_index);
             // std::cout << "done checking path\n";
 
@@ -205,6 +256,7 @@ ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTe
             {
                 // std::cout << "Adding solution path...";
                 // set the solution path
+                std::reverse(std::begin(mpath), std::end(mpath));
                 auto path(std::make_shared<PathGeometric>(si_));
                 for (int i = mpath.size() - 1; i >= 0; --i)
                     path->append(mpath[i]->state);
@@ -217,7 +269,8 @@ ompl::base::PlannerStatus ompl::geometric::LazyRRTF::solve(const base::PlannerTe
                 // std::cout << "Removing Motion...";
                 // for (size_t i = collision_index + 2; i < mpath.size(); i++)
                 // {
-                size_t i = collision_index;
+                size_t i = collision_index+1;
+                assert(i < mpath.size());
                 // std::cout << "nn size " << nn_->size() << "\n";
                 // std::cout << "removing motion " << i << "\n";
                 removeMotion(mpath[i]);
