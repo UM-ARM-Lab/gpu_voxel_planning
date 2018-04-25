@@ -264,6 +264,17 @@ IF(GTEST_FOUND)
     ${EXTERN_LIBS}
     ${GTEST_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
+    )
+
+  
+  add_executable(test_planners tests/planners_test.cpp)
+  target_link_libraries(test_planners
+    victor_model
+    victor_validator
+    victor_planning
+    ${EXTERN_LIBS}
+    ${GTEST_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 
     )
 ENDIF(GTEST_FOUND)
