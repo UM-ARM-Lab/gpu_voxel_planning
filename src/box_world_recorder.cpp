@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
     // BoxRRTstar<BoxMinVoxObjective> planner2(boxWorld.get());
     // BoxRRTstar<BoxMinColProbObjective> planner3(boxWorld.get());
 
-    int num_tests = 5;
+    int num_tests = 20;
     std::cout << "Running " << num_tests << " trials\n";
 
     for(int i=0; i<num_tests; i++)

@@ -116,6 +116,11 @@ target_link_libraries(flrrtc
   ${OMPL_LIBRARIES}
   )
 
+add_library(crrtc src/custom_rrtconnect.cpp)
+target_link_libraries(crrtc
+  ${OMPL_LIBRARIES}
+  )
+
 
 
 
@@ -172,10 +177,20 @@ target_link_libraries(victor_planning
   victor_model
   ${EXTERN_LIBS}
   lazyrrtf
+  crrtc
   )
 
 add_executable(wip_victor_sim src/wip_victor_sim.cpp)
 target_link_libraries(wip_victor_sim
+  ${EXTERN_LIBS}
+  lazyrrtf
+  victor_model
+  victor_planning
+  victor_validator
+  )
+
+add_executable(victor_sim_timings src/victor_sim_timings.cpp)
+target_link_libraries(victor_sim_timings
   ${EXTERN_LIBS}
   lazyrrtf
   victor_model

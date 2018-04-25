@@ -18,7 +18,7 @@
 #define PROB_OCCUPIED eBVM_OCCUPIED
 
 #define NUM_SETS 100
-
+#define EXECUTION_DELAY_us 10000
 
 std::vector<std::string> right_arm_joint_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
         "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5",
@@ -72,7 +72,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_PATH_ENDPOINTS_MAP);
     gvl->addMap(MT_DISTANCE_VOXELMAP, OBSTACLE_DISTANCE_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, FULL_MAP);
-    gvl->insertBoxIntoMap(Vector3f(0,0,0), Vector3f(200*0.02,200*0.02,200*0.02), FULL_MAP, PROB_OCCUPIED);
+    gvl->insertBoxIntoMap(Vector3f(-1,-1,-1), Vector3f(300*0.02,300*0.02,300*0.02), FULL_MAP, PROB_OCCUPIED);
     
     gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);
     
@@ -509,6 +509,7 @@ Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
     return Maybe::Maybe<std::string>();
 }
 
+
 /*
  *  Executes path until completion or collision.
  */
@@ -550,7 +551,7 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
             
         victor_model.updateActual(c);
         victor_model.doVis();
-        usleep(30000);
+        usleep(EXECUTION_DELAY_us);
     }
     std::cout << "Path success!\n";
     return true;

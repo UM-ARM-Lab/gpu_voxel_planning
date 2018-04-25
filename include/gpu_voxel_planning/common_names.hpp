@@ -12,4 +12,11 @@ const std::string CHECK_MOTION_COMP_CHECK = "checkMotion (complicated) full chec
 const std::string INSERT_VIZ_SOLUTION = "insert into viz solution";
 
 
+
+
+
+
+const std::string BiRRT_TIME = "bi_rrt";
+
+
 #endif

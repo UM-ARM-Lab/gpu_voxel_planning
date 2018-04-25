@@ -8,12 +8,15 @@
 #include <signal.h>
 #include <iostream>
 
+#include "custom_rrtconnect.h"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <ompl/geometric/PathSimplifier.h>
+
 
 #include <stdlib.h>
 
 #include <memory>
+
 
 
 namespace ob = ompl::base;
@@ -411,7 +414,7 @@ void VictorThresholdRRTConnect::initializePlanner()
 
 
 
-    planner_ = std::make_shared<og::RRTConnect>(si_);
+    planner_ = std::make_shared<og::cRRTConnect>(si_);
     planner_->setup();
 }
 
@@ -419,36 +422,70 @@ void VictorThresholdRRTConnect::initializePlanner()
 Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::ScopedState<> start,
                                                               ompl::base::ScopedState<> goal)
 {
+    PROFILE_START(BiRRT_TIME);
     std::cout << "Using threshold planner\n";
     preparePlanner(start, goal);
+
     ob::PathPtr path;
-    int planning_time = 15;
+    double planning_time = 15;
+    double eps = 0.0001;
 
     double threshold = 1.0;
-    dynamic_cast<VictorThresholdValidator*>(vv_ptr.get())->setProbabilityThreshold(threshold);
-    ob::PlannerStatus solved = planner_->solve(planning_time);
     
-
-    while(solved)
+    ob::PlannerStatus solved(true, false);
+    bool anySolution = false;
+    VictorThresholdValidator* vv_thresh = dynamic_cast<VictorThresholdValidator*>(vv_ptr.get());
+    vv_thresh->setProbabilityThreshold(threshold);
+    
+    arc_utilities::Stopwatch stopwatch;
+    double time_left;
+    
+    while((time_left = (planning_time - stopwatch())) > 0)
     {
-        threshold -= 0.1;
-        if(threshold <= 0.0){
-            break;
-        }
+        
+        // threshold -= 0.01;
+        // if(threshold <= 0.0){
+        //     std::cout << "0 cost path found. Exiting early\n";
+        //     break;
+        // }
 
         std::cout << "threshold " << threshold << "\n";
-        dynamic_cast<VictorThresholdValidator*>(vv_ptr.get())->setProbabilityThreshold(threshold);
-        solved = planner_->solve(planning_time);
-    }
+        
+        solved = planner_->solve(time_left);
 
-    if (threshold == 1.0)
+        if(solved)
+        {
+            anySolution = true;
+            path = pdef_->getSolutionPath();
+            threshold = vv_thresh->getPathMaxColProb(path->as<og::PathGeometric>()) - eps;
+            vv_thresh->setProbabilityThreshold(threshold);
+            preparePlanner(start, goal);
+            if(!vv_thresh->isValid(start.get()) || !vv_thresh->isValid(goal.get()))
+            {
+                std::cout << "Found best path for given start/goal\n";
+                threshold += (2*eps);
+                break;
+            }
+        }
+        usleep(10000);
+    }
+    std::cout << "Planning finished\n";
+
+    if (!anySolution)
     {
         std::cout << "No solution could be found" << std::endl;
+        PROFILE_RECORD(BiRRT_TIME);
         return Maybe::Maybe<ob::PathPtr>();
     }
 
-    path = pdef_->getSolutionPath();
-
+    // path = pdef_->getSolutionPath();
+    std::cout << "simplfying\n";
+    // simp_->simplifyMax(*(path->as<og::PathGeometric>()));
+    // simp_->simplify(*(path->as<og::PathGeometric>()), 2.0);
+    simp_->shortcutPath(*(path->as<og::PathGeometric>()), 400, 100);
+    std::cout << "done simplifying\n";
+    
+    PROFILE_RECORD(BiRRT_TIME);
     return Maybe::Maybe<ob::PathPtr>(path);
 }
 
@@ -458,7 +495,5 @@ void VictorThresholdRRTConnect::preparePlanner(ob::ScopedState<> start, ob::Scop
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
     pdef_->setStartAndGoalStates(start, goal);
-
     planner_->setProblemDefinition(pdef_);
-
 }

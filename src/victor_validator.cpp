@@ -157,12 +157,10 @@ VictorThresholdValidator::VictorThresholdValidator(const ompl::base::SpaceInform
 
 
 
-bool VictorThresholdValidator::isValid(const ob::State *state) const
+
+
+double VictorThresholdValidator::getCollisionProb(const ob::State *state) const
 {
-    if(!VictorValidator::isValid(state))
-    {
-        return false;
-    }
     const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
     VictorConfig config = victor_model_->toVictorConfig(values);
 
@@ -183,12 +181,41 @@ bool VictorThresholdValidator::isValid(const ob::State *state) const
     assert(p_no_collision <= 1.0);
     assert(p_no_collision >= 0.0);
     double p_collision = 1.0 - p_no_collision;
+    victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
     // std::cout << "p_collision: " << p_collision << "\n";
+    // int unused;
+    // std::cin >> unused;
+    // usleep(100000);
     // std::cout << "threshold: " << threshold << "\n";
-    return p_collision < threshold;
+    return p_collision;
+
+}
+
+bool VictorThresholdValidator::isValid(const ob::State *state) const
+{
+    if(!VictorValidator::isValid(state))
+    {
+        return false;
+    }
+
+    return getCollisionProb(state) < threshold;
 }
 
 
+double VictorThresholdValidator::getPathMaxColProb(og::PathGeometric *path) const
+{
+    std::vector<ob::State*> states = path->getStates();
+    double max_col_prob = 0.0;
+    for(auto state: states)
+    {
+        double pcol = getCollisionProb(state);
+        if(pcol > max_col_prob)
+        {
+            max_col_prob = pcol;
+        }
+    }
+    return max_col_prob;
+}
 
 
 

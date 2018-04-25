@@ -70,6 +70,10 @@ public:
     // virtual bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const;
 
     void setProbabilityThreshold(double value) {threshold = value;}
+
+    double getCollisionProb(const ompl::base::State *state) const;
+
+    double getPathMaxColProb(ompl::geometric::PathGeometric *path) const;
     
     double threshold;
 };
