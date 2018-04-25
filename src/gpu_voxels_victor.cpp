@@ -84,9 +84,14 @@ GpuVoxelsVictor::GpuVoxelsVictor():
         gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
     }
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
-
-
 }
+
+
+GpuVoxelsVictor::~GpuVoxelsVictor()
+{
+    std::cout << "Destructor for gpu voxels victor\n";
+}
+
 
 void GpuVoxelsVictor::insertVictorIntoMap(const VictorConfig &c, const std::string &map_name)
 {

@@ -32,6 +32,8 @@ class GpuVoxelsVictor
 public:
     GpuVoxelsVictor();
 
+    ~GpuVoxelsVictor();
+
     void insertVictorIntoMap(const VictorConfig &c, const std::string &map_name);
 
     void updateActual(const VictorConfig &c);
