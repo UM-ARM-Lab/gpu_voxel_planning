@@ -27,6 +27,10 @@ extern std::vector<std::string> SEEN_OBSTACLE_SETS;
 typedef robot::JointValueMap VictorConfig;
 typedef std::vector<std::vector<double>> Path;
 
+
+
+
+
 class GpuVoxelsVictor
 {
 public:
@@ -84,8 +88,9 @@ public:
     int determineVictorDist();
 
     void doVis();
-    void visualizeSolution(const std::vector<VictorConfig> &joint_maps);
-    void hideSolution();
+    
+    void visPath(const Path &path);
+    void hidePath();
 
 public:
     
@@ -93,6 +98,12 @@ public:
     int num_observed_sets;
     VictorConfig cur_config;
 };
+
+
+
+
+Path densifyPath(const Path &path, int densify_factor);
+
 
 
 

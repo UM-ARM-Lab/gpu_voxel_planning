@@ -45,6 +45,7 @@ const std::string MOTION_COST = "motionCost";
 
 
 
+
 VictorPlanner::VictorPlanner(GpuVoxelsVictor* victor_model)
 {
     space = std::make_shared<ob::RealVectorStateSpace>(7);
@@ -157,7 +158,7 @@ Path VictorPlanner::omplPathToDoublePath(og::PathGeometric* ompl_path)
     {
         ob::State *s1 = ompl_path->getState(step);
         ob::State *s2 = ompl_path->getState(step + 1);
-        int nd = stateSpace->validSegmentCount(s1, s2)*10;
+        int nd = stateSpace->validSegmentCount(s1, s2);
         
         for(int j = 0; j<nd; j++)
         {
@@ -171,8 +172,8 @@ Path VictorPlanner::omplPathToDoublePath(og::PathGeometric* ompl_path)
     si_->freeState(state);
     
     return d_path;
-
 }
+
 
 Maybe::Maybe<Path> VictorPlanner::planPathConfig(VictorConfig start, VictorConfig goal)
 {
@@ -409,7 +410,7 @@ VictorThresholdRRTConnect::VictorThresholdRRTConnect(GpuVoxelsVictor* victor_mod
 
 void VictorThresholdRRTConnect::initializePlanner()
 {
-    vv_ptr = std::make_shared<VictorThresholdValidator>(si_, victor_model_);
+    vv_ptr = std::make_shared<VictorStateThresholdValidator>(si_, victor_model_);
     setupSpaceInformation();
 
 
@@ -422,7 +423,7 @@ void VictorThresholdRRTConnect::initializePlanner()
 Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::ScopedState<> start,
                                                               ompl::base::ScopedState<> goal)
 {
-    PROFILE_START(BiRRT_TIME);
+
     std::cout << "Using threshold planner\n";
     preparePlanner(start, goal);
 
@@ -434,7 +435,7 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
     
     ob::PlannerStatus solved(true, false);
     bool anySolution = false;
-    VictorThresholdValidator* vv_thresh = dynamic_cast<VictorThresholdValidator*>(vv_ptr.get());
+    VictorStateThresholdValidator* vv_thresh = dynamic_cast<VictorStateThresholdValidator*>(vv_ptr.get());
     vv_thresh->setProbabilityThreshold(threshold);
     
     arc_utilities::Stopwatch stopwatch;
@@ -458,12 +459,13 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
             anySolution = true;
             path = pdef_->getSolutionPath();
             threshold = vv_thresh->getPathMaxColProb(path->as<og::PathGeometric>()) - eps;
+            std::cout << "Max col prob on path: " << threshold + eps << "\n";
             vv_thresh->setProbabilityThreshold(threshold);
             preparePlanner(start, goal);
             if(!vv_thresh->isValid(start.get()) || !vv_thresh->isValid(goal.get()))
             {
-                std::cout << "Found best path for given start/goal\n";
-                threshold += (2*eps);
+                std::cout << "Found best path for given start/goal with threshold " << (threshold + eps) <<"\n";
+                vv_thresh->setProbabilityThreshold(threshold + 2*eps);
                 break;
             }
         }
@@ -474,18 +476,21 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
     if (!anySolution)
     {
         std::cout << "No solution could be found" << std::endl;
-        PROFILE_RECORD(BiRRT_TIME);
+
         return Maybe::Maybe<ob::PathPtr>();
     }
 
+    (path->as<og::PathGeometric>())->interpolate();
+    std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states before smoothing\n";
     // path = pdef_->getSolutionPath();
-    std::cout << "simplfying\n";
+    // std::cout << "simplfying\n";
     // simp_->simplifyMax(*(path->as<og::PathGeometric>()));
     // simp_->simplify(*(path->as<og::PathGeometric>()), 2.0);
-    simp_->shortcutPath(*(path->as<og::PathGeometric>()), 400, 100);
-    std::cout << "done simplifying\n";
+    simp_->shortcutPath(*(path->as<og::PathGeometric>()), 100, 30);
+    // std::cout << "done simplifying\n";
+    std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states after smoothing\n";
     
-    PROFILE_RECORD(BiRRT_TIME);
+
     return Maybe::Maybe<ob::PathPtr>(path);
 }
 

@@ -15,83 +15,52 @@
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
+using namespace gpu_voxels_planner;
 
 TEST(GpuVoxelVictor, collisions)
 {
 
-    {
-    std::shared_ptr<ompl::base::RealVectorStateSpace> space =
-        std::make_shared<ob::RealVectorStateSpace>(7);
-
-    ob::RealVectorBounds bounds(7);
-    bounds.setLow(-3.14159265);
-    bounds.setHigh(3.14159265);
-    space->setBounds(bounds);
-    std::shared_ptr<ompl::base::SpaceInformation> si_ =
-        std::make_shared<ob::SpaceInformation>(space);
 
     GpuVoxelsVictor victor_model;
-    double angles[] = {0,0,0,0,0,0,0};
-    robot::JointValueMap config = victor_model.toVictorConfig(angles);
-    bool is_valid = victor_model.queryFreeConfiguration(config);
-    size_t col_count = victor_model.countTotalNumCollisionsForConfig(config);
-    EXPECT_EQ(0, col_count) << "Victor at initial position has collisions";
-    EXPECT_TRUE(is_valid) << "Victor at initial position is in collision";
+    
+    double start[] = {-0.15,0,0,0,0,0,0};
+    double goal[] = {-0.15, 1.2, 0, -0.5, 0, 1.0, 0};
+
+    
+    robot::JointValueMap sconfig = victor_model.toVictorConfig(start);
+    robot::JointValueMap gconfig = victor_model.toVictorConfig(goal);
+    victor_model.updateActual(sconfig);
+    
 
 
-    victor_model.gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2),
-                                       COLLISION_SET, PROB_OCCUPIED, 2);
-    victor_model.num_observed_sets = 1;
+    // victor_model.gvl->insertBoxIntoMap(Vector3f(1.6, 1.4, 0.5), Vector3f(3.0 ,1.5,1.5), 
+    //                                    COLLISION_SET, PROB_OCCUPIED, 2);
+    // victor_model.num_observed_sets = 1;
 
 
-    // is_valid = victor_model.queryFreeConfiguration(config);
-    // col_count = victor_model.countTotalNumCollisionsForConfig(config);
-    victor_model.resetQuery();
-    victor_model.addQueryState(config);
-    col_count = victor_model.countNumCollisions(COLLISION_SET);
-    EXPECT_TRUE(col_count > 0) << "Victor with box obstacle has no collision";
+    ASSERT_TRUE(victor_model.queryFreeConfiguration(sconfig)) << "Victor at initial position is in collision";
+    ASSERT_TRUE(victor_model.queryFreeConfiguration(gconfig)) << "Victor at goal position is in collision";
 
+    VictorThresholdRRTConnect planner(&victor_model);
 
-    col_count = victor_model.countTotalNumCollisionsForConfig(config);
-    EXPECT_TRUE(col_count > 0) << "countTotalNumCollisionsForConfig did not find a collision";
+    Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
 
+    ASSERT_TRUE(path.Valid()) << "Invalid path. Code not necessarily broken, but test cannot continue";
 
+    victor_model.visPath(path.Get());
 
-    ob::RealVectorStateSpace::StateType *test =
-        si_->allocState()->as<ob::RealVectorStateSpace::StateType>();
-    for(int i=0; i<7; i++)
+    for(auto values: path.Get())
     {
-        test->values[i] = 0;
+        VictorConfig on_path_config = victor_model.toVictorConfig(values.data());
+        EXPECT_TRUE(victor_model.queryFreeConfiguration(on_path_config)) << "Collision found on path";
     }
 
-
-    VictorValidator vv = VictorValidator(si_, &victor_model);
-    VictorConservativeValidator vv_cons = VictorConservativeValidator(si_, &victor_model);
-    VictorThresholdValidator vv_thresh = VictorThresholdValidator(si_, &victor_model);
-
-    EXPECT_TRUE(vv.isValid(test)) << "Basic validator failed unexpectedly";
-    EXPECT_TRUE(!vv_cons.isValid(test)) << "Conservative validator does not report collision";
     
-    vv_thresh.setProbabilityThreshold(1.0);
-    EXPECT_TRUE(vv_thresh.isValid(test)) << "Even with threshold=1 there was a collision";
-    
-    vv_thresh.setProbabilityThreshold(0.01);
-    EXPECT_TRUE(!vv_thresh.isValid(test)) << "Even with threshold=.01 there was no collision";
 
 
-
-
-    
-    victor_model.updateActual(config);
-    victor_model.doVis();
-    int dummy;
-    std::cin >> dummy;
-    }
-
-
-    std::cout << "victor model out of scope\n";
-    int dummy;
-    std::cin >> dummy;
+    std::cout << "Waiting for user input to exit\n";
+    std::string dummy;
+    std::getline(std::cin, dummy);
 
 }
 

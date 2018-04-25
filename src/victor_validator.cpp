@@ -10,6 +10,7 @@
 #include "common_names.hpp"
 
 #include <thrust/extrema.h>
+#include <algorithm>
 
 #include <thread>
 #include <chrono>
@@ -148,7 +149,7 @@ bool VictorConservativeValidator::isValid(const ob::State *state) const
  **     Victor Threshold Validator     **
  ***************************************/
 
-VictorThresholdValidator::VictorThresholdValidator(const ompl::base::SpaceInformationPtr &si,
+VictorStateThresholdValidator::VictorStateThresholdValidator(const ompl::base::SpaceInformationPtr &si,
                                                    GpuVoxelsVictor* victor_model):
     VictorValidator(si, victor_model)
 {
@@ -159,7 +160,7 @@ VictorThresholdValidator::VictorThresholdValidator(const ompl::base::SpaceInform
 
 
 
-double VictorThresholdValidator::getCollisionProb(const ob::State *state) const
+double VictorStateThresholdValidator::getCollisionProb(const ob::State *state) const
 {
     const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
     VictorConfig config = victor_model_->toVictorConfig(values);
@@ -191,28 +192,55 @@ double VictorThresholdValidator::getCollisionProb(const ob::State *state) const
 
 }
 
-bool VictorThresholdValidator::isValid(const ob::State *state) const
+bool VictorStateThresholdValidator::isValid(const ob::State *state) const
 {
     if(!VictorValidator::isValid(state))
     {
         return false;
     }
-
-    return getCollisionProb(state) < threshold;
+    // std::cout << "\n\n\n\n!!!!!!!!!!!11 Validity Check Called !!!!+!!!!\n";
+    bool valid = getCollisionProb(state) < threshold;
+    // std::cout << "Validity Check Called " << valid << "\n";
+    return valid;
 }
 
 
-double VictorThresholdValidator::getPathMaxColProb(og::PathGeometric *path) const
+double VictorStateThresholdValidator::getMotionColProb(ob::State *s1, ob::State *s2) const
+{
+    ob::StateSpace *stateSpace = si_->getStateSpace().get();
+    ob::State *state = si_->allocState();
+    int nd = stateSpace->validSegmentCount(s1, s2);
+    double max_col_prob = 0.0;
+
+    for(int i=0; i<nd; i++)
+    {
+        stateSpace->interpolate(s1, s2, (double)i / (double)nd, state);
+        max_col_prob = std::max<double>(max_col_prob, getCollisionProb(state));
+    }
+    return max_col_prob;
+}
+
+double VictorStateThresholdValidator::getPathMaxColProb(og::PathGeometric *path) const
 {
     std::vector<ob::State*> states = path->getStates();
     double max_col_prob = 0.0;
-    for(auto state: states)
+    // std::cout << "Validating " << states.size() << " states\n";
+    // int unused;
+    // std::cin >> unused;
+    // for(auto state: states)
+    for(size_t i = 1; i < states.size(); i++)
     {
-        double pcol = getCollisionProb(state);
+        // auto state = states[i];
+        double pcol = getMotionColProb(states[i-1], states[i]);
+        // std::cout << "PathMax pcol: " << pcol << "\n";
         if(pcol > max_col_prob)
         {
             max_col_prob = pcol;
         }
+        // std::string unused;
+        // std::getline(std::cin, unused);
+
+        // usleep(100000);
     }
     return max_col_prob;
 }

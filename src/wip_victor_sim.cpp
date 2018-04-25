@@ -63,9 +63,9 @@ void testAngles()
     
     while(true)
     {
-        int unused;
+        std::string unused;
         std::cout << "Waiting for user input to set position...\n";
-        std::cin >> unused;
+        std::getline(std::cin, unused);
 
         std::ifstream myfile;
         myfile.open("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/config/test_angles.txt");
@@ -102,9 +102,9 @@ int main(int argc, char* argv[])
 
     sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
 
-    int unused;
+    std::string unused;
     std::cout << "Waiting for user input to start...\n";
-    std::cin >> unused;
+    std::getline(std::cin, unused);
 
     // testAngles();
     

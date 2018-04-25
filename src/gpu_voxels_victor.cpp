@@ -66,7 +66,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_ACTUAL_MAP); //map for victors current state
     gvl->addMap(MT_PROBAB_VOXELMAP, ENV_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP);
-    gvl->addMap(MT_BITVECTOR_VOXELLIST,VICTOR_PATH_SOLUTION_MAP);
+    gvl->addMap(MT_BITVECTOR_VOXELLIST, VICTOR_PATH_SOLUTION_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP_RED);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_PATH_ENDPOINTS_MAP);
@@ -84,6 +84,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
         gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
     }
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
+    gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
 }
 
 
@@ -330,23 +331,20 @@ void GpuVoxelsVictor::doVis()
 
 
 
-// void GpuVoxelsVictor::visualizeSolution(ob::PathPtr path)
-void GpuVoxelsVictor::visualizeSolution(const std::vector<VictorConfig> &configs)
+
+void GpuVoxelsVictor::visPath(const Path &path)
 {
     gvl->clearMap(VICTOR_PATH_SOLUTION_MAP);
+    std::cout << "Visualizing path\n";
 
     // Some new voxels seem to be needed to force the map to refresh in the visualizer
-    gvl->insertBoxIntoMap(Vector3f(0.0,0.0,0.0), Vector3f(0.02,0.02,0.02),
-                          VICTOR_PATH_SOLUTION_MAP, PROB_OCCUPIED, 2);
-        
-    
-    // std::cout << "Robot consists of " << gvl->getRobot(VICTOR_ROBOT)->getTransformedClouds()->getAccumulatedPointcloudSize() << " points" << std::endl;
-    for(size_t step = 0; step < configs.size(); step++)
+
+    for(size_t step = 0; step < path.size(); step++)
     {
         PROFILE_START(INSERT_VIZ_SOLUTION);
-        auto &state_joint_values = configs[step];
+        auto config = toVictorConfig(path[step].data());
         // update the robot joints:
-        gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
+        gvl->setRobotConfiguration(VICTOR_ROBOT, config);
         // insert the robot into the map:
         gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_PATH_SOLUTION_MAP, BitVoxelMeaning(eBVM_SWEPT_VOLUME_START + (step % 249) ));
         PROFILE_RECORD(INSERT_VIZ_SOLUTION);
@@ -356,9 +354,9 @@ void GpuVoxelsVictor::visualizeSolution(const std::vector<VictorConfig> &configs
 }
 
 
-void GpuVoxelsVictor::hideSolution()
+void GpuVoxelsVictor::hidePath()
 {
-    visualizeSolution(std::vector<VictorConfig>());
+    visPath(Path());
 }
 
 
@@ -563,10 +561,39 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
 }
 
 
+
+Path densifyPath(const Path &path, int densify_factor)
+{
+    std::cout << "densifying path\n";
+    Path dense_path;
+    double dt = 1.0/(double)densify_factor;
+    for(size_t i=0; i < (path.size()-1); i++)
+    {
+        for(int new_seg=0; new_seg < densify_factor; new_seg++)
+        {
+            const std::vector<double> &cur = path[i];
+            const std::vector<double> &next = path[i+1];
+            std::vector<double> interp;
+            for(size_t j=0; j<cur.size(); j++)
+            {
+                interp.push_back(cur[j] + (next[j] - cur[j]) * new_seg *dt);
+            }
+            dense_path.push_back(interp);
+        }
+    
+    }
+    dense_path.push_back(path[path.size()-1]);
+    return dense_path;
+}
+
+
+
 bool SimWorld::attemptPath(const Path &path)
 {
+    Path dense_path = densifyPath(path, 10);
+    
     size_t last_valid;
-    if(executePath(path, last_valid))
+    if(executePath(dense_path, last_valid))
     {
         return true;
     }
@@ -577,7 +604,7 @@ bool SimWorld::attemptPath(const Path &path)
     Path backup;
     for(int i=0; i<30; i++)
     {
-        backup.push_back(path[last_valid]);
+        backup.push_back(dense_path[last_valid]);
         if(last_valid == 0)
         {
             break;

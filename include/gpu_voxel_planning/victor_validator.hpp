@@ -58,11 +58,11 @@ public:
 
 
 
-class VictorThresholdValidator : public VictorValidator
+class VictorStateThresholdValidator : public VictorValidator
 {
 public:
-    VictorThresholdValidator(const ompl::base::SpaceInformationPtr &si,
-                             GpuVoxelsVictor* victor_model);
+    VictorStateThresholdValidator(const ompl::base::SpaceInformationPtr &si,
+                                  GpuVoxelsVictor* victor_model);
     
     virtual bool isValid(const ompl::base::State *state) const;
     // virtual bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2,
@@ -72,6 +72,8 @@ public:
     void setProbabilityThreshold(double value) {threshold = value;}
 
     double getCollisionProb(const ompl::base::State *state) const;
+
+    double getMotionColProb(ompl::base::State *s1, ompl::base::State *s2) const;
 
     double getPathMaxColProb(ompl::geometric::PathGeometric *path) const;
     
