@@ -11,7 +11,7 @@
 #include <boost/thread/locks.hpp>
 #include <mutex>
 
-
+std::vector<std::string> SEEN_OBSTACLE_SETS;
 
 
 // #define PROB_OCCUPIED BitVoxelMeaning(255)

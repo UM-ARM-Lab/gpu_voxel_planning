@@ -21,7 +21,7 @@
 #define VICTOR_ROBOT "victor_robot"
 
 
-std::vector<std::string> SEEN_OBSTACLE_SETS;
+extern std::vector<std::string> SEEN_OBSTACLE_SETS;
 
 
 typedef robot::JointValueMap VictorConfig;
