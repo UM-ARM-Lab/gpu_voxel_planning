@@ -5,8 +5,10 @@
 
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
+#include <ompl/geometric/planners/rrt/RRTConnect.h>
 #include <ompl/geometric/planners/prm/PRM.h>
 #include "lazyrrt_fullpath.h"
+
 
 
 namespace gpu_voxels_planner
@@ -90,6 +92,28 @@ namespace gpu_voxels_planner
 
         virtual void preparePlanner(ompl::base::ScopedState<> start,
                                      ompl::base::ScopedState<> goal) override;
+    };
+
+    class VictorRRTConnect: public VictorPlanner
+    {
+    public:
+        VictorRRTConnect(GpuVoxelsVictor* victor_model);
+        virtual void initializePlanner() override;
+
+        virtual void preparePlanner(ompl::base::ScopedState<> start,
+                                     ompl::base::ScopedState<> goal) override;
+    };
+
+    class VictorThresholdRRTConnect: public VictorPlanner
+    {
+    public:
+        VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model);
+        virtual void initializePlanner() override;
+        virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
+                                                           ompl::base::ScopedState<> goal) override;
+        virtual void preparePlanner(ompl::base::ScopedState<> start,
+                                    ompl::base::ScopedState<> goal) override;
+
     };
 
 

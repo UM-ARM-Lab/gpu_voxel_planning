@@ -30,15 +30,21 @@ BoxWorld::BoxWorld():
 
 
 
-    gvl->initialize(100,100,100, 0.01);
+    size_t x=100, y=100, z=100;
+    gvl->initialize(x,y,z, 0.01);
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_ACTUAL_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_QUERY_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, BOX_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_ACTUAL_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, FULL_MAP);
 
-    gvl->insertBoxIntoMap(Vector3f(0,0,0), Vector3f(1,1,1), FULL_MAP, PROB_OCCUPIED);
+    gvl->insertBoxIntoMap(Vector3f(-0.2, -0.2, -0.2), Vector3f(1.0,1.0,1.0), FULL_MAP, PROB_OCCUPIED);
     // gvl->addMap(MT_PROBAB_VOXELMAP, OBSTACLES_SEEN_MAP);
+
+    size_t total_size = countIntersect(FULL_MAP, FULL_MAP);
+    assert(total_size = x*y*z);
+    // std::cout << "total_size: " << total_size << "\n";
+    // assert(false);
 
     SEEN_OBSTACLE_SETS.resize(NUM_SETS);
     for(int i=0; i < NUM_SETS; i++)
@@ -491,7 +497,7 @@ ob::Cost BoxMinColProbSweptObjective::stateCost(const ob::State *state) const
 ob::Cost BoxMinColProbSweptObjective::motionCost(const ob::State *s1,
                                         const ob::State *s2) const
 {
-    std::cout << "starting swept objective\n";
+    // std::cout << "starting swept objective\n";
     ompl::base::StateSpace *stateSpace_ = spi_ptr->getStateSpace().get();
     assert(stateSpace_ != nullptr);
 
@@ -521,10 +527,15 @@ ob::Cost BoxMinColProbSweptObjective::motionCost(const ob::State *s1,
     }
 
 
-    std::cout << "staring count intersection\n";
+    // std::cout << "staring count intersection\n";
     size_t path_size = box_world_ptr->countIntersect(FULL_MAP, BOX_QUERY_MAP);
     size_t total_size = box_world_ptr->countIntersect(FULL_MAP, FULL_MAP);
     size_t known_free_size = box_world_ptr->countIntersect(BOX_SWEPT_VOLUME_MAP, BOX_QUERY_MAP);
+
+    assert(path_size >= known_free_size);
+    assert(total_size >= path_size);
+    assert(total_size >= known_free_size);
+
 
     double num_occupied = (double)(path_size - known_free_size);
     double frac_occupied = num_occupied / (double) total_size;
@@ -533,15 +544,25 @@ ob::Cost BoxMinColProbSweptObjective::motionCost(const ob::State *s1,
 
     
 
-    std::cout << "num_occupied:  " << num_occupied << "\n";
-    std::cout << "p_no_col_unseen: " << p_no_col_unseen << "\n";
-    std::cout << "Col Prob " << 1.0 - p_no_col_seen * p_no_col_unseen << "\n";
-    std::cout << "num_observed sets " << box_world_ptr->num_observed_sets << "\n";
-    std::cout << "ending swept objective\n";
+    double p_no_col_total = 1.0 - p_no_col_seen * p_no_col_unseen;
+
+
+    if(p_no_col_total < 0.0)
+    {
+        std::cout << "total cost is negative. There is a problem:";
+        std::cout << p_no_col_total << "\n";
+        assert(false);
+    }
+        
+    // std::cout << "num_occupied:  " << num_occupied << "\n";
+    // std::cout << "p_no_col_unseen: " << p_no_col_unseen << "\n";
+    // std::cout << "Col Prob " << 1.0 - p_no_col_seen * p_no_col_unseen << "\n";
+    // std::cout << "num_observed sets " << box_world_ptr->num_observed_sets << "\n";
+    // std::cout << "ending swept objective\n";
 
     
     // return ob::Cost(1.0 - p_no_col_seen);
-    return ob::Cost(1.0 - p_no_col_seen * p_no_col_unseen);
+    return ob::Cost(p_no_col_total);
 }
 
 
@@ -675,7 +696,7 @@ Maybe::Maybe<ob::PathPtr> BoxPlanner::planPath(ompl::base::ScopedState<> start,
 {
     preparePlanner(start, goal);
     ob::PathPtr path;
-    int planning_time = 10;
+    int planning_time = 120;
     ob::PlannerStatus solved = planner->solve(planning_time);
 
     while(solved == ob::PlannerStatus::APPROXIMATE_SOLUTION)
@@ -830,7 +851,8 @@ void BoxRRTstar<T>::initializePlanner()
     // spi_ptr->setMotionValidator(v_ptr);
     
     // planner = std::make_shared<og::RRTstar>(spi_ptr);
-    planner = std::make_shared<og::RRTstar>(spi_ptr);
+    planner = std::make_shared<og::cRRTstar>(spi_ptr);
+    std::cout << "\n\nSetting up rrtstar\n";
     planner->setup();
 }
 

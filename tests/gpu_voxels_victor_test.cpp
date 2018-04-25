@@ -22,13 +22,16 @@ TEST(GpuVoxelVictor, collisions)
                                        ENV_MAP, PROB_OCCUPIED, 2);
 
 
-    is_valid = victor_model.queryFreeConfiguration(map);
-    col_count = victor_model.countTotalNumCollisionsForConfig(map);
+    // is_valid = victor_model.queryFreeConfiguration(map);
+    // col_count = victor_model.countTotalNumCollisionsForConfig(map);
+    victor_model.resetQuery();
+    victor_model.addQueryState(map);
+    col_count = victor_model.countNumCollisions(ENV_MAP);
     EXPECT_TRUE(col_count > 0) << "Victor with box obstacle has no collision";
-    EXPECT_TRUE(!is_valid) << "Victor with box obstacle is not in collision";
+    // EXPECT_TRUE(!is_valid) << "Victor with box obstacle is not in collision";
 
     
-    // victor_model.updateVictorPosition(map);
+    // victor_model.updateActual(map);
     // victor_model.doVis();
     // int dummy;
     // std::cin >> dummy;

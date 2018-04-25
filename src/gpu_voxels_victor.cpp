@@ -40,6 +40,18 @@ std::vector<std::string> right_arm_collision_link_names{
         "victor_right_gripper_fingerC_med", "victor_right_gripper_fingerC_prox"
         };
 
+std::vector<std::string> victor_right_gripper_collision_names{
+    "victor_right_gripper_palm",
+        "victor_right_gripper_mounting_bracket",
+        "victor_right_gripper_fingerA_base", "victor_right_gripper_fingerA_dist",
+        "victor_right_gripper_fingerA_med", "victor_right_gripper_fingerA_prox",
+        "victor_right_gripper_fingerB_base", "victor_right_gripper_fingerB_dist",
+        "victor_right_gripper_fingerB_med", "victor_right_gripper_fingerB_prox",
+        "victor_right_gripper_fingerC_base", "victor_right_gripper_fingerC_dist",
+        "victor_right_gripper_fingerC_med", "victor_right_gripper_fingerC_prox"
+
+        };
+
 
 
 GpuVoxelsVictor::GpuVoxelsVictor():
@@ -512,6 +524,19 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
             std::cout << "Collision while executing!\n";
             std::vector<std::string> collision_links;
             collision_links.push_back(col_link.Get());
+
+            /*
+             * If collision with gripper add full gripper
+             */
+            if(std::find(victor_right_gripper_collision_names.begin(),
+                         victor_right_gripper_collision_names.end(),
+                         col_link.Get()) != victor_right_gripper_collision_names.end())
+            {
+                for(auto link: victor_right_gripper_collision_names)
+                {
+                    collision_links.push_back(link);
+                }
+            }
 
             std::vector<VictorConfig> cs;
             for(size_t j=last_valid; (j<last_valid+15) && j<path.size(); j++)

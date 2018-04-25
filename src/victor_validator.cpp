@@ -144,6 +144,56 @@ bool VictorConservativeValidator::isValid(const ob::State *state) const
 
 
 
+/****************************************
+ **     Victor Threshold Validator     **
+ ***************************************/
+
+VictorThresholdValidator::VictorThresholdValidator(const ompl::base::SpaceInformationPtr &si,
+                                                   GpuVoxelsVictor* victor_model):
+    VictorValidator(si, victor_model)
+{
+    threshold = 1.0;
+}
+
+
+
+bool VictorThresholdValidator::isValid(const ob::State *state) const
+{
+    if(!VictorValidator::isValid(state))
+    {
+        return false;
+    }
+    const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
+    VictorConfig config = victor_model_->toVictorConfig(values);
+
+    victor_model_->resetQuery();
+    victor_model_->addQueryState(config);
+    std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
+    std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+
+    // std::cout << "Reporting on query\n";
+    double p_no_collision = 1.0;
+    for(size_t i=0; i<seen_sizes.size(); i++)
+    {
+        // std::cout << "i:\n";
+        // std::cout << "seen col voxels: " << seen_col_voxels[i] << "\n";
+        // std::cout << "seen sizes: " << seen_sizes[i] << "\n";
+        p_no_collision *= (1.0 - (double)seen_col_voxels[i] / (double)seen_sizes[i]);
+    }
+    assert(p_no_collision <= 1.0);
+    assert(p_no_collision >= 0.0);
+    double p_collision = 1.0 - p_no_collision;
+    // std::cout << "p_collision: " << p_collision << "\n";
+    // std::cout << "threshold: " << threshold << "\n";
+    return p_collision < threshold;
+}
+
+
+
+
+
+
+
 
 
 /***********************************************

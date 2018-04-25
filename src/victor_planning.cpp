@@ -269,7 +269,7 @@ void VictorLazyRRTF::initializePlanner()
 Maybe::Maybe<ob::PathPtr> VictorLazyRRTF::planPath(ompl::base::ScopedState<> start,
                                                    ompl::base::ScopedState<> goal)
 {
-    std::cout << "Using this planner\n";
+    std::cout << "Using lazyRRTF planner\n";
     preparePlanner(start, goal);
     ob::PathPtr path;
     int planning_time = 15;
@@ -357,3 +357,108 @@ void VictorPRM::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
 
 
 
+/************************************
+ **       Victor RRTConnect        **
+ ***********************************/
+
+VictorRRTConnect::VictorRRTConnect(GpuVoxelsVictor* victor_model)
+    : VictorPlanner(victor_model)
+{
+    initializePlanner();
+}
+
+void VictorRRTConnect::initializePlanner()
+{
+    vv_ptr = std::make_shared<VictorConservativeValidator>(si_, victor_model_);
+    setupSpaceInformation();
+
+
+
+    planner_ = std::make_shared<og::RRTConnect>(si_);
+    planner_->setup();
+}
+
+
+void VictorRRTConnect::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
+{
+    planner_->clear();
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
+    pdef_->setStartAndGoalStates(start, goal);
+
+    planner_->setProblemDefinition(pdef_);
+
+}
+
+
+
+
+
+
+/***************************************
+ **    Victor ThresholdRRTConnect     **
+ ***************************************/
+
+VictorThresholdRRTConnect::VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model)
+    : VictorPlanner(victor_model)
+{
+    initializePlanner();
+}
+
+void VictorThresholdRRTConnect::initializePlanner()
+{
+    vv_ptr = std::make_shared<VictorThresholdValidator>(si_, victor_model_);
+    setupSpaceInformation();
+
+
+
+    planner_ = std::make_shared<og::RRTConnect>(si_);
+    planner_->setup();
+}
+
+
+Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::ScopedState<> start,
+                                                              ompl::base::ScopedState<> goal)
+{
+    std::cout << "Using threshold planner\n";
+    preparePlanner(start, goal);
+    ob::PathPtr path;
+    int planning_time = 15;
+
+    double threshold = 1.0;
+    dynamic_cast<VictorThresholdValidator*>(vv_ptr.get())->setProbabilityThreshold(threshold);
+    ob::PlannerStatus solved = planner_->solve(planning_time);
+    
+
+    while(solved)
+    {
+        threshold -= 0.1;
+        if(threshold <= 0.0){
+            break;
+        }
+
+        std::cout << "threshold " << threshold << "\n";
+        dynamic_cast<VictorThresholdValidator*>(vv_ptr.get())->setProbabilityThreshold(threshold);
+        solved = planner_->solve(planning_time);
+    }
+
+    if (threshold == 1.0)
+    {
+        std::cout << "No solution could be found" << std::endl;
+        return Maybe::Maybe<ob::PathPtr>();
+    }
+
+    path = pdef_->getSolutionPath();
+
+    return Maybe::Maybe<ob::PathPtr>(path);
+}
+
+
+void VictorThresholdRRTConnect::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
+{
+    planner_->clear();
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
+    pdef_->setStartAndGoalStates(start, goal);
+
+    planner_->setProblemDefinition(pdef_);
+
+}

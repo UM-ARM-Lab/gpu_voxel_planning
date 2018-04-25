@@ -139,6 +139,9 @@ int main(int argc, char* argv[])
     signal(SIGTERM, killhandler);
 
     PROFILE_REINITIALIZE(20, 10000);
+
+    // double testGdb[] = {0};
+    // std::cout << "Invalid value is " << testGdb[10000000] << "\n";
     
     // boxWorld->updateActual(Box(0,0,0,0.1));
 
@@ -156,8 +159,8 @@ int main(int argc, char* argv[])
         // testLBKPIECE();
         // testMinVoxRRTstar();
         // testMinColProbRRTstar();
-        // testMinColProbSweptRRTstar();
-        testLRRTF();
+        testMinColProbSweptRRTstar();
+        // testLRRTF();
         // testMinColProbSweptTRRT();
     }
 

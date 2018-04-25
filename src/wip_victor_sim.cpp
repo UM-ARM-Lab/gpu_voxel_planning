@@ -109,8 +109,10 @@ int main(int argc, char* argv[])
     // testAngles();
     
     // VictorLBKPiece planner(&(sim_world->victor_model));
+    VictorThresholdRRTConnect planner(&(sim_world->victor_model));
+    
     // VictorPRM planner(&(sim_world->victor_model));
-    VictorLazyRRTF planner(&(sim_world->victor_model));
+    // VictorLazyRRTF planner(&(sim_world->victor_model));
 
     attemptGoal(planner, goal);
     

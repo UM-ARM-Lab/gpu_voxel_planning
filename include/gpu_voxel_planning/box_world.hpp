@@ -15,7 +15,8 @@
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/geometric/PathSimplifier.h>
 #include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
-#include <ompl/geometric/planners/rrt/RRTstar.h>
+// #include <ompl/geometric/planners/rrt/RRTstar.h>
+#include "custom_rrtstar.h"
 #include <ompl/geometric/planners/rrt/RRTsharp.h>
 #include <ompl/geometric/planners/rrt/TRRT.h>
 

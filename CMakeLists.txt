@@ -27,12 +27,13 @@ find_package(GTest)
 
 
 
+
 # This is a quirk and should be removed in upcoming versions
 # If you built GPU Voxels without ROS support, remove this.
 # FIND_PACKAGE(orocos_kdl REQUIRED)
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -g")
 
 
 # Also we have to inherit some Environment definitions required for our base libs:
@@ -76,6 +77,16 @@ catkin_package(
 ## Build ##
 ###########
 
+
+set(EXTERN_LIBS
+  ${catkin_LIBRARIES}
+  ${Boost_SYSTEM_LIBRARY}
+  ${icl_core_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  ${OMPL_LIBRARIES}
+  )
+
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
@@ -95,36 +106,39 @@ target_link_libraries(lazyrrtf
   ${OMPL_LIBRARIES}
   )
 
+add_library(custom_rrtstar src/custom_rrtstar.cpp)
+target_link_libraries(custom_rrtstar
+  ${OMPL_LIBRARIES}
+  )
+
+add_library(flrrtc src/fullpath_lrrtconnect.cpp)
+target_link_libraries(flrrtc
+  ${OMPL_LIBRARIES}
+  )
+
 
 
 
 add_executable(box_world src/box_world.cpp)
 target_link_libraries(box_world
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  ${OMPL_LIBRARIES}
+  custom_rrtstar
+  flrrtc
+  ${EXTERN_LIBS}
   lazyrrtf
+
   )
 
 add_library(box_world_lib src/box_world.cpp)
 target_link_libraries(box_world_lib
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  ${OMPL_LIBRARIES}
+  custom_rrtstar
+  ${EXTERN_LIBS}
   lazyrrtf
+
   )
 
 add_executable(box_world_recorder src/box_world_recorder.cpp)
 target_link_libraries(box_world_recorder
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  ${OMPL_LIBRARIES}
+  ${EXTERN_LIBS}
   box_world_lib
   )
 
@@ -156,21 +170,13 @@ add_library(victor_planning src/victor_planning.cpp)
 target_link_libraries(victor_planning
   victor_validator
   victor_model
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  ${OMPL_LIBRARIES}
+  ${EXTERN_LIBS}
   lazyrrtf
   )
 
 add_executable(wip_victor_sim src/wip_victor_sim.cpp)
 target_link_libraries(wip_victor_sim
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  ${OMPL_LIBRARIES}
+  ${EXTERN_LIBS}
   lazyrrtf
   victor_model
   victor_planning
@@ -211,11 +217,7 @@ target_link_libraries(wip_victor_sim
 
 add_executable(urdf_test src/URDF_Loader_ROS_listener.cpp)
 target_link_libraries (urdf_test
-  ${catkin_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARY}
-  ${icl_core_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  
+  ${EXTERN_LIBS}
   )
 
 
@@ -235,11 +237,18 @@ IF(GTEST_FOUND)
   add_executable(test_gpu_voxels_victor tests/gpu_voxels_victor_test.cpp)
   target_link_libraries(test_gpu_voxels_victor
     victor_model
-    ${gpu_voxels_LIBRARIES}
-    ${Boost_SYSTEM_LIBRARY}
-    ${catkin_LIBRARIES}
-    ${icl_core_LIBRARIES}
+    ${EXTERN_LIBS}
     ${GTEST_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
+    )
+
+  add_executable(test_validators tests/validators_test.cpp)
+  target_link_libraries(test_validators
+    victor_model
+    victor_validator
+    ${EXTERN_LIBS}
+    ${GTEST_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+
     )
 ENDIF(GTEST_FOUND)
