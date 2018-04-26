@@ -40,6 +40,7 @@
 #include "ompl/datastructures/NearestNeighbors.h"
 #include "ompl/geometric/planners/PlannerIncludes.h"
 #include "path_validator.h"
+#include <arc_utilities/maybe.hpp>
 
 namespace ompl
 {
@@ -66,6 +67,28 @@ namespace ompl
             CostRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates = false);
 
             ~CostRRTConnect() override;
+
+        protected:
+            /** \brief Representation of a motion */
+            class Motion
+            {
+            public:
+                Motion() = default;
+
+                Motion(const base::SpaceInformationPtr &si) : state(si->allocState())
+                {
+                }
+
+                ~Motion() = default;
+
+                const base::State *root{nullptr};
+                base::State *state{nullptr};
+                Motion *parent{nullptr};
+                double cost_from_root{0};
+            };
+
+            
+        public:
 
             void getPlannerData(base::PlannerData &data) const override;
 
@@ -128,27 +151,31 @@ namespace ompl
 
             void setProbabilityThreshold(double th){threshold = th;}
 
+
+            /*
+             *  Makes a path from start to goal using a motion from each Tree
+             *  that connect at a common node
+             *  
+             */
+            void makePath(Motion *startMotion,
+                          Motion *goalMotion,
+                          std::shared_ptr<PathGeometric> &path);
+
+            /*
+             *  ensures path is below threshold, otherwise removes the highest cost edge
+             *   Returns true if full path is valid
+             */
+            bool validateFullPath(std::vector<base::State*> &pathStates);
+
+            /*
+             *  Removes motion (and therefore all children) from tree
+             */
+            void removeMotion(Motion *motion);
+
             std::shared_ptr<PathValidator> pv_;
                 
 
         protected:
-            /** \brief Representation of a motion */
-            class Motion
-            {
-            public:
-                Motion() = default;
-
-                Motion(const base::SpaceInformationPtr &si) : state(si->allocState())
-                {
-                }
-
-                ~Motion() = default;
-
-                const base::State *root{nullptr};
-                base::State *state{nullptr};
-                Motion *parent{nullptr};
-                double cost_from_root{0};
-            };
 
             /** \brief A nearest-neighbor datastructure representing a tree of motions */
             typedef std::shared_ptr<NearestNeighbors<Motion *>> TreeData;

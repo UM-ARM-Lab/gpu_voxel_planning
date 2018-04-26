@@ -348,43 +348,23 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
             /* if we connected the trees in a valid way (start and goal pair is valid)*/
             if (gsc == REACHED && goal->isStartGoalPairValid(startMotion->root, goalMotion->root))
             {
-                // it must be the case that either the start tree or the goal tree has made some progress
-                // so one of the parents is not nullptr. We go one step 'back' to avoid having a duplicate state
-                // on the solution path
-                if (startMotion->parent != nullptr)
-                    startMotion = startMotion->parent;
-                else
-                    goalMotion = goalMotion->parent;
 
-                connectionPoint_ = std::make_pair(startMotion->state, goalMotion->state);
-
-                /* construct the solution path */
-                Motion *solution = startMotion;
-                std::vector<Motion *> mpath1;
-                while (solution != nullptr)
-                {
-                    mpath1.push_back(solution);
-                    solution = solution->parent;
-                }
-
-                solution = goalMotion;
-                std::vector<Motion *> mpath2;
-                while (solution != nullptr)
-                {
-                    mpath2.push_back(solution);
-                    solution = solution->parent;
-                }
-
+                std::vector<base::State*> pathStates;
                 auto path(std::make_shared<PathGeometric>(si_));
-                path->getStates().reserve(mpath1.size() + mpath2.size());
-                for (int i = mpath1.size() - 1; i >= 0; --i)
-                    path->append(mpath1[i]->state);
-                for (auto &i : mpath2)
-                    path->append(i->state);
+                bool isValid =  makePath(startMotion, goalMotion, path);
 
-                pdef_->addSolutionPath(path, false, 0.0, getName());
-                solved = true;
-                break;
+                std::cout << "Path states size: " << path->getStates().size() << "\n";
+                if(isValid)
+                {
+                    pdef_->addSolutionPath(path, false, 0.0, getName());
+                    solved = true;
+                    std::cout << "Solution path added\n";
+                    break;
+                }
+                else
+                {
+                    removeHighestCostEdge(path->getStates());
+                }
             }
         }
     }
@@ -397,6 +377,89 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
                 tStart_->size(), tGoal_->size());
 
     return solved ? base::PlannerStatus::EXACT_SOLUTION : base::PlannerStatus::TIMEOUT;
+}
+
+bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<ompl::base::State*> &pathStates)
+{
+    pv_->setProbabilityThreshold(threshold);
+    size_t collision_index;
+    double full_motion_cost = pv_->getPathCost(pathStates, collision_index);
+    if(full_motion_cost < threshold)
+    {
+        return true;
+    }
+
+
+    
+    return false;
+}
+
+void ompl::geometric::CostRRTConnect::removeMotion(Motion *motion)
+{
+    nn_->remove(motion);
+
+    /* remove self from parent list */
+
+    if (motion->parent != nullptr)
+    {
+        for (unsigned int i = 0; i < motion->parent->children.size(); ++i)
+            if (motion->parent->children[i] == motion)
+            {
+                motion->parent->children.erase(motion->parent->children.begin() + i);
+                break;
+            }
+    }
+
+    /* remove children */
+    for (auto &i : motion->children)
+    {
+        i->parent = nullptr;
+        removeMotion(i);
+    }
+
+    if (motion->state != nullptr)
+        si_->freeState(motion->state);
+    delete motion;
+}
+
+
+void ompl::geometric::CostRRTConnect::makePath(Motion *startMotion,
+                                               Motion *goalMotion,
+                                               std::shared_ptr<PathGeometric> &path)
+{
+    // it must be the case that either the start tree or the goal tree has made some progress
+    // so one of the parents is not nullptr. We go one step 'back' to avoid having a duplicate state
+    // on the solution path
+    if (startMotion->parent != nullptr)
+        startMotion = startMotion->parent;
+    else
+        goalMotion = goalMotion->parent;
+
+    connectionPoint_ = std::make_pair(startMotion->state, goalMotion->state);
+
+    /* construct the solution path */
+    Motion *solution = startMotion;
+    std::vector<Motion *> mpath1;
+    while (solution != nullptr)
+    {
+        mpath1.push_back(solution);
+        solution = solution->parent;
+    }
+
+    solution = goalMotion;
+    std::vector<Motion *> mpath2;
+    while (solution != nullptr)
+    {
+        mpath2.push_back(solution);
+        solution = solution->parent;
+    }
+
+
+    path->getStates().reserve(mpath1.size() + mpath2.size());
+    for (int i = mpath1.size() - 1; i >= 0; --i)
+        path->append(mpath1[i]->state);
+    for (auto &i : mpath2)
+        path->append(i->state);
 }
 
 void ompl::geometric::CostRRTConnect::getPlannerData(base::PlannerData &data) const

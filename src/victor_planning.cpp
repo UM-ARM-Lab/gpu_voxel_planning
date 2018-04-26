@@ -580,11 +580,14 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
         std::cout << "threshold " << threshold << "\n";
         
         solved = planner_->solve(time_left);
+        std::cout << "Solved? " << solved << "\n";
 
         if(solved)
         {
             anySolution = true;
+            std::cout << "about to get path solution\n";
             ob::PathPtr ptmp = pdef_->getSolutionPath();
+            std::cout << "got path solution\n";
             std::vector<ob::State*> stmp = ptmp->as<og::PathGeometric>()->getStates();
             size_t col_index;
             double path_prob = rplanner_->pv_->getPathCost(stmp, col_index);
