@@ -73,8 +73,24 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
         std::cout << "Timeout before goal reached\n";
         return false;
     }
+    
+    std::cout << "\n\n\n== PATH COMPLETE ==\n\n\n";
+    std::vector<double> cur_values = sim_world->victor_model.toValues(sim_world->victor_model.cur_config);
+    
+    for(size_t i=0; i<goal.size(); i++)
+    {
+        if(std::fabs(cur_values[i] - goal[i]) > 0.01)
+        {
+            std::cout << "Robot though goal is reached, but not actually\n";
+            std::cout << "joint " << i << " is at " << cur_values[i] << " but should be at " << goal[i] << "\n";
+            assert(false);
+        }
+
+    }
+    
     return true;
 }
+
 
 
 

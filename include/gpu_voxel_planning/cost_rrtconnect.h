@@ -169,7 +169,7 @@ namespace ompl
              *  ensures path is below threshold, otherwise removes the highest cost edge
              *   Returns true if full path is valid
              */
-            bool validateFullPath(std::vector<base::State*> &pathStates);
+            bool validateFullPath(std::vector<Motion*> &mpath);
 
             /*
              *  Removes motion (and therefore all children) from tree

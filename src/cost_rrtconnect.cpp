@@ -38,6 +38,7 @@
 #include "ompl/base/goals/GoalSampleableRegion.h"
 #include "ompl/tools/config/SelfConfig.h"
 
+
 ompl::geometric::CostRRTConnect::CostRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates)
   : base::Planner(si, addIntermediateStates ? "CostRRTConnectIntermediate" : "CostRRTConnect")
 {
@@ -215,6 +216,7 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
             motion->parent = nmotion;
             motion->root = nmotion->root;
             motion->cost_from_root = new_cost_from_root;
+            nmotion->children.push_back(motion);
             tgi.xmotion = motion;
 
             tree->add(motion);
@@ -353,20 +355,19 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
                 std::vector<Motion*> motionPath;
                 makePath(startMotion, goalMotion, motionPath);
                 
-                auto path(std::make_shared<PathGeometric>(si_));
-
-                path->getStates().reserve(motionPath.size());
-                for(auto &m: motionPath)
+                if(validateFullPath(motionPath))
                 {
-                    path->append(m->state);
+                    auto path(std::make_shared<PathGeometric>(si_));
+                    path->getStates().reserve(motionPath.size());
+                    for(auto &m: motionPath)
+                    {
+                        path->append(m->state);
+                    }
+
+                    pdef_->addSolutionPath(path, false, 0.0, getName());
+                    solved = true;
+                    break;
                 }
-
-                std::cout << "Path states size: " << path->getStates().size() << "\n";
-                pdef_->addSolutionPath(path, false, 0.0, getName());
-                solved = true;
-                std::cout << "Solution path added\n";
-                break;
-
             }
         }
     }
@@ -381,21 +382,52 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
     return solved ? base::PlannerStatus::EXACT_SOLUTION : base::PlannerStatus::TIMEOUT;
 }
 
-bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<ompl::base::State*> &pathStates)
+bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<Motion*> &mpath)
 {
     pv_->setProbabilityThreshold(threshold);
     size_t collision_index;
-    double full_motion_cost = pv_->getPathCost(pathStates, collision_index);
+    std::vector<ompl::base::State*> spath;
+    for(auto m: mpath)
+    {
+        spath.push_back(m->state);
+    }
+    double full_motion_cost = pv_->getPathCost(spath, collision_index);
     if(full_motion_cost < threshold)
     {
         return true;
     }
+    std::cout << "Invalid path found. Removing motion...\n";
+
+    double max_cost = 0.0;
+    Motion *worst_motion;
+    for(auto m: mpath)
+    {
+        if(m->parent == nullptr)
+        {
+            // Start/Goal have no parents
+            continue;
+        }
+        std::vector<ompl::base::State*> step;
+        step.push_back(m->state);
+        step.push_back(m->parent->state);
+        size_t col_index;
+        double cost = pv_->getPathCost(step, col_index);
+        if(cost > max_cost)
+        {
+            max_cost = cost;
+            worst_motion = m;
+        }
+    }
+    removeMotion(worst_motion);
+    
     return false;
 }
 
 void ompl::geometric::CostRRTConnect::removeMotion(Motion *motion)
 {
+    std::cout << "removing motion\n";
     tStart_->remove(motion);
+    tGoal_->remove(motion);
 
     /* remove self from parent list */
 

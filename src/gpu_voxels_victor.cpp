@@ -107,9 +107,11 @@ void GpuVoxelsVictor::insertVictorIntoMap(const VictorConfig &c, const std::stri
 void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 {
     cur_config = c;
-    gvl->clearMap(VICTOR_ACTUAL_MAP);
+    
+
+
     gvl->setRobotConfiguration(VICTOR_ROBOT, c);
-    // gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, eBVM_OCCUPIED);
+    gvl->clearMap(VICTOR_ACTUAL_MAP);
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, PROB_OCCUPIED);
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_SWEPT_VOLUME_MAP, PROB_OCCUPIED);
 
@@ -119,7 +121,7 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
         voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
   
         obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
-        gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
+
     }
 
 }
@@ -335,6 +337,9 @@ int GpuVoxelsVictor::determineVictorDist()
 void GpuVoxelsVictor::doVis()
 {
     gvl->visualizeMap(VICTOR_ACTUAL_MAP, true);
+    for(size_t i=0; i<num_observed_sets; i++)
+        gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
+
 }
 
 
@@ -574,8 +579,10 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
         }
             
         victor_model.updateActual(c);
+        usleep(EXECUTION_DELAY_us/2);
         victor_model.doVis();
-        usleep(EXECUTION_DELAY_us);
+        usleep(EXECUTION_DELAY_us/2);
+
     }
     std::cout << "Path success!\n";
     return true;

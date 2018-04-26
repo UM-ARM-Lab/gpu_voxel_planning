@@ -168,10 +168,24 @@ Path VictorPlanner::omplPathToDoublePath(og::PathGeometric* ompl_path)
             stateSpace->interpolate(s1, s2, (double)j / (double)nd, state);
             const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
             std::vector<double> d_state;
-            d_state.insert(d_state.end(), &values[0], &values[7]);
+            for(int i=0; i<7; i++)
+            {
+                d_state.push_back(values[i]);
+            }
+
+            assert(d_state.size() == 7);
             d_path.push_back(d_state);
         }
     }
+    ob::State *last = ompl_path->getState(ompl_path->getStateCount()-1);
+    const double *values = last->as<ob::RealVectorStateSpace::StateType>()->values;
+    std::vector<double> d_state;
+    for(int i=0; i<7; i++)
+    {
+        d_state.push_back(values[i]);
+    }
+    d_path.push_back(d_state);
+
     si_->freeState(state);
     
     return d_path;
@@ -580,14 +594,13 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
         std::cout << "threshold " << threshold << "\n";
         
         solved = planner_->solve(time_left);
-        std::cout << "Solved? " << solved << "\n";
 
         if(solved)
         {
             anySolution = true;
-            std::cout << "about to get path solution\n";
+
             ob::PathPtr ptmp = pdef_->getSolutionPath();
-            std::cout << "got path solution\n";
+
             std::vector<ob::State*> stmp = ptmp->as<og::PathGeometric>()->getStates();
             size_t col_index;
             double path_prob = rplanner_->pv_->getPathCost(stmp, col_index);
@@ -602,7 +615,8 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
                 std::cout << "pv thresh: " << rplanner_->pv_->threshold << "\n";
             }
             else{
-                threshold -= eps;
+                std::cout << "This should not happen with planner modifications\n";
+                assert(false);
             }
 
             if(threshold <= 0.0)
@@ -624,7 +638,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
     }
 
     std::cout << "pv thresh after planning: " << rplanner_->pv_->threshold << "\n";
-    rplanner_->pv_->do_delay = true;        
+    // rplanner_->pv_->do_delay = true;        
     (path->as<og::PathGeometric>())->interpolate();
     std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states before smoothing\n";
     size_t col_index;
@@ -653,7 +667,16 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
 
     rplanner_->pv_->do_delay = false;
     
-
+    // std::cout << "path from planner;\n";
+    // for(auto s: path->as<og::PathGeometric>()->getStates())
+    // {
+    //     const double *values = s->as<ob::RealVectorStateSpace::StateType>()->values;
+    //     for(int i=0; i<7; i++)
+    //     {
+    //         std::cout << values[i] << ", ";
+    //     }
+    //     std::cout << "\n";
+    // }
     return Maybe::Maybe<ob::PathPtr>(path);
 }
 
