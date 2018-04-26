@@ -163,7 +163,7 @@ namespace ompl
              */
             void makePath(Motion *startMotion,
                           Motion *goalMotion,
-                          std::shared_ptr<PathGeometric> &path);
+                          std::vector<Motion*> &motionPath);
 
             /*
              *  ensures path is below threshold, otherwise removes the highest cost edge

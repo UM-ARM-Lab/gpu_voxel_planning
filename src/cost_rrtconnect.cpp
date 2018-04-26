@@ -350,9 +350,16 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
             if (gsc == REACHED && goal->isStartGoalPairValid(startMotion->root, goalMotion->root))
             {
 
-                std::vector<base::State*> pathStates;
+                std::vector<Motion*> motionPath;
+                makePath(startMotion, goalMotion, motionPath);
+                
                 auto path(std::make_shared<PathGeometric>(si_));
-                makePath(startMotion, goalMotion, path);
+
+                path->getStates().reserve(motionPath.size());
+                for(auto &m: motionPath)
+                {
+                    path->append(m->state);
+                }
 
                 std::cout << "Path states size: " << path->getStates().size() << "\n";
                 pdef_->addSolutionPath(path, false, 0.0, getName());
@@ -383,9 +390,6 @@ bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<ompl::base::S
     {
         return true;
     }
-
-
-    
     return false;
 }
 
@@ -420,7 +424,7 @@ void ompl::geometric::CostRRTConnect::removeMotion(Motion *motion)
 
 void ompl::geometric::CostRRTConnect::makePath(Motion *startMotion,
                                                Motion *goalMotion,
-                                               std::shared_ptr<PathGeometric> &path)
+                                               std::vector<Motion*> &motionPath)
 {
     // it must be the case that either the start tree or the goal tree has made some progress
     // so one of the parents is not nullptr. We go one step 'back' to avoid having a duplicate state
@@ -450,11 +454,11 @@ void ompl::geometric::CostRRTConnect::makePath(Motion *startMotion,
     }
 
 
-    path->getStates().reserve(mpath1.size() + mpath2.size());
+    // motionPath.reserve(mpath1.size() + mpath2.size());
     for (int i = mpath1.size() - 1; i >= 0; --i)
-        path->append(mpath1[i]->state);
+        motionPath.push_back(mpath1[i]);
     for (auto &i : mpath2)
-        path->append(i->state);
+        motionPath.push_back(i);
 }
 
 void ompl::geometric::CostRRTConnect::getPlannerData(base::PlannerData &data) const
