@@ -254,24 +254,22 @@ double VictorStateThresholdValidator::getPathMaxColProb(og::PathGeometric *path)
 /***********************************************
  **            PATH VALIDATOR                 **
  ***********************************************/
-VictorPathValidator::VictorPathValidator(const ob::SpaceInformationPtr &si,
+VictorPathProbCol::VictorPathProbCol(const ob::SpaceInformationPtr &si,
                                          GpuVoxelsVictor* victor_model) :
     PathValidator(si)
 {
     victor_model_ = victor_model;
 }
 
-void VictorPathValidator::setProbabilityThreshold(double th)
-{
-    threshold = th;
-}
 
-bool VictorPathValidator::checkPath(const std::vector<ob::State*> path,
-                                    size_t &collision_index)
-{
-    // std::cout << "Checking path...";
 
-    
+/*
+ *  Returns the probability of collision for a path.
+ *  Early termination if prob of collision is above threshold
+ */
+double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
+                                      size_t &collision_index)
+{
     ompl::base::StateSpace *stateSpace_ = si_->getStateSpace().get();
     assert(stateSpace_ != nullptr);
 
@@ -288,7 +286,7 @@ bool VictorPathValidator::checkPath(const std::vector<ob::State*> path,
         const ob::State *s2 = path[collision_index + 1];
         if(!si_->isValid(s1))
         {
-            return false;
+            return 1.0;
         }
         int nd = stateSpace_->validSegmentCount(s1, s2);
 
@@ -310,6 +308,7 @@ bool VictorPathValidator::checkPath(const std::vector<ob::State*> path,
             assert(p_no_collision[i] <= 1.0);
             p_no_col_seen *= p_no_collision[i];
         }
+
 
         victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
         // std::cout << "p_no_col_seen: " << p_no_col_seen << "\n";
@@ -338,6 +337,11 @@ bool VictorPathValidator::checkPath(const std::vector<ob::State*> path,
             assert (prob_col <= 1.0);
         }
 
+        if(do_delay)
+        {
+            std::cout << "Prob col: " << prob_col << "\n";
+            usleep(100000);
+        }
         
         if(prob_col > threshold)
         {
@@ -345,18 +349,21 @@ bool VictorPathValidator::checkPath(const std::vector<ob::State*> path,
         }
     }
     si_->freeState(test);
-    // std::cout << "Prob_col " << prob_col;
-    // std::cout << ", p_no_col_seen " << p_no_col_seen;
-    // std::cout << ", p_no_col_unseen " << p_no_col_unseen;
-    // std::cout << "\n";
 
+    if(do_delay)
+    {
+        std::cout << "path cost complete, waiting for input to continue\n";
+        std::string unused;
+        std::getline(std::cin, unused);
+    }
+    
+    return prob_col;
+}
 
-    // std::cout << "Finished\n";
-    // std::cout << "pathsize " << path.size();
-    // std::cout << " col index " << collision_index << "\n";
-    // std::cout << "Threshold " << threshold << "\n";
-    // std::cout << "collision index: " << collision_index << "\n";
-    return prob_col <= threshold;
+bool VictorPathProbCol::checkPath(const std::vector<ob::State*> path,
+                                    size_t &collision_index)
+{
+    return getPathCost(path, collision_index) <= threshold;
 }
 
 

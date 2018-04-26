@@ -34,11 +34,12 @@
 
 /* Author: Ioan Sucan */
 
-#ifndef OMPL_GEOMETRIC_PLANNERS_RRT_C_RRT_CONNECT_
-#define OMPL_GEOMETRIC_PLANNERS_RRT_C_RRT_CONNECT_
+#ifndef OMPL_GEOMETRIC_PLANNERS_RRT_COST_RRT_CONNECT_
+#define OMPL_GEOMETRIC_PLANNERS_RRT_COST_RRT_CONNECT_
 
 #include "ompl/datastructures/NearestNeighbors.h"
 #include "ompl/geometric/planners/PlannerIncludes.h"
+#include "path_validator.h"
 
 namespace ompl
 {
@@ -57,14 +58,14 @@ namespace ompl
            [[more]](http://msl.cs.uiuc.edu/~lavalle/rrtpubs.html)
         */
 
-        /** \brief RRT-Connect (cRRTConnect) */
-        class cRRTConnect : public base::Planner
+        /** \brief RRT-Connect (CostRRTConnect) */
+        class CostRRTConnect : public base::Planner
         {
         public:
             /** \brief Constructor */
-            cRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates = false);
+            CostRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates = false);
 
-            ~cRRTConnect() override;
+            ~CostRRTConnect() override;
 
             void getPlannerData(base::PlannerData &data) const override;
 
@@ -115,6 +116,21 @@ namespace ompl
 
             void setup() override;
 
+            /*
+             *  Function for accumulating cost.
+             *   In this case, probability of collision.
+             */
+            double accumulateCost(double cost_1, double cost_2);
+
+            void setPathValidator(std::shared_ptr<PathValidator> pv){
+                pv_ = pv;
+            }
+
+            void setProbabilityThreshold(double th){threshold = th;}
+
+            std::shared_ptr<PathValidator> pv_;
+                
+
         protected:
             /** \brief Representation of a motion */
             class Motion
@@ -131,6 +147,7 @@ namespace ompl
                 const base::State *root{nullptr};
                 base::State *state{nullptr};
                 Motion *parent{nullptr};
+                double cost_from_root{0};
             };
 
             /** \brief A nearest-neighbor datastructure representing a tree of motions */
@@ -190,6 +207,10 @@ namespace ompl
 
             /** \brief Distance between the nearest pair of start tree and goal tree nodes. */
             double distanceBetweenTrees_;
+
+            double threshold;
+
+
         };
     }
 }

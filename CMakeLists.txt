@@ -100,6 +100,9 @@ include_directories(
   ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
   )
 
+add_library(cost_simp src/cost_simplifier.cpp
+  ${OMPL_LIBRARIES}
+  )
 
 add_library(lazyrrtf src/lazyrrt_fullpath.cpp)
 target_link_libraries(lazyrrtf
@@ -119,6 +122,12 @@ target_link_libraries(flrrtc
 add_library(crrtc src/custom_rrtconnect.cpp)
 target_link_libraries(crrtc
   ${OMPL_LIBRARIES}
+  )
+
+add_library(costrrtc src/cost_rrtconnect.cpp)
+target_link_libraries(costrrtc
+  ${OMPL_LIBRARIES}
+  cost_simp
   )
 
 
@@ -178,6 +187,7 @@ target_link_libraries(victor_planning
   ${EXTERN_LIBS}
   lazyrrtf
   crrtc
+  costrrtc
   )
 
 add_executable(wip_victor_sim src/wip_victor_sim.cpp)

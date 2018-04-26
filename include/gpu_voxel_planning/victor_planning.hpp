@@ -80,7 +80,7 @@ namespace gpu_voxels_planner
         virtual void preparePlanner(ompl::base::ScopedState<> start,
                                     ompl::base::ScopedState<> goal) override;
     protected:
-        std::shared_ptr<VictorPathValidator> pv_;
+        std::shared_ptr<VictorPathProbCol> pv_;
         double threshold;
     };
 
@@ -107,10 +107,26 @@ namespace gpu_voxels_planner
                                      ompl::base::ScopedState<> goal) override;
     };
 
+
+    
     class VictorThresholdRRTConnect: public VictorPlanner
     {
     public:
         VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model);
+        virtual void initializePlanner() override;
+        virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
+                                                           ompl::base::ScopedState<> goal) override;
+        virtual void preparePlanner(ompl::base::ScopedState<> start,
+                                    ompl::base::ScopedState<> goal) override;
+
+    };
+
+
+
+    class VictorMotionCostRRTConnect: public VictorPlanner
+    {
+    public:
+        VictorMotionCostRRTConnect(GpuVoxelsVictor* victor_model);
         virtual void initializePlanner() override;
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
                                                            ompl::base::ScopedState<> goal) override;

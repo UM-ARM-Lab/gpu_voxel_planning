@@ -124,7 +124,11 @@ public:
     BoxPathValidator(ompl::base::SpaceInformationPtr si,
                      BoxWorld* box_world);
     virtual bool checkPath(const std::vector<ompl::base::State*> path,
-                           size_t &collision_index);
+                           size_t &collision_index) override;
+
+    virtual double getPathCost(const std::vector<ompl::base::State*> path,
+                               size_t &collision_index) override;
+
     void setProbabilityThreshold(double th);
 
 protected:

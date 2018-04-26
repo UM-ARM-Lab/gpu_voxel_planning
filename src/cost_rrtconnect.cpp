@@ -34,28 +34,28 @@
 
 /* Author: Ioan Sucan */
 
-#include "custom_rrtconnect.h"
+#include "cost_rrtconnect.h"
 #include "ompl/base/goals/GoalSampleableRegion.h"
 #include "ompl/tools/config/SelfConfig.h"
 
-ompl::geometric::cRRTConnect::cRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates)
-  : base::Planner(si, addIntermediateStates ? "cRRTConnectIntermediate" : "cRRTConnect")
+ompl::geometric::CostRRTConnect::CostRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates)
+  : base::Planner(si, addIntermediateStates ? "CostRRTConnectIntermediate" : "CostRRTConnect")
 {
     specs_.recognizedGoal = base::GOAL_SAMPLEABLE_REGION;
     specs_.directed = true;
 
-    Planner::declareParam<double>("range", this, &cRRTConnect::setRange, &cRRTConnect::getRange, "0.:1.:10000.");
+    Planner::declareParam<double>("range", this, &CostRRTConnect::setRange, &CostRRTConnect::getRange, "0.:1.:10000.");
     connectionPoint_ = std::make_pair<base::State *, base::State *>(nullptr, nullptr);
     distanceBetweenTrees_ = std::numeric_limits<double>::infinity();
     addIntermediateStates_ = addIntermediateStates;
 }
 
-ompl::geometric::cRRTConnect::~cRRTConnect()
+ompl::geometric::CostRRTConnect::~CostRRTConnect()
 {
     freeMemory();
 }
 
-void ompl::geometric::cRRTConnect::setup()
+void ompl::geometric::CostRRTConnect::setup()
 {
     Planner::setup();
     tools::SelfConfig sc(si_, getName());
@@ -69,7 +69,7 @@ void ompl::geometric::cRRTConnect::setup()
     tGoal_->setDistanceFunction([this](const Motion *a, const Motion *b) { return distanceFunction(a, b); });
 }
 
-void ompl::geometric::cRRTConnect::freeMemory()
+void ompl::geometric::CostRRTConnect::freeMemory()
 {
     std::vector<Motion *> motions;
 
@@ -96,7 +96,7 @@ void ompl::geometric::cRRTConnect::freeMemory()
     }
 }
 
-void ompl::geometric::cRRTConnect::clear()
+void ompl::geometric::CostRRTConnect::clear()
 {
     Planner::clear();
     sampler_.reset();
@@ -109,7 +109,7 @@ void ompl::geometric::cRRTConnect::clear()
     distanceBetweenTrees_ = std::numeric_limits<double>::infinity();
 }
 
-ompl::geometric::cRRTConnect::GrowState ompl::geometric::cRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
+ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
                                                                              Motion *rmotion)
 {
     /* find closest state in the tree */
@@ -138,6 +138,8 @@ ompl::geometric::cRRTConnect::GrowState ompl::geometric::cRRTConnect::growTree(T
     // so we check that one first
     if (addIntermediateStates_)
     {
+        std::cout << "Adding intermediate states seems to have some bugs\n";
+        assert(false);
         std::string treename = tgi.start ? "start tree" : "goal tree";
         std::cout << "Adding intermediate states to " << treename << "\n";
         std::vector<base::State *> states;
@@ -190,13 +192,28 @@ ompl::geometric::cRRTConnect::GrowState ompl::geometric::cRRTConnect::growTree(T
             tgi.start ? si_->checkMotion(nmotion->state, dstate) :
                         si_->getStateValidityChecker()->isValid(dstate) && si_->checkMotion(dstate, nmotion->state);
 
-        if (validMotion)
+        if(!validMotion)
+        {
+            return TRAPPED;
+        }
+        
+
+        std::vector<base::State*> path;
+        path.push_back(dstate);
+        path.push_back(nmotion->state);
+        size_t collision_index;
+        pv_->setProbabilityThreshold(threshold);
+        double new_motion_cost = pv_->getPathCost(path, collision_index);
+        double new_cost_from_root = accumulateCost(nmotion->cost_from_root, new_motion_cost);
+            
+        if (new_cost_from_root < threshold)
         {
             /* create a motion */
             Motion *motion = new Motion(si_);
             si_->copyState(motion->state, dstate);
             motion->parent = nmotion;
             motion->root = nmotion->root;
+            motion->cost_from_root = new_cost_from_root;
             tgi.xmotion = motion;
 
             tree->add(motion);
@@ -210,7 +227,17 @@ ompl::geometric::cRRTConnect::GrowState ompl::geometric::cRRTConnect::growTree(T
     }
 }
 
-ompl::base::PlannerStatus ompl::geometric::cRRTConnect::solve(const base::PlannerTerminationCondition &ptc)
+/*
+ *  Accumulation of cost, in this case probabilities of collision.
+ *  Collisions probabilities are assumed to be indep
+ */
+double ompl::geometric::CostRRTConnect::accumulateCost(double cost_1, double cost_2)
+{
+    return 1.0 - (1.0 - cost_1)*(1.0 - cost_2);
+}
+
+
+ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::PlannerTerminationCondition &ptc)
 {
     checkValidity();
     auto *goal = dynamic_cast<base::GoalSampleableRegion *>(pdef_->getGoal().get());
@@ -372,7 +399,7 @@ ompl::base::PlannerStatus ompl::geometric::cRRTConnect::solve(const base::Planne
     return solved ? base::PlannerStatus::EXACT_SOLUTION : base::PlannerStatus::TIMEOUT;
 }
 
-void ompl::geometric::cRRTConnect::getPlannerData(base::PlannerData &data) const
+void ompl::geometric::CostRRTConnect::getPlannerData(base::PlannerData &data) const
 {
     Planner::getPlannerData(data);
 

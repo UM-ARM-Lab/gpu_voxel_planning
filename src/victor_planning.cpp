@@ -9,6 +9,8 @@
 #include <iostream>
 
 #include "custom_rrtconnect.h"
+#include "cost_rrtconnect.h"
+#include "cost_simplifier.h"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <ompl/geometric/PathSimplifier.h>
 
@@ -260,7 +262,7 @@ void VictorLazyRRTF::initializePlanner()
     // spi_ptr->setStateValidityChecker(v_ptr);
     // spi_ptr->setMotionValidator(v_ptr);
     std::shared_ptr<og::LazyRRTF> lrrtf = std::make_shared<og::LazyRRTF>(si_);
-    pv_ = std::make_shared<VictorPathValidator>(si_, victor_model_);
+    pv_ = std::make_shared<VictorPathProbCol>(si_, victor_model_);
     lrrtf->setPathValidator(pv_);
     planner_ = lrrtf;
     planner_->setup();
@@ -469,7 +471,6 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
                 break;
             }
         }
-        usleep(10000);
     }
     std::cout << "Planning finished\n";
 
@@ -479,13 +480,9 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
 
         return Maybe::Maybe<ob::PathPtr>();
     }
-
+    
     (path->as<og::PathGeometric>())->interpolate();
     std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states before smoothing\n";
-    // path = pdef_->getSolutionPath();
-    // std::cout << "simplfying\n";
-    // simp_->simplifyMax(*(path->as<og::PathGeometric>()));
-    // simp_->simplify(*(path->as<og::PathGeometric>()), 2.0);
     simp_->shortcutPath(*(path->as<og::PathGeometric>()), 100, 30);
     // std::cout << "done simplifying\n";
     std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states after smoothing\n";
@@ -496,6 +493,163 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
 
 
 void VictorThresholdRRTConnect::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
+{
+    planner_->clear();
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
+    pdef_->setStartAndGoalStates(start, goal);
+    planner_->setProblemDefinition(pdef_);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***************************************
+ **    Victor MotionCostRRTConnect    **
+ ***************************************/
+
+VictorMotionCostRRTConnect::VictorMotionCostRRTConnect(GpuVoxelsVictor* victor_model)
+    : VictorPlanner(victor_model)
+{
+    initializePlanner();
+}
+
+void VictorMotionCostRRTConnect::initializePlanner()
+{
+    vv_ptr = std::make_shared<VictorValidator>(si_, victor_model_);
+    setupSpaceInformation();
+
+
+    
+
+    std::shared_ptr<og::CostRRTConnect> mcrrt = std::make_shared<og::CostRRTConnect>(si_);
+    std::shared_ptr<VictorPathProbCol> vppc = std::make_shared<VictorPathProbCol>(si_, victor_model_);
+    mcrrt->setPathValidator(vppc);
+    planner_ = mcrrt;
+    planner_->setup();
+}
+
+
+Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::ScopedState<> start,
+                                                              ompl::base::ScopedState<> goal)
+{
+
+    std::cout << "Using motion cost planner\n";
+    preparePlanner(start, goal);
+
+    ob::PathPtr path;
+    double planning_time = 15;
+    double eps = 0.0001;
+
+    double threshold = 1.0;
+    
+    ob::PlannerStatus solved(true, false);
+    bool anySolution = false;
+    // VictorStateThresholdValidator* vv_thresh = dynamic_cast<VictorStateThresholdValidator*>(vv_ptr.get());
+    // vv_thresh->setProbabilityThreshold(threshold);
+    og::CostRRTConnect* rplanner_ = planner_->as<og::CostRRTConnect>();
+    rplanner_->setProbabilityThreshold(threshold);
+
+    arc_utilities::Stopwatch stopwatch;
+    double time_left;
+    
+    while((time_left = (planning_time - stopwatch())) > 0)
+    {
+        std::cout << "threshold " << threshold << "\n";
+        
+        solved = planner_->solve(time_left);
+
+        if(solved)
+        {
+            anySolution = true;
+            ob::PathPtr ptmp = pdef_->getSolutionPath();
+            std::vector<ob::State*> stmp = ptmp->as<og::PathGeometric>()->getStates();
+            size_t col_index;
+            double path_prob = rplanner_->pv_->getPathCost(stmp, col_index);
+
+            
+            std::cout << "Path col prob: " << path_prob << "\n";
+            if(path_prob < threshold)
+            {
+                threshold = path_prob - eps;
+                path = ptmp;
+                rplanner_->setProbabilityThreshold(threshold);
+            }
+            else{
+                threshold -= eps;
+            }
+
+            if(threshold <= 0.0)
+            {
+                break;
+            }
+            
+            preparePlanner(start, goal);
+
+        }
+    }
+    std::cout << "Planning finished\n";
+
+    if (!anySolution)
+    {
+        std::cout << "No solution could be found" << std::endl;
+
+        return Maybe::Maybe<ob::PathPtr>();
+    }
+
+
+    rplanner_->pv_->do_delay = true;        
+    (path->as<og::PathGeometric>())->interpolate();
+    std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states before smoothing\n";
+    size_t col_index;
+    double path_prob = rplanner_->pv_->getPathCost(path->as<og::PathGeometric>()->getStates(), col_index);
+    std::cout << "with cost " << path_prob << "\n";
+
+    // simp_->shortcutPath(*(path->as<og::PathGeometric>()), 100, 30);
+    rplanner_->pv_->do_delay = false;
+    og::CostSimplifier cost_simp(si_, rplanner_->pv_.get());
+    cost_simp.shortcutPath(*(path->as<og::PathGeometric>()), 100);
+    rplanner_->pv_->do_delay = true;        
+    // std::cout << "done simplifying\n";
+    std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states after smoothing\n";
+
+    
+
+
+
+    path_prob = rplanner_->pv_->getPathCost(path->as<og::PathGeometric>()->getStates(), col_index);
+    std::cout << "with cost " << path_prob << "\n";
+
+
+    rplanner_->pv_->do_delay = false;
+    
+
+    return Maybe::Maybe<ob::PathPtr>(path);
+}
+
+
+void VictorMotionCostRRTConnect::preparePlanner(ob::ScopedState<> start, ob::ScopedState<> goal)
 {
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);

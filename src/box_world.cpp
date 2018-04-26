@@ -300,6 +300,14 @@ void BoxPathValidator::setProbabilityThreshold(double th)
     threshold = th;
 }
 
+double BoxPathValidator::getPathCost(const std::vector<ompl::base::State*> path,
+                   size_t &collision_index)
+{
+    std::cout << "get path cost not implemented for box world\n";
+    assert(false);
+}
+
+
 bool BoxPathValidator::checkPath(const std::vector<ompl::base::State*> path,
                                  size_t &collision_index)
 {
