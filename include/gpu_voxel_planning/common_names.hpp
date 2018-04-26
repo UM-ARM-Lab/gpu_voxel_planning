@@ -17,6 +17,7 @@ const std::string INSERT_VIZ_SOLUTION = "insert into viz solution";
 
 
 const std::string BiRRT_TIME = "bi_rrt";
+const std::string MOTION_COST_TIME = "motion_cost_rrt";
 
 
 #endif

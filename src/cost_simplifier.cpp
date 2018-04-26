@@ -42,7 +42,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
     std::vector<ob::State *> orig(states.begin()+start_ind, states.begin()+end_ind);
 
     size_t col_index;
-    std::cout << "attempting path cost smoothing from " << start_ind << " to " << end_ind << "\n";
+    // std::cout << "attempting path cost smoothing from " << start_ind << " to " << end_ind << "\n";
     double cur_cost = pv_->getPathCost(orig, col_index);
 
     pv_->setProbabilityThreshold(cur_cost);
@@ -62,7 +62,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
     // }
 
 
-    std::cout << "shortcut attempt\n";
+    // std::cout << "shortcut attempt\n";
     double new_cost = pv_->getPathCost(new_attempt, col_index);
 
     pv_->setProbabilityThreshold(orig_threshold);
@@ -70,7 +70,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
     if(new_cost <= cur_cost)
     {
-        std::cout << "Sizes: before " << states.size();
+        // std::cout << "Sizes: before " << states.size();
         std::vector<ob::State *> post_rework(states.begin() + end_ind, states.end());
         
         states = std::vector<ob::State *> (states.begin(), states.begin()+start_ind);
@@ -78,7 +78,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
         states.insert(states.end(), new_attempt.begin(), new_attempt.end());
         states.insert(states.end(), post_rework.begin(), post_rework.end());
 
-        std::cout << ", after " << states.size() << "\n";
+        // std::cout << ", after " << states.size() << "\n";
         
         si_->freeStates(orig);
 

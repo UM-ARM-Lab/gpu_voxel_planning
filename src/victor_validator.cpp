@@ -11,12 +11,14 @@
 
 #include <thrust/extrema.h>
 #include <algorithm>
+#include "hardcoded_params.h"
 
 #include <thread>
 #include <chrono>
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
+
 
 
 namespace ob = ompl::base;
@@ -167,8 +169,18 @@ double VictorStateThresholdValidator::getCollisionProb(const ob::State *state) c
 
     victor_model_->resetQuery();
     victor_model_->addQueryState(config);
+
+    if(USE_KNOWN_OBSTACLES)
+    {
+        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+        {
+            return 1.0;
+        }
+    }
+
     std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
     std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+
 
     // std::cout << "Reporting on query\n";
     double p_no_collision = 1.0;
@@ -296,6 +308,15 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
             const double *values = test->as<ob::RealVectorStateSpace::StateType>()->values;
             victor_model_->addQueryState(victor_model_->toVictorConfig(values));
         }
+
+        if(USE_KNOWN_OBSTACLES)
+        {
+            if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+            {
+                return 1.0;
+            }
+        }
+        
         std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
         std::vector<size_t> seen_sizes = victor_model_->seenSizes();
         std::vector<double> p_no_collision;
@@ -324,7 +345,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         double num_occupied = (double)(path_size - known_free_size);
         double frac_occupied = num_occupied / (double) total_size;
         
-        p_no_col_unseen = std::pow(1.0 - frac_occupied, 0);
+        p_no_col_unseen = std::pow(1.0 - frac_occupied, UNEXPLORED_BIAS);
 
         prob_col = 1.0 - p_no_col_seen * p_no_col_unseen;
         
@@ -340,12 +361,21 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         if(do_delay)
         {
             std::cout << "Prob col: " << prob_col << "\n";
+            std::cout << "prob colsets: " << 1.0-p_no_col_seen;
+            std::cout << "   prob void space: " << 1.0 - p_no_col_unseen << "\n";
             usleep(100000);
         }
         
         if(prob_col > threshold)
         {
-            break;
+            if(do_delay)
+            {
+                std::cout << "PROB COL ABOVE THRESHOLD " << threshold << "\n";
+            }
+            else
+            {
+                break;
+            }
         }
     }
     si_->freeState(test);

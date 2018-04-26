@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <iostream>
 
+#include "hardcoded_params.h"
 #include "custom_rrtconnect.h"
 #include "cost_rrtconnect.h"
 #include "cost_simplifier.h"
@@ -278,7 +279,7 @@ Maybe::Maybe<ob::PathPtr> VictorLazyRRTF::planPath(ompl::base::ScopedState<> sta
     std::cout << "Using lazyRRTF planner\n";
     preparePlanner(start, goal);
     ob::PathPtr path;
-    int planning_time = 15;
+    int planning_time = PLANNING_TIMEOUT;
 
     threshold = 1.0;
     pv_->setProbabilityThreshold(threshold);
@@ -430,7 +431,7 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
     preparePlanner(start, goal);
 
     ob::PathPtr path;
-    double planning_time = 15;
+    double planning_time = PLANNING_TIMEOUT;
     double eps = 0.0001;
 
     double threshold = 1.0;
@@ -559,7 +560,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
     preparePlanner(start, goal);
 
     ob::PathPtr path;
-    double planning_time = 15;
+    double planning_time = PLANNING_TIMEOUT;
     double eps = 0.0001;
 
     double threshold = 1.0;
@@ -595,6 +596,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
                 threshold = path_prob - eps;
                 path = ptmp;
                 rplanner_->setProbabilityThreshold(threshold);
+                std::cout << "pv thresh: " << rplanner_->pv_->threshold << "\n";
             }
             else{
                 threshold -= eps;
@@ -618,7 +620,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
         return Maybe::Maybe<ob::PathPtr>();
     }
 
-
+    std::cout << "pv thresh after planning: " << rplanner_->pv_->threshold << "\n";
     rplanner_->pv_->do_delay = true;        
     (path->as<og::PathGeometric>())->interpolate();
     std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states before smoothing\n";
@@ -627,10 +629,14 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
     std::cout << "with cost " << path_prob << "\n";
 
     // simp_->shortcutPath(*(path->as<og::PathGeometric>()), 100, 30);
+
+
+    bool tmp =    rplanner_->pv_->do_delay;
     rplanner_->pv_->do_delay = false;
     og::CostSimplifier cost_simp(si_, rplanner_->pv_.get());
-    cost_simp.shortcutPath(*(path->as<og::PathGeometric>()), 100);
-    rplanner_->pv_->do_delay = true;        
+    cost_simp.shortcutPath(*(path->as<og::PathGeometric>()), SMOOTHING_ITERATIONS);
+    rplanner_->pv_->do_delay = tmp;
+    
     // std::cout << "done simplifying\n";
     std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states after smoothing\n";
 

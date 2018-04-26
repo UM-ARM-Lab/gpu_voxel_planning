@@ -16,6 +16,7 @@
 #define VICTOR_PATH_SOLUTION_MAP "victor_path_solutions_map"
 #define OBSTACLE_DISTANCE_MAP "obstacle_distance_map"
 #define FULL_MAP "full_map"
+#define KNOWN_OBSTACLES_MAP "known_obstacles_map"
 
 #define SIM_OBSTACLES_MAP "sim_obstacles_map"
 #define VICTOR_ROBOT "victor_robot"

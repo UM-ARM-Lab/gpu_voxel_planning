@@ -48,20 +48,30 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
 
     bool reached_goal = false;
 
-    while(!reached_goal)
+    arc_utilities::Stopwatch stopwatch;
+    double timeout = 60* 15; //seconds;
+    // double timeout = 30; //seconds;
+    
+    while(!reached_goal && stopwatch() < timeout)
     {
-        PROFILE_START(planner_name + "_plan");
+        PROFILE_START(planner_name + " plan");
         M::Maybe<Path> maybe_path = planner.planPathConfig(sim_world->victor_model.cur_config,
                                                     goal_config);
-        PROFILE_RECORD(planner_name + "_plan");
+        PROFILE_RECORD(planner_name + " plan");
         if(!maybe_path.Valid())
         {
             std::cout << "Path planning failed\n";
             return false;
         }
-        PROFILE_START(planner_name + "_execute");
+        PROFILE_START(planner_name + " execute");
         reached_goal = sim_world->attemptPath(maybe_path.Get());
-        PROFILE_RECORD(planner_name + "_execute");
+        PROFILE_RECORD(planner_name + " execute");
+    }
+
+    if(!reached_goal)
+    {
+        std::cout << "Timeout before goal reached\n";
+        return false;
     }
     return true;
 }
@@ -70,6 +80,12 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
 
 void setupWorld()
 {
+    if(sim_world != nullptr)
+    {
+        sim_world->gvl.reset();
+        sim_world->victor_model.gvl.reset();
+    }
+
     sim_world = std::make_shared<SimWorld>();
     sim_world->initializeObstacles();
 }
@@ -80,12 +96,13 @@ void runTest(VictorPlanner &planner, std::string planner_name)
     std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
     std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
 
+
     
     sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
     PROFILE_START(planner_name);
     attemptGoal(planner, goal, planner_name);
     PROFILE_RECORD(planner_name);
-    sim_world->gvl.reset();
+    setupWorld();
 }
 
 
@@ -93,6 +110,12 @@ void runTest_ThresholdRRTConnect()
 {
     VictorThresholdRRTConnect planner(&(sim_world->victor_model));
     runTest(planner, BiRRT_TIME);
+}
+
+void runTest_MotionCostRRTConnect()
+{
+    VictorMotionCostRRTConnect planner(&(sim_world->victor_model));
+    runTest(planner, MOTION_COST_TIME);
 }
 
 
@@ -106,32 +129,28 @@ int main(int argc, char* argv[])
     signal(SIGTERM, killhandler);
 
 
-
-
-    
-
-
     PROFILE_REINITIALIZE(20, 10000);
 
-    std::cout << "before reset\n";
     setupWorld();
-    std::cout << "after reset\n";
 
-    for(int i=0; i<2; i++)
+    for(int i=0; i<20; i++)
     {
-        runTest_ThresholdRRTConnect();
+        // runTest_ThresholdRRTConnect();
+        runTest_MotionCostRRTConnect();
     }
-    
     
 
     std::vector<std::string> names = {
         BiRRT_TIME,
         BiRRT_TIME + " plan",
         BiRRT_TIME + " execute",
+        MOTION_COST_TIME,
+        MOTION_COST_TIME + " plan",
+        MOTION_COST_TIME + " execute",
     };
 
 
-    PROFILE_WRITE_SUMMARY_FOR_GROUP("victor_sim_times.txt", names);
+    PROFILE_WRITE_SUMMARY_FOR_ALL("victor_sim_times.txt");
     std::cout << "Wrote summary\n";
 
     

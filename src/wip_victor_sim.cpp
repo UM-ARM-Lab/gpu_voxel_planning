@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
     std::cout << "Waiting for user input to start...\n";
     std::getline(std::cin, unused);
 
-    // testAngles();
+    testAngles();
     
     // VictorLBKPiece planner(&(sim_world->victor_model));
     // VictorThresholdRRTConnect planner(&(sim_world->victor_model));

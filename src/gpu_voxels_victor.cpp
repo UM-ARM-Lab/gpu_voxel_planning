@@ -1,5 +1,6 @@
 #include "gpu_voxels_victor.hpp"
 #include "common_names.hpp"
+#include "hardcoded_params.h"
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
@@ -10,6 +11,7 @@
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/locks.hpp>
 #include <mutex>
+
 
 std::vector<std::string> SEEN_OBSTACLE_SETS;
 
@@ -65,6 +67,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_QUERY_MAP); //map for queries on victor validity
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_ACTUAL_MAP); //map for victors current state
     gvl->addMap(MT_PROBAB_VOXELMAP, ENV_MAP);
+    gvl->addMap(MT_PROBAB_VOXELMAP, KNOWN_OBSTACLES_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_BITVECTOR_VOXELLIST, VICTOR_PATH_SOLUTION_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP_RED);
@@ -103,17 +106,22 @@ void GpuVoxelsVictor::insertVictorIntoMap(const VictorConfig &c, const std::stri
 
 void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 {
+    cur_config = c;
     gvl->clearMap(VICTOR_ACTUAL_MAP);
     gvl->setRobotConfiguration(VICTOR_ROBOT, c);
     // gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, eBVM_OCCUPIED);
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, PROB_OCCUPIED);
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_SWEPT_VOLUME_MAP, PROB_OCCUPIED);
 
-    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(ENV_MAP);
-    voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
+    for(size_t i=0; i<num_observed_sets; i++)
+    {
+        gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(SEEN_OBSTACLE_SETS[i]);
+        voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
   
-    obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
-    cur_config = c;
+        obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
+        gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
+    }
+
 }
 
 void GpuVoxelsVictor::resetQuery()
@@ -437,7 +445,12 @@ SimWorld::SimWorld()
     std::cout << "Creating sim world\n";
     gvl = gpu_voxels::GpuVoxels::getInstance();
     gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
+    if(USE_KNOWN_OBSTACLES)
+    {
+        gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
+    }
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
+
 
     double init_angles[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     VictorConfig init_config = victor_model.toVictorConfig(init_angles);
@@ -449,7 +462,10 @@ void SimWorld::initializeObstacles()
     Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
     Vector3f tc(1.7, 1.4, 0.9); //table corner
     Vector3f tld(.033, 0.033, tc.z); //table leg dims
+
+
     
+    //table top
     gvl->insertBoxIntoMap(tc, tc + td,
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
     gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0),
@@ -483,10 +499,15 @@ void SimWorld::initializeObstacles()
                           cavecorner+cavesideoffset+cavesidedim,
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
 
-    
-    
-    
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
+
+    
+    if(USE_KNOWN_OBSTACLES)
+    {
+        gvl->insertBoxIntoMap(tc, tc + td,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
+    }
 
 }
 
@@ -543,7 +564,7 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
             }
 
             std::vector<VictorConfig> cs;
-            for(size_t j=last_valid; (j<last_valid+15) && j<path.size(); j++)
+            for(size_t j=last_valid; (j<last_valid + NUM_STEPS_FOR_ADDING_COLLISION) && j<path.size(); j++)
             {
                 cs.push_back(victor_model.toVictorConfig(path[j].data()));
             }

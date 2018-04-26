@@ -17,6 +17,21 @@ To get a darker version of the color add "dark" infront of the name
   </rgba>
 </background>
 
+<known_obstacles_map>
+  <!-- only voxels with an occupancy >= occupancy_threshold will be drawn. Has to be in the range of 1 to 255 -->
+  <occupancy_threshold> 1 </occupancy_threshold>
+
+  <all_types>
+    <rgba>
+      <r> 0.1 </r>
+      <g> 0.1 </g>
+      <b> 0.1 </b>
+    </rgba>
+    
+  </all_types>
+</known_obstacles_map>
+
+
 
 
 <!--  The parameter for the voxel map 0 -->
@@ -27,12 +42,13 @@ To get a darker version of the color add "dark" infront of the name
   <all_types>
     <rgba>
       <r> 0.0 </r>
-      <g> .8 </g>
+      <g> .7 </g>
       <b> 0.0 </b>
     </rgba>
     
   </all_types>
 </victor_actual_map>
+
 
 
 
