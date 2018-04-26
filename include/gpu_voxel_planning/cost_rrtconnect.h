@@ -85,6 +85,10 @@ namespace ompl
                 base::State *state{nullptr};
                 Motion *parent{nullptr};
                 double cost_from_root{0};
+                
+                /** \brief The set of motions that descend from this one */
+                std::vector<Motion *> children;
+
             };
 
             

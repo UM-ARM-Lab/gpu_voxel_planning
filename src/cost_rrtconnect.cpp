@@ -171,6 +171,7 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
                 motion->state = states[i];
                 motion->parent = nmotion;
                 motion->root = nmotion->root;
+                nmotion->children.push_back(motion);
                 tgi.xmotion = motion;
                 nmotion = motion;
                 tree->add(motion);
@@ -351,20 +352,14 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
 
                 std::vector<base::State*> pathStates;
                 auto path(std::make_shared<PathGeometric>(si_));
-                bool isValid =  makePath(startMotion, goalMotion, path);
+                makePath(startMotion, goalMotion, path);
 
                 std::cout << "Path states size: " << path->getStates().size() << "\n";
-                if(isValid)
-                {
-                    pdef_->addSolutionPath(path, false, 0.0, getName());
-                    solved = true;
-                    std::cout << "Solution path added\n";
-                    break;
-                }
-                else
-                {
-                    removeHighestCostEdge(path->getStates());
-                }
+                pdef_->addSolutionPath(path, false, 0.0, getName());
+                solved = true;
+                std::cout << "Solution path added\n";
+                break;
+
             }
         }
     }
@@ -396,7 +391,7 @@ bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<ompl::base::S
 
 void ompl::geometric::CostRRTConnect::removeMotion(Motion *motion)
 {
-    nn_->remove(motion);
+    tStart_->remove(motion);
 
     /* remove self from parent list */
 
