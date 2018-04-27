@@ -127,7 +127,6 @@ namespace gpu_voxels_planner
     {
     public:
         VictorMotionCostRRTConnect(GpuVoxelsVictor* victor_model);
-        virtual void initializePlanner() override;
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
                                                            ompl::base::ScopedState<> goal) override;
         virtual void preparePlanner(ompl::base::ScopedState<> start,
@@ -135,6 +134,20 @@ namespace gpu_voxels_planner
 
     };
 
+    class VictorVoxCostRRTConnect: public VictorMotionCostRRTConnect
+    {
+    public:
+        VictorVoxCostRRTConnect(GpuVoxelsVictor* victor_model);
+        virtual void initializePlanner() override;
+    };
+    
+        
+    class VictorProbColCostRRTConnect: public VictorMotionCostRRTConnect
+    {
+    public:
+        VictorProbColCostRRTConnect(GpuVoxelsVictor* victor_model);
+        virtual void initializePlanner() override;
+    };
 
 
 }

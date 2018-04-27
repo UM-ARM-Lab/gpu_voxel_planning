@@ -15,6 +15,7 @@
 
 #include <thread>
 #include <chrono>
+#include <limits>
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
@@ -263,6 +264,8 @@ double VictorStateThresholdValidator::getPathMaxColProb(og::PathGeometric *path)
 
 
 
+
+
 /***********************************************
  **            PATH VALIDATOR                 **
  ***********************************************/
@@ -392,6 +395,136 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
 
 bool VictorPathProbCol::checkPath(const std::vector<ob::State*> path,
                                     size_t &collision_index)
+{
+    return getPathCost(path, collision_index) <= threshold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***********************************************
+ **        PATH VOXEL COUNT                   **
+ ***********************************************/
+VictorPathVox::VictorPathVox(const ob::SpaceInformationPtr &si,
+                                         GpuVoxelsVictor* victor_model) :
+    PathValidator(si)
+{
+    victor_model_ = victor_model;
+}
+
+
+
+/*
+ *  Returns the probability of collision for a path.
+ *  Early termination if prob of collision is above threshold
+ */
+double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
+                                      size_t &collision_index)
+{
+    ompl::base::StateSpace *stateSpace_ = si_->getStateSpace().get();
+    assert(stateSpace_ != nullptr);
+
+    victor_model_->resetQuery();
+    ob::State *test = si_->allocState();
+
+    double total_col = 0.0;
+        
+    for(collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
+    {
+        total_col = 0;
+        const ob::State *s1 = path[collision_index];
+        const ob::State *s2 = path[collision_index + 1];
+        if(!si_->isValid(s1))
+        {
+            return std::numeric_limits<double>::max();
+        }
+        int nd = stateSpace_->validSegmentCount(s1, s2);
+
+        for(int j = 0; j < nd; j++)
+        {
+            stateSpace_->interpolate(s1, s2, (double)j / (double)nd, test);
+            const double *values = test->as<ob::RealVectorStateSpace::StateType>()->values;
+            victor_model_->addQueryState(victor_model_->toVictorConfig(values));
+        }
+
+        if(USE_KNOWN_OBSTACLES)
+        {
+            if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+            {
+                return std::numeric_limits<double>::max();
+            }
+        }
+
+        std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
+
+        for(size_t i=0; i < seen_col_voxels.size(); i++)
+        {
+            total_col += seen_col_voxels[i];
+        }
+
+
+        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
+
+        //Stuff for freespace cost
+
+        // size_t path_size = victor_model_->countIntersect(FULL_MAP, VICTOR_QUERY_MAP);
+        // size_t total_size = victor_model_->countIntersect(FULL_MAP, FULL_MAP);
+        // size_t known_free_size = victor_model_->countIntersect(VICTOR_SWEPT_VOLUME_MAP, VICTOR_QUERY_MAP);
+
+        // double num_occupied = (double)(path_size - known_free_size);
+        // double frac_occupied = num_occupied / (double) total_size;
+        
+        // p_no_col_unseen = std::pow(1.0 - frac_occupied, UNEXPLORED_BIAS);
+
+        // prob_col = 1.0 - p_no_col_seen * p_no_col_unseen;
+        
+
+
+        if(do_delay)
+        {
+            std::cout << "Total col: " << total_col << "\n";
+            usleep(100000);
+        }
+
+        if(total_col > threshold)
+        {
+            if(do_delay)
+            {
+                std::cout << "PROB COL ABOVE THRESHOLD " << threshold << "\n";
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    si_->freeState(test);
+
+    if(do_delay)
+    {
+        std::cout << "path cost complete, waiting for input to continue\n";
+        std::string unused;
+        std::getline(std::cin, unused);
+    }
+    
+    return total_col;
+}
+
+
+bool VictorPathVox::checkPath(const std::vector<ob::State*> path,
+                              size_t &collision_index)
 {
     return getPathCost(path, collision_index) <= threshold;
 }

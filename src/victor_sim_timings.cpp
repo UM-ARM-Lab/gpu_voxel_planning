@@ -128,10 +128,16 @@ void runTest_ThresholdRRTConnect()
     runTest(planner, BiRRT_TIME);
 }
 
-void runTest_MotionCostRRTConnect()
+void runTest_ProbColCostRRTConnect()
 {
-    VictorMotionCostRRTConnect planner(&(sim_world->victor_model));
-    runTest(planner, MOTION_COST_TIME);
+    VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
+    runTest(planner, PROB_COL_COST_TIME);
+}
+
+void runTest_VoxCostRRTConnect()
+{
+    VictorVoxCostRRTConnect planner(&(sim_world->victor_model));
+    runTest(planner, VOX_COST_TIME);
 }
 
 
@@ -149,21 +155,13 @@ int main(int argc, char* argv[])
 
     setupWorld();
 
-    for(int i=0; i<20; i++)
+    for(int i=0; i<5; i++)
     {
         // runTest_ThresholdRRTConnect();
-        runTest_MotionCostRRTConnect();
+        runTest_ProbColCostRRTConnect();
+        runTest_VoxCostRRTConnect();
     }
     
-
-    std::vector<std::string> names = {
-        BiRRT_TIME,
-        BiRRT_TIME + " plan",
-        BiRRT_TIME + " execute",
-        MOTION_COST_TIME,
-        MOTION_COST_TIME + " plan",
-        MOTION_COST_TIME + " execute",
-    };
 
 
     PROFILE_WRITE_SUMMARY_FOR_ALL("victor_sim_times.txt");

@@ -547,23 +547,8 @@ void VictorThresholdRRTConnect::preparePlanner(ob::ScopedState<> start, ob::Scop
 VictorMotionCostRRTConnect::VictorMotionCostRRTConnect(GpuVoxelsVictor* victor_model)
     : VictorPlanner(victor_model)
 {
-    initializePlanner();
 }
 
-void VictorMotionCostRRTConnect::initializePlanner()
-{
-    vv_ptr = std::make_shared<VictorValidator>(si_, victor_model_);
-    setupSpaceInformation();
-
-
-    
-
-    std::shared_ptr<og::CostRRTConnect> mcrrt = std::make_shared<og::CostRRTConnect>(si_);
-    std::shared_ptr<VictorPathProbCol> vppc = std::make_shared<VictorPathProbCol>(si_, victor_model_);
-    mcrrt->setPathValidator(vppc);
-    planner_ = mcrrt;
-    planner_->setup();
-}
 
 
 Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::ScopedState<> start,
@@ -577,7 +562,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
     double planning_time = PLANNING_TIMEOUT;
     double eps = 0.0001;
 
-    double threshold = 1.0;
+    double threshold = std::numeric_limits<double>::max();
     
     ob::PlannerStatus solved(true, false);
     bool anySolution = false;
@@ -603,16 +588,16 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
 
             std::vector<ob::State*> stmp = ptmp->as<og::PathGeometric>()->getStates();
             size_t col_index;
-            double path_prob = rplanner_->pv_->getPathCost(stmp, col_index);
+            double path_cost = rplanner_->pv_->getPathCost(stmp, col_index);
 
             
-            std::cout << "Path col prob: " << path_prob << "\n";
-            if(path_prob < threshold)
+            std::cout << "Path cost: " << path_cost << "\n";
+            if(path_cost < threshold)
             {
-                threshold = path_prob - eps;
+                threshold = path_cost - eps;
                 path = ptmp;
                 rplanner_->setProbabilityThreshold(threshold);
-                std::cout << "pv thresh: " << rplanner_->pv_->threshold << "\n";
+                // std::cout << "pv thresh: " << rplanner_->pv_->threshold << "\n";
             }
             else{
                 std::cout << "This should not happen with planner modifications\n";
@@ -687,4 +672,60 @@ void VictorMotionCostRRTConnect::preparePlanner(ob::ScopedState<> start, ob::Sco
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
     pdef_->setStartAndGoalStates(start, goal);
     planner_->setProblemDefinition(pdef_);
+}
+
+
+
+
+
+
+
+
+
+/***************************************
+ **    Victor VoxCostRRTConnect    **
+ ***************************************/
+VictorVoxCostRRTConnect::VictorVoxCostRRTConnect(GpuVoxelsVictor* victor_model)
+    : VictorMotionCostRRTConnect(victor_model)
+{
+    initializePlanner();
+}
+
+
+void VictorVoxCostRRTConnect::initializePlanner()
+{
+    vv_ptr = std::make_shared<VictorValidator>(si_, victor_model_);
+    setupSpaceInformation();
+
+    std::shared_ptr<og::CostRRTConnect> mcrrt = std::make_shared<og::CostRRTConnect>(si_);
+    std::shared_ptr<VictorPathVox> vppc = std::make_shared<VictorPathVox>(si_, victor_model_);
+    mcrrt->setPathValidator(vppc);
+    planner_ = mcrrt;
+    planner_->setup();
+}
+
+
+
+
+
+/****************************************
+ **    Victor ProbColCostRRTConnect    **
+ ****************************************/
+VictorProbColCostRRTConnect::VictorProbColCostRRTConnect(GpuVoxelsVictor* victor_model)
+    : VictorMotionCostRRTConnect(victor_model)
+{
+    initializePlanner();
+}
+
+
+void VictorProbColCostRRTConnect::initializePlanner()
+{
+    vv_ptr = std::make_shared<VictorValidator>(si_, victor_model_);
+    setupSpaceInformation();
+
+    std::shared_ptr<og::CostRRTConnect> mcrrt = std::make_shared<og::ProbColRRTConnect>(si_);
+    std::shared_ptr<VictorPathProbCol> vppc = std::make_shared<VictorPathProbCol>(si_, victor_model_);
+    mcrrt->setPathValidator(vppc);
+    planner_ = mcrrt;
+    planner_->setup();
 }

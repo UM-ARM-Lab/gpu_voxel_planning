@@ -236,7 +236,7 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
  */
 double ompl::geometric::CostRRTConnect::accumulateCost(double cost_1, double cost_2)
 {
-    return 1.0 - (1.0 - cost_1)*(1.0 - cost_2);
+    return cost_1 + cost_2;
 }
 
 
@@ -532,3 +532,30 @@ void ompl::geometric::CostRRTConnect::getPlannerData(base::PlannerData &data) co
     // Add some info.
     data.properties["approx goal distance REAL"] = boost::lexical_cast<std::string>(distanceBetweenTrees_);
 }
+
+
+
+
+
+/***********************************************
+ *         Probability of Collision cost
+ ***********************************************/
+
+ompl::geometric::ProbColRRTConnect::ProbColRRTConnect(const base::SpaceInformationPtr &si,
+                                                      bool addIntermediateStates)
+    : CostRRTConnect(si, addIntermediateStates)
+{
+    std::cout << "AddIntermediatestates: " << addIntermediateStates << "\n";
+}
+
+
+
+/*
+ *  Accumulation of cost, in this case probabilities of collision.
+ *  Collisions probabilities are assumed to be indep
+ */
+double ompl::geometric::ProbColRRTConnect::accumulateCost(double cost_1, double cost_2)
+{
+    return 1.0 - (1.0 - cost_1)*(1.0 - cost_2);
+}
+

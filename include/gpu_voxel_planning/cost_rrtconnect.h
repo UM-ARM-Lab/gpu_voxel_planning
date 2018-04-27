@@ -147,7 +147,7 @@ namespace ompl
              *  Function for accumulating cost.
              *   In this case, probability of collision.
              */
-            double accumulateCost(double cost_1, double cost_2);
+            virtual double accumulateCost(double cost_1, double cost_2);
 
             void setPathValidator(std::shared_ptr<PathValidator> pv){
                 pv_ = pv;
@@ -242,6 +242,19 @@ namespace ompl
             double threshold;
 
 
+        };
+
+
+
+/****************************************************
+*           Probability of collision cost
+*****************************************************/
+        class ProbColRRTConnect : public CostRRTConnect
+        {
+        public:
+            ProbColRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates = false);
+            
+            virtual double accumulateCost(double cost_1, double cost_2) override;
         };
     }
 }

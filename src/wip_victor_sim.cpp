@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
     
     // VictorLBKPiece planner(&(sim_world->victor_model));
     // VictorThresholdRRTConnect planner(&(sim_world->victor_model));
-    VictorMotionCostRRTConnect planner(&(sim_world->victor_model));
+    VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
     
     // VictorPRM planner(&(sim_world->victor_model));
     // VictorLazyRRTF planner(&(sim_world->victor_model));

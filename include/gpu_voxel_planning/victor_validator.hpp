@@ -96,7 +96,23 @@ public:
     virtual double getPathCost(const std::vector<ompl::base::State*> path,
                                size_t &collision_index) override;
 
+protected:
+    GpuVoxelsVictor* victor_model_;
+};
 
+
+
+
+class VictorPathVox : public ompl::geometric::PathValidator
+{
+public:
+    VictorPathVox(const ompl::base::SpaceInformationPtr &si,
+                        GpuVoxelsVictor* victor_model);
+    virtual bool checkPath(const std::vector<ompl::base::State*> path,
+                           size_t &collision_index) override;
+
+    virtual double getPathCost(const std::vector<ompl::base::State*> path,
+                               size_t &collision_index) override;
 
 protected:
     GpuVoxelsVictor* victor_model_;
