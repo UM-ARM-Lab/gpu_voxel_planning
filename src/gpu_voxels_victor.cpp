@@ -592,7 +592,7 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
 
 Path densifyPath(const Path &path, int densify_factor)
 {
-    std::cout << "densifying path\n";
+    // std::cout << "densifying path\n";
     Path dense_path;
     double dt = 1.0/(double)densify_factor;
     for(size_t i=0; i < (path.size()-1); i++)

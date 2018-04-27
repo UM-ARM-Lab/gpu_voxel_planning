@@ -594,7 +594,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
             std::cout << "Path cost: " << path_cost << "\n";
             if(path_cost < threshold)
             {
-                threshold = path_cost - eps;
+                threshold = (path_cost - eps) * 0.5;
                 path = ptmp;
                 rplanner_->setProbabilityThreshold(threshold);
                 // std::cout << "pv thresh: " << rplanner_->pv_->threshold << "\n";
@@ -606,6 +606,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
 
             if(threshold <= 0.0)
             {
+                std::cout << "Early termination because 0 cost path found!\n";
                 break;
             }
             

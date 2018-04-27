@@ -17,6 +17,7 @@ namespace ompl
             {
                 si_ = si;
                 pv_ = pv;
+                cur_cost = 0;
             }
 
             void shortcutPath(PathGeometric &path, size_t num_trials);
@@ -26,6 +27,7 @@ namespace ompl
         protected:
             ompl::base::SpaceInformationPtr si_;
             PathValidator* pv_;
+            double cur_cost;
         };
     }
 }

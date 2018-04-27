@@ -396,7 +396,7 @@ bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<Motion*> &mpa
     {
         return true;
     }
-    std::cout << "Invalid path found. Removing motion...\n";
+
 
     double max_cost = 0.0;
     Motion *worst_motion;
@@ -418,6 +418,7 @@ bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<Motion*> &mpa
             worst_motion = m;
         }
     }
+    std::cout << "Invalid path found. Removing motion with cost " << max_cost << "\n";
     removeMotion(worst_motion);
     
     return false;

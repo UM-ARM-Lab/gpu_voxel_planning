@@ -8,6 +8,8 @@ namespace og = ompl::geometric;
 
 void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials)
 {
+    size_t col_index;
+    cur_cost = pv_->getPathCost(orig, col_index);
     for(size_t i=0; i<num_trials; i++)
     {
         singleShortcut(path);
@@ -43,7 +45,10 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
     size_t col_index;
     // std::cout << "attempting path cost smoothing from " << start_ind << " to " << end_ind << "\n";
-    double cur_cost = pv_->getPathCost(orig, col_index);
+    // double cur_cost = pv_->getPathCost(orig, col_index);
+
+
+    
 
     pv_->setProbabilityThreshold(cur_cost);
 
