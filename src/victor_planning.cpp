@@ -53,20 +53,20 @@ VictorPlanner::VictorPlanner(GpuVoxelsVictor* victor_model)
 {
     space = std::make_shared<ob::RealVectorStateSpace>();
 
-    double pi=3.1415;
+    double torad=3.1415/180;
     // ob::RealVectorBounds bounds(7);
     // bounds.setLow(-3.14159265);
     // bounds.setHigh(3.14159265);
     // space->setBounds(bounds);
 
 
-    space->addDimension(-170*pi, 170*pi);
-    space->addDimension(-120*pi, 120*pi);
-    space->addDimension(-170*pi, 170*pi);
-    space->addDimension(-120*pi, 120*pi);
-    space->addDimension(-170*pi, 170*pi);
-    space->addDimension(-120*pi, 120*pi);
-    space->addDimension(-175*pi, 175*pi);
+    space->addDimension(-170*torad, 170*torad);
+    space->addDimension(-120*torad, 120*torad);
+    space->addDimension(-170*torad, 170*torad);
+    space->addDimension(-120*torad, 120*torad);
+    space->addDimension(-170*torad, 170*torad);
+    space->addDimension(-120*torad, 120*torad);
+    space->addDimension(-175*torad, 175*torad);
 
     
     si_ = std::make_shared<ob::SpaceInformation>(space);

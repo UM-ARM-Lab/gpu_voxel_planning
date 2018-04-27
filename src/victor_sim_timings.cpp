@@ -15,7 +15,7 @@
 #include "arc_utilities/timing.hpp"
 
 //Avoid execution on the actual robot, used to test planner with all obstacles known
-#define PLAN_ONLY true
+#define PLAN_ONLY false
 
 
 std::shared_ptr<SimWorld> sim_world;
