@@ -70,6 +70,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_ACTUAL_MAP); //map for victors current state
     gvl->addMap(MT_PROBAB_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, KNOWN_OBSTACLES_MAP);
+    gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_BITVECTOR_VOXELLIST, VICTOR_PATH_SOLUTION_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP_RED);
@@ -77,10 +78,29 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_PATH_ENDPOINTS_MAP);
     gvl->addMap(MT_DISTANCE_VOXELMAP, OBSTACLE_DISTANCE_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, FULL_MAP);
+
     gvl->insertBoxIntoMap(Vector3f(-1,-1,-1), Vector3f(300*0.02,300*0.02,300*0.02), FULL_MAP, PROB_OCCUPIED);
     
-    // gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf", false);
-    gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);
+    gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf", false);
+    // gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);
+
+    gvl->addRobot(VICTOR_ROBOT_STATIONARY, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf", false);
+
+    VictorConfig left_arm_config;
+    left_arm_config["victor_left_arm_joint_1"] = 1.57;
+    left_arm_config["victor_left_arm_joint_2"] = 1.57;
+    gvl->setRobotConfiguration(VICTOR_ROBOT_STATIONARY, left_arm_config);
+    gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, KNOWN_OBSTACLES_MAP, PROB_OCCUPIED);
+
+    gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, SIM_OBSTACLES_MAP, PROB_OCCUPIED);
+
+
+
+    VictorConfig right_gripper_config;
+    right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
+    right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
+    right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
+    gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
     
     SEEN_OBSTACLE_SETS.resize(NUM_SETS);
     for(int i=0; i < NUM_SETS; i++)
@@ -452,7 +472,7 @@ SimWorld::SimWorld()
 {
     std::cout << "Creating sim world\n";
     gvl = gpu_voxels::GpuVoxels::getInstance();
-    gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
+
     if(USE_KNOWN_OBSTACLES)
     {
         gvl->visualizeMap(KNOWN_OBSTACLES_MAP);

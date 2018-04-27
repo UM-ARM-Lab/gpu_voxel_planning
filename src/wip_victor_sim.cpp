@@ -57,6 +57,39 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
 }
 
 
+void wiggleFingers()
+{
+
+    VictorConfig right_gripper_config;
+
+    while(true)
+    {
+        for(double p=-1.5; p<1.5; p+=0.1)
+        {
+            right_gripper_config["victor_right_gripper_fingerA_joint_2"] = p;
+            right_gripper_config["victor_right_gripper_fingerB_joint_2"] = p;
+            right_gripper_config["victor_right_gripper_fingerC_joint_2"] = p;
+            sim_world->victor_model.updateActual(right_gripper_config);
+            sim_world->victor_model.doVis();
+            usleep(100000);
+            std::cout << "fingers at " << p << "\n";
+            
+        }
+        for(double p=1.5; p>-1.5; p-=0.1)
+        {
+            right_gripper_config["victor_right_gripper_fingerA_joint_2"] = p;
+            right_gripper_config["victor_right_gripper_fingerB_joint_2"] = p;
+            right_gripper_config["victor_right_gripper_fingerC_joint_2"] = p;
+            sim_world->victor_model.updateActual(right_gripper_config);
+            sim_world->victor_model.doVis();
+            usleep(100000);
+            std::cout << "fingers at " << p << "\n";
+        }
+    }
+
+}
+
+
 
 void testAngles()
 {
@@ -106,6 +139,7 @@ int main(int argc, char* argv[])
     std::cout << "Waiting for user input to start...\n";
     std::getline(std::cin, unused);
 
+    wiggleFingers();
     testAngles();
     
     // VictorLBKPiece planner(&(sim_world->victor_model));

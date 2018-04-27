@@ -20,6 +20,7 @@
 
 #define SIM_OBSTACLES_MAP "sim_obstacles_map"
 #define VICTOR_ROBOT "victor_robot"
+#define VICTOR_ROBOT_STATIONARY "victor_robot_stationary"
 
 
 extern std::vector<std::string> SEEN_OBSTACLE_SETS;

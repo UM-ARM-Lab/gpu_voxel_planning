@@ -171,13 +171,11 @@ double VictorStateThresholdValidator::getCollisionProb(const ob::State *state) c
     victor_model_->resetQuery();
     victor_model_->addQueryState(config);
 
-    if(USE_KNOWN_OBSTACLES)
+    if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
     {
-        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
-        {
-            return 1.0;
-        }
+        return 1.0;
     }
+
 
     std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
     std::vector<size_t> seen_sizes = victor_model_->seenSizes();
@@ -313,13 +311,12 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
             victor_model_->addQueryState(victor_model_->toVictorConfig(values));
         }
 
-        if(USE_KNOWN_OBSTACLES)
+
+        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
         {
-            if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
-            {
-                return 1.0;
-            }
+            return 1.0;
         }
+
         
         std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
         std::vector<size_t> seen_sizes = victor_model_->seenSizes();
@@ -461,13 +458,12 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
             victor_model_->addQueryState(victor_model_->toVictorConfig(values));
         }
 
-        if(USE_KNOWN_OBSTACLES)
+
+        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
         {
-            if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
-            {
-                return std::numeric_limits<double>::max();
-            }
+            return std::numeric_limits<double>::max();
         }
+
 
         std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
 
