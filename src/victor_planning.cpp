@@ -625,16 +625,19 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
         return Maybe::Maybe<ob::PathPtr>();
     }
 
-    rplanner_->pv_->setProbabilityThreshold(best_threshold);
-    std::cout << "pv thresh after planning: " << rplanner_->pv_->threshold << "\n";
-    // rplanner_->pv_->do_delay = true;        
+    // rplanner_->pv_->do_delay = true;
+    
     (path->as<og::PathGeometric>())->interpolate();
+    
+    rplanner_->pv_->setProbabilityThreshold(std::numeric_limits<double>::max());
 
     size_t col_index;
     double unsmoothed_path_prob = rplanner_->pv_->getPathCost(path->as<og::PathGeometric>()->getStates(), col_index);
 
     //Note, this could be higher due to densification.
+    
     rplanner_->pv_->setProbabilityThreshold(unsmoothed_path_prob);
+    std::cout << "pv thresh after planning: " << rplanner_->pv_->threshold << "\n";
 
     std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states before smoothing with cost " << unsmoothed_path_prob << " \n";
 
