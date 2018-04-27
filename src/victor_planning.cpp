@@ -51,12 +51,24 @@ const std::string MOTION_COST = "motionCost";
 
 VictorPlanner::VictorPlanner(GpuVoxelsVictor* victor_model)
 {
-    space = std::make_shared<ob::RealVectorStateSpace>(7);
+    space = std::make_shared<ob::RealVectorStateSpace>();
 
-    ob::RealVectorBounds bounds(7);
-    bounds.setLow(-3.14159265);
-    bounds.setHigh(3.14159265);
-    space->setBounds(bounds);
+    double pi=3.1415;
+    // ob::RealVectorBounds bounds(7);
+    // bounds.setLow(-3.14159265);
+    // bounds.setHigh(3.14159265);
+    // space->setBounds(bounds);
+
+
+    space->addDimension(-170*pi, 170*pi);
+    space->addDimension(-120*pi, 120*pi);
+    space->addDimension(-170*pi, 170*pi);
+    space->addDimension(-120*pi, 120*pi);
+    space->addDimension(-170*pi, 170*pi);
+    space->addDimension(-120*pi, 120*pi);
+    space->addDimension(-175*pi, 175*pi);
+
+    
     si_ = std::make_shared<ob::SpaceInformation>(space);
     // vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si_, victor_model));
     simp_ = std::make_shared<og::PathSimplifier>(si_);
