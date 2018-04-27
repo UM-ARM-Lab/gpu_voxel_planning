@@ -570,6 +570,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
     // vv_thresh->setProbabilityThreshold(threshold);
     og::CostRRTConnect* rplanner_ = planner_->as<og::CostRRTConnect>();
     rplanner_->setProbabilityThreshold(threshold);
+    double best_threshold = threshold;
 
     arc_utilities::Stopwatch stopwatch;
     double time_left;
@@ -594,7 +595,8 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
             std::cout << "Path cost: " << path_cost << "\n";
             if(path_cost < threshold)
             {
-                threshold = (path_cost - eps) * 0.5;
+                best_threshold = path_cost;
+                threshold = (path_cost - eps) * 0.8;
                 path = ptmp;
                 rplanner_->setProbabilityThreshold(threshold);
                 // std::cout << "pv thresh: " << rplanner_->pv_->threshold << "\n";
@@ -623,32 +625,38 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
         return Maybe::Maybe<ob::PathPtr>();
     }
 
+    rplanner_->pv_->setProbabilityThreshold(best_threshold);
     std::cout << "pv thresh after planning: " << rplanner_->pv_->threshold << "\n";
     // rplanner_->pv_->do_delay = true;        
     (path->as<og::PathGeometric>())->interpolate();
-    std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states before smoothing\n";
+
     size_t col_index;
-    double path_prob = rplanner_->pv_->getPathCost(path->as<og::PathGeometric>()->getStates(), col_index);
-    std::cout << "with cost " << path_prob << "\n";
+    double unsmoothed_path_prob = rplanner_->pv_->getPathCost(path->as<og::PathGeometric>()->getStates(), col_index);
 
-    // simp_->shortcutPath(*(path->as<og::PathGeometric>()), 100, 30);
+    //Note, this could be higher due to densification.
+    rplanner_->pv_->setProbabilityThreshold(unsmoothed_path_prob);
 
+    std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states before smoothing with cost " << unsmoothed_path_prob << " \n";
 
     bool tmp =    rplanner_->pv_->do_delay;
     rplanner_->pv_->do_delay = false;
+
     og::CostSimplifier cost_simp(si_, rplanner_->pv_.get());
     cost_simp.shortcutPath(*(path->as<og::PathGeometric>()), SMOOTHING_ITERATIONS);
+
     rplanner_->pv_->do_delay = tmp;
     
-    // std::cout << "done simplifying\n";
-    std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states after smoothing\n";
+
+    double smoothed_path_prob = rplanner_->pv_->getPathCost(path->as<og::PathGeometric>()->getStates(), col_index);
+
+    std::cout << "Path has " << path->as<og::PathGeometric>()->getStates().size() << " states after smoothing with cost " << smoothed_path_prob << "\n";
+
+    assert(smoothed_path_prob <= unsmoothed_path_prob);
 
     
 
 
 
-    path_prob = rplanner_->pv_->getPathCost(path->as<og::PathGeometric>()->getStates(), col_index);
-    std::cout << "with cost " << path_prob << "\n";
 
 
     rplanner_->pv_->do_delay = false;

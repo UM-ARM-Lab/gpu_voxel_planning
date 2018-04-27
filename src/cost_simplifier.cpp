@@ -8,11 +8,35 @@ namespace og = ompl::geometric;
 
 void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials)
 {
+    rng.seed(std::random_device()());
+        
+    pv_->setProbabilityThreshold(pv_->threshold + eps);
     size_t col_index;
-    cur_cost = pv_->getPathCost(orig, col_index);
+    cur_cost = pv_->getPathCost(path.getStates(), col_index);
+
+    pv_->setProbabilityThreshold(cur_cost + eps);
+    
     for(size_t i=0; i<num_trials; i++)
     {
         singleShortcut(path);
+    }
+}
+
+void og::CostSimplifier::sampleInd(int &start, int &end, int max_exclusive)
+{
+    start = 0;
+    end = 0;
+    if(max_exclusive <= 2)
+        return;
+
+    std::uniform_int_distribution<size_t> dist(0, max_exclusive);
+
+    while(start >= end-1)
+    {
+        int a = dist(rng);
+        end = dist(rng);
+        start = a<end ? a : end;
+        end = a < end ? end : a;
     }
 }
 
@@ -24,74 +48,63 @@ void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials
 void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 {
 
-    double orig_threshold = pv_->threshold;
+
     std::vector<ob::State *> &states = path.getStates();
-    
-    std::mt19937 rng;
-    rng.seed(std::random_device()());
-    std::uniform_int_distribution<size_t> dist(0, states.size());
 
-
-    int a = dist(rng);
-    int end_ind = dist(rng);
-    int start_ind = a<end_ind ? a : end_ind;
-    end_ind = a < end_ind ? end_ind : a;
-    if(a == end_ind)
-        return;
+    int start_ind, end_ind;
+    sampleInd(start_ind, end_ind, states.size());
 
     assert(start_ind < end_ind);
     
-    std::vector<ob::State *> orig(states.begin()+start_ind, states.begin()+end_ind);
+    std::vector<ob::State *> orig_segment(states.begin()+start_ind, states.begin()+end_ind);
 
     size_t col_index;
-    // std::cout << "attempting path cost smoothing from " << start_ind << " to " << end_ind << "\n";
-    // double cur_cost = pv_->getPathCost(orig, col_index);
-
-
-    
-
-    pv_->setProbabilityThreshold(cur_cost);
-
-
     ob::StateSpace *stateSpace = si_->getStateSpace().get();
     
-    int nd = stateSpace->validSegmentCount(orig[0], orig.back());
-    std::vector<ob::State *> new_attempt;
+    int nd = stateSpace->validSegmentCount(orig_segment[0], orig_segment.back());
+    std::vector<ob::State *> new_segment;
 
-    si_->getMotionStates(orig[0], orig.back(), new_attempt, nd, true, true);
-    // for(size_t i=0; i < new_attempt.size(); i++)
-    // {
-    //     std::cout << "i: " << i << "\n";
-    //     new_attempt[i] = si_->allocState();
-    //     stateSpace->interpolate(orig[0], orig.back(), (double)i / (double)nd, new_attempt[i]);   
-    // }
+    si_->getMotionStates(orig_segment[0], orig_segment.back(), new_segment, nd, true, true);
+    std::vector<ob::State *> post_rework(states.begin() + end_ind, states.end());
 
 
-    // std::cout << "shortcut attempt\n";
-    double new_cost = pv_->getPathCost(new_attempt, col_index);
+    std::vector<ob::State *> new_path;
+    new_path = std::vector<ob::State *> (states.begin(), states.begin()+start_ind);
+    new_path.insert(new_path.end(), new_segment.begin(), new_segment.end());
+    new_path.insert(new_path.end(), post_rework.begin(), post_rework.end());
 
-    pv_->setProbabilityThreshold(orig_threshold);
+
+    if(new_path.size() == states.size())
+    {
+        std::cout << "shortcut is not smaller, exiting early\n";
+        si_->freeStates(new_segment);
+        return;
+    }
+
+    
+    double new_seg_cost = pv_->getPathCost(new_segment, col_index);
+    if(new_seg_cost > cur_cost)
+    {
+        std::cout << "new segment has cost higher than total path, exiting early\n";
+        si_->freeStates(new_segment);
+        return;
+    }
+
+
+    double new_cost = pv_->getPathCost(new_path, col_index);
+
 
 
     if(new_cost <= cur_cost)
     {
-        // std::cout << "Sizes: before " << states.size();
-        std::vector<ob::State *> post_rework(states.begin() + end_ind, states.end());
-        
-        states = std::vector<ob::State *> (states.begin(), states.begin()+start_ind);
-        // states.insert(states.end(), orig.begin(), orig.end());
-        states.insert(states.end(), new_attempt.begin(), new_attempt.end());
-        states.insert(states.end(), post_rework.begin(), post_rework.end());
-
-        // std::cout << ", after " << states.size() << "\n";
-        
-        si_->freeStates(orig);
-
-        // std::cout << "Path smoothing worked! New path\n";
-        // pv_->getPathCost(states, col_index);
+        std::cout << "smoother path found with cost " << new_cost << "\n";
+        cur_cost = new_cost;
+        states = new_path;
+        si_->freeStates(orig_segment);
+        pv_->setProbabilityThreshold(new_cost + eps);
     }
     else{
-        si_->freeStates(new_attempt);
+        si_->freeStates(new_segment);
     }
 
 }

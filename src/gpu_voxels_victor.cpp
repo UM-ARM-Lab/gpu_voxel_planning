@@ -43,6 +43,8 @@ std::vector<std::string> right_arm_collision_link_names{
         };
 
 std::vector<std::string> victor_right_gripper_collision_names{
+    "victor_right_arm_link_6",
+    "victor_right_arm_link_7",
     "victor_right_gripper_palm",
         "victor_right_gripper_mounting_bracket",
         "victor_right_gripper_fingerA_base", "victor_right_gripper_fingerA_dist",
