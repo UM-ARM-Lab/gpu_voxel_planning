@@ -14,6 +14,8 @@
 #define ENABLE_PROFILING
 #include "arc_utilities/timing.hpp"
 
+//Avoid execution on the actual robot, used to test planner with all obstacles known
+#define PLAN_ONLY true
 
 
 std::shared_ptr<SimWorld> sim_world;
@@ -41,6 +43,23 @@ void killhandler(int)
     exit(EXIT_SUCCESS);
 }
 
+void confirmAtGoal(std::vector<double> goal)
+{
+    std::vector<double> cur_values = sim_world->victor_model.toValues(sim_world->victor_model.cur_config);
+    
+    for(size_t i=0; i<goal.size(); i++)
+    {
+        if(std::fabs(cur_values[i] - goal[i]) > 0.01)
+        {
+            std::cout << "Robot though goal is reached, but not actually\n";
+            std::cout << "joint " << i << " is at " << cur_values[i] << " but should be at " << goal[i] << "\n";
+            assert(false);
+        }
+
+    }
+
+}
+
 
 bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string planner_name)
 {
@@ -48,20 +67,28 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
 
     bool reached_goal = false;
 
+    
+
     arc_utilities::Stopwatch stopwatch;
     double timeout = 60* 15; //seconds;
     // double timeout = 30; //seconds;
-    
+    PROFILE_START(planner_name + " success");
     while(!reached_goal && stopwatch() < timeout)
     {
         PROFILE_START(planner_name + " plan");
         M::Maybe<Path> maybe_path = planner.planPathConfig(sim_world->victor_model.cur_config,
-                                                    goal_config);
+                                                           goal_config);
         PROFILE_RECORD(planner_name + " plan");
         if(!maybe_path.Valid())
         {
             std::cout << "Path planning failed\n";
             return false;
+        }
+
+        if(PLAN_ONLY)
+        {
+            reached_goal = true;
+            break;
         }
         PROFILE_START(planner_name + " execute");
         reached_goal = sim_world->attemptPath(maybe_path.Get());
@@ -75,17 +102,12 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
     }
     
     std::cout << "\n\n\n== PATH COMPLETE ==\n\n\n";
-    std::vector<double> cur_values = sim_world->victor_model.toValues(sim_world->victor_model.cur_config);
-    
-    for(size_t i=0; i<goal.size(); i++)
-    {
-        if(std::fabs(cur_values[i] - goal[i]) > 0.01)
-        {
-            std::cout << "Robot though goal is reached, but not actually\n";
-            std::cout << "joint " << i << " is at " << cur_values[i] << " but should be at " << goal[i] << "\n";
-            assert(false);
-        }
 
+    PROFILE_RECORD(planner_name + " success");
+
+    if(!PLAN_ONLY)
+    {
+        confirmAtGoal(goal);
     }
     
     return true;
@@ -141,6 +163,7 @@ void runTest_VoxCostRRTConnect()
 }
 
 
+
 int main(int argc, char* argv[])
 {
     
@@ -155,13 +178,13 @@ int main(int argc, char* argv[])
 
     setupWorld();
 
-    int num_trials = 30;
+    int num_trials = 20;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "Trial " << i + 1<< " of " << num_trials << "\n";
         // runTest_ThresholdRRTConnect();
         runTest_ProbColCostRRTConnect();
-        // runTest_VoxCostRRTConnect();
+        runTest_VoxCostRRTConnect();
     }
     
 

@@ -492,7 +492,7 @@ void SimWorld::initializeObstacles()
 
     Vector3f cavecorner(1.7, 2.0, 0.9);
     Vector3f caveheight(0.0, 0.0, 0.4);
-    Vector3f cavetopd(0.4, 0.3, 0.033);
+    Vector3f cavetopd(0.4, 0.5, 0.033);
     Vector3f cavesidedim(0.033, cavetopd.y, caveheight.z);
     Vector3f cavesideoffset(cavetopd.x, 0.0, 0.0);
 
@@ -513,6 +513,22 @@ void SimWorld::initializeObstacles()
     {
         gvl->insertBoxIntoMap(tc, tc + td,
                               KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->insertBoxIntoMap(cavecorner+caveheight,
+                              cavecorner+caveheight+cavetopd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->insertBoxIntoMap(cavecorner,
+                              cavecorner+cavesidedim,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+        if(ALL_OBSTACLES_KNOWN)
+        {
+            gvl->insertBoxIntoMap(cavecorner+cavesideoffset,
+                                  cavecorner+cavesideoffset+cavesidedim,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        }
+
+
+
         gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
     }
 

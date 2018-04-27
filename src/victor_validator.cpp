@@ -285,6 +285,7 @@ VictorPathProbCol::VictorPathProbCol(const ob::SpaceInformationPtr &si,
 double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
                                       size_t &collision_index)
 {
+
     ompl::base::StateSpace *stateSpace_ = si_->getStateSpace().get();
     assert(stateSpace_ != nullptr);
 
@@ -389,7 +390,8 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         std::string unused;
         std::getline(std::cin, unused);
     }
-    
+
+
     return prob_col;
 }
 

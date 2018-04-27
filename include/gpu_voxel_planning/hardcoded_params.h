@@ -9,9 +9,11 @@
 #define UNEXPLORED_BIAS 0
 
 /* Max planning time in seconds */
-#define PLANNING_TIMEOUT 5
+#define PLANNING_TIMEOUT 15
 
-#define USE_KNOWN_OBSTACLES false
+#define USE_KNOWN_OBSTACLES true
+
+#define ALL_OBSTACLES_KNOWN true
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 
