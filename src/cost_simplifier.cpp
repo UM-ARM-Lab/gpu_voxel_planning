@@ -94,7 +94,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
     if((double)new_segment.size()/(double)orig_segment.size() > .8)
     {
-        std::cout << "not sufficiently shorter\n";
+        // std::cout << "not sufficiently shorter\n";
         return;
     }
 

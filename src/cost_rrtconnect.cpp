@@ -244,7 +244,7 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
 
             if(new_cost_from_root >= threshold)
             {
-                std::cout << "total cost for added motion exceed threshold. Returing trapped\n";
+                // std::cout << "total cost for added motion exceed threshold. Returing trapped\n";
                 return TRAPPED;
             }
 

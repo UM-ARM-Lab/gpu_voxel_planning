@@ -606,7 +606,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planAnytime(ob::ScopedStat
     double eps = 0.0001;
     double threshold = std::numeric_limits<double>::max();
 
-    bool anySolution = false;
+    bool any_solution = false;
 
     rplanner_->setProbabilityThreshold(threshold);
     double best_cost = threshold;
@@ -622,7 +622,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planAnytime(ob::ScopedStat
 
         if(solved)
         {
-            anySolution = true;
+            any_solution = true;
 
             ob::PathPtr ptmp = pdef_->getSolutionPath();
             double path_cost = rplanner_->path_cost;
@@ -652,7 +652,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planAnytime(ob::ScopedStat
     }
     std::cout << "Planning finished\n";
 
-    if (!anySolution)
+    if (!any_solution)
     {
         std::cout << "No solution could be found" << std::endl;
 
@@ -668,13 +668,14 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planAnytime(ob::ScopedStat
 Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planUp(ob::ScopedState<> start,
                                                              Goals goals)
 {
+    std::cout << "Planning up!\n";
     preparePlanner(start, goals);
     ob::PathPtr path;
     double planning_time = PLANNING_TIMEOUT;
     double eps = 0.0001;
-    double threshold = 0;
+    double threshold = 0.3;
 
-    bool anySolution = false;
+    bool any_solution = false;
 
     rplanner_->setProbabilityThreshold(threshold);
     double best_cost = threshold;
@@ -685,12 +686,14 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planUp(ob::ScopedState<> s
     while((time_left = (planning_time - stopwatch())) > 0)
     {
         std::cout << "threshold " << threshold << "\n";
+
+        double iter_plan_time = any_solution ? time_left : time_left / 4;
         
-        ob::PlannerStatus solved = planner_->solve(time_left/4);
+        ob::PlannerStatus solved = planner_->solve(iter_plan_time);
 
         if(solved)
         {
-            anySolution = true;
+            any_solution = true;
 
             ob::PathPtr ptmp = pdef_->getSolutionPath();
             double path_cost = rplanner_->path_cost;
@@ -705,8 +708,8 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planUp(ob::ScopedState<> s
                 // std::cout << "pv thresh: " << rplanner_->pv_->threshold << "\n";
             }
             else{
-                time_left = planning_time - stopwatch();
-                threshold = (stopwatch()/planning_time) * cost_upper_bound;
+                std::cout << "Shouldn't happend with this rrtconnect\n";
+                assert(false);
             }
 
             if(threshold <= 0.0)
@@ -717,10 +720,18 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planUp(ob::ScopedState<> s
             
             preparePlanner(start, goals);
         }
+        else if(!any_solution)
+        {
+
+            threshold = (stopwatch()/planning_time) * cost_upper_bound;
+            rplanner_->setProbabilityThreshold(threshold);
+            std::cout << "No solution found, raising threshold to " << threshold << "\n";
+        }
+        
     }
     std::cout << "Planning finished\n";
 
-    if (!anySolution)
+    if (!any_solution)
     {
         std::cout << "No solution could be found" << std::endl;
 

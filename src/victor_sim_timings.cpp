@@ -199,15 +199,15 @@ int main(int argc, char* argv[])
 
     setupWorld();
 
-    int num_trials = 3;
+    int num_trials = 20;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "Trial " << i + 1<< " of " << num_trials << "\n";
         // runTest_ThresholdRRTConnect();
         runTest_ProbColCostRRTConnect();
-        runTest_VoxCostRRTConnect();
+        // runTest_VoxCostRRTConnect();
         runTest_PlanUpProbColCostRRTConnect();
-        runTest_PlanUpVoxCostRRTConnect();
+        // runTest_PlanUpVoxCostRRTConnect();
     }
     
 
