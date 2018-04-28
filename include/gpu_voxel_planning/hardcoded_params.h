@@ -17,4 +17,8 @@
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 
+#define PEG_IN_HOLE false
+
+#define PLAN_ONLY false
+
 #endif

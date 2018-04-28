@@ -96,6 +96,10 @@ public:
     virtual double getPathCost(const std::vector<ompl::base::State*> path,
                                size_t &collision_index) override;
 
+    virtual double getPathCost(const std::vector<ompl::base::State*> path,
+                               std::vector<double> &costs) override;
+
+
 protected:
     GpuVoxelsVictor* victor_model_;
 };
@@ -113,6 +117,10 @@ public:
 
     virtual double getPathCost(const std::vector<ompl::base::State*> path,
                                size_t &collision_index) override;
+
+    virtual double getPathCost(const std::vector<ompl::base::State*> path,
+                               std::vector<double> &costs) override;
+
 
 protected:
     GpuVoxelsVictor* victor_model_;

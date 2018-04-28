@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
     std::cout << "Waiting for user input to start...\n";
     std::getline(std::cin, unused);
 
-    wiggleFingers();
+    // wiggleFingers();
     testAngles();
     
     // VictorLBKPiece planner(&(sim_world->victor_model));

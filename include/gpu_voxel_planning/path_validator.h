@@ -28,6 +28,9 @@ namespace ompl
             virtual double getPathCost(const std::vector<ompl::base::State*> path,
                                        size_t &collision_index) = 0;
 
+            virtual double getPathCost(const std::vector<ompl::base::State*> path,
+                                       std::vector<double> &costs) = 0;
+
             void setProbabilityThreshold(double th) {threshold = th;}
 
             bool do_delay{false};

@@ -49,6 +49,7 @@ ompl::geometric::CostRRTConnect::CostRRTConnect(const base::SpaceInformationPtr 
     connectionPoint_ = std::make_pair<base::State *, base::State *>(nullptr, nullptr);
     distanceBetweenTrees_ = std::numeric_limits<double>::infinity();
     addIntermediateStates_ = addIntermediateStates;
+
 }
 
 ompl::geometric::CostRRTConnect::~CostRRTConnect()
@@ -60,6 +61,7 @@ void ompl::geometric::CostRRTConnect::setup()
 {
     Planner::setup();
     tools::SelfConfig sc(si_, getName());
+    // maxDistance_ = si_->getStateSpace()->getLongestValidSegmentFraction() * 20;
     sc.configurePlannerRange(maxDistance_);
 
     if (!tStart_)
@@ -133,61 +135,141 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
         dstate = tgi.xstate;
         reach = false;
     }
+
+    std::cout << "Distance of extend: " << si_->distance(nmotion->state, dstate) << "\n";
+    std::cout << "valid segment count: " << si_->getStateSpace()->validSegmentCount(nmotion->state, dstate) << "\n";
+    std::cout << "maxDistance: "<< si_->getStateSpace()->getLongestValidSegmentFraction()<< "\n";
     // if we are in the start tree, we just check the motion like we normally do;
     // if we are in the goal tree, we need to check the motion in reverse, but checkMotion() assumes the first state it
     // receives as argument is valid,
     // so we check that one first
     if (addIntermediateStates_)
     {
-        std::cout << "Adding intermediate states seems to have some bugs\n";
-        assert(false);
-        std::string treename = tgi.start ? "start tree" : "goal tree";
-        std::cout << "Adding intermediate states to " << treename << "\n";
-        std::vector<base::State *> states;
-        const unsigned int count =
-            1 + si_->distance(nmotion->state, dstate) / si_->getStateValidityCheckingResolution();
-        ompl::base::State *nstate = nmotion->state;
-        std::cout << "Motion state count " << count << "\n";
-        std::cout << "Distance " << si_->distance(nmotion->state, dstate) << "\n";
-        if (tgi.start)
-            si_->getMotionStates(nstate, dstate, states, count, true, true);
-        else
+        // std::cout << "Adding intermediate states seems to have some bugs\n";
+        // assert(false);
+        // std::string treename = tgi.start ? "start tree" : "goal tree";
+        // std::cout << "Adding intermediate states to " << treename << "\n";
+        // std::vector<base::State *> states;
+        // const unsigned int count =
+        //     1 + si_->distance(nmotion->state, dstate) / si_->getStateValidityCheckingResolution();
+        // ompl::base::State *nstate = nmotion->state;
+        // std::cout << "Motion state count " << count << "\n";
+        // std::cout << "Distance " << si_->distance(nmotion->state, dstate) << "\n";
+        // if (tgi.start)
+        //     si_->getMotionStates(nstate, dstate, states, count, true, true);
+        // else
+        // {
+        //     si_->getStateValidityChecker()->isValid(dstate) &&
+        //         si_->getMotionStates(dstate, nstate, states, count, true, true);
+        //     // std::cout << "but only for single state\n";
+        // }
+        // if (states.empty())
+        //     return TRAPPED;
+        // bool adv = si_->distance(states.back(), tgi.start ? dstate : nstate) <= 0.01;
+        
+
+        // reach = reach && adv;
+        // si_->freeState(states[0]);
+        // Motion *motion;
+        // for (std::size_t i = 1; i < states.size(); i++)
+        // {
+        //     if (adv)
+        //     {
+        //         /* create a motion */
+        //         motion = new Motion;
+        //         motion->state = states[i];
+        //         motion->parent = nmotion;
+        //         motion->root = nmotion->root;
+        //         nmotion->children.push_back(motion);
+        //         tgi.xmotion = motion;
+        //         nmotion = motion;
+        //         tree->add(motion);
+        //     }
+        //     else
+        //         si_->freeState(states[i]);
+        // }
+        // if (reach)
+        //     return REACHED;
+        // else if (adv)
+        //     return ADVANCED;
+        // else
+        //     return TRAPPED;
+
+
+
+
+
+
+
+        // std::cout << "Adding intermediate states\n";
+        bool validMotion =
+            tgi.start ? si_->checkMotion(nmotion->state, dstate) :
+                        si_->getStateValidityChecker()->isValid(dstate) && si_->checkMotion(dstate, nmotion->state);
+
+        if(!validMotion)
         {
-            si_->getStateValidityChecker()->isValid(dstate) &&
-                si_->getMotionStates(dstate, nstate, states, count, true, true);
-            // std::cout << "but only for single state\n";
-        }
-        if (states.empty())
+            std::cout << "invalid motion\n";
             return TRAPPED;
-        bool adv = si_->distance(states.back(), tgi.start ? dstate : nstate) <= 0.01;
-        reach = reach && adv;
-        si_->freeState(states[0]);
-        Motion *motion;
-        for (std::size_t i = 1; i < states.size(); i++)
-        {
-            if (adv)
-            {
-                /* create a motion */
-                motion = new Motion;
-                motion->state = states[i];
-                motion->parent = nmotion;
-                motion->root = nmotion->root;
-                nmotion->children.push_back(motion);
-                tgi.xmotion = motion;
-                nmotion = motion;
-                tree->add(motion);
-            }
-            else
-                si_->freeState(states[i]);
         }
+        
+        auto path(std::make_shared<PathGeometric>(si_));
+        path->append(nmotion->state);
+        path->append(dstate);
+
+        // std::cout << "path has " << path->getStates().size();
+        path->interpolate();
+        // std::cout << ". After interpolating " << path->getStates().size() << "\n";
+
+        // std::vector<base::State*> path;
+        // path.push_back(nmotion->state);
+        // path.push_back(dstate);
+        // size_t collision_index;
+        pv_->setProbabilityThreshold(threshold);
+        std::vector<double> costs;
+        // pv_->do_delay = true;
+        double new_motion_cost = pv_->getPathCost(path->getStates(), costs);
+        // std::cout << "costs size: " << costs.size() << "\n";
+
+
+        double nd = si_->getStateSpace()->validSegmentCount(nmotion->state, dstate);
+        for(size_t i=1; i < costs.size(); i+=1)
+        {
+            assert(costs[i] <= threshold);            
+            double new_cost_from_root = accumulateCost(nmotion->cost_from_root, costs[i]);
+
+            if(new_cost_from_root >= threshold)
+            {
+                break;
+            }
+
+            assert(i < nd);
+
+            
+            Motion *motion = new Motion(si_);
+            si_->getStateSpace()->interpolate(nmotion->state,
+                                              dstate, (double)i / nd, motion->state);            
+            // si_->copyState(motion->state, dstate);
+            motion->parent = nmotion;
+            motion->root = nmotion->root;
+            motion->cost_from_root = new_cost_from_root;
+            nmotion->children.push_back(motion);
+            tgi.xmotion = motion;
+            tree->add(motion);            
+        }
+
+        if(new_motion_cost > threshold)
+        {
+            return TRAPPED;
+        }
+            
         if (reach)
             return REACHED;
-        else if (adv)
-            return ADVANCED;
         else
-            return TRAPPED;
+            return ADVANCED;
+     
+
     }
-    else
+    else // dont add intermediate
     {
         // std::cout << "Not adding intermediate states\n";
         bool validMotion =
@@ -198,6 +280,7 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
         {
             return TRAPPED;
         }
+
         
 
         std::vector<base::State*> path;
@@ -205,6 +288,7 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
         path.push_back(nmotion->state);
         size_t collision_index;
         pv_->setProbabilityThreshold(threshold);
+        // pv_->do_delay = true;
         double new_motion_cost = pv_->getPathCost(path, collision_index);
         double new_cost_from_root = accumulateCost(nmotion->cost_from_root, new_motion_cost);
             

@@ -8,14 +8,16 @@
 
 #include <iostream>
 #include <fstream>
+#include "hardcoded_params.h"
 
 #include "common_names.hpp"
+
 
 #define ENABLE_PROFILING
 #include "arc_utilities/timing.hpp"
 
 //Avoid execution on the actual robot, used to test planner with all obstacles known
-#define PLAN_ONLY false
+
 
 
 std::shared_ptr<SimWorld> sim_world;
@@ -133,6 +135,10 @@ void runTest(VictorPlanner &planner, std::string planner_name)
 {
     std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
     std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
+    if(PEG_IN_HOLE)
+    {
+        goal = std::vector<double>{-0.15, 0.52, 0.0, -0.72, 0.0, 1.0, -2.5};
+    }
 
 
     
@@ -166,7 +172,8 @@ void runTest_VoxCostRRTConnect()
 
 int main(int argc, char* argv[])
 {
-    
+
+
     icl_core::logging::initialize(argc, argv);
 
     // sim_world = std::make_shared<SimWorld>();
@@ -190,7 +197,7 @@ int main(int argc, char* argv[])
 
 
     PROFILE_WRITE_SUMMARY_FOR_ALL("victor_sim_times.txt");
-    std::cout << "Wrote summary\n";
+    std::cout << "\n\n\n\n\n\nWrote summary!!\n\n\n\n\n\n";
 
     
 

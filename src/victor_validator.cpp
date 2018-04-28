@@ -265,7 +265,7 @@ double VictorStateThresholdValidator::getPathMaxColProb(og::PathGeometric *path)
 
 
 /***********************************************
- **            PATH VALIDATOR                 **
+ **        ProbCol PATH VALIDATOR             **
  ***********************************************/
 VictorPathProbCol::VictorPathProbCol(const ob::SpaceInformationPtr &si,
                                          GpuVoxelsVictor* victor_model) :
@@ -276,12 +276,23 @@ VictorPathProbCol::VictorPathProbCol(const ob::SpaceInformationPtr &si,
 
 
 
+double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
+                                      size_t &collision_index)
+{
+    std::vector<double> costs;
+    double c = getPathCost(path, costs);
+    collision_index = costs.size();
+    return c;
+}
+
+
 /*
  *  Returns the probability of collision for a path.
  *  Early termination if prob of collision is above threshold
  */
 double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
-                                      size_t &collision_index)
+
+                                      std::vector<double> &costs)
 {
 
     ompl::base::StateSpace *stateSpace_ = si_->getStateSpace().get();
@@ -294,7 +305,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
     double p_no_col_unseen;
     double p_no_col_seen;
         
-    for(collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
+    for(size_t collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
     {
         const ob::State *s1 = path[collision_index];
         const ob::State *s2 = path[collision_index + 1];
@@ -304,6 +315,10 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         }
         int nd = stateSpace_->validSegmentCount(s1, s2);
 
+        if(do_delay)
+        {
+            std::cout << "nd: " << nd << "\n";
+        }
         for(int j = 0; j < nd; j++)
         {
             stateSpace_->interpolate(s1, s2, (double)j / (double)nd, test);
@@ -364,7 +379,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
             std::cout << "Prob col: " << prob_col << "\n";
             std::cout << "prob colsets: " << 1.0-p_no_col_seen;
             std::cout << "   prob void space: " << 1.0 - p_no_col_unseen << "\n";
-            usleep(100000);
+            usleep(30000);
         }
         
         if(prob_col > threshold)
@@ -373,11 +388,9 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
             {
                 std::cout << "PROB COL ABOVE THRESHOLD " << threshold << "\n";
             }
-            else
-            {
-                break;
-            }
+            break;
         }
+        costs.push_back(prob_col);
     }
     si_->freeState(test);
 
@@ -424,13 +437,22 @@ VictorPathVox::VictorPathVox(const ob::SpaceInformationPtr &si,
 }
 
 
+double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
+                                      size_t &collision_index)
+{
+    std::vector<double> costs;
+    double c = getPathCost(path, costs);
+    collision_index = costs.size();
+    return c;
+}
+
 
 /*
  *  Returns the probability of collision for a path.
  *  Early termination if prob of collision is above threshold
  */
 double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
-                                      size_t &collision_index)
+                                  std::vector<double> &costs)
 {
     ompl::base::StateSpace *stateSpace_ = si_->getStateSpace().get();
     assert(stateSpace_ != nullptr);
@@ -440,7 +462,7 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
 
     double total_col = 0.0;
         
-    for(collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
+    for(size_t collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
     {
         total_col = 0;
         const ob::State *s1 = path[collision_index];
@@ -493,7 +515,7 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
         if(do_delay)
         {
             std::cout << "Total col: " << total_col << "\n";
-            usleep(100000);
+            usleep(30000);
         }
 
         if(total_col > threshold)
@@ -502,11 +524,10 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
             {
                 std::cout << "PROB COL ABOVE THRESHOLD " << threshold << "\n";
             }
-            else
-            {
-                break;
-            }
+            break;
+
         }
+        costs.push_back(total_col);
     }
     si_->freeState(test);
 

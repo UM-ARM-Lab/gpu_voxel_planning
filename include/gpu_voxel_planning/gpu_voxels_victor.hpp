@@ -18,7 +18,9 @@
 #define FULL_MAP "full_map"
 #define KNOWN_OBSTACLES_MAP "known_obstacles_map"
 
+
 #define SIM_OBSTACLES_MAP "sim_obstacles_map"
+#define TMP_MAP "tmp_map"
 #define VICTOR_ROBOT "victor_robot"
 #define VICTOR_ROBOT_STATIONARY "victor_robot_stationary"
 

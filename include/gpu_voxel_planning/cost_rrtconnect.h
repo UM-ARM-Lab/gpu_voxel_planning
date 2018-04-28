@@ -64,7 +64,7 @@ namespace ompl
         {
         public:
             /** \brief Constructor */
-            CostRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates = false);
+            CostRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates = true);
 
             ~CostRRTConnect() override;
 
@@ -252,7 +252,7 @@ namespace ompl
         class ProbColRRTConnect : public CostRRTConnect
         {
         public:
-            ProbColRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates = false);
+            ProbColRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates = true);
             
             virtual double accumulateCost(double cost_1, double cost_2) override;
         };

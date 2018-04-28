@@ -133,28 +133,28 @@ target_link_libraries(costrrtc
 
 
 
-add_executable(box_world src/box_world.cpp)
-target_link_libraries(box_world
-  custom_rrtstar
-  flrrtc
-  ${EXTERN_LIBS}
-  lazyrrtf
+# add_executable(box_world src/box_world.cpp)
+# target_link_libraries(box_world
+#   custom_rrtstar
+#   flrrtc
+#   ${EXTERN_LIBS}
+#   lazyrrtf
 
-  )
+#   )
 
-add_library(box_world_lib src/box_world.cpp)
-target_link_libraries(box_world_lib
-  custom_rrtstar
-  ${EXTERN_LIBS}
-  lazyrrtf
+# add_library(box_world_lib src/box_world.cpp)
+# target_link_libraries(box_world_lib
+#   custom_rrtstar
+#   ${EXTERN_LIBS}
+#   lazyrrtf
 
-  )
+#   )
 
-add_executable(box_world_recorder src/box_world_recorder.cpp)
-target_link_libraries(box_world_recorder
-  ${EXTERN_LIBS}
-  box_world_lib
-  )
+# add_executable(box_world_recorder src/box_world_recorder.cpp)
+# target_link_libraries(box_world_recorder
+#   ${EXTERN_LIBS}
+#   box_world_lib
+#   )
 
 add_library(victor_model src/gpu_voxels_victor.cpp)
 target_link_libraries(victor_model

@@ -566,8 +566,6 @@ VictorMotionCostRRTConnect::VictorMotionCostRRTConnect(GpuVoxelsVictor* victor_m
 Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::ScopedState<> start,
                                                               ompl::base::ScopedState<> goal)
 {
-
-    std::cout << "Using motion cost planner\n";
     preparePlanner(start, goal);
 
     ob::PathPtr path;
@@ -608,7 +606,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
             if(path_cost < threshold)
             {
                 best_threshold = path_cost;
-                threshold = (path_cost - eps) * 0.8;
+                threshold = (path_cost - eps);
                 path = ptmp;
                 rplanner_->setProbabilityThreshold(threshold);
                 // std::cout << "pv thresh: " << rplanner_->pv_->threshold << "\n";
@@ -712,6 +710,7 @@ void VictorMotionCostRRTConnect::preparePlanner(ob::ScopedState<> start, ob::Sco
 VictorVoxCostRRTConnect::VictorVoxCostRRTConnect(GpuVoxelsVictor* victor_model)
     : VictorMotionCostRRTConnect(victor_model)
 {
+    std::cout << "Using Voxel Cost planner\n";
     initializePlanner();
 }
 
@@ -726,6 +725,7 @@ void VictorVoxCostRRTConnect::initializePlanner()
     mcrrt->setPathValidator(vppc);
     planner_ = mcrrt;
     planner_->setup();
+    std::cout << "Planner max extend dist: " << mcrrt->getRange() << "\n";
 }
 
 
@@ -738,6 +738,7 @@ void VictorVoxCostRRTConnect::initializePlanner()
 VictorProbColCostRRTConnect::VictorProbColCostRRTConnect(GpuVoxelsVictor* victor_model)
     : VictorMotionCostRRTConnect(victor_model)
 {
+    std::cout << "Using Probabiltiy of Collision planner\n";
     initializePlanner();
 }
 
@@ -752,4 +753,5 @@ void VictorProbColCostRRTConnect::initializePlanner()
     mcrrt->setPathValidator(vppc);
     planner_ = mcrrt;
     planner_->setup();
+    std::cout << "Planner max extend dist: " << mcrrt->getRange() << "\n";
 }

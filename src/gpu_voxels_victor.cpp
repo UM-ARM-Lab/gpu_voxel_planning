@@ -18,6 +18,7 @@ std::vector<std::string> SEEN_OBSTACLE_SETS;
 
 // #define PROB_OCCUPIED BitVoxelMeaning(255)
 #define PROB_OCCUPIED eBVM_OCCUPIED
+#define PROB_FREE eBVM_FREE
 
 #define NUM_SETS 100
 #define EXECUTION_DELAY_us 10000
@@ -69,6 +70,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_QUERY_MAP); //map for queries on victor validity
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_ACTUAL_MAP); //map for victors current state
     gvl->addMap(MT_PROBAB_VOXELMAP, ENV_MAP);
+    gvl->addMap(MT_PROBAB_VOXELMAP, TMP_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, KNOWN_OBSTACLES_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP);
@@ -80,8 +82,17 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, FULL_MAP);
 
     gvl->insertBoxIntoMap(Vector3f(-1,-1,-1), Vector3f(300*0.02,300*0.02,300*0.02), FULL_MAP, PROB_OCCUPIED);
-    
-    gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf", false);
+
+    if(PEG_IN_HOLE)
+    {
+        gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_with_rod.urdf", false);
+        victor_right_gripper_collision_names.push_back("rod");
+        right_arm_collision_link_names.push_back("rod");
+    }
+    else{
+        gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf", false);
+    }
+
     // gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);
 
     gvl->addRobot(VICTOR_ROBOT_STATIONARY, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf", false);
@@ -175,11 +186,13 @@ size_t GpuVoxelsVictor::countTotalNumCollisions()
 
 std::vector<size_t> GpuVoxelsVictor::countSeenCollisionsInQueryForEach()
 {
+    PROFILE_START("Seen sizes, robot intersection")
     std::vector<size_t> collisions_in_seen;
     for(int i=0; i<num_observed_sets; i++)
     {
         collisions_in_seen.push_back(countNumCollisions(SEEN_OBSTACLE_SETS[i]));
     }
+    PROFILE_RECORD("Seen sizes, robot intersection")
     return collisions_in_seen;
 }
 
@@ -473,10 +486,10 @@ SimWorld::SimWorld()
     std::cout << "Creating sim world\n";
     gvl = gpu_voxels::GpuVoxels::getInstance();
 
-    if(USE_KNOWN_OBSTACLES)
-    {
+    // if(USE_KNOWN_OBSTACLES)
+    // {
         gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
-    }
+    // }
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
 
 
@@ -510,12 +523,21 @@ void SimWorld::initializeObstacles()
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
     
 
-
-    Vector3f cavecorner(1.7, 2.0, 0.9);
+    Vector3f cavecorner;
+    if(PEG_IN_HOLE)
+    {
+        cavecorner = Vector3f(1.7, 1.7, 0.9);
+    }
+    else
+    {
+        cavecorner = Vector3f(1.7, 2.0, 0.9);
+    }
     Vector3f caveheight(0.0, 0.0, 0.4);
     Vector3f cavetopd(0.4, 0.5, 0.033);
     Vector3f cavesidedim(0.033, cavetopd.y, caveheight.z);
     Vector3f cavesideoffset(cavetopd.x, 0.0, 0.0);
+    Vector3f caveholecorner = cavecorner + cavesideoffset + Vector3f(0, 0.15, 0.15);
+    Vector3f caveholesize(.04, .15, .15);
 
     gvl->insertBoxIntoMap(cavecorner+caveheight,
                           cavecorner+caveheight+cavetopd,
@@ -527,7 +549,23 @@ void SimWorld::initializeObstacles()
                           cavecorner+cavesideoffset+cavesidedim,
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
 
-    gvl->visualizeMap(SIM_OBSTACLES_MAP);
+
+    if(PEG_IN_HOLE)
+    {
+        gvl->insertBoxIntoMap(caveholecorner,
+                              caveholecorner + caveholesize,
+                              TMP_MAP, PROB_OCCUPIED, 2);
+
+    
+        gpu_voxels::GpuVoxelsMapSharedPtr sim_map_ptr = gvl->getMap(SIM_OBSTACLES_MAP);
+        voxelmap::ProbVoxelMap* sim_map = sim_map_ptr->as<voxelmap::ProbVoxelMap>();
+  
+        sim_map->subtract(gvl->getMap(TMP_MAP)->as<voxelmap::ProbVoxelMap>());
+    }
+
+
+    
+
 
     
     if(USE_KNOWN_OBSTACLES)
@@ -549,7 +587,7 @@ void SimWorld::initializeObstacles()
         }
 
 
-
+        gvl->visualizeMap(SIM_OBSTACLES_MAP);
         gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
     }
 
