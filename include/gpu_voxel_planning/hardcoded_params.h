@@ -11,7 +11,7 @@
 /* Max planning time in seconds */
 #define PLANNING_TIMEOUT 5
 
-#define USE_KNOWN_OBSTACLES false
+#define USE_KNOWN_OBSTACLES true
 
 #define ALL_OBSTACLES_KNOWN false
 

@@ -85,12 +85,19 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
     new_path.insert(new_path.end(), post_rework.begin(), post_rework.end());
 
 
-    if(new_path.size() == states.size())
+    if(new_path.size() >= states.size())
     {
         // std::cout << "shortcut is not smaller, exiting early\n";
         si_->freeStates(new_segment);
         return;
     }
+
+    if((double)new_segment.size()/(double)orig_segment.size() > .8)
+    {
+        std::cout << "not sufficiently shorter\n";
+        return;
+    }
+
 
     
     double new_seg_cost = pv_->getPathCost(new_segment, col_index);
@@ -100,6 +107,14 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
         si_->freeStates(new_segment);
         return;
     }
+
+    double orig_seg_cost = pv_->getPathCost(orig_segment, col_index);
+    if(orig_seg_cost < new_seg_cost)
+    {
+        si_->freeStates(new_segment);
+        return;
+    }
+    
 
 
     double new_cost = pv_->getPathCost(new_path, col_index);

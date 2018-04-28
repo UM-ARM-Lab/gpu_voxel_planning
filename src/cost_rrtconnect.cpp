@@ -60,6 +60,7 @@ ompl::geometric::CostRRTConnect::~CostRRTConnect()
 void ompl::geometric::CostRRTConnect::setup()
 {
     Planner::setup();
+    path_cost = std::numeric_limits<double>::max();
     tools::SelfConfig sc(si_, getName());
     // maxDistance_ = si_->getStateSpace()->getLongestValidSegmentFraction() * 10;
     
@@ -497,6 +498,7 @@ bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<Motion*> &mpa
     if(full_motion_cost < threshold)
     {
         std::cout << "Path validated\n";
+        path_cost = full_motion_cost;
         return true;
     }
 

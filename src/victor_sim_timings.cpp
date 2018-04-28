@@ -168,6 +168,20 @@ void runTest_VoxCostRRTConnect()
     runTest(planner, VOX_COST_TIME);
 }
 
+void runTest_PlanUpProbColCostRRTConnect()
+{
+    VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
+    planner.use_anytime_planner = false;
+    runTest(planner, "plan_up_" + PROB_COL_COST_TIME);
+}
+
+void runTest_PlanUpVoxCostRRTConnect()
+{
+    VictorVoxCostRRTConnect planner(&(sim_world->victor_model));
+    planner.use_anytime_planner = false;
+    runTest(planner, "plan_up_" + VOX_COST_TIME);
+}
+
 
 
 int main(int argc, char* argv[])
@@ -192,6 +206,8 @@ int main(int argc, char* argv[])
         // runTest_ThresholdRRTConnect();
         runTest_ProbColCostRRTConnect();
         runTest_VoxCostRRTConnect();
+        runTest_PlanUpProbColCostRRTConnect();
+        runTest_PlanUpVoxCostRRTConnect();
     }
     
 

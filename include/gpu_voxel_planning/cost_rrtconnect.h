@@ -68,6 +68,8 @@ namespace ompl
 
             ~CostRRTConnect() override;
 
+            double path_cost;
+
         protected:
             /** \brief Representation of a motion */
             class Motion
@@ -240,6 +242,8 @@ namespace ompl
             double distanceBetweenTrees_;
 
             double threshold;
+
+
 
 
         };

@@ -8,13 +8,14 @@
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
 #include <ompl/geometric/planners/prm/PRM.h>
 #include "lazyrrt_fullpath.h"
-
+#include "cost_rrtconnect.h"
 
 
 namespace gpu_voxels_planner
 {
 
 
+    typedef ompl::base::ScopedState<> Goals;
         
     class VictorPlanner
     {
@@ -23,10 +24,10 @@ namespace gpu_voxels_planner
 
         virtual void initializePlanner() = 0;
 
-        virtual void preparePlanner(ompl::base::ScopedState<> start, ompl::base::ScopedState<> goal) = 0;
+        virtual void preparePlanner(ompl::base::ScopedState<> start, Goals goals) = 0;
 
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
-                                                   ompl::base::ScopedState<> goal);
+                                                   Goals goals);
 
         virtual void setupSpaceInformation();
         
@@ -64,7 +65,7 @@ namespace gpu_voxels_planner
         virtual void initializePlanner() override;
 
         virtual void preparePlanner(ompl::base::ScopedState<> start,
-                                     ompl::base::ScopedState<> goal) override;
+                                     Goals goals) override;
     };
 
 
@@ -76,9 +77,9 @@ namespace gpu_voxels_planner
         VictorLazyRRTF(GpuVoxelsVictor* victor_model);
         virtual void initializePlanner() override;
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
-                                                           ompl::base::ScopedState<> goal) override;
+                                                           Goals goals) override;
         virtual void preparePlanner(ompl::base::ScopedState<> start,
-                                    ompl::base::ScopedState<> goal) override;
+                                    Goals goals) override;
     protected:
         std::shared_ptr<VictorPathProbCol> pv_;
         double threshold;
@@ -94,7 +95,7 @@ namespace gpu_voxels_planner
         virtual void initializePlanner() override;
 
         virtual void preparePlanner(ompl::base::ScopedState<> start,
-                                     ompl::base::ScopedState<> goal) override;
+                                     Goals goals) override;
     };
 
     class VictorRRTConnect: public VictorPlanner
@@ -104,7 +105,7 @@ namespace gpu_voxels_planner
         virtual void initializePlanner() override;
 
         virtual void preparePlanner(ompl::base::ScopedState<> start,
-                                     ompl::base::ScopedState<> goal) override;
+                                     Goals goals) override;
     };
 
 
@@ -115,9 +116,9 @@ namespace gpu_voxels_planner
         VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model);
         virtual void initializePlanner() override;
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
-                                                           ompl::base::ScopedState<> goal) override;
+                                                           Goals goals) override;
         virtual void preparePlanner(ompl::base::ScopedState<> start,
-                                    ompl::base::ScopedState<> goal) override;
+                                    Goals goals) override;
 
     };
 
@@ -128,9 +129,20 @@ namespace gpu_voxels_planner
     public:
         VictorMotionCostRRTConnect(GpuVoxelsVictor* victor_model);
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
-                                                           ompl::base::ScopedState<> goal) override;
+                                                           Goals goals) override;
+
+        Maybe::Maybe<ompl::base::PathPtr> planAnytime(ompl::base::ScopedState<> start,
+                                                      Goals goals);
+        Maybe::Maybe<ompl::base::PathPtr> planUp(ompl::base::ScopedState<> start,
+                                                 Goals goals);
+        void smooth(ompl::base::PathPtr &path);
+            
+        
         virtual void preparePlanner(ompl::base::ScopedState<> start,
-                                    ompl::base::ScopedState<> goal) override;
+                                    Goals goals) override;
+        ompl::geometric::CostRRTConnect* rplanner_;
+        double cost_upper_bound;
+        bool use_anytime_planner{true};
 
     };
 
