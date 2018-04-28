@@ -661,7 +661,7 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
         usleep(EXECUTION_DELAY_us/2);
 
     }
-    std::cout << "Path success!\n";
+    std::cout << "Path success\n";
     return true;
 }
 

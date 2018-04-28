@@ -62,6 +62,8 @@ void ompl::geometric::CostRRTConnect::setup()
     Planner::setup();
     tools::SelfConfig sc(si_, getName());
     // maxDistance_ = si_->getStateSpace()->getLongestValidSegmentFraction() * 20;
+    
+    maxDistance_ = 2.5;
     sc.configurePlannerRange(maxDistance_);
 
     if (!tStart_)
@@ -136,9 +138,9 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
         reach = false;
     }
 
-    std::cout << "Distance of extend: " << si_->distance(nmotion->state, dstate) << "\n";
-    std::cout << "valid segment count: " << si_->getStateSpace()->validSegmentCount(nmotion->state, dstate) << "\n";
-    std::cout << "maxDistance: "<< si_->getStateSpace()->getLongestValidSegmentFraction()<< "\n";
+    // std::cout << "Distance of extend: " << si_->distance(nmotion->state, dstate) << "\n";
+    // std::cout << "valid segment count: " << si_->getStateSpace()->validSegmentCount(nmotion->state, dstate) << "\n";
+    // std::cout << "longest valid seg: "<< si_->getStateSpace()->getLongestValidSegmentLength() << "\n";
     // if we are in the start tree, we just check the motion like we normally do;
     // if we are in the goal tree, we need to check the motion in reverse, but checkMotion() assumes the first state it
     // receives as argument is valid,
@@ -232,14 +234,17 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
 
 
         double nd = si_->getStateSpace()->validSegmentCount(nmotion->state, dstate);
+        double nn_cost_from_root = nmotion->cost_from_root;
+        int count = 0;
         for(size_t i=1; i < costs.size(); i+=1)
         {
             assert(costs[i] <= threshold);            
-            double new_cost_from_root = accumulateCost(nmotion->cost_from_root, costs[i]);
+            double new_cost_from_root = accumulateCost(nn_cost_from_root, costs[i]);
 
             if(new_cost_from_root >= threshold)
             {
-                break;
+                // std::cout << "total cost for added motion exceed threshold. Returing trapped\n";
+                return TRAPPED;
             }
 
             assert(i < nd);
@@ -254,9 +259,18 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
             motion->cost_from_root = new_cost_from_root;
             nmotion->children.push_back(motion);
             tgi.xmotion = motion;
-            tree->add(motion);            
+            nmotion = motion;
+            tree->add(motion);
+            count++;
+            
+            // std::cout << "Adding motion with cost " << new_cost_from_root << "\n";
         }
+        // std::cout << "Added " << count << " motions. Reached? " << reach << "  Trapped? " << (new_motion_cost > threshold) << "\n";
 
+        // std::cout << "cost sizes: " << costs.size();
+        // std::cout << " new_motion_cost: " << new_motion_cost;
+        // std::cout << " threshold: " << threshold << "\n";
+        
         if(new_motion_cost > threshold)
         {
             return TRAPPED;
@@ -303,6 +317,7 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
             nmotion->children.push_back(motion);
             tgi.xmotion = motion;
 
+            
             tree->add(motion);
             if (reach)
                 return REACHED;
@@ -468,6 +483,7 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
 
 bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<Motion*> &mpath)
 {
+    std::cout << "Validating full path\n";
     pv_->setProbabilityThreshold(threshold);
     size_t collision_index;
     std::vector<ompl::base::State*> spath;
@@ -478,6 +494,7 @@ bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<Motion*> &mpa
     double full_motion_cost = pv_->getPathCost(spath, collision_index);
     if(full_motion_cost < threshold)
     {
+        std::cout << "Path validated\n";
         return true;
     }
 
@@ -502,7 +519,7 @@ bool ompl::geometric::CostRRTConnect::validateFullPath(std::vector<Motion*> &mpa
             worst_motion = m;
         }
     }
-    std::cout << "Invalid path found. Removing motion with cost " << max_cost << "\n";
+    std::cout << "Invalid path found, " << full_motion_cost << " exceeds " << threshold << ". Removing motion with cost " << max_cost << "\n";
     removeMotion(worst_motion);
     
     return false;

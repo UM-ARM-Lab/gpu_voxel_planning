@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
 
     setupWorld();
 
-    int num_trials = 20;
+    int num_trials = 3;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "Trial " << i + 1<< " of " << num_trials << "\n";
