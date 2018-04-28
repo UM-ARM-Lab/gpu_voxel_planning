@@ -9,7 +9,8 @@ namespace og = ompl::geometric;
 void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials)
 {
     rng.seed(std::random_device()());
-        
+
+    
     pv_->setProbabilityThreshold(pv_->threshold + eps);
     size_t col_index;
     cur_cost = pv_->getPathCost(path.getStates(), col_index);
@@ -51,10 +52,20 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
     std::vector<ob::State *> &states = path.getStates();
 
+    if(states.size() <= 2)
+    {
+        return;
+    }
+    
     int start_ind, end_ind;
     sampleInd(start_ind, end_ind, states.size());
 
-    assert(start_ind < end_ind);
+    if(start_ind >= end_ind)
+    {
+        std::cout << "start: " << start_ind << " end: " << end_ind << " sizes: " << states.size() << "\n";
+        assert(start_ind < end_ind);
+    }
+
     
     std::vector<ob::State *> orig_segment(states.begin()+start_ind, states.begin()+end_ind);
 
@@ -76,7 +87,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
     if(new_path.size() == states.size())
     {
-        std::cout << "shortcut is not smaller, exiting early\n";
+        // std::cout << "shortcut is not smaller, exiting early\n";
         si_->freeStates(new_segment);
         return;
     }
@@ -85,7 +96,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
     double new_seg_cost = pv_->getPathCost(new_segment, col_index);
     if(new_seg_cost > cur_cost)
     {
-        std::cout << "new segment has cost higher than total path, exiting early\n";
+        // std::cout << "new segment has cost higher than total path, exiting early\n";
         si_->freeStates(new_segment);
         return;
     }
@@ -97,7 +108,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
     if(new_cost <= cur_cost)
     {
-        std::cout << "smoother path found with cost " << new_cost << "\n";
+        // std::cout << "smoother path found with cost " << new_cost << "\n";
         cur_cost = new_cost;
         states = new_path;
         si_->freeStates(orig_segment);

@@ -61,7 +61,7 @@ void ompl::geometric::CostRRTConnect::setup()
 {
     Planner::setup();
     tools::SelfConfig sc(si_, getName());
-    // maxDistance_ = si_->getStateSpace()->getLongestValidSegmentFraction() * 20;
+    // maxDistance_ = si_->getStateSpace()->getLongestValidSegmentFraction() * 10;
     
     maxDistance_ = 2.5;
     sc.configurePlannerRange(maxDistance_);
@@ -230,20 +230,20 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
         std::vector<double> costs;
         // pv_->do_delay = true;
         double new_motion_cost = pv_->getPathCost(path->getStates(), costs);
-        // std::cout << "costs size: " << costs.size() << "\n";
+        // std::cout << "costs size: " << costs.size() << " path size: " << path->getStates().size() << "\n";
 
 
         double nd = si_->getStateSpace()->validSegmentCount(nmotion->state, dstate);
         double nn_cost_from_root = nmotion->cost_from_root;
         int count = 0;
-        for(size_t i=1; i < costs.size(); i+=1)
+        for(size_t i=0; i < costs.size(); i+=1)
         {
             assert(costs[i] <= threshold);            
             double new_cost_from_root = accumulateCost(nn_cost_from_root, costs[i]);
 
             if(new_cost_from_root >= threshold)
             {
-                // std::cout << "total cost for added motion exceed threshold. Returing trapped\n";
+                std::cout << "total cost for added motion exceed threshold. Returing trapped\n";
                 return TRAPPED;
             }
 
@@ -251,8 +251,10 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
 
             
             Motion *motion = new Motion(si_);
-            si_->getStateSpace()->interpolate(nmotion->state,
-                                              dstate, (double)i / nd, motion->state);            
+            // si_->getStateSpace()->interpolate(nmotion->state,
+            //                                   dstate, (double)i / nd, motion->state);
+            // motion->state = si_->copyState(motion->state, path->getState(i+1));
+            si_->copyState(motion->state, path->getState(i+1));
             // si_->copyState(motion->state, dstate);
             motion->parent = nmotion;
             motion->root = nmotion->root;
@@ -271,7 +273,7 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
         // std::cout << " new_motion_cost: " << new_motion_cost;
         // std::cout << " threshold: " << threshold << "\n";
         
-        if(new_motion_cost > threshold)
+        if(new_motion_cost > threshold || costs.size() == 0)
         {
             return TRAPPED;
         }
