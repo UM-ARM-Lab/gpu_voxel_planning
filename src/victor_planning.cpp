@@ -290,7 +290,17 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
             goal_sampled = true;
         }
         else
+        {
             sampler_->sampleUniform(test);
+
+            //uniformly sample motion directions, not states
+            double *testv = test->as<ob::RealVectorStateSpace::StateType>()->values;
+            const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
+            for(int i=0; i<7; i++)
+            {
+                testv[i] += startv[i];
+            }
+        }
         
         double motion_dist = si_->distance(start.get(), test);
 
@@ -593,7 +603,9 @@ void VictorThresholdRRTConnect::initializePlanner()
 
 
 
-    planner_ = std::make_shared<og::cRRTConnect>(si_);
+    auto crrt(std::make_shared<og::cRRTConnect>(si_));
+    crrt->setRange(0.1);
+    planner_ = crrt;
     planner_->setup();
     vppc = std::make_shared<VictorPathProbCol>(si_, victor_model_);
 }
@@ -610,12 +622,12 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
     double planning_time = PLANNING_TIMEOUT;
     double eps = 0.0001;
 
-    double threshold = 1.0;
+    double threshold = std::numeric_limits<double>::max();
     
     ob::PlannerStatus solved(true, false);
     bool anySolution = false;
     VictorStateThresholdValidator* vv_thresh = dynamic_cast<VictorStateThresholdValidator*>(vv_ptr.get());
-    vv_thresh->setProbabilityThreshold(threshold);
+    vv_thresh->setCostThreshold(threshold);
     
     arc_utilities::Stopwatch stopwatch;
     double time_left;
@@ -637,14 +649,14 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
         {
             anySolution = true;
             path = pdef_->getSolutionPath();
-            threshold = vv_thresh->getPathMaxColProb(path->as<og::PathGeometric>()) - eps;
-            std::cout << "Max col prob on path: " << threshold + eps << "\n";
-            vv_thresh->setProbabilityThreshold(threshold);
+            threshold = vv_thresh->getPathCost(path->as<og::PathGeometric>()) - eps;
+            std::cout << "Max cost on path: " << threshold + eps << "\n";
+            vv_thresh->setCostThreshold(threshold);
             preparePlanner(start, goals);
             if(!vv_thresh->isValid(start.get()) || !vv_thresh->isValid(goals.get()))
             {
                 std::cout << "Found best path for given start/goal with threshold " << (threshold + eps) <<"\n";
-                vv_thresh->setProbabilityThreshold(threshold + 2*eps);
+                vv_thresh->setCostThreshold(threshold + 2*eps);
                 break;
             }
         }
@@ -912,9 +924,10 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
     }
 
 
-    std::cout << "Path has " << path.Get()->as<og::PathGeometric>()->getStates().size() << " states before smoothing with cost " << rplanner_->path_cost << " \n";
+    std::cout << "Path has " << path.Get()->as<og::PathGeometric>()->getStates().size() << " states before smoothing with cost " << rplanner_->path_cost << ",... ";
 
     smooth(path.Get());
+    std::cout << " and " << path.Get()->as<og::PathGeometric>()->getStates().size() << " states after\n";
     
     return Maybe::Maybe<ob::PathPtr>(path);
 }
@@ -944,7 +957,7 @@ VictorVoxCostRRTConnect::VictorVoxCostRRTConnect(GpuVoxelsVictor* victor_model)
 {
     std::cout << "Using Voxel Cost planner\n";
     initializePlanner();
-    cost_upper_bound = 600;
+    cost_upper_bound = 100;
 }
 
 
@@ -954,8 +967,9 @@ void VictorVoxCostRRTConnect::initializePlanner()
     setupSpaceInformation();
 
     std::shared_ptr<og::CostRRTConnect> mcrrt = std::make_shared<og::CostRRTConnect>(si_);
-    std::shared_ptr<VictorPathVox> vppc = std::make_shared<VictorPathVox>(si_, victor_model_);
-    mcrrt->setPathValidator(vppc);
+    vppc = std::make_shared<VictorPathProbCol>(si_, victor_model_);
+    std::shared_ptr<VictorPathVox> vppc_vox = std::make_shared<VictorPathVox>(si_, victor_model_);
+    mcrrt->setPathValidator(vppc_vox);
     planner_ = mcrrt;
     rplanner_ = planner_->as<og::CostRRTConnect>();
     planner_->setup();

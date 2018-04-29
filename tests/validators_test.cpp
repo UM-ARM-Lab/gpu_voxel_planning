@@ -71,10 +71,10 @@ TEST(GpuVoxelVictor, collisions)
     EXPECT_TRUE(vv.isValid(test)) << "Basic validator failed unexpectedly";
     EXPECT_TRUE(!vv_cons.isValid(test)) << "Conservative validator does not report collision";
     
-    vv_thresh.setProbabilityThreshold(1.0);
+    vv_thresh.setCostThreshold(1.0);
     EXPECT_TRUE(vv_thresh.isValid(test)) << "Even with threshold=1 there was a collision";
     
-    vv_thresh.setProbabilityThreshold(0.01);
+    vv_thresh.setCostThreshold(0.01);
     EXPECT_TRUE(!vv_thresh.isValid(test)) << "Even with threshold=.01 there was no collision";
 
 

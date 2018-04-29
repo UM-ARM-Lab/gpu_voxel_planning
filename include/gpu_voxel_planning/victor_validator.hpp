@@ -69,7 +69,7 @@ public:
     //                          std::pair< ompl::base::State*, double > & lastValid) const;
     // virtual bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2) const;
 
-    void setProbabilityThreshold(double value) {threshold = value;}
+    void setCostThreshold(double value) {threshold = value;}
 
     double getCollisionProb(const ompl::base::State *state) const;
 
@@ -77,7 +77,9 @@ public:
 
     double getPathMaxColProb(ompl::geometric::PathGeometric *path) const;
 
-    double getColVoxelIntersects(ompl::base::State *state) const;
+    double getPathCost(ompl::geometric::PathGeometric *path) const;
+
+    double getColVoxelIntersects(const ompl::base::State *state) const;
     
     double threshold;
 };

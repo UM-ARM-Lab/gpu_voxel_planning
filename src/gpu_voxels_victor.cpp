@@ -342,6 +342,7 @@ void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
     for(auto &c: cs)
     {
         addCollisionLinks(c, collision_links, SEEN_OBSTACLE_SETS[num_observed_sets]);
+        addCollisionLinks(c, collision_links, COMBINED_COLSETS_MAP);
     }
     gvl->visualizeMap(SEEN_OBSTACLE_SETS[num_observed_sets]);
     num_observed_sets++;
@@ -559,7 +560,7 @@ void SimWorld::makeTable()
                               caveholecorner + caveholesize,
                               TMP_MAP, PROB_OCCUPIED, 2);
 
-        m1_subtract_m2(SIM_OBSTACLES_MAP, TMP_MAP);
+        victor_model.m1_subtract_m2(SIM_OBSTACLES_MAP, TMP_MAP);
     }
 
 
