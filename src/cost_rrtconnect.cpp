@@ -64,7 +64,7 @@ void ompl::geometric::CostRRTConnect::setup()
     tools::SelfConfig sc(si_, getName());
     // maxDistance_ = si_->getStateSpace()->getLongestValidSegmentFraction() * 10;
     
-    maxDistance_ = 2.5;
+    maxDistance_ = si_->getStateSpace()->getLongestValidSegmentLength() * 10;
     sc.configurePlannerRange(maxDistance_);
 
     if (!tStart_)
@@ -115,8 +115,9 @@ void ompl::geometric::CostRRTConnect::clear()
     distanceBetweenTrees_ = std::numeric_limits<double>::infinity();
 }
 
-ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
-                                                                             Motion *rmotion)
+ompl::geometric::CostRRTConnect::GrowState
+ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
+                                          Motion *rmotion, bool limit)
 {
     /* find closest state in the tree */
     Motion *nmotion = tree->nearest(rmotion);
@@ -127,8 +128,9 @@ ompl::geometric::CostRRTConnect::GrowState ompl::geometric::CostRRTConnect::grow
     /* find state to add */
     base::State *dstate = rmotion->state;
     double d = si_->distance(nmotion->state, rmotion->state);
-    if (d > maxDistance_)
+    if (limit && (d > maxDistance_))
     {
+        std::cout << "limiting to " << maxDistance_ << "\n";
         si_->getStateSpace()->interpolate(nmotion->state, rmotion->state, maxDistance_ / d, tgi.xstate);
 
         /* check if we have moved at all */
@@ -417,8 +419,9 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
         /* sample random state */
         sampler_->sampleUniform(rstate);
 
+
         // std::cout << "growing to random sample\n";
-        GrowState gs = growTree(tree, tgi, rmotion);
+        GrowState gs = growTree(tree, tgi, rmotion, true);
 
         if (gs != TRAPPED)
         {
