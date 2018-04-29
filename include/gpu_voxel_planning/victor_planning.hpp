@@ -51,7 +51,8 @@ namespace gpu_voxels_planner
         std::shared_ptr<VictorValidator> vv_ptr;
         std::shared_ptr<ompl::base::RealVectorStateSpace> space;
 
-        ompl::geometric::CostRRTConnect* rplanner_;
+
+        std::shared_ptr<VictorPathProbCol> vppc;
 
         double controller_threshold;
         
@@ -152,6 +153,8 @@ namespace gpu_voxels_planner
         
         virtual void preparePlanner(ompl::base::ScopedState<> start,
                                     Goals goals) override;
+
+        ompl::geometric::CostRRTConnect* rplanner_;
 
         double cost_upper_bound;
         bool use_anytime_planner{true};

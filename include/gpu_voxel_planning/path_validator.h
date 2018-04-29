@@ -26,10 +26,10 @@ namespace ompl
                                    size_t &collision_index) = 0;
 
             virtual double getPathCost(const std::vector<ompl::base::State*> path,
-                                       size_t &collision_index) = 0;
+                                       size_t &collision_index, bool fast=false) = 0;
 
             virtual double getPathCost(const std::vector<ompl::base::State*> path,
-                                       std::vector<double> &costs) = 0;
+                                       std::vector<double> &costs, bool fast=false) = 0;
 
             void setProbabilityThreshold(double th) {threshold = th;}
 

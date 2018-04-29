@@ -277,10 +277,10 @@ VictorPathProbCol::VictorPathProbCol(const ob::SpaceInformationPtr &si,
 
 
 double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
-                                      size_t &collision_index)
+                                      size_t &collision_index, bool fast)
 {
     std::vector<double> costs;
-    double c = getPathCost(path, costs);
+    double c = getPathCost(path, costs, fast);
     collision_index = costs.size();
     return c;
 }
@@ -292,7 +292,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
  */
 double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
 
-                                      std::vector<double> &costs)
+                                      std::vector<double> &costs, bool fast)
 {
     PROFILE_START("getProbCost");
 
@@ -327,6 +327,8 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         {
             // std::cout << "nd: " << nd << "\n";
         }
+
+        
         PROFILE_START("prob add query");
         for(int j = 0; j < nd; j++)
         {
@@ -335,6 +337,10 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
             victor_model_->addQueryState(victor_model_->toVictorConfig(values));
         }
         PROFILE_RECORD("prob add query");
+        if(fast)
+        {
+            continue;
+        }
 
 
         if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
@@ -365,12 +371,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
             p_no_col_seen *= p_no_collision[i];
         }
 
-
         victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
-        // std::cout << "p_no_col_seen: " << p_no_col_seen << "\n";
-        // int unused;
-        // std::cout << "Waiting for user input to start...\n";
-        // std::cin >> unused;
 
         PROFILE_START("prob free space collisions");
         size_t path_size = victor_model_->countIntersect(FULL_MAP, VICTOR_QUERY_MAP);
@@ -413,6 +414,48 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         costs.push_back(prob_col);
     }
     si_->freeState(test);
+
+    if(fast && prob_col < 1.0)
+    {
+        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+        {
+            PROFILE_RECORD("getProbCost");
+            prob_col = 1.0;
+        } else
+        {
+            PROFILE_START("prob seen collision");
+            std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
+            std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+            PROFILE_RECORD("prob seen collision");
+                
+            std::vector<double> p_no_collision;
+            p_no_collision.resize(seen_col_voxels.size());
+            p_no_col_seen = 1.0;
+
+            for(size_t i=0; i < seen_sizes.size(); i++)
+            {
+                p_no_collision[i] = 1.0 - (double)seen_col_voxels[i] / (double)seen_sizes[i];
+                assert(p_no_collision[i] <= 1.0);
+                p_no_col_seen *= p_no_collision[i];
+            }
+
+            victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
+
+            PROFILE_START("prob free space collisions");
+            size_t path_size = victor_model_->countIntersect(FULL_MAP, VICTOR_QUERY_MAP);
+            size_t total_size = victor_model_->countIntersect(FULL_MAP, FULL_MAP);
+            size_t known_free_size = victor_model_->countIntersect(VICTOR_SWEPT_VOLUME_MAP, VICTOR_QUERY_MAP);
+            PROFILE_RECORD("prob free space collisions");
+
+            double num_occupied = (double)(path_size - known_free_size);
+            double frac_occupied = num_occupied / (double) total_size;
+        
+            p_no_col_unseen = std::pow(1.0 - frac_occupied, UNEXPLORED_BIAS);
+
+            prob_col = 1.0 - p_no_col_seen * p_no_col_unseen;
+        }
+
+    }
 
     if(do_delay)
     {
@@ -460,10 +503,10 @@ VictorPathVox::VictorPathVox(const ob::SpaceInformationPtr &si,
 
 
 double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
-                                      size_t &collision_index)
+                                  size_t &collision_index, bool fast)
 {
     std::vector<double> costs;
-    double c = getPathCost(path, costs);
+    double c = getPathCost(path, costs, fast);
     collision_index = costs.size();
     return c;
 }
@@ -474,7 +517,7 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
  *  Early termination if prob of collision is above threshold
  */
 double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
-                                  std::vector<double> &costs)
+                                  std::vector<double> &costs, bool fast)
 {
     PROFILE_START("getVoxCost");
     ompl::base::StateSpace *stateSpace_ = si_->getStateSpace().get();
@@ -513,17 +556,21 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
             return std::numeric_limits<double>::max();
         }
 
-        PROFILE_START("vox collision");
-        std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
-        PROFILE_RECORD("vox collision");
-
-        for(size_t i=0; i < seen_col_voxels.size(); i++)
+        if(!fast)
         {
-            total_col += seen_col_voxels[i];
+            PROFILE_START("vox collision");
+            std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
+            PROFILE_RECORD("vox collision");
+
+            for(size_t i=0; i < seen_col_voxels.size(); i++)
+            {
+                total_col += seen_col_voxels[i];
+            }
+            victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
         }
 
 
-        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
+
 
         //Stuff for freespace cost
 
@@ -558,6 +605,21 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
         costs.push_back(total_col);
     }
     si_->freeState(test);
+
+    if(fast)
+    {
+        total_col=0;
+        PROFILE_START("vox collision");
+        std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
+        PROFILE_RECORD("vox collision");
+
+        for(size_t i=0; i < seen_col_voxels.size(); i++)
+        {
+            total_col += seen_col_voxels[i];
+        }
+        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
+    }
+
 
     if(do_delay)
     {

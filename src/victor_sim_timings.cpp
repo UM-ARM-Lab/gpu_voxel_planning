@@ -53,7 +53,7 @@ void confirmAtGoal(std::vector<double> goal)
     {
         if(std::fabs(cur_values[i] - goal[i]) > 0.01)
         {
-            std::cout << "Robot though goal is reached, but not actually\n";
+            std::cout << "Robot thought goal is reached, but not actually\n";
             std::cout << "joint " << i << " is at " << cur_values[i] << " but should be at " << goal[i] << "\n";
             assert(false);
         }
@@ -70,6 +70,9 @@ bool checkAtGoal(std::vector<double> goal)
     {
         if(std::fabs(cur_values[i] - goal[i]) > 0.01)
         {
+            // std::cout << "Goal not reached\n";
+            // std::cout << "joint " << i << " is at " << cur_values[i] << " but should be at " << goal[i] << "\n";
+
             return false;
         }
     }
@@ -100,13 +103,16 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
             {
                 std::cout << "Local control found, executing\n";
                 sim_world->attemptPath(maybe_path.Get());
-                maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
-                                                        goal_config);
                 reached_goal = checkAtGoal(goal);
                 if(reached_goal){
                     break;
                 }
+
+                maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
+                                                        goal_config);
             }
+            if(reached_goal)
+                break;
         }
 
         if(DO_PLAN)

@@ -17,6 +17,7 @@
 #define OBSTACLE_DISTANCE_MAP "obstacle_distance_map"
 #define FULL_MAP "full_map"
 #define KNOWN_OBSTACLES_MAP "known_obstacles_map"
+#define COMBINED_COLSETS_MAP "combined_colsets_map"
 
 
 #define SIM_OBSTACLES_MAP "sim_obstacles_map"
@@ -57,6 +58,8 @@ public:
                          const std::vector<std::string> &collision_links);
     
     void addQueryLink(const VictorConfig &c, const std::string &link_name);
+
+
     
     void resetQuery();
 
@@ -65,6 +68,8 @@ public:
     size_t countTotalNumCollisions();
 
     size_t countIntersect(const std::string& map_1, const std::string& map_2);
+
+    void m1_subtract_m2(const std::string& map_1, const std::string& map_2);
     
     std::vector<size_t> countSeenCollisionsInQueryForEach();
 

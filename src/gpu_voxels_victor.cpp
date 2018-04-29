@@ -72,6 +72,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, TMP_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, KNOWN_OBSTACLES_MAP);
+    gvl->addMap(MT_PROBAB_VOXELMAP, COMBINED_COLSETS_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
     // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_BITVECTOR_VOXELLIST, VICTOR_PATH_SOLUTION_MAP);
@@ -151,12 +152,17 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 
     for(size_t i=0; i<num_observed_sets; i++)
     {
-        gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(SEEN_OBSTACLE_SETS[i]);
-        voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
-  
-        obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
-
+        m1_subtract_m2(SEEN_OBSTACLE_SETS[i], VICTOR_SWEPT_VOLUME_MAP);
     }
+    m1_subtract_m2(COMBINED_COLSETS_MAP, VICTOR_SWEPT_VOLUME_MAP);
+}
+
+
+void GpuVoxelsVictor::m1_subtract_m2(const std::string& map_1, const std::string& map_2)
+{
+    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(map_1);
+    voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
+    obstacles->subtract(gvl->getMap(map_2)->as<voxelmap::ProbVoxelMap>());
 
 }
 
@@ -183,6 +189,7 @@ size_t GpuVoxelsVictor::countTotalNumCollisions()
     }
     return total_col;
 }
+
 
 std::vector<size_t> GpuVoxelsVictor::countSeenCollisionsInQueryForEach()
 {
@@ -326,11 +333,7 @@ void GpuVoxelsVictor::addCollisionLinks(const VictorConfig &c,
         gvl->insertPointCloudIntoMap(cloud, map_name, PROB_OCCUPIED);
     }
 
-    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(map_name);
-    boost::shared_ptr<voxelmap::ProbVoxelMap> obstacles = boost::dynamic_pointer_cast<voxelmap::ProbVoxelMap>(obstacles_ptr);
-  
-    obstacles->subtract(gvl->getMap(VICTOR_SWEPT_VOLUME_MAP)->as<voxelmap::ProbVoxelMap>());
-
+    m1_subtract_m2(map_name, VICTOR_SWEPT_VOLUME_MAP);
 }
 
 void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
@@ -556,11 +559,7 @@ void SimWorld::makeTable()
                               caveholecorner + caveholesize,
                               TMP_MAP, PROB_OCCUPIED, 2);
 
-    
-        gpu_voxels::GpuVoxelsMapSharedPtr sim_map_ptr = gvl->getMap(SIM_OBSTACLES_MAP);
-        voxelmap::ProbVoxelMap* sim_map = sim_map_ptr->as<voxelmap::ProbVoxelMap>();
-  
-        sim_map->subtract(gvl->getMap(TMP_MAP)->as<voxelmap::ProbVoxelMap>());
+        m1_subtract_m2(SIM_OBSTACLES_MAP, TMP_MAP);
     }
 
 
@@ -786,8 +785,10 @@ Path densifyPath(const Path &path, int densify_factor)
 
 bool SimWorld::attemptPath(const Path &path)
 {
-    Path dense_path = densifyPath(path, 10);
     
+    Path dense_path = densifyPath(path, 10);
+    // std::cout << "Last state in given attempt " << path.back()[0] << "\n";
+    // std::cout << "Last state in dense attempt " << dense_path.back()[0] << "\n";
     size_t last_valid;
     if(executePath(dense_path, last_valid))
     {

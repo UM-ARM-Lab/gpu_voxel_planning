@@ -94,10 +94,10 @@ public:
                            size_t &collision_index) override;
 
     virtual double getPathCost(const std::vector<ompl::base::State*> path,
-                               size_t &collision_index) override;
+                               size_t &collision_index, bool fast=false) override;
 
     virtual double getPathCost(const std::vector<ompl::base::State*> path,
-                               std::vector<double> &costs) override;
+                               std::vector<double> &costs, bool fast=false) override;
 
 
 protected:
@@ -116,10 +116,10 @@ public:
                            size_t &collision_index) override;
 
     virtual double getPathCost(const std::vector<ompl::base::State*> path,
-                               size_t &collision_index) override;
+                               size_t &collision_index, bool fast=false) override;
 
     virtual double getPathCost(const std::vector<ompl::base::State*> path,
-                               std::vector<double> &costs) override;
+                               std::vector<double> &costs, bool fast=false) override;
 
 
 protected:

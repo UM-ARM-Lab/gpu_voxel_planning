@@ -13,7 +13,9 @@ void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials
     
     pv_->setProbabilityThreshold(pv_->threshold + eps);
     size_t col_index;
-    cur_cost = pv_->getPathCost(path.getStates(), col_index);
+    bool fast_check = true;
+    // std::cout << "calling with fast check " << fast_check << "\n";
+    cur_cost = pv_->getPathCost(path.getStates(), col_index, fast_check);
 
     pv_->setProbabilityThreshold(cur_cost + eps);
     
@@ -49,6 +51,7 @@ void og::CostSimplifier::sampleInd(int &start, int &end, int max_exclusive)
 void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 {
 
+    bool fast_check = true;
 
     std::vector<ob::State *> &states = path.getStates();
 
@@ -100,7 +103,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
 
     
-    double new_seg_cost = pv_->getPathCost(new_segment, col_index);
+    double new_seg_cost = pv_->getPathCost(new_segment, col_index, fast_check);
     if(new_seg_cost > cur_cost)
     {
         // std::cout << "new segment has cost higher than total path, exiting early\n";
@@ -108,7 +111,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
         return;
     }
 
-    double orig_seg_cost = pv_->getPathCost(orig_segment, col_index);
+    double orig_seg_cost = pv_->getPathCost(orig_segment, col_index, fast_check);
     if(orig_seg_cost < new_seg_cost)
     {
         si_->freeStates(new_segment);
@@ -118,7 +121,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
 
     std::reverse(std::begin(new_path), std::end(new_path));
-    double new_cost = pv_->getPathCost(new_path, col_index);
+    double new_cost = pv_->getPathCost(new_path, col_index, fast_check);
     std::reverse(std::begin(new_path), std::end(new_path));
 
 
