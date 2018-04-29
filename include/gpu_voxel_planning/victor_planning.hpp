@@ -39,7 +39,7 @@ namespace gpu_voxels_planner
 
         Maybe::Maybe<Path> localControlDouble(std::vector<double> start, std::vector<double> goal);
 
-        Maybe::Maybe<ompl::base::PathPtr> localControl(ompl::base::ScopedState<> start, Goals goal);
+        virtual Maybe::Maybe<ompl::base::PathPtr> localControl(ompl::base::ScopedState<> start, Goals goal);
 
     public:
 
@@ -52,7 +52,7 @@ namespace gpu_voxels_planner
         std::shared_ptr<ompl::base::RealVectorStateSpace> space;
 
 
-        std::shared_ptr<VictorPathProbCol> vppc;
+        std::shared_ptr<ompl::geometric::PathValidator> vppc;
 
         double controller_threshold;
         
@@ -166,6 +166,8 @@ namespace gpu_voxels_planner
     public:
         VictorVoxCostRRTConnect(GpuVoxelsVictor* victor_model);
         virtual void initializePlanner() override;
+        virtual Maybe::Maybe<ompl::base::PathPtr> localControl(ompl::base::ScopedState<> start,
+                                                       Goals goals) override;
     };
     
         

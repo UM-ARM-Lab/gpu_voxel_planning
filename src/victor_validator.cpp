@@ -333,6 +333,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
     double prob_col = 0.0;
     double p_no_col_unseen;
     double p_no_col_seen;
+    std::vector<size_t> seen_sizes = victor_model_->seenSizes();
 
     if(do_delay)
     {
@@ -389,7 +390,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
 
         PROFILE_START("prob seen collision");
         std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
-        std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+
         PROFILE_RECORD("prob seen collision")
                     
         std::vector<double> p_no_collision;

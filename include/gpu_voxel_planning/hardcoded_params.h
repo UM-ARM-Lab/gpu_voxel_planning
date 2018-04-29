@@ -29,4 +29,6 @@
 
 #define DO_PLAN true
 
+#define VOX_CONTROLLER_THRESHOLD 30
+
 #endif
