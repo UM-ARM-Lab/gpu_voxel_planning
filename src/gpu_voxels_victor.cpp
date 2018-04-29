@@ -604,8 +604,8 @@ void SimWorld::makeSlottedWall()
 
 
 
-    double lower_wall_height = 1.0;
-    double gap_height = .5;
+    double lower_wall_height = 1.1;
+    double gap_height = .4;
 
     Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
     Vector3f lfwd(0.04, 1.5, lower_wall_height);
@@ -619,9 +619,11 @@ void SimWorld::makeSlottedWall()
     Vector3f lswc = lfwc;  // lower side wall corner
     Vector3f lswd(1.5, 0.04, lower_wall_height); //lower side wall dims
     Vector3f cswc = ufwc; //close side wall corner
-    Vector3f cswd(0.3, 0.04, 0.3);
-    Vector3f fswc(2.0, 1.6, lower_wall_height); //far side wall corner
+    Vector3f cswd(0.2, 0.04, 0.3);
+    Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
     Vector3f fswd(0.3, 0.04, 0.6);
+    Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
+    Vector3f mswd(0.3, 0.04, 0.2);
     
     //table top
     
@@ -638,11 +640,16 @@ void SimWorld::makeSlottedWall()
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
     gvl->insertBoxIntoMap(fswc, fswc+fswd,
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(mswc, mswc+mswd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
     
     if(USE_KNOWN_OBSTACLES)
     {
         gvl->insertBoxIntoMap(lfwc, lfwc+lfwd,
                               KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->insertBoxIntoMap(lswc, lswc+lswd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
         gvl->insertBoxIntoMap(ufwc, ufwc+ufwd,
                               KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
         gvl->insertBoxIntoMap(mfwc, mfwc+mfwd,
@@ -655,6 +662,9 @@ void SimWorld::makeSlottedWall()
                                   KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
             gvl->insertBoxIntoMap(fswc, fswc+fswd,
                                   KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+            gvl->insertBoxIntoMap(mswc, mswc+mswd,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
 
         }
         

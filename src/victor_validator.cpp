@@ -318,13 +318,14 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         if(!si_->isValid(s1))
         {
             PROFILE_RECORD("getProbCost");
-            return 1.0;
+            prob_col = 1.0;
+            break;
         }
         int nd = stateSpace_->validSegmentCount(s1, s2);
 
         if(do_delay)
         {
-            std::cout << "nd: " << nd << "\n";
+            // std::cout << "nd: " << nd << "\n";
         }
         PROFILE_START("prob add query");
         for(int j = 0; j < nd; j++)
@@ -343,7 +344,8 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
             {
                 std::cout << "terminating early, known cost collision\n";
             }
-            return 1.0;
+            prob_col = 1.0;
+            break;
         }
 
 
@@ -394,10 +396,10 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
 
         if(do_delay)
         {
-            std::cout << "Prob col: " << prob_col << "\n";
-            std::cout << "prob colsets: " << 1.0-p_no_col_seen;
-            std::cout << "   prob void space: " << 1.0 - p_no_col_unseen << "\n";
-            usleep(30000);
+            // std::cout << "Prob col: " << prob_col << "\n";
+            // std::cout << "prob colsets: " << 1.0-p_no_col_seen;
+            // std::cout << "   prob void space: " << 1.0 - p_no_col_unseen << "\n";
+            // usleep(30000);
         }
         
         if(prob_col > threshold)
@@ -415,6 +417,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
     if(do_delay)
     {
         std::cout << "path cost complete, waiting for input to continue\n";
+        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
         std::string unused;
         std::getline(std::cin, unused);
     }

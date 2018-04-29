@@ -24,7 +24,7 @@ std::shared_ptr<SimWorld> sim_world;
 
 
 using namespace gpu_voxels_planner;
-namespace M = Maybe;
+typedef Maybe::Maybe<Path> Optpath;
 
 
 /***********************************************
@@ -77,24 +77,41 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
     PROFILE_START(planner_name + " success");
     while(!reached_goal && stopwatch() < timeout)
     {
-        PROFILE_START(planner_name + " plan");
-        M::Maybe<Path> maybe_path = planner.planPathConfig(sim_world->victor_model.cur_config,
-                                                           goal_config);
-        PROFILE_RECORD(planner_name + " plan");
-        if(!maybe_path.Valid())
+        if(DO_PLAN)
         {
-            std::cout << "Path planning failed\n";
-            return false;
+            PROFILE_START(planner_name + " plan");
+            Optpath maybe_path = planner.planPathConfig(sim_world->victor_model.cur_config,
+                                                        goal_config);
+            PROFILE_RECORD(planner_name + " plan");
+            if(!maybe_path.Valid())
+            {
+                std::cout << "Path planning failed\n";
+                return false;
+            }
+
+            if(PLAN_ONLY)
+            {
+                reached_goal = true;
+                break;
+            }
+            PROFILE_START(planner_name + " execute");
+            reached_goal = sim_world->attemptPath(maybe_path.Get());
+            PROFILE_RECORD(planner_name + " execute");
         }
 
-        if(PLAN_ONLY)
+        if(DO_CONTROL)
         {
-            reached_goal = true;
-            break;
+            Optpath maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
+                                                            goal_config);
+            while(maybe_path.Valid())
+            {
+                sim_world->attemptPath(maybe_path.Get());
+                Optpath maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
+                                                                    goal_config);
+            }
         }
-        PROFILE_START(planner_name + " execute");
-        reached_goal = sim_world->attemptPath(maybe_path.Get());
-        PROFILE_RECORD(planner_name + " execute");
+
+
     }
 
     if(!reached_goal)
@@ -141,7 +158,7 @@ void runTest(VictorPlanner &planner, std::string planner_name)
         goal = std::vector<double>{-0.15, 0.52, 0.0, -0.72, 0.0, 1.0, -2.5};
     } else if(MAKE_SLOTTED_WALL)
     {
-        start = std::vector<double>{1, -1.5, 1.5,     .5,   0, 0.9,   0};
+        start = std::vector<double>{1, -1.5, 1.5,    0.5,   0, 0.9,   0};
         goal = std::vector<double>{ 0, 0.32, 0.0, -1.32, -0.2, 0.9, 0.3};
     }
 
@@ -209,14 +226,14 @@ int main(int argc, char* argv[])
 
     setupWorld();
 
-    int num_trials = 2;
+    int num_trials = 20;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "Trial " << i + 1<< " of " << num_trials << "\n";
         // runTest_ThresholdRRTConnect();
-        // runTest_ProbColCostRRTConnect();
+        runTest_ProbColCostRRTConnect();
         // runTest_VoxCostRRTConnect();
-        runTest_PlanUpProbColCostRRTConnect();
+        // runTest_PlanUpProbColCostRRTConnect();
         // runTest_PlanUpVoxCostRRTConnect();
     }
     
@@ -241,7 +258,7 @@ int main(int argc, char* argv[])
 
 
     
-    // M::Maybe<Path> maybe_path = planner.planPathDouble(start, goal);
+    // Optpath maybe_path = planner.planPathDouble(start, goal);
 
     // if(!maybe_path.Valid())
     // {

@@ -27,6 +27,7 @@ namespace og = ompl::geometric;
 using namespace gpu_voxels_planner;
 
 
+
 const std::string FULL_PLANNING = "Full Planning";
 const std::string PLANNING = "unsmoothed planning";
 const std::string POST_PROCESSING = "post processing";
@@ -214,25 +215,118 @@ Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std:
     ob::ScopedState<> start_ss(space);
     ob::ScopedState<> goal_ss(space);
     std::cout << "start: ";
-    for(size_t i=0; i<start.size(); i++)
-    {
-        std::cout << start[i] << ", ";
-        start_ss[i] = start[i];
-        goal_ss[i] = goal[i];
-    }
-    std::cout << "\n";
-    std::cout << "goal: ";
-    for(size_t i=0; i<start.size(); i++)
-    {
-        std::cout << goal[i] << ", ";
-    }
-    std::cout << "\n";
+    start_ss = toScopedState(start);
+
+    goal_ss = toScopedState(goal);
+    
+
+    
     Maybe::Maybe<ob::PathPtr> ompl_path = planPath(start_ss, goal_ss);
     if(!ompl_path.Valid())
     {
         return Maybe::Maybe<Path>();
     }
     return Maybe::Maybe<Path>(omplPathToDoublePath(ompl_path.Get()->as<og::PathGeometric>()));
+}
+
+ob::ScopedState<> VictorPlanner::toScopedState(std::vector<double> ds)
+{
+    ob::ScopedState<> s(space);
+    for(size_t i=0; i<ds.size(); i++)
+    {
+        s[i] = ds[i];
+    }
+    return s;
+}
+
+Maybe::Maybe<Path> VictorPlanner::localControlConfig(VictorConfig start, VictorConfig goal)
+{
+    return localControlDouble(victor_model_->toValues(start), victor_model_->toValues(goal));
+}
+
+Maybe::Maybe<Path> VictorPlanner::localControlDouble(std::vector<double> start, std::vector<double> goal)
+{
+    Maybe::Maybe<ob::PathPtr> ompl_path = localControl(toScopedState(start), toScopedState(goal));
+    if(!ompl_path.Valid())
+    {
+        return Maybe::Maybe<Path>();
+    }
+    return Maybe::Maybe<Path>(omplPathToDoublePath(ompl_path.Get()->as<og::PathGeometric>()));
+}
+
+Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, Goals goals)
+{
+    if(rplanner_ == nullptr)
+    {
+        std::cout << "Cannot run local controller without allocated rplanner\n";
+        return Maybe::Maybe<ob::PathPtr>();
+    }
+    
+    int num_samples = 100;
+    int i=0;
+
+    double start_d_to_goal = goals.distance(start);
+    
+    double max_motion = space->getLongestValidSegmentLength() * 3;
+
+    ob::State* test(si_->allocState());
+    ob::State* best(si_->allocState());
+    double best_ev = 0;
+    bool found_ok = false;
+
+    ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
+
+    
+    // while(i < num_samples)
+    for(i=0; i<num_samples; i++)
+    {
+        sampler_->sampleUniform(test);
+        double motion_dist = si_->distance(start.get(), test);
+
+        if(motion_dist > max_motion)
+        {
+            space->interpolate(start.get(), test, max_motion / motion_dist, test);
+        }
+
+        double progress_d = start_d_to_goal - goals.distance(test);
+        
+        if(progress_d <= 0 || progress_d <= best_ev)
+        {
+            continue;
+        }
+
+
+        std::vector<ob::State*> dpath;
+        dpath.push_back(start.get());
+        dpath.push_back(test);
+
+        size_t col_index;
+        rplanner_->pv_->do_delay = true;
+        double pcol = rplanner_->pv_->getPathCost(dpath, col_index);
+
+        double ev = (1.0 - pcol) * (progress_d);
+        if(ev > best_ev)
+        {
+            si_->copyState(best, test);
+            best_ev = ev;
+            found_ok = true;
+        }
+    
+    }
+
+    si_->freeState(test);
+    
+    if(!found_ok)
+    {
+        return Maybe::Maybe<ob::PathPtr>();
+    }
+    auto path(std::make_shared<og::PathGeometric>(si_));
+    path->append(start.get());
+    path->append(best);
+
+    return Maybe::Maybe<ob::PathPtr>(path);
+
+    
 }
 
 
@@ -673,7 +767,8 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planUp(ob::ScopedState<> s
     ob::PathPtr path;
     double planning_time = PLANNING_TIMEOUT;
     double eps = 0.0001;
-    double threshold = 0.3;
+    double initial_thresh = 0.3;
+    double threshold = initial_thresh;
 
     bool any_solution = false;
 
@@ -698,7 +793,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planUp(ob::ScopedState<> s
             ob::PathPtr ptmp = pdef_->getSolutionPath();
             double path_cost = rplanner_->path_cost;
             
-            std::cout << "Path cost: " << path_cost << "\n";
+            std::cout << "Path found with cost: " << path_cost << "\n";
             if(path_cost < threshold)
             {
                 best_cost = path_cost;
@@ -723,7 +818,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planUp(ob::ScopedState<> s
         else if(!any_solution)
         {
 
-            threshold = (stopwatch()/planning_time) * cost_upper_bound;
+            threshold = (stopwatch()/planning_time) * cost_upper_bound + initial_thresh;
             rplanner_->setProbabilityThreshold(threshold);
             std::cout << "No solution found, raising threshold to " << threshold << "\n";
         }

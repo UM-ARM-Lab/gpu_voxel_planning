@@ -9,20 +9,24 @@
 #define UNEXPLORED_BIAS 100
 
 /* Max planning time in seconds */
-#define PLANNING_TIMEOUT 100
+#define PLANNING_TIMEOUT 10
 
-#define USE_KNOWN_OBSTACLES true
+#define USE_KNOWN_OBSTACLES false
 
-#define MAKE_TABLE false
+#define MAKE_TABLE true
 
-#define MAKE_SLOTTED_WALL true
+#define MAKE_SLOTTED_WALL false
 
-#define ALL_OBSTACLES_KNOWN true
+#define ALL_OBSTACLES_KNOWN false
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 
 #define PEG_IN_HOLE false
 
 #define PLAN_ONLY false
+
+#define DO_CONTROL true
+
+#define DO_PLAN false
 
 #endif
