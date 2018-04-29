@@ -200,8 +200,23 @@ double VictorStateThresholdValidator::getCollisionProb(const ob::State *state) c
     // usleep(100000);
     // std::cout << "threshold: " << threshold << "\n";
     return p_collision;
-
 }
+
+double VictorStateThresholdValidator::getColVoxelIntersects(ob::State *state) const
+{
+    const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
+    VictorConfig config = victor_model_->toVictorConfig(values);
+
+    victor_model_->resetQuery();
+    victor_model_->addQueryState(config);
+    if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+    {
+        return std::numeric_limits<double>::max();
+    }
+
+    return victor_model_->countIntersect(VICTOR_QUERY_MAP, COMBINED_COLSETS_MAP);
+}
+
 
 bool VictorStateThresholdValidator::isValid(const ob::State *state) const
 {
@@ -291,7 +306,6 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
  *  Early termination if prob of collision is above threshold
  */
 double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
-
                                       std::vector<double> &costs, bool fast)
 {
     PROFILE_START("getProbCost");
@@ -322,6 +336,10 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
             break;
         }
         int nd = stateSpace_->validSegmentCount(s1, s2);
+        if(nd==2)
+        {
+            nd = 1; //path already densified
+        }
 
         if(do_delay)
         {

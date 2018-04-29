@@ -76,6 +76,9 @@ public:
     double getMotionColProb(ompl::base::State *s1, ompl::base::State *s2) const;
 
     double getPathMaxColProb(ompl::geometric::PathGeometric *path) const;
+
+    double getColVoxelIntersects(ompl::base::State *state) const;
+    
     double threshold;
 };
 
