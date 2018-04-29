@@ -62,6 +62,20 @@ void confirmAtGoal(std::vector<double> goal)
 
 }
 
+bool checkAtGoal(std::vector<double> goal)
+{
+    std::vector<double> cur_values = sim_world->victor_model.toValues(sim_world->victor_model.cur_config);
+    
+    for(size_t i=0; i<goal.size(); i++)
+    {
+        if(std::fabs(cur_values[i] - goal[i]) > 0.01)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string planner_name)
 {
@@ -77,6 +91,24 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
     PROFILE_START(planner_name + " success");
     while(!reached_goal && stopwatch() < timeout)
     {
+
+        if(DO_CONTROL)
+        {
+            Optpath maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
+                                                            goal_config);
+            while(maybe_path.Valid())
+            {
+                std::cout << "Local control found, executing\n";
+                sim_world->attemptPath(maybe_path.Get());
+                maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
+                                                        goal_config);
+                reached_goal = checkAtGoal(goal);
+                if(reached_goal){
+                    break;
+                }
+            }
+        }
+
         if(DO_PLAN)
         {
             PROFILE_START(planner_name + " plan");
@@ -99,17 +131,6 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
             PROFILE_RECORD(planner_name + " execute");
         }
 
-        if(DO_CONTROL)
-        {
-            Optpath maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
-                                                            goal_config);
-            while(maybe_path.Valid())
-            {
-                sim_world->attemptPath(maybe_path.Get());
-                Optpath maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
-                                                                    goal_config);
-            }
-        }
 
 
     }
@@ -231,9 +252,9 @@ int main(int argc, char* argv[])
     {
         std::cout << "Trial " << i + 1<< " of " << num_trials << "\n";
         // runTest_ThresholdRRTConnect();
-        runTest_ProbColCostRRTConnect();
+        // runTest_ProbColCostRRTConnect();
         // runTest_VoxCostRRTConnect();
-        // runTest_PlanUpProbColCostRRTConnect();
+        runTest_PlanUpProbColCostRRTConnect();
         // runTest_PlanUpVoxCostRRTConnect();
     }
     

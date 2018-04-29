@@ -267,7 +267,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
 
     double start_d_to_goal = goals.distance(start);
     
-    double max_motion = space->getLongestValidSegmentLength() * 3;
+    double max_motion = space->getLongestValidSegmentLength() * 5;
 
     ob::State* test(si_->allocState());
     ob::State* best(si_->allocState());
@@ -275,12 +275,18 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
     bool found_ok = false;
 
     ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
+    rplanner_->pv_->setProbabilityThreshold(std::numeric_limits<double>::max());
+    double best_pcol = std::numeric_limits<double>::max();
 
     
     // while(i < num_samples)
     for(i=0; i<num_samples; i++)
     {
-        sampler_->sampleUniform(test);
+        if(i==0 && goals.distance(start) <= max_motion*1.5)
+            si_->copyState(test, goals.get());
+        else
+            sampler_->sampleUniform(test);
+        
         double motion_dist = si_->distance(start.get(), test);
 
         if(motion_dist > max_motion)
@@ -301,8 +307,13 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         dpath.push_back(test);
 
         size_t col_index;
-        rplanner_->pv_->do_delay = true;
+        // rplanner_->pv_->do_delay = true;
         double pcol = rplanner_->pv_->getPathCost(dpath, col_index);
+
+        if(pcol > 0.9)
+        {
+            continue;
+        }
 
         double ev = (1.0 - pcol) * (progress_d);
         if(ev > best_ev)
@@ -310,9 +321,11 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
             si_->copyState(best, test);
             best_ev = ev;
             found_ok = true;
+            best_pcol = pcol;
         }
     
     }
+
 
     si_->freeState(test);
     
@@ -320,6 +333,23 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
     {
         return Maybe::Maybe<ob::PathPtr>();
     }
+
+    if(bool debug = false)
+    {
+        std::vector<ob::State*> dpath;
+        dpath.push_back(start.get());
+        dpath.push_back(best);
+        
+        size_t col_index;
+        std::cout << "best pcol " << best_pcol << ", when reevaluated ";
+        std::cout << rplanner_->pv_->getPathCost(dpath, col_index) << "\n";
+        
+        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);        
+        std::string unused;
+        std::getline(std::cin, unused);
+
+    }
+
     auto path(std::make_shared<og::PathGeometric>(si_));
     path->append(start.get());
     path->append(best);
@@ -903,7 +933,7 @@ void VictorVoxCostRRTConnect::initializePlanner()
     planner_ = mcrrt;
     rplanner_ = planner_->as<og::CostRRTConnect>();
     planner_->setup();
-    std::cout << "Planner max extend dist: " << mcrrt->getRange() << "\n";
+    // std::cout << "Planner max extend dist: " << mcrrt->getRange() << "\n";
 }
 
 
@@ -934,5 +964,5 @@ void VictorProbColCostRRTConnect::initializePlanner()
     planner_ = mcrrt;
     rplanner_ = planner_->as<og::CostRRTConnect>();
     planner_->setup();
-    std::cout << "Planner max extend dist: " << mcrrt->getRange() << "\n";
+    // std::cout << "Planner max extend dist: " << mcrrt->getRange() << "\n";
 }

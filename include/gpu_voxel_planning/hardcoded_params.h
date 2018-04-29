@@ -6,10 +6,10 @@
 #define SMOOTHING_ITERATIONS 30
 
 /* Expected num total voxels in world in collision */
-#define UNEXPLORED_BIAS 100
+#define UNEXPLORED_BIAS 0
 
 /* Max planning time in seconds */
-#define PLANNING_TIMEOUT 10
+#define PLANNING_TIMEOUT 15
 
 #define USE_KNOWN_OBSTACLES false
 
@@ -27,6 +27,6 @@
 
 #define DO_CONTROL true
 
-#define DO_PLAN false
+#define DO_PLAN true
 
 #endif
