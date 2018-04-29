@@ -604,19 +604,23 @@ void SimWorld::makeSlottedWall()
 
 
 
+    double lower_wall_height = 1.0;
+    double gap_height = .5;
 
     Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
-    Vector3f lfwd(0.04, 1.5, 1.1);
-    Vector3f ufwc(1.5, 1.6, 1.4); //upper front call
+    Vector3f lfwd(0.04, 1.5, lower_wall_height);
+    
+    Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front call
     Vector3f ufwd(0.04, 1.5, 0.3);
-    Vector3f mfwc(1.5, 1.7, 0);  //middle front wall
+    
+    Vector3f mfwc(1.5, 1.8, 0);  //middle front wall
     Vector3f mfwd(0.04, 1.4, 1.5);
    
     Vector3f lswc = lfwc;  // lower side wall corner
-    Vector3f lswd(1.5, 0.04, 1.1); //lower side wall dims
+    Vector3f lswd(1.5, 0.04, lower_wall_height); //lower side wall dims
     Vector3f cswc = ufwc; //close side wall corner
     Vector3f cswd(0.3, 0.04, 0.3);
-    Vector3f fswc(2.0, 1.6, 1.1); //far side wall corner
+    Vector3f fswc(2.0, 1.6, lower_wall_height); //far side wall corner
     Vector3f fswd(0.3, 0.04, 0.6);
     
     //table top
@@ -627,6 +631,7 @@ void SimWorld::makeSlottedWall()
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
     gvl->insertBoxIntoMap(mfwc, mfwc+mfwd,
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    
     gvl->insertBoxIntoMap(lswc, lswc+lswd,
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
     gvl->insertBoxIntoMap(cswc, cswc+cswd,

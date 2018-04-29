@@ -141,8 +141,8 @@ void runTest(VictorPlanner &planner, std::string planner_name)
         goal = std::vector<double>{-0.15, 0.52, 0.0, -0.72, 0.0, 1.0, -2.5};
     } else if(MAKE_SLOTTED_WALL)
     {
-        start = std::vector<double>{1, -1.5, 1.5, .5, 0, 0.9, 0};
-        goal = std::vector<double>{0, 0.32, 0.0, -1.52, -0.2, 0.9, 0.3};
+        start = std::vector<double>{1, -1.5, 1.5,     .5,   0, 0.9,   0};
+        goal = std::vector<double>{ 0, 0.32, 0.0, -1.32, -0.2, 0.9, 0.3};
     }
 
 

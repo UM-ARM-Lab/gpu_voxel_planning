@@ -64,7 +64,7 @@ void ompl::geometric::CostRRTConnect::setup()
     tools::SelfConfig sc(si_, getName());
     // maxDistance_ = si_->getStateSpace()->getLongestValidSegmentFraction() * 10;
     
-    maxDistance_ = si_->getStateSpace()->getLongestValidSegmentLength() * 3;
+    maxDistance_ = si_->getStateSpace()->getLongestValidSegmentLength() * 1;
     sc.configurePlannerRange(maxDistance_);
 
     if (!tStart_)
@@ -130,7 +130,7 @@ ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
     double d = si_->distance(nmotion->state, rmotion->state);
     if (limit && (d > maxDistance_))
     {
-        // std::cout << "limiting to " << maxDistance_ << "\n";
+        std::cout << "limiting to " << maxDistance_ << "\n";
         si_->getStateSpace()->interpolate(nmotion->state, rmotion->state, maxDistance_ / d, tgi.xstate);
 
         /* check if we have moved at all */
@@ -223,7 +223,7 @@ ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
 
         // std::cout << "path has " << path->getStates().size();
         path->interpolate();
-        // std::cout << ". After interpolating " << path->getStates().size() << "\n";
+        std::cout << ". After interpolating " << path->getStates().size() << "\n";
 
         // std::vector<base::State*> path;
         // path.push_back(nmotion->state);
@@ -231,9 +231,10 @@ ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
         // size_t collision_index;
         pv_->setProbabilityThreshold(threshold);
         std::vector<double> costs;
-        // pv_->do_delay = true;
+        pv_->do_delay = true;
         double new_motion_cost = pv_->getPathCost(path->getStates(), costs);
-        // std::cout << "costs size: " << costs.size() << " path size: " << path->getStates().size() << "\n";
+        if(pv_->do_delay)
+            std::cout << "costs size: " << costs.size() << " path size: " << path->getStates().size() << "\n";
 
 
         double nd = si_->getStateSpace()->validSegmentCount(nmotion->state, dstate);
@@ -420,7 +421,7 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
         sampler_->sampleUniform(rstate);
 
 
-        // std::cout << "growing to random sample\n";
+        std::cout << "extend\n";
         GrowState gs = growTree(tree, tgi, rmotion, true);
 
         if (gs != TRAPPED)
@@ -431,6 +432,7 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
             /* attempt to connect trees */
 
             /* if reached, it means we used rstate directly, no need top copy again */
+            std::cout << "connect\n";
             if (gs != REACHED)
                 si_->copyState(rstate, tgi.xstate);
 

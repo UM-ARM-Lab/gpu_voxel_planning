@@ -305,7 +305,12 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
     double prob_col = 0.0;
     double p_no_col_unseen;
     double p_no_col_seen;
-        
+
+    if(do_delay)
+    {
+        std::cout << "Running getPathCost for path of size " << path.size() << "\n";
+    }
+    
     for(size_t collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
     {
         const ob::State *s1 = path[collision_index];
@@ -334,6 +339,10 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
         {
             PROFILE_RECORD("getProbCost");
+            if(do_delay)
+            {
+                std::cout << "terminating early, known cost collision\n";
+            }
             return 1.0;
         }
 

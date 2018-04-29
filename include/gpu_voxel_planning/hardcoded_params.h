@@ -9,7 +9,7 @@
 #define UNEXPLORED_BIAS 100
 
 /* Max planning time in seconds */
-#define PLANNING_TIMEOUT 10
+#define PLANNING_TIMEOUT 100
 
 #define USE_KNOWN_OBSTACLES true
 
