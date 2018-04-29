@@ -64,7 +64,7 @@ void ompl::geometric::CostRRTConnect::setup()
     tools::SelfConfig sc(si_, getName());
     // maxDistance_ = si_->getStateSpace()->getLongestValidSegmentFraction() * 10;
     
-    maxDistance_ = si_->getStateSpace()->getLongestValidSegmentLength() * 10;
+    maxDistance_ = si_->getStateSpace()->getLongestValidSegmentLength() * 3;
     sc.configurePlannerRange(maxDistance_);
 
     if (!tStart_)
@@ -130,7 +130,7 @@ ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
     double d = si_->distance(nmotion->state, rmotion->state);
     if (limit && (d > maxDistance_))
     {
-        std::cout << "limiting to " << maxDistance_ << "\n";
+        // std::cout << "limiting to " << maxDistance_ << "\n";
         si_->getStateSpace()->interpolate(nmotion->state, rmotion->state, maxDistance_ / d, tgi.xstate);
 
         /* check if we have moved at all */

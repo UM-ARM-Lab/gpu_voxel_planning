@@ -116,6 +116,8 @@ class SimWorld
 public:
     SimWorld();
     void initializeObstacles();
+    void makeTable();
+    void makeSlottedWall();
     bool executePath(const Path &path, size_t &last_index);
 
     bool attemptPath(const Path &path);

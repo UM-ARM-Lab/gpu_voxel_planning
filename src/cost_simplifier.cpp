@@ -117,8 +117,9 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
     
 
 
+    std::reverse(std::begin(new_path), std::end(new_path));
     double new_cost = pv_->getPathCost(new_path, col_index);
-
+    std::reverse(std::begin(new_path), std::end(new_path));
 
 
     if(new_cost <= cur_cost)

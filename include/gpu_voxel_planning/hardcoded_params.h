@@ -11,9 +11,13 @@
 /* Max planning time in seconds */
 #define PLANNING_TIMEOUT 10
 
-#define USE_KNOWN_OBSTACLES false
+#define USE_KNOWN_OBSTACLES true
 
-#define ALL_OBSTACLES_KNOWN false
+#define MAKE_TABLE false
+
+#define MAKE_SLOTTED_WALL true
+
+#define ALL_OBSTACLES_KNOWN true
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 

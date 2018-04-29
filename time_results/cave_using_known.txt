@@ -1,0 +1,55 @@
+Label                                    tot time (s)       num_calls    avg time (s)
+Seen sizes, robot intersection             457.479435          660337        0.000693
+bi_rrt                                     449.363417              20       22.468171
+bi_rrt execute                             160.014779              46        3.478582
+bi_rrt plan                                289.346712              46        6.290146
+bi_rrt success                             449.362317              20       22.468116
+getProbCost                               1141.270828           78414        0.014554
+getVoxCost                                1183.294568           75579        0.015656
+motion_prob_col_rrt                        734.839469              20       36.741973
+motion_prob_col_rrt execute                172.387593              51        3.380149
+motion_prob_col_rrt plan                   562.450073              51       11.028433
+motion_prob_col_rrt success                734.838454              20       36.741923
+motion_vox_cost_rrt                        815.139922              20       40.756996
+motion_vox_cost_rrt execute                195.163290              70        2.788047
+motion_vox_cost_rrt plan                   619.974549              71        8.732036
+motion_vox_cost_rrt success                800.983519              19       42.157027
+plan_up_motion_prob_col_rrt                725.329297              20       36.266465
+plan_up_motion_prob_col_rrt execute        144.240734              51        2.828250
+plan_up_motion_prob_col_rrt plan           581.086714              52       11.174745
+plan_up_motion_prob_col_rrt success        637.417558              19       33.548293
+plan_up_motion_vox_cost_rrt                746.790499              20       37.339525
+plan_up_motion_vox_cost_rrt execute        177.551353              61        2.910678
+plan_up_motion_vox_cost_rrt plan           569.237022              67        8.496075
+plan_up_motion_vox_cost_rrt success        452.934138              14       32.352438
+prob add query                             921.240099          106677        0.008636
+prob free space collisions                  94.756849           71855        0.001319
+prob seen collision                         68.467324           71855        0.000953
+vox add query                              609.411787          502110        0.001214
+vox collision                              363.686671          465694        0.000781
+
+
+#ifndef GPU_VOX_HARDCODED_PARAMS_H
+#define GPU_VOX_HARDCODED_PARAMS_H
+
+
+/* Number of iterations to run shortcut smoothing */
+#define SMOOTHING_ITERATIONS 30
+
+/* Expected num total voxels in world in collision */
+#define UNEXPLORED_BIAS 100
+
+/* Max planning time in seconds */
+#define PLANNING_TIMEOUT 10
+
+#define USE_KNOWN_OBSTACLES true
+
+#define ALL_OBSTACLES_KNOWN false
+
+#define NUM_STEPS_FOR_ADDING_COLLISION 5
+
+#define PEG_IN_HOLE false
+
+#define PLAN_ONLY false
+
+#endif

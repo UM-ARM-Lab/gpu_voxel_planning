@@ -99,13 +99,14 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
 
     if(!reached_goal)
     {
-        std::cout << "Timeout before goal reached\n";
+        std::cout << "\n\n\nTimeout before goal reached\n\n\n";
         return false;
     }
     
     std::cout << "\n\n\n== PATH COMPLETE ==\n\n\n";
 
-    PROFILE_RECORD(planner_name + " success");
+    double time = PROFILE_RECORD(planner_name + " success");
+    std::cout << "Total time: " << time << "\n";
 
     if(!PLAN_ONLY)
     {
@@ -138,6 +139,10 @@ void runTest(VictorPlanner &planner, std::string planner_name)
     if(PEG_IN_HOLE)
     {
         goal = std::vector<double>{-0.15, 0.52, 0.0, -0.72, 0.0, 1.0, -2.5};
+    } else if(MAKE_SLOTTED_WALL)
+    {
+        start = std::vector<double>{1, -1.5, 1.5, .5, 0, 0.9, 0};
+        goal = std::vector<double>{0, 0.32, 0.0, -1.52, -0.2, 0.9, 0.3};
     }
 
 
@@ -152,24 +157,28 @@ void runTest(VictorPlanner &planner, std::string planner_name)
 
 void runTest_ThresholdRRTConnect()
 {
+    std::cout << "threshold planner\n";
     VictorThresholdRRTConnect planner(&(sim_world->victor_model));
     runTest(planner, BiRRT_TIME);
 }
 
 void runTest_ProbColCostRRTConnect()
 {
+    std::cout << "Anytime ProbCol test\n";
     VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
     runTest(planner, PROB_COL_COST_TIME);
 }
 
 void runTest_VoxCostRRTConnect()
 {
+    std::cout << "Anytime MinVox test\n";
     VictorVoxCostRRTConnect planner(&(sim_world->victor_model));
     runTest(planner, VOX_COST_TIME);
 }
 
 void runTest_PlanUpProbColCostRRTConnect()
 {
+    std::cout << "PlanUp ProbCol test\n";
     VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
     planner.use_anytime_planner = false;
     runTest(planner, "plan_up_" + PROB_COL_COST_TIME);
@@ -177,6 +186,7 @@ void runTest_PlanUpProbColCostRRTConnect()
 
 void runTest_PlanUpVoxCostRRTConnect()
 {
+    std::cout << "PlanUp MinVox test\n";
     VictorVoxCostRRTConnect planner(&(sim_world->victor_model));
     planner.use_anytime_planner = false;
     runTest(planner, "plan_up_" + VOX_COST_TIME);
@@ -199,12 +209,12 @@ int main(int argc, char* argv[])
 
     setupWorld();
 
-    int num_trials = 20;
+    int num_trials = 2;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "Trial " << i + 1<< " of " << num_trials << "\n";
         // runTest_ThresholdRRTConnect();
-        runTest_ProbColCostRRTConnect();
+        // runTest_ProbColCostRRTConnect();
         // runTest_VoxCostRRTConnect();
         runTest_PlanUpProbColCostRRTConnect();
         // runTest_PlanUpVoxCostRRTConnect();

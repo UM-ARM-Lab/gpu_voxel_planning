@@ -498,7 +498,7 @@ SimWorld::SimWorld()
     victor_model.updateActual(init_config);
 }
 
-void SimWorld::initializeObstacles()
+void SimWorld::makeTable()
 {
     Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
     Vector3f tc(1.7, 1.4, 0.9); //table corner
@@ -591,6 +591,82 @@ void SimWorld::initializeObstacles()
         gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
     }
 
+
+}
+
+void SimWorld::makeSlottedWall()
+{
+
+    std::cout << "Making slotted walls\n";
+    // Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 0.0 * 0.0254); //table dimensions
+    // Vector3f tc(1.7, 1.4, 0.9); //table corner
+    // Vector3f tld(.033, 0.033, tc.z); //table leg dims
+
+
+
+
+    Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
+    Vector3f lfwd(0.04, 1.5, 1.1);
+    Vector3f ufwc(1.5, 1.6, 1.4); //upper front call
+    Vector3f ufwd(0.04, 1.5, 0.3);
+    Vector3f mfwc(1.5, 1.7, 0);  //middle front wall
+    Vector3f mfwd(0.04, 1.4, 1.5);
+   
+    Vector3f lswc = lfwc;  // lower side wall corner
+    Vector3f lswd(1.5, 0.04, 1.1); //lower side wall dims
+    Vector3f cswc = ufwc; //close side wall corner
+    Vector3f cswd(0.3, 0.04, 0.3);
+    Vector3f fswc(2.0, 1.6, 1.1); //far side wall corner
+    Vector3f fswd(0.3, 0.04, 0.6);
+    
+    //table top
+    
+    gvl->insertBoxIntoMap(lfwc, lfwc+lfwd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(ufwc, ufwc+ufwd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(mfwc, mfwc+mfwd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(lswc, lswc+lswd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(cswc, cswc+cswd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(fswc, fswc+fswd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    
+    if(USE_KNOWN_OBSTACLES)
+    {
+        gvl->insertBoxIntoMap(lfwc, lfwc+lfwd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->insertBoxIntoMap(ufwc, ufwc+ufwd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->insertBoxIntoMap(mfwc, mfwc+mfwd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        if(ALL_OBSTACLES_KNOWN)
+        {
+            gvl->insertBoxIntoMap(lswc, lswc+lswd,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+            gvl->insertBoxIntoMap(cswc, cswc+cswd,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+            gvl->insertBoxIntoMap(fswc, fswc+fswd,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+        }
+        
+    }
+    gvl->visualizeMap(SIM_OBSTACLES_MAP);
+    gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
+
+}
+    
+void SimWorld::initializeObstacles()
+{
+
+    if(MAKE_TABLE)
+        makeTable();
+    if(MAKE_SLOTTED_WALL)
+        makeSlottedWall();
+        
 }
 
 Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
@@ -661,7 +737,7 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
         usleep(EXECUTION_DELAY_us/2);
 
     }
-    std::cout << "Path success\n";
+    // std::cout << "Path success\n";
     return true;
 }
 
