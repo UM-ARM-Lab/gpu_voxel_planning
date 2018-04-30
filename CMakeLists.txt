@@ -43,6 +43,10 @@ add_definitions(
   )
 
 
+add_message_files(DIRECTORY msg FILES
+  CollisionInformation.msg
+  )
+
 add_service_files(
   FILES
   PlanPath.srv
@@ -240,9 +244,15 @@ target_link_libraries(victor_sim_timings
 #   )
 
 
-add_executable(urdf_test src/URDF_Loader_ROS_listener.cpp)
-target_link_libraries (urdf_test
-  ${EXTERN_LIBS}
+# add_executable(urdf_test src/URDF_Loader_ROS_listener.cpp)
+# target_link_libraries (urdf_test
+#   ${EXTERN_LIBS}
+#   )
+
+
+add_executable(collision_link_node src/collision_link_node.cpp)
+target_link_libraries(collision_link_node
+  ${catkin_LIBRARIES}
   )
 
 
