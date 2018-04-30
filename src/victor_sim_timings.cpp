@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
 
     setupWorld();
 
-    int num_trials = 4;
+    int num_trials = 8;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "Trial " << i + 1<< " of " << num_trials << "\n";

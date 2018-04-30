@@ -1,0 +1,43 @@
+Label                                    tot time (s)       num_calls    avg time (s)
+Seen sizes, robot intersection              32.059951            2622        0.012227
+getVoxCost                                1852.228449          139432        0.013284
+plan_up_motion_vox_cost_rrt               2797.551522               4      699.387881
+plan_up_motion_vox_cost_rrt execute        587.013280              61        9.623169
+plan_up_motion_vox_cost_rrt plan          1806.394749              61       29.613029
+plan_up_motion_vox_cost_rrt success          7.559049               1        7.559049
+vox add query                             1229.598797          728056        0.001689
+vox collision                              291.204271          590297        0.000493
+#ifndef GPU_VOX_HARDCODED_PARAMS_H
+#define GPU_VOX_HARDCODED_PARAMS_H
+
+
+/* Number of iterations to run shortcut smoothing */
+#define SMOOTHING_ITERATIONS 30
+
+/* Expected num total voxels in world in collision */
+#define UNEXPLORED_BIAS 0
+
+/* Max planning time in seconds */
+#define PLANNING_TIMEOUT 30
+
+#define USE_KNOWN_OBSTACLES false
+
+#define MAKE_TABLE true
+
+#define MAKE_SLOTTED_WALL false
+
+#define ALL_OBSTACLES_KNOWN false
+
+#define NUM_STEPS_FOR_ADDING_COLLISION 5
+
+#define PEG_IN_HOLE false
+
+#define PLAN_ONLY false
+
+#define DO_CONTROL true
+
+#define DO_PLAN true
+
+#define VOX_CONTROLLER_THRESHOLD 30
+
+#endif
