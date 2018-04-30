@@ -29,6 +29,6 @@
 
 #define DO_PLAN true
 
-#define VOX_CONTROLLER_THRESHOLD 100
+#define VOX_CONTROLLER_THRESHOLD 20
 
 #endif

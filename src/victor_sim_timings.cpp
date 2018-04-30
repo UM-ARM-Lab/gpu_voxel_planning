@@ -97,10 +97,13 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
 
         if(DO_CONTROL)
         {
+            PROFILE_START(planner_name + " control");
             Optpath maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
                                                             goal_config);
             while(maybe_path.Valid())
             {
+                if(stopwatch() > timeout) break;
+                
                 std::cout << "Local control found, executing\n";
                 sim_world->attemptPath(maybe_path.Get());
                 reached_goal = checkAtGoal(goal);
@@ -111,6 +114,7 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
                 maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
                                                         goal_config);
             }
+            PROFILE_RECORD(planner_name + " control");
             if(reached_goal)
                 break;
         }
@@ -253,15 +257,15 @@ int main(int argc, char* argv[])
 
     setupWorld();
 
-    int num_trials = 8;
+    int num_trials = 10;
     for(int i=0; i<num_trials; i++)
     {
-        std::cout << "Trial " << i + 1<< " of " << num_trials << "\n";
+        std::cout << "\n\n\n\n!!!!!!!!!!!!!!\nTrial " << i + 1<< " of " << num_trials << "!!!!!!!!!!!!!\n\n\n\n\n";
         // runTest_ThresholdRRTConnect();
-        // runTest_ProbColCostRRTConnect();
-        // runTest_VoxCostRRTConnect();
+        runTest_ProbColCostRRTConnect();
+        runTest_VoxCostRRTConnect();
         // runTest_PlanUpProbColCostRRTConnect();
-        runTest_PlanUpVoxCostRRTConnect();
+        // runTest_PlanUpVoxCostRRTConnect();
     }
     
 

@@ -263,40 +263,40 @@ size_t GpuVoxelsVictor::countIntersect(const std::string& map_1, const std::stri
 
 
 
-void GpuVoxelsVictor::addCollisionPoints(CollisionInformation collision_info)
-{
-    std::lock_guard<boost::recursive_timed_mutex> g(gvl->getMap(VICTOR_ACTUAL_MAP)->m_mutex);
-    if(!collision_info.collision)
-    {
-        std::cout << "Asked to add collision, but provided CollisionInformation indicates no collision\n";
-        return;
-    }
-    VictorConfig cur_joints, extended_joints;
-    for(size_t i = 0; i < collision_info.joints.size(); i++)
-    {
-        cur_joints[right_arm_joint_names[i]] = collision_info.joints[i];
-        extended_joints[right_arm_joint_names[i]] = collision_info.joints[i] + 0.05 * collision_info.dirs[i];
-    }
+// void GpuVoxelsVictor::addCollisionPoints(CollisionInformation collision_info)
+// {
+//     std::lock_guard<boost::recursive_timed_mutex> g(gvl->getMap(VICTOR_ACTUAL_MAP)->m_mutex);
+//     if(!collision_info.collision)
+//     {
+//         std::cout << "Asked to add collision, but provided CollisionInformation indicates no collision\n";
+//         return;
+//     }
+//     VictorConfig cur_joints, extended_joints;
+//     for(size_t i = 0; i < collision_info.joints.size(); i++)
+//     {
+//         cur_joints[right_arm_joint_names[i]] = collision_info.joints[i];
+//         extended_joints[right_arm_joint_names[i]] = collision_info.joints[i] + 0.05 * collision_info.dirs[i];
+//     }
 
-    gvl->setRobotConfiguration(VICTOR_ROBOT, cur_joints);
+//     gvl->setRobotConfiguration(VICTOR_ROBOT, cur_joints);
 
-    gvl->clearMap(VICTOR_ACTUAL_MAP);
-    gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, PROB_OCCUPIED);
+//     gvl->clearMap(VICTOR_ACTUAL_MAP);
+//     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, PROB_OCCUPIED);
     
-    int dist = determineVictorDist();
-    // if(dist <= 1)
-    // {
-    //     std::cout << "Already knew victor would be in collision. Skipping\n";
-    //     return;
-    // }
+//     int dist = determineVictorDist();
+//     // if(dist <= 1)
+//     // {
+//     //     std::cout << "Already knew victor would be in collision. Skipping\n";
+//     //     return;
+//     // }
             
 
-    // Update robot to be slightly into collision object.
-    // Insert only the last few links (heuristic to avoid adding too many points)
+//     // Update robot to be slightly into collision object.
+//     // Insert only the last few links (heuristic to avoid adding too many points)
 
 
-    addCollisionLinks(extended_joints, collision_info.links_in_contact, ENV_MAP);
-}
+//     addCollisionLinks(extended_joints, collision_info.links_in_contact, ENV_MAP);
+// }
 
 void GpuVoxelsVictor::addQueryLink(const VictorConfig &c,
                                    const std::string &link_name)
