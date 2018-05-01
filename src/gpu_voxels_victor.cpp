@@ -840,7 +840,7 @@ RealWorld::RealWorld()
     ros::NodeHandle n;
     joint_sub = n.subscribe("/joint_states", 1, &RealWorld::jointStateCallback, this);
     attempt_path_client = n.serviceClient<gpu_voxel_planning::AttemptPathStart>("attempt_path_on_victor");
-    get_attempt_status_client = n.serviceClient<gpu_voxel_planning::AttemptPathResult>("attempt_path_on_victor");
+    get_attempt_status_client = n.serviceClient<gpu_voxel_planning::AttemptPathResult>("get_path_status");
     
 
     double init_angles[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
@@ -848,8 +848,6 @@ RealWorld::RealWorld()
     victor_model.updateActual(init_config);
 
     update_victor_from_messages = true;
-
-    ros::spinOnce();
 }
 
 RealWorld::~RealWorld()
@@ -861,7 +859,6 @@ RealWorld::~RealWorld()
 void RealWorld::jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
 {
     std::vector<double> right_arm_angles(&msg->position[7], &msg->position[14]);
-    std::cout << "size: " << right_arm_angles.size() << "\n";
     VictorConfig cur = victor_model.toVictorConfig(right_arm_angles.data());
     victor_model.updateActual(cur);
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
@@ -888,6 +885,7 @@ bool RealWorld::attemptPath(const Path &path)
     {
         get_attempt_status_client.call(path_res);
         path_finished = path_res.response.finished.data;
+        ros::Duration(0.05).sleep();
         ros::spinOnce();
     }
 

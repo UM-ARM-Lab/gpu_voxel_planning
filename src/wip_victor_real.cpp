@@ -65,8 +65,9 @@ int main(int argc, char* argv[])
     ros::init(argc, argv, "gpu_voxels");
     
     real_world = std::make_shared<RealWorld>();
-    signal(SIGINT, ctrlchandler);
-    signal(SIGTERM, killhandler);
+
+    ros::Duration(0.5).sleep();
+    ros::spinOnce();
 
     VictorProbColCostRRTConnect planner(&(real_world->victor_model));
 
@@ -75,10 +76,10 @@ int main(int argc, char* argv[])
     std::string unused;
     std::cout << "Waiting for user input to start...\n";
     std::getline(std::cin, unused);
-    while(ros::ok())
-    {
-        ros::spinOnce();
-    }
+    // while(ros::ok())
+    // {
+    //     ros::spinOnce();
+    // }
 
 
     attemptGoal(planner, goal);
