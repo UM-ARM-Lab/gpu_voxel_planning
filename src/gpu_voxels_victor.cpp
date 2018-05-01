@@ -887,11 +887,11 @@ bool RealWorld::attemptPath(const Path &path)
     while(ros::ok() && !path_finished)
     {
         get_attempt_status_client.call(path_res);
-        path_finished = path_res.response.finshed;
-        ros::spinOnce()
+        path_finished = path_res.response.finished.data;
+        ros::spinOnce();
     }
 
-    if(path_res.response.ci.collision)
+    if(path_res.response.ci.collided.data)
     {
         std::cout << "Collision found on path\n";
         return false;
