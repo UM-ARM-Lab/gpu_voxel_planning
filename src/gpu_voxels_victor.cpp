@@ -342,6 +342,18 @@ void GpuVoxelsVictor::addCollisionLinks(const VictorConfig &c,
 void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
                                       const std::vector<std::string> &collision_links)
 {
+    if(collision_links.size() == 0)
+    {
+        std::cout << "Attempted to add a collision set with no links, exiting\n";
+        assert(false);
+        return;
+    }
+    if(cs.size() == 0)
+    {
+        std::cout << "Attempted to add a collision set with no configurations, exiting\n";
+        assert(false);
+        return;
+    }
     for(auto &c: cs)
     {
         addCollisionLinks(c, collision_links, SEEN_OBSTACLE_SETS[num_observed_sets]);
@@ -848,6 +860,7 @@ RealWorld::RealWorld()
     victor_model.updateActual(init_config);
 
     update_victor_from_messages = true;
+    pos_updated = false;
 }
 
 RealWorld::~RealWorld()
@@ -862,8 +875,18 @@ void RealWorld::jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
     VictorConfig cur = victor_model.toVictorConfig(right_arm_angles.data());
     victor_model.updateActual(cur);
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
+    pos_updated = true;
 }
 
+void RealWorld::spinUntilUpdate()
+{
+    pos_updated = false;
+    while(ros::ok() && !pos_updated)
+    {
+        ros::Duration(0.01).sleep();
+        ros::spinOnce();
+    }
+}
 
 bool RealWorld::attemptPath(const Path &path)
 {
@@ -883,15 +906,37 @@ bool RealWorld::attemptPath(const Path &path)
     bool path_finished = false;
     while(ros::ok() && !path_finished)
     {
+        // std::cout << "path not yet finished\n";
         get_attempt_status_client.call(path_res);
-        path_finished = path_res.response.finished.data;
+        path_finished = path_res.response.finished;
         ros::Duration(0.05).sleep();
         ros::spinOnce();
     }
+    std::cout << "Path finished\n";
 
-    if(path_res.response.ci.collided.data)
+    if(path_res.response.ci.collided)
     {
+        gpu_voxel_planning::CollisionInformation &ci = path_res.response.ci;
         std::cout << "Collision found on path\n";
+
+        std::vector<VictorConfig> col_configs;
+        for(auto &traj_point: ci.collision_path.points)
+        {
+            col_configs.push_back(victor_model.toVictorConfig(traj_point.positions.data()));
+        }
+
+        victor_model.addCollisionSet(col_configs, ci.collision_links);
+        std::cout << "added " << col_configs.size() << " collision configs\n";
+        std::cout << "for links \n";
+        for(auto &link_name: ci.collision_links)
+        {
+            std::cout << link_name << "\n";
+        }
+        spinUntilUpdate();
+        std::string unused;
+        std::cout << "Waiting for user input to start...\n";
+        std::getline(std::cin, unused);
+
         return false;
     }
     return true;

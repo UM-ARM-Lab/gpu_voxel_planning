@@ -164,6 +164,7 @@ target_link_libraries(costrrtc
 #   )
 
 add_library(victor_model src/gpu_voxels_victor.cpp)
+add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
 target_link_libraries(victor_model
   ${catkin_LIBRARIES}
   ${gpu_voxels_LIBRARIES}

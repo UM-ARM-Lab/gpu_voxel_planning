@@ -232,6 +232,7 @@ ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
         pv_->setProbabilityThreshold(threshold);
         std::vector<double> costs;
         // pv_->do_delay = true;
+        // std::cout << "rrt threshold: " << threshold << "\n";
         double new_motion_cost = pv_->getPathCost(path->getStates(), costs);
         if(pv_->do_delay)
             std::cout << "costs size: " << costs.size() << " path size: " << path->getStates().size() << "\n";
@@ -242,6 +243,10 @@ ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
         int count = 0;
         for(size_t i=0; i < costs.size(); i+=1)
         {
+            if(!(costs[i] <= threshold))
+            {
+                std::cout << "costs: " << costs[i] << "\n";
+            }
             assert(costs[i] <= threshold);            
             double new_cost_from_root = accumulateCost(nn_cost_from_root, costs[i]);
 

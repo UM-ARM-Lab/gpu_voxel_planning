@@ -52,15 +52,17 @@ def check_collision(motion_status_msg):
             return False
 
         g_links_in_contact = ["victor_right_arm_link_" + str(idx+1) for idx in range(col_indicies[0], len(jt))]
+        print("check_collision links in contact")
+        print(g_links_in_contact)
         return True
 
 def path_status_srv(req):
     global path_in_progress
     global last_collision_info
-    rospy.loginfo("Path status srv")
+    # rospy.loginfo("Path status srv")
     resp = AttemptPathResultResponse()
     with start_new_path_lock:
-        resp.finished.data = not path_in_progress
+        resp.finished = not path_in_progress
         resp.ci = last_collision_info
     return resp
             
@@ -74,13 +76,14 @@ def attempt_path_srv(req):
     if(path_in_progress):
         rospy.loginfo("But there is already a path in progress");
         
-        resp.started.data = False
+        resp.started = False
         return resp
-    
-    resp.started.data = True
+
+    resp.started = True
 
     rospy.loginfo("Triggering new path start");
     with start_new_path_lock:
+        path_in_progress = True
         ros_path = [point.positions for point in req.path.points]
     rospy.loginfo("Returning");
     return resp
@@ -90,14 +93,21 @@ def start_attempt_path():
     global ros_path
     global path_in_progress
     global last_collision_info
-    if ros_path:
-        rospy.loginfo("Attempting path");
-        path_in_progress = True
-        with start_new_path_lock:
-            last_collision_info = execute_path(ros_path)
-        path_in_progress = False
+
+    path_to_execute = None
+    with start_new_path_lock:
+        if not ros_path:
+            return
+        path_to_execute = copy.deepcopy(ros_path)
+        
+        
+    rospy.loginfo("Attempting path");
+    ci = execute_path(ros_path)
+    with start_new_path_lock:
+        last_collision_info = ci
         ros_path = []
-        return
+        path_in_progress = False
+
 
 
 def execute_path(path):
@@ -116,9 +126,10 @@ def execute_path(path):
     global g_links_in_contact
     global vm
     global path_in_progress
+    global col_links
     
     rospy.loginfo("Executing path")
-    col_links = None
+    col_links = []
     global in_collision
     in_collision = False
     
@@ -126,12 +137,16 @@ def execute_path(path):
         global g_in_collision
         global g_links_in_contact
         global in_collision
+        global col_links
         with check_collision_lock:
             if(g_in_collision):
                 # rospy.loginfo("collision during motion")
                 in_collision = True
                 col_links = copy.deepcopy(g_links_in_contact)
-                
+
+                print("stop links in contact")
+                print(g_links_in_contact)
+                print(col_links)
             return g_in_collision
         # return 
         # global hit_torque_limit
@@ -152,18 +167,23 @@ def execute_path(path):
 
     msg = CollisionInformation()
     msg.collided = in_collision
-    msg.collision_links = col_links
+
 
 
     if not in_collision:
         
         return msg
-    voice.publish("collision")
 
+    # speak_collision_link()
+    
+    
+    print("assignment links in contact")
+    print(col_links)
+    msg.collision_links = col_links
     
     cur_pos = vu.jvq_to_list(right_arm_listener.get().measured_joint_position)
 
-    next_poses = pu.densify(pu.travel_along(path, .2, cur_pos), .05)
+    next_poses = pu.densify(pu.travel_along(path, .2, cur_pos), .5)
 
     for pos in next_poses:
         jtp_msg = JointTrajectoryPoint()
@@ -190,9 +210,9 @@ def speak_collision_link():
         with check_collision_lock:
             play_msg = g_in_collision
 
-        if play_msg:
-            voice.publish(g_links_in_contact[0][-1])
-            rospy.sleep(1)
+            if play_msg:
+                voice.publish("collision link " + g_links_in_contact[0][-1])
+                rospy.sleep(1)
 
 
 

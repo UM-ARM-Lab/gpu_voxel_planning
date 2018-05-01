@@ -145,6 +145,7 @@ public:
     ~RealWorld();
     bool attemptPath(const Path &path);
     void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg);
+    void spinUntilUpdate();
     
 public:
     gpu_voxels::GpuVoxelsSharedPtr gvl;
@@ -154,6 +155,7 @@ public:
     ros::ServiceClient get_attempt_status_client;
 
     bool update_victor_from_messages;
+    bool pos_updated;
 };
 
 

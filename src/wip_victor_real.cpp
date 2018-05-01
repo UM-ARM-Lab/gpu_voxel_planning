@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include "std_msgs/String.h"
 #include "gpu_voxels_victor.hpp"
 #include "victor_planning.hpp"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
@@ -11,11 +12,14 @@
 #include <fstream>
 
 
+
 std::shared_ptr<RealWorld> real_world;
 
 
 using namespace gpu_voxels_planner;
 namespace M = Maybe;
+
+ros::Publisher speaker;
 
 
 /***********************************************
@@ -63,6 +67,8 @@ int main(int argc, char* argv[])
     
     icl_core::logging::initialize(argc, argv);
     ros::init(argc, argv, "gpu_voxels");
+    ros::NodeHandle nh;
+    speaker = nh.advertise<std_msgs::String>("/polly", 1, true);
     
     real_world = std::make_shared<RealWorld>();
 
@@ -71,7 +77,8 @@ int main(int argc, char* argv[])
 
     VictorProbColCostRRTConnect planner(&(real_world->victor_model));
 
-    std::vector<double> goal = {-.25, -.11, -.18, -1.0, .4, .4, -.7};
+    std::vector<double> goal1 = {-.25, -.11, -.18, -1.0, .4, .4, -.7};
+    std::vector<double> goal2 = {-.25, .5, .3, -1.0, .4, .4, -.7};
 
     std::string unused;
     std::cout << "Waiting for user input to start...\n";
@@ -82,7 +89,21 @@ int main(int argc, char* argv[])
     // }
 
 
-    attemptGoal(planner, goal);
+    std_msgs::String msg;
+
+
+    while(ros::ok())
+    {
+        msg.data = "goal one";
+        // speaker.publish(msg);
+        attemptGoal(planner, goal1);
+        ros::Duration(5.0).sleep();
+        
+        msg.data = "goal two";
+        // speaker.publish(msg);
+        attemptGoal(planner, goal2);
+        ros::Duration(5.0).sleep();
+    }
     
 
     real_world->gvl.reset();
