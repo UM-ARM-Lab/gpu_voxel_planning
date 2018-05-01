@@ -7,6 +7,10 @@
 
 #include <arc_utilities/maybe.hpp>
 
+#include <ros/ros.h>
+#include <sensor_msgs/JointState.h>
+
+
 #define VICTOR_ACTUAL_MAP "victor_actual_map"
 #define VICTOR_QUERY_MAP "victor_query_map"
 #define ENV_MAP "env_map"
@@ -132,7 +136,24 @@ public:
 public:    
     gpu_voxels::GpuVoxelsSharedPtr gvl;
     GpuVoxelsVictor victor_model;
+};
 
+class RealWorld
+{
+public:
+    RealWorld();
+    ~RealWorld();
+    bool attemptPath(const Path &path);
+    void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg);
+    
+public:
+    gpu_voxels::GpuVoxelsSharedPtr gvl;
+    GpuVoxelsVictor victor_model;
+    ros::Subscriber joint_sub;
+    ros::ServiceClient attempt_path_client;
+    ros::ServiceClient get_attempt_status_client;
+
+    bool update_victor_from_messages;
 };
 
 

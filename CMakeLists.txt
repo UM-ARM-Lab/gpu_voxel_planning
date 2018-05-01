@@ -50,6 +50,9 @@ add_message_files(DIRECTORY msg FILES
 add_service_files(
   FILES
   PlanPath.srv
+  AttemptPath.srv
+  AttemptPathStart.srv
+  AttemptPathResult.srv
   )
 
 generate_messages(
@@ -253,6 +256,15 @@ target_link_libraries(victor_sim_timings
 add_executable(collision_link_node src/collision_link_node.cpp)
 target_link_libraries(collision_link_node
   ${catkin_LIBRARIES}
+  )
+
+add_executable(wip_victor_real src/wip_victor_real.cpp)
+target_link_libraries(wip_victor_real
+  ${EXTERN_LIBS}
+  lazyrrtf
+  victor_model
+  victor_planning
+  victor_validator
   )
 
 

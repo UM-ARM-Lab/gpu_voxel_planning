@@ -1,6 +1,9 @@
 #include "gpu_voxels_victor.hpp"
 #include "common_names.hpp"
 #include "hardcoded_params.h"
+#include <gpu_voxel_planning/CollisionInformation.h>
+#include <gpu_voxel_planning/AttemptPathStart.h>
+#include <gpu_voxel_planning/AttemptPathResult.h>
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
@@ -813,3 +816,85 @@ bool SimWorld::attemptPath(const Path &path)
     return false;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+/***********************************
+ **          REAL WORLD           **
+ **********************************/
+RealWorld::RealWorld()
+{
+    std::cout << "Creating real world\n";
+    gvl = gpu_voxels::GpuVoxels::getInstance();
+    gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
+
+    ros::NodeHandle n;
+    joint_sub = n.subscribe("/joint_states", 1, &RealWorld::jointStateCallback, this);
+    attempt_path_client = n.serviceClient<gpu_voxel_planning::AttemptPathStart>("attempt_path_on_victor");
+    get_attempt_status_client = n.serviceClient<gpu_voxel_planning::AttemptPathResult>("attempt_path_on_victor");
+    
+
+    double init_angles[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    VictorConfig init_config = victor_model.toVictorConfig(init_angles);
+    victor_model.updateActual(init_config);
+
+    update_victor_from_messages = true;
+
+    ros::spinOnce();
+}
+
+RealWorld::~RealWorld()
+{
+    gvl.reset();
+    victor_model.gvl.reset();
+}
+
+void RealWorld::jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
+{
+    std::vector<double> right_arm_angles(&msg->position[7], &msg->position[14]);
+    std::cout << "size: " << right_arm_angles.size() << "\n";
+    VictorConfig cur = victor_model.toVictorConfig(right_arm_angles.data());
+    victor_model.updateActual(cur);
+    gvl->visualizeMap(VICTOR_ACTUAL_MAP);
+}
+
+
+bool RealWorld::attemptPath(const Path &path)
+{
+    gpu_voxel_planning::AttemptPathStart srv;
+    srv.request.path.points.resize(path.size());
+    for(size_t i=0; i<path.size(); i++)
+    {
+        srv.request.path.points[i].positions = path[i];
+    }
+    
+    if(attempt_path_client.call(srv))
+    {
+        std::cout << "New path message sent\n";
+    }
+
+    gpu_voxel_planning::AttemptPathResult path_res;
+    bool path_finished = false;
+    while(ros::ok() && !path_finished)
+    {
+        get_attempt_status_client.call(path_res);
+        path_finished = path_res.response.finshed;
+        ros::spinOnce()
+    }
+
+    if(path_res.response.ci.collision)
+    {
+        std::cout << "Collision found on path\n";
+        return false;
+    }
+    return true;
+}
