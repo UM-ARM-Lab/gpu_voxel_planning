@@ -24,7 +24,7 @@ std::vector<std::string> SEEN_OBSTACLE_SETS;
 #define PROB_FREE eBVM_FREE
 
 #define NUM_SETS 100
-#define EXECUTION_DELAY_us 10000
+
 
 std::vector<std::string> right_arm_joint_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
         "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5",
@@ -105,8 +105,8 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
     VictorConfig left_arm_config;
 
-    // std::vector<double> left_arm_joint_values = {1.57, 1.57, 0, 0, 0, 0 ,0};
-    std::vector<double> left_arm_joint_values = {-0.91, 1.571, -1.168, 0.676, 2.461, 1.395, -1.235};
+    std::vector<double> left_arm_joint_values = {1.57, 1.57, 0, 0, 0, 0 ,0};
+    // std::vector<double> left_arm_joint_values = {-0.91, 1.571, -1.168, 0.676, 2.461, 1.395, -1.235};
     for(size_t i=0; i<left_arm_joint_values.size(); i++)
     {
         left_arm_config[left_arm_joint_names[i]] = left_arm_joint_values[i];
@@ -344,7 +344,7 @@ void GpuVoxelsVictor::addCollisionLinks(const VictorConfig &c,
     {
         int16_t cloud_num = clouds->getCloudNumber(collision_link_name);
         uint32_t cloud_size = clouds->getPointcloudSizes()[cloud_num];
-        std::cout << collision_link_name << " has " << cloud_size << " points \n";
+        // std::cout << collision_link_name << " has " << cloud_size << " points \n";
         const gpu_voxels::Vector3f* cloud_ptr = clouds->getPointCloud(cloud_num);
         const std::vector<gpu_voxels::Vector3f> cloud(cloud_ptr, cloud_ptr + cloud_size);
         gvl->insertPointCloudIntoMap(cloud, map_name, PROB_OCCUPIED);
@@ -607,7 +607,7 @@ void SimWorld::makeTable()
     
     if(USE_KNOWN_OBSTACLES)
     {
-        gvl->insertBoxIntoMap(tc, tc + td,
+        gvl->insertBoxIntoMap(tc, tc + td - Vector3f(0, .405, 0),
                               KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
         gvl->insertBoxIntoMap(cavecorner+caveheight,
                               cavecorner+caveheight+cavetopd,
@@ -618,6 +618,9 @@ void SimWorld::makeTable()
 
         if(ALL_OBSTACLES_KNOWN)
         {
+            gvl->insertBoxIntoMap(tc, tc + td,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
             gvl->insertBoxIntoMap(cavecorner+cavesideoffset,
                                   cavecorner+cavesideoffset+cavesidedim,
                                   KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
@@ -662,7 +665,6 @@ void SimWorld::makeSlottedWall()
     Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
     Vector3f mswd(0.3, 0.04, 0.2);
     
-    //table top
     
     gvl->insertBoxIntoMap(lfwc, lfwc+lfwd,
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);

@@ -80,7 +80,7 @@ bool checkAtGoal(std::vector<double> goal)
 }
 
 
-bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string planner_name)
+bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
 {
     VictorConfig goal_config = sim_world->victor_model.toVictorConfig(goal.data());
 
@@ -91,13 +91,15 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
     arc_utilities::Stopwatch stopwatch;
     double timeout = 60* 15; //seconds;
     // double timeout = 30; //seconds;
-    PROFILE_START(planner_name + " success");
+    double num_planner_iterations;
+    PROFILE_START(planner.name + " planner iters");
+    PROFILE_START(planner.name + " success");
     while(!reached_goal && stopwatch() < timeout)
     {
 
         if(DO_CONTROL)
         {
-            PROFILE_START(planner_name + " control");
+            PROFILE_START(planner.name + " control");
             Optpath maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
                                                             goal_config);
             while(maybe_path.Valid())
@@ -114,17 +116,18 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
                 maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
                                                         goal_config);
             }
-            PROFILE_RECORD(planner_name + " control");
+            PROFILE_RECORD(planner.name + " control");
             if(reached_goal)
                 break;
         }
 
         if(DO_PLAN)
         {
-            PROFILE_START(planner_name + " plan");
+            num_planner_iterations ++;
+            PROFILE_START(planner.name + " plan");
             Optpath maybe_path = planner.planPathConfig(sim_world->victor_model.cur_config,
                                                         goal_config);
-            PROFILE_RECORD(planner_name + " plan");
+            PROFILE_RECORD(planner.name + " plan");
             if(!maybe_path.Valid())
             {
                 std::cout << "Path planning failed\n";
@@ -136,9 +139,9 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
                 reached_goal = true;
                 break;
             }
-            PROFILE_START(planner_name + " execute");
+            PROFILE_START(planner.name + " execute");
             reached_goal = sim_world->attemptPath(maybe_path.Get());
-            PROFILE_RECORD(planner_name + " execute");
+            PROFILE_RECORD(planner.name + " execute");
         }
 
 
@@ -150,10 +153,11 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
         std::cout << "\n\n\nTimeout before goal reached\n\n\n";
         return false;
     }
-    
+
+    PROFILE_RECORD_DOUBLE(planner.name + " planner iters", num_planner_iterations);
     std::cout << "\n\n\n== PATH COMPLETE ==\n\n\n";
 
-    double time = PROFILE_RECORD(planner_name + " success");
+    double time = PROFILE_RECORD(planner.name + " success");
     std::cout << "Total time: " << time << "\n";
 
     if(!PLAN_ONLY)
@@ -180,11 +184,16 @@ void setupWorld()
 }
 
 
-void runTest(VictorPlanner &planner, std::string planner_name)
+void runTest(VictorPlanner &planner)
 {
     std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
     std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
-    if(PEG_IN_HOLE)
+    if(TABLE_WORLD)
+    {
+        start = std::vector<double>{0, 0, 0, 0, 0.00, 0.00, 0.00};
+        goal = std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
+    }
+    else if(PEG_IN_HOLE)
     {
         goal = std::vector<double>{-0.15, 0.52, 0.0, -0.72, 0.0, 1.0, -2.5};
     } else if(MAKE_SLOTTED_WALL)
@@ -196,9 +205,9 @@ void runTest(VictorPlanner &planner, std::string planner_name)
 
     
     sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
-    PROFILE_START(planner_name);
-    attemptGoal(planner, goal, planner_name);
-    PROFILE_RECORD(planner_name);
+    PROFILE_START(planner.name);
+    attemptGoal(planner, goal);
+    PROFILE_RECORD(planner.name);
     setupWorld();
 }
 
@@ -207,37 +216,42 @@ void runTest_ThresholdRRTConnect()
 {
     std::cout << "threshold planner\n";
     VictorThresholdRRTConnect planner(&(sim_world->victor_model));
-    runTest(planner, BiRRT_TIME);
+    planner.name = "Threshold bi_rrt";
+    runTest(planner);
 }
 
 void runTest_ProbColCostRRTConnect()
 {
-    std::cout << "Anytime ProbCol test\n";
+    std::cout << "\n\nAnytime ProbCol test\n\n\n";
     VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
-    runTest(planner, PROB_COL_COST_TIME);
+    planner.name = "Prob Col Anytime";
+    runTest(planner);
 }
 
 void runTest_VoxCostRRTConnect()
 {
-    std::cout << "Anytime MinVox test\n";
+    std::cout << "\n\nAnytime MinVox test\n\n\n";
     VictorVoxCostRRTConnect planner(&(sim_world->victor_model));
-    runTest(planner, VOX_COST_TIME);
+    planner.name = "Vox Cost Anytime";
+    runTest(planner);
 }
 
 void runTest_PlanUpProbColCostRRTConnect()
 {
-    std::cout << "PlanUp ProbCol test\n";
+    std::cout << "\n\nPlanUp ProbCol test\n\n\n";
     VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
     planner.use_anytime_planner = false;
-    runTest(planner, "plan_up_" + PROB_COL_COST_TIME);
+    planner.name = "Prob Col Increasing";
+    runTest(planner);
 }
 
 void runTest_PlanUpVoxCostRRTConnect()
 {
-    std::cout << "PlanUp MinVox test\n";
+    std::cout << "\n\nPlanUp MinVox test\n\n\n";
     VictorVoxCostRRTConnect planner(&(sim_world->victor_model));
     planner.use_anytime_planner = false;
-    runTest(planner, "plan_up_" + VOX_COST_TIME);
+    planner.name = "Vox Cost Increasing";
+    runTest(planner);
 }
 
 
@@ -257,21 +271,21 @@ int main(int argc, char* argv[])
 
     setupWorld();
 
-    int num_trials = 10;
+    int num_trials = 20;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "\n\n\n\n!!!!!!!!!!!!!!\nTrial " << i + 1<< " of " << num_trials << "!!!!!!!!!!!!!\n\n\n\n\n";
         // runTest_ThresholdRRTConnect();
         runTest_ProbColCostRRTConnect();
         runTest_VoxCostRRTConnect();
-        // runTest_PlanUpProbColCostRRTConnect();
-        // runTest_PlanUpVoxCostRRTConnect();
+        runTest_PlanUpProbColCostRRTConnect();
+        runTest_PlanUpVoxCostRRTConnect();
     }
     
 
 
     PROFILE_WRITE_SUMMARY_FOR_ALL("victor_sim_times.txt");
-    PROFILE_WRITE_ALL("victor_sim_times.txt");
+    PROFILE_WRITE_ALL_FEWER_THAN("victor_sim_times.txt", 10000);
     std::cout << "\n\n\n\n\n\nWrote summary!!\n\n\n\n\n\n";
 
     

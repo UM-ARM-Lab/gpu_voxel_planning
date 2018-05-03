@@ -16,9 +16,9 @@ const std::string INSERT_VIZ_SOLUTION = "insert into viz solution";
 
 
 
-const std::string BiRRT_TIME = "bi_rrt";
-const std::string PROB_COL_COST_TIME = "motion_prob_col_rrt";
-const std::string VOX_COST_TIME = "motion_vox_cost_rrt";
+// const std::string BiRRT_TIME = "bi_rrt";
+// const std::string PROB_COL_COST_TIME = "motion_prob_col_rrt";
+// const std::string VOX_COST_TIME = "motion_vox_cost_rrt";
 
 
 #endif

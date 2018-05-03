@@ -132,7 +132,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
     if(new_cost <= cur_cost)
     {
-        std::cout << "smoother path found with cost " << new_cost << "\n";
+        // std::cout << "smoother path found with cost " << new_cost << "\n";
         cur_cost = new_cost;
         states = new_path;
         si_->freeStates(orig_segment);

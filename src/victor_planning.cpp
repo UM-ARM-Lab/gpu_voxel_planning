@@ -1,7 +1,7 @@
 #include "victor_planning.hpp"
 
 
-// #define ENABLE_PROFILING
+#define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
 
 
@@ -75,7 +75,6 @@ VictorPlanner::VictorPlanner(GpuVoxelsVictor* victor_model)
     simp_ = std::make_shared<og::PathSimplifier>(si_);
     victor_model_ = victor_model;
 
-    PROFILE_REINITIALIZE(10,1000);
 }
 
 void VictorPlanner::setupSpaceInformation()
@@ -157,8 +156,6 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::planPath(ob::ScopedState<> start, Goals
     
         
     PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
-    
-    PROFILE_REINITIALIZE(10,1000);
 
     return Maybe::Maybe<ob::PathPtr>(path);
 }
@@ -344,14 +341,14 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
             best_pcol = pcol;
         }
 
-        if(checking_goal_directly)
-        {
-            std::cout << "Direct path towards goal has pcol " << pcol << "\n";
-            if(pcol < .1)
-            {
-                break;
-            }
-        }
+        // if(checking_goal_directly)
+        // {
+        //     std::cout << "Direct path towards goal has pcol " << pcol << "\n";
+        //     if(pcol < .1)
+        //     {
+        //         break;
+        //     }
+        // }
     
     }
 
@@ -790,6 +787,11 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planAnytime(ob::ScopedStat
 
     arc_utilities::Stopwatch stopwatch;
     double time_left;
+
+    std::string profile_optim_name = name + " optimal value";
+    PROFILE_START(profile_optim_name);
+    PROFILE_RECORD_DOUBLE(profile_optim_name, -1);
+
     
     while((time_left = (planning_time - stopwatch())) > 0)
     {
@@ -807,6 +809,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planAnytime(ob::ScopedStat
             std::cout << "Path cost: " << path_cost << "\n";
             if(path_cost < threshold)
             {
+                PROFILE_RECORD_DOUBLE(profile_optim_name, path_cost);
                 best_cost = path_cost;
                 threshold = (path_cost - eps);
                 path = ptmp;
@@ -860,6 +863,10 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planUp(ob::ScopedState<> s
 
     arc_utilities::Stopwatch stopwatch;
     double time_left;
+
+    std::string profile_optim_name = name + " optimal value";
+    PROFILE_START(profile_optim_name);
+    // PROFILE_RECORD_DOUBLE(profile_optim_name, -1);
     
     while((time_left = (planning_time - stopwatch())) > 0)
     {
@@ -879,6 +886,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planUp(ob::ScopedState<> s
             std::cout << "Path found with cost: " << path_cost << "\n";
             if(path_cost < threshold)
             {
+                PROFILE_RECORD_DOUBLE(profile_optim_name, path_cost);
                 best_cost = path_cost;
                 threshold = (path_cost - eps);
                 path = ptmp;

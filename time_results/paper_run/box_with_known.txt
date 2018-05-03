@@ -1,0 +1,1399 @@
+2018-05-03 12:11:49
+
+/* Number of iterations to run shortcut smoothing */
+#define SMOOTHING_ITERATIONS 30
+
+/* Expected num total voxels in world in collision */
+#define UNEXPLORED_BIAS 0
+
+/* Max planning time in seconds */
+#define PLANNING_TIMEOUT 30
+
+#define USE_KNOWN_OBSTACLES true
+
+#define MAKE_TABLE true
+
+#define MAKE_SLOTTED_WALL false
+
+#define ALL_OBSTACLES_KNOWN false
+
+#define NUM_STEPS_FOR_ADDING_COLLISION 5
+
+#define TABLE_WORLD true
+
+#define PEG_IN_HOLE false
+
+#define PLAN_ONLY false
+
+#define DO_CONTROL true
+
+#define DO_PLAN true
+
+#define VOX_CONTROLLER_THRESHOLD 20
+
+#define VIDEO_VISUALIZE true
+
+#define EXECUTION_DELAY_us 10000
+
+#endif
+
+
+Label                                  tot time (s)       num_calls    avg time (s)     total value       avg value
+Prob Col Anytime                        1837.543248              20       91.877162
+Prob Col Anytime control                 135.987318              57        2.385742
+Prob Col Anytime execute                 169.807923              50        3.396158
+Prob Col Anytime optimal value           196.973308             148        1.330901       44.535205        0.300914
+Prob Col Anytime plan                   1531.744576              50       30.634892
+Prob Col Anytime planner iters          1837.540851              20       91.877043       50.000000        2.500000
+Prob Col Anytime success                1837.541398              20       91.877070
+Prob Col Increasing                     1329.812473              20       66.490624
+Prob Col Increasing control              125.089846              45        2.779774
+Prob Col Increasing execute               71.331574              35        2.038045
+Prob Col Increasing optimal value       1102.689494              48       22.972698       44.374455        0.924468
+Prob Col Increasing plan                1133.388783              37       30.632129
+Prob Col Increasing planner iters       1225.818388              18       68.101022       34.000000        1.888889
+Prob Col Increasing success             1225.818859              18       68.101048
+Seen sizes, robot intersection          1084.085037          540189        0.002007
+Vox Cost Anytime                        2884.535294              20      144.226765
+Vox Cost Anytime control                 248.313965              80        3.103925
+Vox Cost Anytime execute                 239.591804              78        3.071690
+Vox Cost Anytime optimal value           424.778220             224        1.896331    25715.000000      114.799107
+Vox Cost Anytime plan                   2396.625997              78       30.725974
+Vox Cost Anytime planner iters          2884.533368              20      144.226668       78.000000        3.900000
+Vox Cost Anytime success                2884.533900              20      144.226695
+Vox Cost Increasing                     1532.801518              20       76.640076
+Vox Cost Increasing control              259.270826              41        6.323679
+Vox Cost Increasing execute              141.996777              34        4.176376
+Vox Cost Increasing optimal value        782.405855              46       17.008823     5157.000000      112.108696
+Vox Cost Increasing plan                1131.531180              39       29.013620
+Vox Cost Increasing planner iters       1085.203275              15       72.346885       27.000000        1.800000
+Vox Cost Increasing success             1085.203743              15       72.346916
+getProbCost                             3164.063659          192261        0.016457
+getVoxCost                              3526.102565          352252        0.010010
+prob add query                           414.335848          671480        0.000617
+prob free space collisions               645.158526          537530        0.001200
+prob seen collision                     1084.213375          537530        0.002017
+vox add query                           2129.531749         1870846        0.001138
+vox collision                            617.851994         1594646        0.000387
+
+2018-05-03 12:11:49
+
+Label                                          time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Prob Col Anytime                           2.996558 
+Prob Col Anytime                          38.060387 
+Prob Col Anytime                         371.449540 
+Prob Col Anytime                         132.495350 
+Prob Col Anytime                         168.052477 
+Prob Col Anytime                         184.991709 
+Prob Col Anytime                          37.349008 
+Prob Col Anytime                           5.054665 
+Prob Col Anytime                          84.446764 
+Prob Col Anytime                          37.560461 
+Prob Col Anytime                          37.792565 
+Prob Col Anytime                          37.452019 
+Prob Col Anytime                         131.932988 
+Prob Col Anytime                          36.927664 
+Prob Col Anytime                         131.643769 
+Prob Col Anytime                           4.546017 
+Prob Col Anytime                         204.762898 
+Prob Col Anytime                         175.749484 
+Prob Col Anytime                           8.327420 
+Prob Col Anytime                           5.951504 
+Prob Col Anytime control                   2.996510 
+Prob Col Anytime control                   5.227086 
+Prob Col Anytime control                   3.913496 
+Prob Col Anytime control                   4.660534 
+Prob Col Anytime control                   2.227790 
+Prob Col Anytime control                   3.120325 
+Prob Col Anytime control                   0.062118 
+Prob Col Anytime control                   0.035914 
+Prob Col Anytime control                   0.059515 
+Prob Col Anytime control                   0.064838 
+Prob Col Anytime control                   0.056531 
+Prob Col Anytime control                   0.034179 
+Prob Col Anytime control                   1.663522 
+Prob Col Anytime control                   3.804423 
+Prob Col Anytime control                   5.953383 
+Prob Col Anytime control                   0.029697 
+Prob Col Anytime control                   0.023121 
+Prob Col Anytime control                   0.027422 
+Prob Col Anytime control                   5.457961 
+Prob Col Anytime control                   1.216109 
+Prob Col Anytime control                   0.060709 
+Prob Col Anytime control                   0.015694 
+Prob Col Anytime control                   5.283015 
+Prob Col Anytime control                   0.014163 
+Prob Col Anytime control                   0.055643 
+Prob Col Anytime control                   2.577386 
+Prob Col Anytime control                   5.138831 
+Prob Col Anytime control                   5.054610 
+Prob Col Anytime control                   7.077680 
+Prob Col Anytime control                   6.670511 
+Prob Col Anytime control                   5.096512 
+Prob Col Anytime control                   4.980978 
+Prob Col Anytime control                   4.809210 
+Prob Col Anytime control                   3.883022 
+Prob Col Anytime control                   0.011696 
+Prob Col Anytime control                   0.019439 
+Prob Col Anytime control                   0.018483 
+Prob Col Anytime control                   4.425299 
+Prob Col Anytime control                   1.414770 
+Prob Col Anytime control                   3.113851 
+Prob Col Anytime control                   0.050146 
+Prob Col Anytime control                   0.035383 
+Prob Col Anytime control                   0.889579 
+Prob Col Anytime control                   4.545909 
+Prob Col Anytime control                   5.395716 
+Prob Col Anytime control                   0.041168 
+Prob Col Anytime control                   0.043847 
+Prob Col Anytime control                   0.056964 
+Prob Col Anytime control                   0.807736 
+Prob Col Anytime control                   0.060098 
+Prob Col Anytime control                   5.683517 
+Prob Col Anytime control                   0.052904 
+Prob Col Anytime control                   1.813809 
+Prob Col Anytime control                   0.988790 
+Prob Col Anytime control                   0.887059 
+Prob Col Anytime control                   8.327312 
+Prob Col Anytime control                   5.951404 
+Prob Col Anytime execute                   2.340657 
+Prob Col Anytime execute                   2.396309 
+Prob Col Anytime execute                   4.185847 
+Prob Col Anytime execute                   1.976349 
+Prob Col Anytime execute                   0.212810 
+Prob Col Anytime execute                   0.569890 
+Prob Col Anytime execute                   0.418807 
+Prob Col Anytime execute                   0.520105 
+Prob Col Anytime execute                   0.231316 
+Prob Col Anytime execute                   0.534479 
+Prob Col Anytime execute                   2.642701 
+Prob Col Anytime execute                   2.155923 
+Prob Col Anytime execute                   1.010411 
+Prob Col Anytime execute                   0.655088 
+Prob Col Anytime execute                   0.942522 
+Prob Col Anytime execute                   2.551680 
+Prob Col Anytime execute                  28.266800 
+Prob Col Anytime execute                   0.825799 
+Prob Col Anytime execute                   1.764745 
+Prob Col Anytime execute                   6.106760 
+Prob Col Anytime execute                   0.580818 
+Prob Col Anytime execute                   2.028113 
+Prob Col Anytime execute                   2.397952 
+Prob Col Anytime execute                  46.038293 
+Prob Col Anytime execute                   1.778230 
+Prob Col Anytime execute                   4.905395 
+Prob Col Anytime execute                   3.622372 
+Prob Col Anytime execute                   2.050772 
+Prob Col Anytime execute                   2.527024 
+Prob Col Anytime execute                   2.398809 
+Prob Col Anytime execute                   1.373194 
+Prob Col Anytime execute                   1.118565 
+Prob Col Anytime execute                   0.663868 
+Prob Col Anytime execute                   2.807325 
+Prob Col Anytime execute                   1.047403 
+Prob Col Anytime execute                   1.076678 
+Prob Col Anytime execute                   0.685579 
+Prob Col Anytime execute                   0.687689 
+Prob Col Anytime execute                   3.027047 
+Prob Col Anytime execute                   0.878124 
+Prob Col Anytime execute                   1.232559 
+Prob Col Anytime execute                   1.195688 
+Prob Col Anytime execute                   1.754633 
+Prob Col Anytime execute                   1.297061 
+Prob Col Anytime execute                   8.412431 
+Prob Col Anytime execute                   1.463029 
+Prob Col Anytime execute                   1.889520 
+Prob Col Anytime execute                   1.929389 
+Prob Col Anytime execute                   1.906603 
+Prob Col Anytime execute                   6.724761 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.184206        1.000000 
+Prob Col Anytime optimal value            18.976099        0.996838 
+Prob Col Anytime optimal value            19.524901        0.924752 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.022159        1.000000 
+Prob Col Anytime optimal value             0.381770        0.815127 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.332005        0.996215 
+Prob Col Anytime optimal value             1.415942        0.995361 
+Prob Col Anytime optimal value             1.981953        0.963225 
+Prob Col Anytime optimal value             3.032106        0.947445 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.073586        1.000000 
+Prob Col Anytime optimal value             0.690315        0.992730 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.227394        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.256480        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.047485        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.277651        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.305709        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.071681        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.135549        1.000000 
+Prob Col Anytime optimal value             1.093069        0.994242 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.685030        0.999991 
+Prob Col Anytime optimal value             1.519899        0.975168 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.037587        1.000000 
+Prob Col Anytime optimal value             0.395533        0.922638 
+Prob Col Anytime optimal value             0.756647        0.919116 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.193887        1.000000 
+Prob Col Anytime optimal value             0.000002       -1.000000 
+Prob Col Anytime optimal value             0.039624        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.243575        1.000000 
+Prob Col Anytime optimal value             0.669190        0.998394 
+Prob Col Anytime optimal value             1.042812        0.988345 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.021483        1.000000 
+Prob Col Anytime optimal value             1.006789        0.985131 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.214583        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.047506        1.000000 
+Prob Col Anytime optimal value             0.408095        0.974593 
+Prob Col Anytime optimal value             0.000003       -1.000000 
+Prob Col Anytime optimal value             0.212878        1.000000 
+Prob Col Anytime optimal value             1.734757        0.985793 
+Prob Col Anytime optimal value             0.000002       -1.000000 
+Prob Col Anytime optimal value             0.163375        1.000000 
+Prob Col Anytime optimal value             0.000002       -1.000000 
+Prob Col Anytime optimal value             0.195858        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.026647        1.000000 
+Prob Col Anytime optimal value             1.610637        0.905017 
+Prob Col Anytime optimal value             0.000003       -1.000000 
+Prob Col Anytime optimal value             0.077011        1.000000 
+Prob Col Anytime optimal value             0.496569        0.982512 
+Prob Col Anytime optimal value            15.602842        0.932136 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.183013        1.000000 
+Prob Col Anytime optimal value             2.112642        0.763512 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.038156        1.000000 
+Prob Col Anytime optimal value             0.398591        0.982347 
+Prob Col Anytime optimal value             1.570316        0.978865 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.070645        1.000000 
+Prob Col Anytime optimal value             2.060648        0.970104 
+Prob Col Anytime optimal value             3.190810        0.897785 
+Prob Col Anytime optimal value             3.567346        0.739343 
+Prob Col Anytime optimal value             6.053279        0.679999 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.164346        1.000000 
+Prob Col Anytime optimal value             0.578814        0.938339 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.271607        0.777670 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.265469        0.970479 
+Prob Col Anytime optimal value             1.146891        0.781231 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.167795        1.000000 
+Prob Col Anytime optimal value             7.014186        0.849893 
+Prob Col Anytime optimal value             7.440228        0.821386 
+Prob Col Anytime optimal value             0.000002       -1.000000 
+Prob Col Anytime optimal value             0.053175        1.000000 
+Prob Col Anytime optimal value             0.439983        0.952632 
+Prob Col Anytime optimal value             0.762575        0.931378 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.346492        0.998207 
+Prob Col Anytime optimal value            20.386296        0.994273 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.373917        0.996912 
+Prob Col Anytime optimal value            15.528795        0.985408 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.027126        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.264894        0.841915 
+Prob Col Anytime optimal value             0.698118        0.777171 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.026832        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.042803        1.000000 
+Prob Col Anytime optimal value             3.839796        0.999685 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.183028        1.000000 
+Prob Col Anytime optimal value            16.303385        0.946779 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.060102        1.000000 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.178053        1.000000 
+Prob Col Anytime optimal value             0.587437        0.998132 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.381396        0.982718 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.211865        1.000000 
+Prob Col Anytime optimal value             1.616579        0.999048 
+Prob Col Anytime optimal value             0.000002       -1.000000 
+Prob Col Anytime optimal value             0.062768        1.000000 
+Prob Col Anytime optimal value             0.493946        0.981649 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.359550        0.999791 
+Prob Col Anytime optimal value             0.791047        0.985856 
+Prob Col Anytime optimal value            12.823915        0.916040 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.037025        1.000000 
+Prob Col Anytime optimal value             0.432926        0.984535 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.182733        1.000000 
+Prob Col Anytime optimal value             0.514920        0.976960 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.041973        1.000000 
+Prob Col Anytime optimal value             0.432106        0.989335 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.039119        1.000000 
+Prob Col Anytime optimal value             0.415088        0.995976 
+Prob Col Anytime optimal value             0.000001       -1.000000 
+Prob Col Anytime optimal value             0.263849        1.000000 
+Prob Col Anytime optimal value             1.044528        0.999799 
+Prob Col Anytime optimal value             3.997454        0.955288 
+Prob Col Anytime plan                     30.492513 
+Prob Col Anytime plan                     30.356340 
+Prob Col Anytime plan                     30.660431 
+Prob Col Anytime plan                     30.697685 
+Prob Col Anytime plan                     30.361740 
+Prob Col Anytime plan                     30.276558 
+Prob Col Anytime plan                     30.096367 
+Prob Col Anytime plan                     30.331320 
+Prob Col Anytime plan                     30.608298 
+Prob Col Anytime plan                     30.168400 
+Prob Col Anytime plan                     31.398289 
+Prob Col Anytime plan                     30.946180 
+Prob Col Anytime plan                     30.368160 
+Prob Col Anytime plan                     30.302683 
+Prob Col Anytime plan                     30.064778 
+Prob Col Anytime plan                     30.566226 
+Prob Col Anytime plan                     32.887071 
+Prob Col Anytime plan                     30.153898 
+Prob Col Anytime plan                     30.405303 
+Prob Col Anytime plan                     30.891395 
+Prob Col Anytime plan                     30.239585 
+Prob Col Anytime plan                     30.375213 
+Prob Col Anytime plan                     30.623417 
+Prob Col Anytime plan                     34.777742 
+Prob Col Anytime plan                     30.431858 
+Prob Col Anytime plan                     30.904229 
+Prob Col Anytime plan                     31.266038 
+Prob Col Anytime plan                     30.413020 
+Prob Col Anytime plan                     30.284425 
+Prob Col Anytime plan                     30.243850 
+Prob Col Anytime plan                     30.164439 
+Prob Col Anytime plan                     30.274815 
+Prob Col Anytime plan                     30.939494 
+Prob Col Anytime plan                     30.658468 
+Prob Col Anytime plan                     30.040073 
+Prob Col Anytime plan                     30.282057 
+Prob Col Anytime plan                     30.077734 
+Prob Col Anytime plan                     30.307296 
+Prob Col Anytime plan                     31.410543 
+Prob Col Anytime plan                     30.058457 
+Prob Col Anytime plan                     30.306579 
+Prob Col Anytime plan                     30.388896 
+Prob Col Anytime plan                     30.667501 
+Prob Col Anytime plan                     30.533171 
+Prob Col Anytime plan                     31.632102 
+Prob Col Anytime plan                     30.515904 
+Prob Col Anytime plan                     30.396057 
+Prob Col Anytime plan                     30.473458 
+Prob Col Anytime plan                     30.417839 
+Prob Col Anytime plan                     30.606684 
+Prob Col Anytime planner iters             2.996515        0.000000 
+Prob Col Anytime planner iters            38.060277        1.000000 
+Prob Col Anytime planner iters           371.449484       11.000000 
+Prob Col Anytime planner iters           132.495233        4.000000 
+Prob Col Anytime planner iters           168.052391        4.000000 
+Prob Col Anytime planner iters           184.991487        4.000000 
+Prob Col Anytime planner iters            37.348933        1.000000 
+Prob Col Anytime planner iters             5.054615        0.000000 
+Prob Col Anytime planner iters            84.446267        2.000000 
+Prob Col Anytime planner iters            37.560325        1.000000 
+Prob Col Anytime planner iters            37.792445        1.000000 
+Prob Col Anytime planner iters            37.451889        1.000000 
+Prob Col Anytime planner iters           131.932869        4.000000 
+Prob Col Anytime planner iters            36.927572        1.000000 
+Prob Col Anytime planner iters           131.643647        4.000000 
+Prob Col Anytime planner iters             4.545920        0.000000 
+Prob Col Anytime planner iters           204.762827        6.000000 
+Prob Col Anytime planner iters           175.749415        5.000000 
+Prob Col Anytime planner iters             8.327323        0.000000 
+Prob Col Anytime planner iters             5.951416        0.000000 
+Prob Col Anytime success                   2.996528 
+Prob Col Anytime success                  38.060307 
+Prob Col Anytime success                 371.449502 
+Prob Col Anytime success                 132.495265 
+Prob Col Anytime success                 168.052415 
+Prob Col Anytime success                 184.991519 
+Prob Col Anytime success                  37.348951 
+Prob Col Anytime success                   5.054632 
+Prob Col Anytime success                  84.446300 
+Prob Col Anytime success                  37.560363 
+Prob Col Anytime success                  37.792477 
+Prob Col Anytime success                  37.451922 
+Prob Col Anytime success                 131.932900 
+Prob Col Anytime success                  36.927604 
+Prob Col Anytime success                 131.643680 
+Prob Col Anytime success                   4.545955 
+Prob Col Anytime success                 204.762845 
+Prob Col Anytime success                 175.749433 
+Prob Col Anytime success                   8.327355 
+Prob Col Anytime success                   5.951447 
+Prob Col Increasing                       74.131706 
+Prob Col Increasing                        4.464150 
+Prob Col Increasing                      138.624334 
+Prob Col Increasing                       72.131727 
+Prob Col Increasing                       37.635428 
+Prob Col Increasing                       38.258089 
+Prob Col Increasing                      362.673231 
+Prob Col Increasing                       68.930686 
+Prob Col Increasing                       71.679309 
+Prob Col Increasing                       40.447447 
+Prob Col Increasing                        4.411993 
+Prob Col Increasing                      111.817434 
+Prob Col Increasing                       40.071311 
+Prob Col Increasing                        6.879776 
+Prob Col Increasing                      132.540920 
+Prob Col Increasing                        7.465246 
+Prob Col Increasing                       35.061771 
+Prob Col Increasing                       38.949504 
+Prob Col Increasing                        6.064960 
+Prob Col Increasing                       37.573451 
+Prob Col Increasing control                7.354321 
+Prob Col Increasing control                0.024858 
+Prob Col Increasing control                4.464046 
+Prob Col Increasing control                5.205912 
+Prob Col Increasing control                0.044320 
+Prob Col Increasing control                0.856324 
+Prob Col Increasing control                2.057439 
+Prob Col Increasing control                0.471746 
+Prob Col Increasing control                3.477051 
+Prob Col Increasing control                2.806368 
+Prob Col Increasing control                3.879438 
+Prob Col Increasing control                1.591209 
+Prob Col Increasing control                4.922862 
+Prob Col Increasing control                3.877170 
+Prob Col Increasing control                4.579732 
+Prob Col Increasing control                1.185449 
+Prob Col Increasing control                0.036415 
+Prob Col Increasing control                0.115782 
+Prob Col Increasing control                0.866910 
+Prob Col Increasing control                0.738576 
+Prob Col Increasing control                0.041698 
+Prob Col Increasing control                0.052327 
+Prob Col Increasing control                0.050096 
+Prob Col Increasing control                0.051172 
+Prob Col Increasing control                4.750667 
+Prob Col Increasing control                1.809933 
+Prob Col Increasing control                4.591339 
+Prob Col Increasing control                0.794770 
+Prob Col Increasing control                1.418761 
+Prob Col Increasing control                4.239368 
+Prob Col Increasing control                4.411893 
+Prob Col Increasing control                8.224049 
+Prob Col Increasing control                0.940880 
+Prob Col Increasing control                0.044626 
+Prob Col Increasing control                5.310073 
+Prob Col Increasing control                6.879727 
+Prob Col Increasing control                4.927935 
+Prob Col Increasing control                0.030156 
+Prob Col Increasing control                0.045164 
+Prob Col Increasing control                0.059574 
+Prob Col Increasing control                7.465127 
+Prob Col Increasing control                5.036792 
+Prob Col Increasing control                4.855972 
+Prob Col Increasing control                6.064832 
+Prob Col Increasing control                4.436987 
+Prob Col Increasing execute                1.278911 
+Prob Col Increasing execute                3.894795 
+Prob Col Increasing execute                1.712985 
+Prob Col Increasing execute                2.096344 
+Prob Col Increasing execute                1.772700 
+Prob Col Increasing execute                1.357737 
+Prob Col Increasing execute                2.831714 
+Prob Col Increasing execute                1.784999 
+Prob Col Increasing execute                1.504064 
+Prob Col Increasing execute                2.865117 
+Prob Col Increasing execute                1.683471 
+Prob Col Increasing execute                0.884675 
+Prob Col Increasing execute                1.281601 
+Prob Col Increasing execute                1.507501 
+Prob Col Increasing execute                1.209523 
+Prob Col Increasing execute                1.881979 
+Prob Col Increasing execute                1.931499 
+Prob Col Increasing execute                0.440336 
+Prob Col Increasing execute                0.441269 
+Prob Col Increasing execute                0.751836 
+Prob Col Increasing execute                1.536445 
+Prob Col Increasing execute                1.669778 
+Prob Col Increasing execute                2.067089 
+Prob Col Increasing execute                1.112009 
+Prob Col Increasing execute                5.749462 
+Prob Col Increasing execute                5.736351 
+Prob Col Increasing execute                1.840795 
+Prob Col Increasing execute                2.890919 
+Prob Col Increasing execute                4.058078 
+Prob Col Increasing execute                0.621073 
+Prob Col Increasing execute                1.002026 
+Prob Col Increasing execute                1.733659 
+Prob Col Increasing execute                1.808995 
+Prob Col Increasing execute                3.716714 
+Prob Col Increasing execute                2.675126 
+Prob Col Increasing optimal value         21.257975        0.917923 
+Prob Col Increasing optimal value         23.543714        1.000000 
+Prob Col Increasing optimal value         23.905325        0.985602 
+Prob Col Increasing optimal value         28.299277        0.906943 
+Prob Col Increasing optimal value         22.479307        0.964801 
+Prob Col Increasing optimal value         24.926617        1.000000 
+Prob Col Increasing optimal value         25.326249        0.994551 
+Prob Col Increasing optimal value         26.445156        0.823701 
+Prob Col Increasing optimal value         23.798124        0.993731 
+Prob Col Increasing optimal value         23.667051        1.000000 
+Prob Col Increasing optimal value         21.213351        0.907879 
+Prob Col Increasing optimal value         21.465653        0.808419 
+Prob Col Increasing optimal value         18.228516        0.714286 
+Prob Col Increasing optimal value         21.299460        0.932641 
+Prob Col Increasing optimal value         17.743279        0.762456 
+Prob Col Increasing optimal value         20.828620        0.899316 
+Prob Col Increasing optimal value         23.386033        0.979823 
+Prob Col Increasing optimal value         23.730941        1.000000 
+Prob Col Increasing optimal value         24.137932        0.970770 
+Prob Col Increasing optimal value         23.445622        1.000000 
+Prob Col Increasing optimal value         23.409161        1.000000 
+Prob Col Increasing optimal value         23.370228        1.000000 
+Prob Col Increasing optimal value         29.040655        0.980058 
+Prob Col Increasing optimal value         23.948340        1.000000 
+Prob Col Increasing optimal value         23.874819        1.000000 
+Prob Col Increasing optimal value         23.772253        1.000000 
+Prob Col Increasing optimal value         24.724431        1.000000 
+Prob Col Increasing optimal value         27.267444        0.999682 
+Prob Col Increasing optimal value         21.182451        0.968274 
+Prob Col Increasing optimal value         21.673633        0.956100 
+Prob Col Increasing optimal value         21.023569        0.893526 
+Prob Col Increasing optimal value         17.841145        0.824142 
+Prob Col Increasing optimal value         18.619729        0.684953 
+Prob Col Increasing optimal value         21.095483        0.965397 
+Prob Col Increasing optimal value         22.743554        0.944370 
+Prob Col Increasing optimal value         23.334601        0.900883 
+Prob Col Increasing optimal value         21.058761        0.947833 
+Prob Col Increasing optimal value         23.561745        1.000000 
+Prob Col Increasing optimal value         28.686232        0.866043 
+Prob Col Increasing optimal value         18.811889        0.591234 
+Prob Col Increasing optimal value         23.743270        1.000000 
+Prob Col Increasing optimal value         23.832504        1.000000 
+Prob Col Increasing optimal value         24.004292        0.998860 
+Prob Col Increasing optimal value         24.360811        0.990514 
+Prob Col Increasing optimal value         21.635091        0.968537 
+Prob Col Increasing optimal value         23.757729        1.000000 
+Prob Col Increasing optimal value         24.660191        0.633471 
+Prob Col Increasing optimal value         18.527283        0.697738 
+Prob Col Increasing plan                  30.709438 
+Prob Col Increasing plan                  30.869285 
+Prob Col Increasing plan                  30.900815 
+Prob Col Increasing plan                  30.443976 
+Prob Col Increasing plan                  30.925005 
+Prob Col Increasing plan                  30.778864 
+Prob Col Increasing plan                  30.259154 
+Prob Col Increasing plan                  30.972297 
+Prob Col Increasing plan                  30.660592 
+Prob Col Increasing plan                  30.469975 
+Prob Col Increasing plan                  30.343094 
+Prob Col Increasing plan                  30.458134 
+Prob Col Increasing plan                  30.326339 
+Prob Col Increasing plan                  31.019166 
+Prob Col Increasing plan                  30.640609 
+Prob Col Increasing plan                  30.579493 
+Prob Col Increasing plan                  31.221573 
+Prob Col Increasing plan                  30.495007 
+Prob Col Increasing plan                  30.921116 
+Prob Col Increasing plan                  30.913311 
+Prob Col Increasing plan                  30.609716 
+Prob Col Increasing plan                  30.688223 
+Prob Col Increasing plan                  30.012054 
+Prob Col Increasing plan                  30.843397 
+Prob Col Increasing plan                  30.851790 
+Prob Col Increasing plan                  30.458543 
+Prob Col Increasing plan                  30.883781 
+Prob Col Increasing plan                  30.642789 
+Prob Col Increasing plan                  30.613048 
+Prob Col Increasing plan                  30.703016 
+Prob Col Increasing plan                  30.377077 
+Prob Col Increasing plan                  30.567462 
+Prob Col Increasing plan                  30.531345 
+Prob Col Increasing plan                  30.836347 
+Prob Col Increasing plan                  30.024964 
+Prob Col Increasing plan                  30.376725 
+Prob Col Increasing plan                  30.461263 
+Prob Col Increasing planner iters         74.131636        2.000000 
+Prob Col Increasing planner iters          4.464057        0.000000 
+Prob Col Increasing planner iters        138.624238        4.000000 
+Prob Col Increasing planner iters         72.131609        2.000000 
+Prob Col Increasing planner iters         37.635333        1.000000 
+Prob Col Increasing planner iters         38.257973        1.000000 
+Prob Col Increasing planner iters        362.673168       11.000000 
+Prob Col Increasing planner iters         71.679201        2.000000 
+Prob Col Increasing planner iters         40.447388        1.000000 
+Prob Col Increasing planner iters          4.411903        0.000000 
+Prob Col Increasing planner iters        111.817305        3.000000 
+Prob Col Increasing planner iters         40.071191        1.000000 
+Prob Col Increasing planner iters          6.879732        0.000000 
+Prob Col Increasing planner iters        132.540857        4.000000 
+Prob Col Increasing planner iters          7.465138        0.000000 
+Prob Col Increasing planner iters         38.949428        1.000000 
+Prob Col Increasing planner iters          6.064843        0.000000 
+Prob Col Increasing planner iters         37.573388        1.000000 
+Prob Col Increasing success               74.131656 
+Prob Col Increasing success                4.464088 
+Prob Col Increasing success              138.624270 
+Prob Col Increasing success               72.131640 
+Prob Col Increasing success               37.635364 
+Prob Col Increasing success               38.258004 
+Prob Col Increasing success              362.673183 
+Prob Col Increasing success               71.679237 
+Prob Col Increasing success               40.447402 
+Prob Col Increasing success                4.411935 
+Prob Col Increasing success              111.817337 
+Prob Col Increasing success               40.071224 
+Prob Col Increasing success                6.879744 
+Prob Col Increasing success              132.540870 
+Prob Col Increasing success                7.465172 
+Prob Col Increasing success               38.949447 
+Prob Col Increasing success                6.064881 
+Prob Col Increasing success               37.573403 
+Vox Cost Anytime                           5.501885 
+Vox Cost Anytime                         152.169413 
+Vox Cost Anytime                         231.952369 
+Vox Cost Anytime                          41.848865 
+Vox Cost Anytime                          71.666047 
+Vox Cost Anytime                         103.810756 
+Vox Cost Anytime                         270.886520 
+Vox Cost Anytime                          45.214716 
+Vox Cost Anytime                         144.070926 
+Vox Cost Anytime                         125.270388 
+Vox Cost Anytime                         437.125376 
+Vox Cost Anytime                         137.545297 
+Vox Cost Anytime                         300.332349 
+Vox Cost Anytime                          48.400209 
+Vox Cost Anytime                         108.951185 
+Vox Cost Anytime                         106.530006 
+Vox Cost Anytime                         151.553940 
+Vox Cost Anytime                           5.837695 
+Vox Cost Anytime                         183.817689 
+Vox Cost Anytime                         212.049663 
+Vox Cost Anytime control                   5.501847 
+Vox Cost Anytime control                   6.403566 
+Vox Cost Anytime control                   5.098552 
+Vox Cost Anytime control                   0.036579 
+Vox Cost Anytime control                   3.304975 
+Vox Cost Anytime control                   7.774410 
+Vox Cost Anytime control                   0.814291 
+Vox Cost Anytime control                   0.030578 
+Vox Cost Anytime control                   0.012003 
+Vox Cost Anytime control                   0.007077 
+Vox Cost Anytime control                   0.036906 
+Vox Cost Anytime control                   0.034105 
+Vox Cost Anytime control                   7.624827 
+Vox Cost Anytime control                   6.062996 
+Vox Cost Anytime control                   1.610624 
+Vox Cost Anytime control                   4.837315 
+Vox Cost Anytime control                   0.030867 
+Vox Cost Anytime control                   0.035955 
+Vox Cost Anytime control                  11.489668 
+Vox Cost Anytime control                   0.017132 
+Vox Cost Anytime control                   1.966388 
+Vox Cost Anytime control                   0.029119 
+Vox Cost Anytime control                   0.778576 
+Vox Cost Anytime control                   7.788647 
+Vox Cost Anytime control                   0.025946 
+Vox Cost Anytime control                   8.615221 
+Vox Cost Anytime control                   8.870577 
+Vox Cost Anytime control                   2.153211 
+Vox Cost Anytime control                   0.013972 
+Vox Cost Anytime control                   0.036840 
+Vox Cost Anytime control                  12.080777 
+Vox Cost Anytime control                   3.096157 
+Vox Cost Anytime control                   0.802039 
+Vox Cost Anytime control                   9.430358 
+Vox Cost Anytime control                   4.821575 
+Vox Cost Anytime control                   0.004807 
+Vox Cost Anytime control                   0.007626 
+Vox Cost Anytime control                  23.143835 
+Vox Cost Anytime control                   1.020979 
+Vox Cost Anytime control                   0.020170 
+Vox Cost Anytime control                   0.047662 
+Vox Cost Anytime control                   0.845621 
+Vox Cost Anytime control                   0.006700 
+Vox Cost Anytime control                   0.820937 
+Vox Cost Anytime control                   7.192190 
+Vox Cost Anytime control                   0.029416 
+Vox Cost Anytime control                   0.015665 
+Vox Cost Anytime control                   0.018053 
+Vox Cost Anytime control                   5.226428 
+Vox Cost Anytime control                   3.387908 
+Vox Cost Anytime control                   2.424742 
+Vox Cost Anytime control                   0.047531 
+Vox Cost Anytime control                   0.024397 
+Vox Cost Anytime control                   0.015662 
+Vox Cost Anytime control                   0.016111 
+Vox Cost Anytime control                   1.007080 
+Vox Cost Anytime control                   0.018299 
+Vox Cost Anytime control                  10.937797 
+Vox Cost Anytime control                   3.770529 
+Vox Cost Anytime control                   1.915174 
+Vox Cost Anytime control                   4.303614 
+Vox Cost Anytime control                   3.889262 
+Vox Cost Anytime control                   1.633952 
+Vox Cost Anytime control                   3.322140 
+Vox Cost Anytime control                   8.442927 
+Vox Cost Anytime control                   3.891875 
+Vox Cost Anytime control                   0.053601 
+Vox Cost Anytime control                   0.014122 
+Vox Cost Anytime control                   5.837586 
+Vox Cost Anytime control                   8.183038 
+Vox Cost Anytime control                   6.096139 
+Vox Cost Anytime control                   2.884001 
+Vox Cost Anytime control                   0.029624 
+Vox Cost Anytime control                   0.792017 
+Vox Cost Anytime control                   4.986112 
+Vox Cost Anytime control                   4.573402 
+Vox Cost Anytime control                   2.490154 
+Vox Cost Anytime control                   0.052274 
+Vox Cost Anytime control                   0.045021 
+Vox Cost Anytime control                   3.554107 
+Vox Cost Anytime execute                   4.089388 
+Vox Cost Anytime execute                   2.057370 
+Vox Cost Anytime execute                   3.076373 
+Vox Cost Anytime execute                   4.334958 
+Vox Cost Anytime execute                   0.565555 
+Vox Cost Anytime execute                   0.444309 
+Vox Cost Anytime execute                   1.447240 
+Vox Cost Anytime execute                   0.641446 
+Vox Cost Anytime execute                   1.288895 
+Vox Cost Anytime execute                   1.078500 
+Vox Cost Anytime execute                   4.911871 
+Vox Cost Anytime execute                   3.436623 
+Vox Cost Anytime execute                   1.880870 
+Vox Cost Anytime execute                   1.040393 
+Vox Cost Anytime execute                   1.758116 
+Vox Cost Anytime execute                   1.159699 
+Vox Cost Anytime execute                   4.619668 
+Vox Cost Anytime execute                   1.554194 
+Vox Cost Anytime execute                  17.894254 
+Vox Cost Anytime execute                   1.287686 
+Vox Cost Anytime execute                   1.533882 
+Vox Cost Anytime execute                   3.037653 
+Vox Cost Anytime execute                   0.419879 
+Vox Cost Anytime execute                   6.575193 
+Vox Cost Anytime execute                   5.968206 
+Vox Cost Anytime execute                   2.170431 
+Vox Cost Anytime execute                   1.443292 
+Vox Cost Anytime execute                   1.574818 
+Vox Cost Anytime execute                   5.973384 
+Vox Cost Anytime execute                   3.627053 
+Vox Cost Anytime execute                   2.223053 
+Vox Cost Anytime execute                  11.113614 
+Vox Cost Anytime execute                   3.592623 
+Vox Cost Anytime execute                   1.744269 
+Vox Cost Anytime execute                   0.662410 
+Vox Cost Anytime execute                  13.007141 
+Vox Cost Anytime execute                   1.663227 
+Vox Cost Anytime execute                   2.371439 
+Vox Cost Anytime execute                   2.312309 
+Vox Cost Anytime execute                  14.370669 
+Vox Cost Anytime execute                   0.367066 
+Vox Cost Anytime execute                  12.192798 
+Vox Cost Anytime execute                   1.040161 
+Vox Cost Anytime execute                   1.633797 
+Vox Cost Anytime execute                   1.845634 
+Vox Cost Anytime execute                   1.457991 
+Vox Cost Anytime execute                   3.782844 
+Vox Cost Anytime execute                   1.867402 
+Vox Cost Anytime execute                   2.277485 
+Vox Cost Anytime execute                   0.556101 
+Vox Cost Anytime execute                   1.499651 
+Vox Cost Anytime execute                   0.748728 
+Vox Cost Anytime execute                   0.917904 
+Vox Cost Anytime execute                   1.894052 
+Vox Cost Anytime execute                   1.606027 
+Vox Cost Anytime execute                   2.281776 
+Vox Cost Anytime execute                   6.370171 
+Vox Cost Anytime execute                   1.458810 
+Vox Cost Anytime execute                   2.239736 
+Vox Cost Anytime execute                   3.483020 
+Vox Cost Anytime execute                   1.737091 
+Vox Cost Anytime execute                   1.922865 
+Vox Cost Anytime execute                   2.569394 
+Vox Cost Anytime execute                   4.130749 
+Vox Cost Anytime execute                   1.113006 
+Vox Cost Anytime execute                   1.442126 
+Vox Cost Anytime execute                   9.279606 
+Vox Cost Anytime execute                   3.533492 
+Vox Cost Anytime execute                   2.571999 
+Vox Cost Anytime execute                   1.282104 
+Vox Cost Anytime execute                   1.193087 
+Vox Cost Anytime execute                   2.706478 
+Vox Cost Anytime execute                   2.599140 
+Vox Cost Anytime execute                   1.814045 
+Vox Cost Anytime execute                   1.247312 
+Vox Cost Anytime execute                   1.381127 
+Vox Cost Anytime execute                   2.416502 
+Vox Cost Anytime execute                   3.178573 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.520791      165.000000 
+Vox Cost Anytime optimal value             2.306775      108.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.019024      210.000000 
+Vox Cost Anytime optimal value             0.336936      170.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.870711      206.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.250354      299.000000 
+Vox Cost Anytime optimal value             0.729649      249.000000 
+Vox Cost Anytime optimal value            12.261265      245.000000 
+Vox Cost Anytime optimal value            12.741607      170.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.260320      175.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.286728      129.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.322606      380.000000 
+Vox Cost Anytime optimal value             0.597702      250.000000 
+Vox Cost Anytime optimal value             0.842899      157.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.161470      248.000000 
+Vox Cost Anytime optimal value             0.367858      206.000000 
+Vox Cost Anytime optimal value             0.000003       -1.000000 
+Vox Cost Anytime optimal value             0.166693      246.000000 
+Vox Cost Anytime optimal value             0.395250      244.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             1.569243      358.000000 
+Vox Cost Anytime optimal value             1.780047      242.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.812756      452.000000 
+Vox Cost Anytime optimal value             1.052189      262.000000 
+Vox Cost Anytime optimal value            29.751215      171.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             1.211469      101.000000 
+Vox Cost Anytime optimal value             2.686958       50.000000 
+Vox Cost Anytime optimal value             3.022187       13.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             1.112410      117.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.432007      138.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.166671      205.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.018745      184.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             1.878122      252.000000 
+Vox Cost Anytime optimal value             2.192706       88.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.033543      178.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.283421      260.000000 
+Vox Cost Anytime optimal value             0.595080      212.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.182672      248.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.253827      170.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.975434      197.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.172914      211.000000 
+Vox Cost Anytime optimal value             0.426532      192.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.097305      146.000000 
+Vox Cost Anytime optimal value             0.840018      145.000000 
+Vox Cost Anytime optimal value            20.682142       74.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.185349      199.000000 
+Vox Cost Anytime optimal value             0.427961      157.000000 
+Vox Cost Anytime optimal value             7.849471       76.000000 
+Vox Cost Anytime optimal value            17.075444       36.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.306968      220.000000 
+Vox Cost Anytime optimal value             0.770777      120.000000 
+Vox Cost Anytime optimal value             2.865691      105.000000 
+Vox Cost Anytime optimal value             3.193072       34.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.953873      229.000000 
+Vox Cost Anytime optimal value             1.275038      206.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.741978      359.000000 
+Vox Cost Anytime optimal value             1.083321      235.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.073257      234.000000 
+Vox Cost Anytime optimal value             0.263453      150.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.840761       86.000000 
+Vox Cost Anytime optimal value             2.567784       38.000000 
+Vox Cost Anytime optimal value             7.551688       26.000000 
+Vox Cost Anytime optimal value            26.969405        8.000000 
+Vox Cost Anytime optimal value            27.645714        4.000000 
+Vox Cost Anytime optimal value            27.905028        3.000000 
+Vox Cost Anytime optimal value            29.446011        2.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.938951      131.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.227964      201.000000 
+Vox Cost Anytime optimal value             3.530971       86.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.233871      195.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.176940      154.000000 
+Vox Cost Anytime optimal value             1.515469      132.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.482441      185.000000 
+Vox Cost Anytime optimal value             0.000003       -1.000000 
+Vox Cost Anytime optimal value             0.485301      203.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.157906      205.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.472542      215.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.473739      166.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.364090      135.000000 
+Vox Cost Anytime optimal value             0.000003       -1.000000 
+Vox Cost Anytime optimal value             0.175456      172.000000 
+Vox Cost Anytime optimal value             0.343216      145.000000 
+Vox Cost Anytime optimal value             0.000003       -1.000000 
+Vox Cost Anytime optimal value             0.183099      130.000000 
+Vox Cost Anytime optimal value             0.000003       -1.000000 
+Vox Cost Anytime optimal value             0.416244      240.000000 
+Vox Cost Anytime optimal value             0.571913      139.000000 
+Vox Cost Anytime optimal value             1.316288      131.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.062886       74.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.039353      178.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             2.240768      196.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.185302      180.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.049257       78.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.226564      299.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.177883      281.000000 
+Vox Cost Anytime optimal value            10.624293      280.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.600378      405.000000 
+Vox Cost Anytime optimal value             0.913772      329.000000 
+Vox Cost Anytime optimal value             1.149589      240.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.273774      256.000000 
+Vox Cost Anytime optimal value             0.000003       -1.000000 
+Vox Cost Anytime optimal value             0.461611      256.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.282297      270.000000 
+Vox Cost Anytime optimal value            16.598682      159.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.353979      149.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.831035      159.000000 
+Vox Cost Anytime optimal value             1.024271       94.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.162975      170.000000 
+Vox Cost Anytime optimal value             0.433031      123.000000 
+Vox Cost Anytime optimal value            13.583872       20.000000 
+Vox Cost Anytime optimal value            14.180249        5.000000 
+Vox Cost Anytime optimal value            16.799021        2.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.175183      245.000000 
+Vox Cost Anytime optimal value             0.330578      172.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.277406      271.000000 
+Vox Cost Anytime optimal value             0.541103      222.000000 
+Vox Cost Anytime optimal value             0.704213      207.000000 
+Vox Cost Anytime optimal value             0.913261      132.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.198846      233.000000 
+Vox Cost Anytime optimal value             1.688006      164.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             1.256966      153.000000 
+Vox Cost Anytime optimal value             1.668309       49.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.899728      215.000000 
+Vox Cost Anytime optimal value             2.442161      152.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.320549      191.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.159240      107.000000 
+Vox Cost Anytime optimal value             1.302654       72.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.160766      215.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.618375      308.000000 
+Vox Cost Anytime optimal value             0.978601      169.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.155306      273.000000 
+Vox Cost Anytime optimal value             2.562366      238.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.032854      179.000000 
+Vox Cost Anytime optimal value             2.614022       35.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.227059      237.000000 
+Vox Cost Anytime optimal value             0.642921      149.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             0.451636      264.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.562628      260.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.895614      272.000000 
+Vox Cost Anytime optimal value             1.332553      176.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             1.179592      218.000000 
+Vox Cost Anytime optimal value             4.317804      191.000000 
+Vox Cost Anytime optimal value             5.968447      184.000000 
+Vox Cost Anytime optimal value             9.177521      107.000000 
+Vox Cost Anytime optimal value            10.210786       81.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.182010      179.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.022371      180.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.286327      173.000000 
+Vox Cost Anytime optimal value             0.000001       -1.000000 
+Vox Cost Anytime optimal value             0.149546      212.000000 
+Vox Cost Anytime optimal value             0.333692      175.000000 
+Vox Cost Anytime optimal value             0.000002       -1.000000 
+Vox Cost Anytime optimal value             1.062330      184.000000 
+Vox Cost Anytime optimal value             1.818636      169.000000 
+Vox Cost Anytime optimal value             6.974610      162.000000 
+Vox Cost Anytime plan                     31.390068 
+Vox Cost Anytime plan                     30.386736 
+Vox Cost Anytime plan                     31.114181 
+Vox Cost Anytime plan                     30.876453 
+Vox Cost Anytime plan                     30.282181 
+Vox Cost Anytime plan                     30.156438 
+Vox Cost Anytime plan                     30.409365 
+Vox Cost Anytime plan                     30.452398 
+Vox Cost Anytime plan                     30.471674 
+Vox Cost Anytime plan                     30.155035 
+Vox Cost Anytime plan                     30.937851 
+Vox Cost Anytime plan                     30.787275 
+Vox Cost Anytime plan                     30.597956 
+Vox Cost Anytime plan                     30.473124 
+Vox Cost Anytime plan                     30.588234 
+Vox Cost Anytime plan                     30.018342 
+Vox Cost Anytime plan                     30.762443 
+Vox Cost Anytime plan                     30.169556 
+Vox Cost Anytime plan                     32.962867 
+Vox Cost Anytime plan                     30.541156 
+Vox Cost Anytime plan                     30.311113 
+Vox Cost Anytime plan                     30.772930 
+Vox Cost Anytime plan                     30.544293 
+Vox Cost Anytime plan                     31.186066 
+Vox Cost Anytime plan                     30.631154 
+Vox Cost Anytime plan                     30.545358 
+Vox Cost Anytime plan                     30.309580 
+Vox Cost Anytime plan                     30.475970 
+Vox Cost Anytime plan                     30.503281 
+Vox Cost Anytime plan                     30.715124 
+Vox Cost Anytime plan                     30.254799 
+Vox Cost Anytime plan                     31.357575 
+Vox Cost Anytime plan                     30.723292 
+Vox Cost Anytime plan                     31.594287 
+Vox Cost Anytime plan                     30.567257 
+Vox Cost Anytime plan                     32.756889 
+Vox Cost Anytime plan                     30.352649 
+Vox Cost Anytime plan                     30.817856 
+Vox Cost Anytime plan                     30.261061 
+Vox Cost Anytime plan                     32.174898 
+Vox Cost Anytime plan                     31.351540 
+Vox Cost Anytime plan                     32.198759 
+Vox Cost Anytime plan                     30.832079 
+Vox Cost Anytime plan                     30.141807 
+Vox Cost Anytime plan                     30.186424 
+Vox Cost Anytime plan                     30.775629 
+Vox Cost Anytime plan                     30.465676 
+Vox Cost Anytime plan                     30.143257 
+Vox Cost Anytime plan                     30.269022 
+Vox Cost Anytime plan                     30.868040 
+Vox Cost Anytime plan                     30.673193 
+Vox Cost Anytime plan                     30.195572 
+Vox Cost Anytime plan                     30.544178 
+Vox Cost Anytime plan                     30.831329 
+Vox Cost Anytime plan                     30.487795 
+Vox Cost Anytime plan                     30.502401 
+Vox Cost Anytime plan                     31.092078 
+Vox Cost Anytime plan                     30.487765 
+Vox Cost Anytime plan                     30.667373 
+Vox Cost Anytime plan                     30.625056 
+Vox Cost Anytime plan                     30.454348 
+Vox Cost Anytime plan                     30.361917 
+Vox Cost Anytime plan                     30.638934 
+Vox Cost Anytime plan                     30.564652 
+Vox Cost Anytime plan                     30.206631 
+Vox Cost Anytime plan                     30.327271 
+Vox Cost Anytime plan                     32.087209 
+Vox Cost Anytime plan                     31.525389 
+Vox Cost Anytime plan                     30.616277 
+Vox Cost Anytime plan                     30.450128 
+Vox Cost Anytime plan                     30.977207 
+Vox Cost Anytime plan                     30.976570 
+Vox Cost Anytime plan                     31.306686 
+Vox Cost Anytime plan                     30.687127 
+Vox Cost Anytime plan                     30.107127 
+Vox Cost Anytime plan                     30.374687 
+Vox Cost Anytime plan                     30.533358 
+Vox Cost Anytime plan                     30.702739 
+Vox Cost Anytime planner iters             5.501851        0.000000 
+Vox Cost Anytime planner iters           152.169295        4.000000 
+Vox Cost Anytime planner iters           231.952245        7.000000 
+Vox Cost Anytime planner iters            41.848744        1.000000 
+Vox Cost Anytime planner iters            71.665993        2.000000 
+Vox Cost Anytime planner iters           103.810688        3.000000 
+Vox Cost Anytime planner iters           270.886384        7.000000 
+Vox Cost Anytime planner iters            45.214611        1.000000 
+Vox Cost Anytime planner iters           144.070781        4.000000 
+Vox Cost Anytime planner iters           125.270270        3.000000 
+Vox Cost Anytime planner iters           437.125254       11.000000 
+Vox Cost Anytime planner iters           137.545177        4.000000 
+Vox Cost Anytime planner iters           300.332224        9.000000 
+Vox Cost Anytime planner iters            48.400075        1.000000 
+Vox Cost Anytime planner iters           108.951123        3.000000 
+Vox Cost Anytime planner iters           106.529946        3.000000 
+Vox Cost Anytime planner iters           151.553877        4.000000 
+Vox Cost Anytime planner iters             5.837597        0.000000 
+Vox Cost Anytime planner iters           183.817623        5.000000 
+Vox Cost Anytime planner iters           212.049610        6.000000 
+Vox Cost Anytime success                   5.501862 
+Vox Cost Anytime success                 152.169328 
+Vox Cost Anytime success                 231.952280 
+Vox Cost Anytime success                  41.848775 
+Vox Cost Anytime success                  71.666007 
+Vox Cost Anytime success                 103.810706 
+Vox Cost Anytime success                 270.886419 
+Vox Cost Anytime success                  45.214640 
+Vox Cost Anytime success                 144.070833 
+Vox Cost Anytime success                 125.270303 
+Vox Cost Anytime success                 437.125288 
+Vox Cost Anytime success                 137.545210 
+Vox Cost Anytime success                 300.332256 
+Vox Cost Anytime success                  48.400110 
+Vox Cost Anytime success                 108.951138 
+Vox Cost Anytime success                 106.529961 
+Vox Cost Anytime success                 151.553891 
+Vox Cost Anytime success                   5.837632 
+Vox Cost Anytime success                 183.817638 
+Vox Cost Anytime success                 212.049623 
+Vox Cost Increasing                       82.168364 
+Vox Cost Increasing                      141.840583 
+Vox Cost Increasing                        6.725533 
+Vox Cost Increasing                       48.765706 
+Vox Cost Increasing                      137.021734 
+Vox Cost Increasing                       11.662182 
+Vox Cost Increasing                       91.913752 
+Vox Cost Increasing                      124.348532 
+Vox Cost Increasing                      149.765195 
+Vox Cost Increasing                       22.154431 
+Vox Cost Increasing                        6.359072 
+Vox Cost Increasing                       88.834092 
+Vox Cost Increasing                       41.932442 
+Vox Cost Increasing                       47.136091 
+Vox Cost Increasing                       89.900901 
+Vox Cost Increasing                      159.621436 
+Vox Cost Increasing                       36.708731 
+Vox Cost Increasing                       52.134462 
+Vox Cost Increasing                      116.600245 
+Vox Cost Increasing                       77.208034 
+Vox Cost Increasing control                8.467873 
+Vox Cost Increasing control                4.388536 
+Vox Cost Increasing control                8.886843 
+Vox Cost Increasing control                2.623433 
+Vox Cost Increasing control                0.029120 
+Vox Cost Increasing control                0.029147 
+Vox Cost Increasing control                6.725428 
+Vox Cost Increasing control               11.690976 
+Vox Cost Increasing control                5.433732 
+Vox Cost Increasing control                0.879586 
+Vox Cost Increasing control                0.860798 
+Vox Cost Increasing control                0.006426 
+Vox Cost Increasing control                7.190417 
+Vox Cost Increasing control                6.723884 
+Vox Cost Increasing control               11.828741 
+Vox Cost Increasing control                6.464596 
+Vox Cost Increasing control                3.424665 
+Vox Cost Increasing control                2.605283 
+Vox Cost Increasing control                0.014484 
+Vox Cost Increasing control                8.339392 
+Vox Cost Increasing control                8.215148 
+Vox Cost Increasing control                0.036391 
+Vox Cost Increasing control                3.517856 
+Vox Cost Increasing control               11.160600 
+Vox Cost Increasing control                6.358980 
+Vox Cost Increasing control                4.851437 
+Vox Cost Increasing control                8.500894 
+Vox Cost Increasing control               11.919300 
+Vox Cost Increasing control               12.756957 
+Vox Cost Increasing control               11.679265 
+Vox Cost Increasing control                7.067698 
+Vox Cost Increasing control               11.133056 
+Vox Cost Increasing control                2.513353 
+Vox Cost Increasing control               22.493644 
+Vox Cost Increasing control                6.689430 
+Vox Cost Increasing control                6.974418 
+Vox Cost Increasing control               11.206813 
+Vox Cost Increasing control                1.726451 
+Vox Cost Increasing control                4.388996 
+Vox Cost Increasing control                9.422263 
+Vox Cost Increasing control                0.044515 
+Vox Cost Increasing execute                7.682019 
+Vox Cost Increasing execute                1.259096 
+Vox Cost Increasing execute                0.627365 
+Vox Cost Increasing execute                1.233941 
+Vox Cost Increasing execute                4.377326 
+Vox Cost Increasing execute                6.234560 
+Vox Cost Increasing execute                1.963809 
+Vox Cost Increasing execute                1.304384 
+Vox Cost Increasing execute                2.707274 
+Vox Cost Increasing execute                3.113552 
+Vox Cost Increasing execute                4.708846 
+Vox Cost Increasing execute                6.248998 
+Vox Cost Increasing execute                3.106015 
+Vox Cost Increasing execute                2.705858 
+Vox Cost Increasing execute                1.298649 
+Vox Cost Increasing execute                9.294571 
+Vox Cost Increasing execute                2.349745 
+Vox Cost Increasing execute                1.160240 
+Vox Cost Increasing execute                2.708405 
+Vox Cost Increasing execute                3.617514 
+Vox Cost Increasing execute                5.413685 
+Vox Cost Increasing execute                6.279616 
+Vox Cost Increasing execute                2.550748 
+Vox Cost Increasing execute                4.585073 
+Vox Cost Increasing execute                3.223299 
+Vox Cost Increasing execute                4.998048 
+Vox Cost Increasing execute               13.611328 
+Vox Cost Increasing execute                6.729327 
+Vox Cost Increasing execute               13.230303 
+Vox Cost Increasing execute                3.405479 
+Vox Cost Increasing execute                2.816957 
+Vox Cost Increasing execute                1.042052 
+Vox Cost Increasing execute                1.578972 
+Vox Cost Increasing execute                4.829725 
+Vox Cost Increasing optimal value         23.317390      205.000000 
+Vox Cost Increasing optimal value         24.071947      133.000000 
+Vox Cost Increasing optimal value         27.736511      118.000000 
+Vox Cost Increasing optimal value          7.777226       65.000000 
+Vox Cost Increasing optimal value         16.424044      118.000000 
+Vox Cost Increasing optimal value         26.563416      100.000000 
+Vox Cost Increasing optimal value          7.922338       94.000000 
+Vox Cost Increasing optimal value         26.911136       90.000000 
+Vox Cost Increasing optimal value         21.341632      152.000000 
+Vox Cost Increasing optimal value          7.780127       58.000000 
+Vox Cost Increasing optimal value          8.306113       52.000000 
+Vox Cost Increasing optimal value         27.359267      173.000000 
+Vox Cost Increasing optimal value          8.717614       60.000000 
+Vox Cost Increasing optimal value         19.476548      177.000000 
+Vox Cost Increasing optimal value          0.679827        0.000000 
+Vox Cost Increasing optimal value         13.606894      130.000000 
+Vox Cost Increasing optimal value         26.595831      182.000000 
+Vox Cost Increasing optimal value         27.207740      172.000000 
+Vox Cost Increasing optimal value          0.370547        0.000000 
+Vox Cost Increasing optimal value         17.701098      127.000000 
+Vox Cost Increasing optimal value         20.766033       98.000000 
+Vox Cost Increasing optimal value         13.964275      109.000000 
+Vox Cost Increasing optimal value         17.951624      130.000000 
+Vox Cost Increasing optimal value          8.419093       40.000000 
+Vox Cost Increasing optimal value         23.219149      175.000000 
+Vox Cost Increasing optimal value         26.269095      145.000000 
+Vox Cost Increasing optimal value         24.143192      206.000000 
+Vox Cost Increasing optimal value          6.660160        0.000000 
+Vox Cost Increasing optimal value          7.940334       55.000000 
+Vox Cost Increasing optimal value         24.070209      167.000000 
+Vox Cost Increasing optimal value         24.667672      137.000000 
+Vox Cost Increasing optimal value         28.823660      163.000000 
+Vox Cost Increasing optimal value          8.197030       35.000000 
+Vox Cost Increasing optimal value         26.527752      182.000000 
+Vox Cost Increasing optimal value         18.500211      165.000000 
+Vox Cost Increasing optimal value         28.928441      185.000000 
+Vox Cost Increasing optimal value         17.099574      114.000000 
+Vox Cost Increasing optimal value          7.864142       51.000000 
+Vox Cost Increasing optimal value          8.804588       91.000000 
+Vox Cost Increasing optimal value          8.005367       45.000000 
+Vox Cost Increasing optimal value          7.705716       95.000000 
+Vox Cost Increasing optimal value          7.902370       67.000000 
+Vox Cost Increasing optimal value          8.104119       48.000000 
+Vox Cost Increasing optimal value         22.166810      172.000000 
+Vox Cost Increasing optimal value         22.439424      168.000000 
+Vox Cost Increasing optimal value         23.398568      108.000000 
+Vox Cost Increasing plan                  31.621756 
+Vox Cost Increasing plan                  30.008124 
+Vox Cost Increasing plan                  30.487444 
+Vox Cost Increasing plan                  30.513829 
+Vox Cost Increasing plan                  30.597803 
+Vox Cost Increasing plan                  31.175026 
+Vox Cost Increasing plan                  30.839988 
+Vox Cost Increasing plan                  31.426669 
+Vox Cost Increasing plan                  31.119093 
+Vox Cost Increasing plan                  31.304312 
+Vox Cost Increasing plan                  30.015578 
+Vox Cost Increasing plan                   1.358150 
+Vox Cost Increasing plan                  31.301225 
+Vox Cost Increasing plan                  31.101877 
+Vox Cost Increasing plan                   1.011989 
+Vox Cost Increasing plan                  31.198306 
+Vox Cost Increasing plan                  30.946756 
+Vox Cost Increasing plan                  32.277200 
+Vox Cost Increasing plan                  31.304668 
+Vox Cost Increasing plan                  30.348665 
+Vox Cost Increasing plan                  31.746339 
+Vox Cost Increasing plan                  30.038267 
+Vox Cost Increasing plan                   7.376149 
+Vox Cost Increasing plan                  31.456677 
+Vox Cost Increasing plan                  32.331579 
+Vox Cost Increasing plan                  30.013128 
+Vox Cost Increasing plan                  31.828247 
+Vox Cost Increasing plan                  31.677756 
+Vox Cost Increasing plan                  31.667636 
+Vox Cost Increasing plan                  31.284017 
+Vox Cost Increasing plan                  36.031944 
+Vox Cost Increasing plan                  30.826453 
+Vox Cost Increasing plan                  30.019285 
+Vox Cost Increasing plan                  31.929565 
+Vox Cost Increasing plan                  30.872729 
+Vox Cost Increasing plan                  30.535637 
+Vox Cost Increasing plan                  30.604956 
+Vox Cost Increasing plan                  30.316735 
+Vox Cost Increasing plan                  31.015625 
+Vox Cost Increasing planner iters        141.840451        4.000000 
+Vox Cost Increasing planner iters          6.725439        0.000000 
+Vox Cost Increasing planner iters         48.765555        1.000000 
+Vox Cost Increasing planner iters         11.662130        1.000000 
+Vox Cost Increasing planner iters         91.913615        2.000000 
+Vox Cost Increasing planner iters        124.348452        4.000000 
+Vox Cost Increasing planner iters         22.154285        1.000000 
+Vox Cost Increasing planner iters          6.358989        0.000000 
+Vox Cost Increasing planner iters         88.833961        2.000000 
+Vox Cost Increasing planner iters         47.135972        1.000000 
+Vox Cost Increasing planner iters         89.900781        2.000000 
+Vox Cost Increasing planner iters        159.621295        3.000000 
+Vox Cost Increasing planner iters         52.134333        1.000000 
+Vox Cost Increasing planner iters        116.600133        3.000000 
+Vox Cost Increasing planner iters         77.207883        2.000000 
+Vox Cost Increasing success              141.840485 
+Vox Cost Increasing success                6.725471 
+Vox Cost Increasing success               48.765594 
+Vox Cost Increasing success               11.662143 
+Vox Cost Increasing success               91.913647 
+Vox Cost Increasing success              124.348473 
+Vox Cost Increasing success               22.154318 
+Vox Cost Increasing success                6.359019 
+Vox Cost Increasing success               88.833997 
+Vox Cost Increasing success               47.136004 
+Vox Cost Increasing success               89.900812 
+Vox Cost Increasing success              159.621330 
+Vox Cost Increasing success               52.134367 
+Vox Cost Increasing success              116.600162 
+Vox Cost Increasing success               77.207920 
+

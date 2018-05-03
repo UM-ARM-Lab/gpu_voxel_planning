@@ -55,6 +55,8 @@ namespace gpu_voxels_planner
         std::shared_ptr<ompl::geometric::PathValidator> vppc;
 
         double controller_threshold;
+
+        std::string name;
         
     protected:
 
