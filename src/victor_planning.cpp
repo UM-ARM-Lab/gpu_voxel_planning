@@ -282,11 +282,13 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
 
     double goal_sampled = false;
 
+    bool checking_goal_directly = false;
     
     // while(i < num_samples)
     for(i=0; i<num_samples; i++)
     {
-        if(i==0 && goals.distance(start) <= max_motion*1.5)
+        checking_goal_directly = (i==0);
+        if(checking_goal_directly)// && goals.distance(start) <= max_motion*1.5)
         {
             si_->copyState(test, goals.get());
             goal_sampled = true;
@@ -341,8 +343,19 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
             found_ok = true;
             best_pcol = pcol;
         }
+
+        if(checking_goal_directly)
+        {
+            std::cout << "Direct path towards goal has pcol " << pcol << "\n";
+            if(pcol < .1)
+            {
+                break;
+            }
+        }
     
     }
+
+
 
 
     si_->freeState(test);
@@ -749,7 +762,7 @@ void VictorMotionCostRRTConnect::smooth(ob::PathPtr &path)
     cost_simp.shortcutPath(*(path->as<og::PathGeometric>()), SMOOTHING_ITERATIONS);
 
     rplanner_->pv_->do_delay = tmp;
-    
+
 
     // double smoothed_path_prob = rplanner_->pv_->getPathCost(path->as<og::PathGeometric>()->getStates(), col_index);
 
@@ -929,7 +942,7 @@ Maybe::Maybe<ob::PathPtr> VictorMotionCostRRTConnect::planPath(ompl::base::Scope
     std::cout << "Path has " << path.Get()->as<og::PathGeometric>()->getStates().size() << " states before smoothing with cost " << rplanner_->path_cost << ",... ";
 
     smooth(path.Get());
-    std::cout << " and " << path.Get()->as<og::PathGeometric>()->getStates().size() << " states after\n";
+    std::cout << " and " << path.Get()->as<og::PathGeometric>()->getStates().size() << " states after smoothing\n";
     
     return Maybe::Maybe<ob::PathPtr>(path);
 }

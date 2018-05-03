@@ -6,10 +6,10 @@
 #define SMOOTHING_ITERATIONS 30
 
 /* Expected num total voxels in world in collision */
-#define UNEXPLORED_BIAS 0
+#define UNEXPLORED_BIAS 100
 
 /* Max planning time in seconds */
-#define PLANNING_TIMEOUT 30
+#define PLANNING_TIMEOUT 10
 
 #define USE_KNOWN_OBSTACLES false
 
@@ -21,7 +21,7 @@
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 
-#define PEG_IN_HOLE false
+#define PEG_IN_HOLE true
 
 #define PLAN_ONLY false
 
@@ -30,5 +30,7 @@
 #define DO_PLAN true
 
 #define VOX_CONTROLLER_THRESHOLD 20
+
+#define VIDEO_VISUALIZE true
 
 #endif

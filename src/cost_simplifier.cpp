@@ -10,12 +10,13 @@ void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials
 {
     rng.seed(std::random_device()());
 
-    
-    pv_->setProbabilityThreshold(pv_->threshold + eps);
+    // std::cout << "path size in smoother before: "<< path.getStates().size() << "\n";
+    pv_->setProbabilityThreshold(std::numeric_limits<double>::max());
     size_t col_index;
     bool fast_check = true;
     // std::cout << "calling with fast check " << fast_check << "\n";
     cur_cost = pv_->getPathCost(path.getStates(), col_index, fast_check);
+    // std::cout << "Current path cost " << cur_cost << "\n";
 
     pv_->setProbabilityThreshold(cur_cost + eps);
     
@@ -23,6 +24,7 @@ void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials
     {
         singleShortcut(path);
     }
+    // std::cout << " and after: "<< path.getStates().size() << "\n";   
 }
 
 void og::CostSimplifier::sampleInd(int &start, int &end, int max_exclusive)
@@ -106,17 +108,20 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
     double new_seg_cost = pv_->getPathCost(new_segment, col_index, fast_check);
     if(new_seg_cost > cur_cost)
     {
-        // std::cout << "new segment has cost higher than total path, exiting early\n";
+        // std::cout << "new segment has cost (" << new_seg_cost<< ") higher than total path, exiting early\n";
         si_->freeStates(new_segment);
         return;
     }
 
-    double orig_seg_cost = pv_->getPathCost(orig_segment, col_index, fast_check);
-    if(orig_seg_cost < new_seg_cost)
-    {
-        si_->freeStates(new_segment);
-        return;
-    }
+    
+    // double orig_seg_cost = pv_->getPathCost(orig_segment, col_index, fast_check);
+    // if(orig_seg_cost < new_seg_cost)
+    // {
+    //     std::cout << "new segment has cost ( " << new_seg_cost << ") higher than old segment(";
+    //     std::cout << orig_seg_cost << "), exiting early\n";
+    //     si_->freeStates(new_segment);
+    //     return;
+    // }
     
 
 
@@ -127,13 +132,14 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
     if(new_cost <= cur_cost)
     {
-        // std::cout << "smoother path found with cost " << new_cost << "\n";
+        std::cout << "smoother path found with cost " << new_cost << "\n";
         cur_cost = new_cost;
         states = new_path;
         si_->freeStates(orig_segment);
         pv_->setProbabilityThreshold(new_cost + eps);
     }
     else{
+        // std::cout << "new total path has higher cost ("<< new_cost<< ") than old path\n";
         si_->freeStates(new_segment);
     }
 

@@ -30,7 +30,7 @@ ros_path = []
 path_in_progress = False
 
 
-ext_torque_limits = [5, 5, 5, 4, 2, 1, 1]
+ext_torque_limits = [10, 10, 10, 4, 2, 1, 1]
 
 right_arm_listener = None
 vm = None
@@ -51,7 +51,7 @@ def check_collision(motion_status_msg):
         if not g_in_collision:
             return False
 
-        g_links_in_contact = ["victor_right_arm_link_" + str(idx+1) for idx in range(col_indicies[0], len(jt))]
+        g_links_in_contact = ["victor_right_arm_link_" + str(idx+1) for idx in range(col_indicies[-1], len(jt))]
         print("check_collision links in contact")
         print(g_links_in_contact)
         return True
@@ -183,14 +183,14 @@ def execute_path(path):
     
     cur_pos = vu.jvq_to_list(right_arm_listener.get().measured_joint_position)
 
-    next_poses = pu.densify(pu.travel_along(path, .2, cur_pos), .5)
+    next_poses = pu.densify(pu.travel_along(path, .2, cur_pos), .05)
 
     for pos in next_poses:
         jtp_msg = JointTrajectoryPoint()
         jtp_msg.positions = pos
         msg.collision_path.points.append(jtp_msg)
     
-    backup_path = pu.travel_along(path, -0.2, cur_pos)
+    backup_path = pu.travel_along(path, -0.1, cur_pos)
 
     rospy.loginfo("Collision detected. Backing up")
 

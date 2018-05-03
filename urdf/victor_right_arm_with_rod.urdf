@@ -634,7 +634,7 @@
     <child link="victor_right_gripper_fingerA_prox"/>
     <origin rpy="0 0.610865238198 0" xyz="0.02225000 0 0.02151380"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="1" velocity="10"/>
+    <limit effort="300" lower="0" upper="1.2217304763960307" velocity="10"/>
     <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-0.610865238198" soft_upper_limit="0.610865238198"/>
     <dynamics damping="0.5"/>
   </joint>
@@ -721,106 +721,6 @@
       <material name="DarkGray"/>
     </collision>
   </link>
-  <!-- Load Gazebo lib and set the robot namespace -->
-  <gazebo>
-    <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
-      <robotNamespace>/victor_right_gripper_fingerA</robotNamespace>
-    </plugin>
-  </gazebo>
-  <!-- Palm -->
-  <gazebo reference="victor_right_gripper_fingerA_base">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerA_base">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerA_base_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerA_base_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerA_base_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-  </gazebo>
-  <!-- Palm -->
-  <gazebo reference="victor_right_gripper_fingerA_prox">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerA_prox">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerA_prox_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerA_prox_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerA_prox_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-  </gazebo>
-  <!-- Palm Surface -->
-  <gazebo reference="victor_right_gripper_fingerA_med">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerA_med">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerA_med_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerA_med_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerA_med_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-    <gravity>false</gravity>
-  </gazebo>
-  <!-- Palm Surface -->
-  <gazebo reference="victor_right_gripper_fingerA_dist">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerA_dist">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerA_dist_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerA_dist_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerA_dist_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-    <gravity>false</gravity>
-  </gazebo>
   <!-- Finger B -->
   <joint name="victor_right_gripper_fingerB_knuckle" type="revolute">
     <origin rpy="0 0 3.14159265359" xyz="-0.02230120 0.03651250 0.06111875"/>
@@ -858,7 +758,7 @@
     <child link="victor_right_gripper_fingerB_prox"/>
     <origin rpy="0 0.610865238198 0" xyz="0.02225000 0 0.02151380"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="1" velocity="10"/>
+    <limit effort="300" lower="0" upper="1.2217304763960307" velocity="10"/>
     <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-0.610865238198" soft_upper_limit="0.610865238198"/>
     <dynamics damping="0.5"/>
   </joint>
@@ -945,106 +845,6 @@
       <material name="DarkGray"/>
     </collision>
   </link>
-  <!-- Load Gazebo lib and set the robot namespace -->
-  <gazebo>
-    <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
-      <robotNamespace>/victor_right_gripper_fingerB</robotNamespace>
-    </plugin>
-  </gazebo>
-  <!-- Palm -->
-  <gazebo reference="victor_right_gripper_fingerB_base">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerB_base">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerB_base_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerB_base_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerB_base_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-  </gazebo>
-  <!-- Palm -->
-  <gazebo reference="victor_right_gripper_fingerB_prox">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerB_prox">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerB_prox_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerB_prox_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerB_prox_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-  </gazebo>
-  <!-- Palm Surface -->
-  <gazebo reference="victor_right_gripper_fingerB_med">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerB_med">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerB_med_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerB_med_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerB_med_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-    <gravity>false</gravity>
-  </gazebo>
-  <!-- Palm Surface -->
-  <gazebo reference="victor_right_gripper_fingerB_dist">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerB_dist">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerB_dist_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerB_dist_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerB_dist_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-    <gravity>false</gravity>
-  </gazebo>
   <!-- Finger C -->
   <joint name="victor_right_gripper_fingerC_knuckle" type="revolute">
     <origin rpy="0 0 3.14159265359" xyz="-0.02230120 -0.03651250 0.06111875"/>
@@ -1082,7 +882,7 @@
     <child link="victor_right_gripper_fingerC_prox"/>
     <origin rpy="0 0.610865238198 0" xyz="0.02225000 0 0.02151380"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="1" velocity="10"/>
+    <limit effort="300" lower="0" upper="1.2217304763960307" velocity="10"/>
     <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-0.610865238198" soft_upper_limit="0.610865238198"/>
     <dynamics damping="0.5"/>
   </joint>
@@ -1169,106 +969,6 @@
       <material name="DarkGray"/>
     </collision>
   </link>
-  <!-- Load Gazebo lib and set the robot namespace -->
-  <gazebo>
-    <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
-      <robotNamespace>/victor_right_gripper_fingerC</robotNamespace>
-    </plugin>
-  </gazebo>
-  <!-- Palm -->
-  <gazebo reference="victor_right_gripper_fingerC_base">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerC_base">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerC_base_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerC_base_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerC_base_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-  </gazebo>
-  <!-- Palm -->
-  <gazebo reference="victor_right_gripper_fingerC_prox">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerC_prox">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerC_prox_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerC_prox_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerC_prox_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-  </gazebo>
-  <!-- Palm Surface -->
-  <gazebo reference="victor_right_gripper_fingerC_med">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerC_med">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerC_med_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerC_med_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerC_med_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-    <gravity>false</gravity>
-  </gazebo>
-  <!-- Palm Surface -->
-  <gazebo reference="victor_right_gripper_fingerC_dist">
-    <gravity>false</gravity>
-  </gazebo>
-  <gazebo reference="victor_right_gripper_fingerC_dist">
-    <!-- contact sensor -->
-    <sensor name="victor_right_gripper_fingerC_dist_contact_sensor" type="contact">
-      <update_rate>1000.0</update_rate>
-      <always_on>true</always_on>
-      <contact>
-        <collision>victor_right_gripper_fingerC_dist_collision</collision>
-      </contact>
-      <plugin filename="libgazebo_ros_bumper.so" name="gazebo_ros_bumper_controller">
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-        <bumperTopicName>/victor_right_gripper_fingerC_dist_bumper</bumperTopicName>
-        <frameName>world</frameName>
-      </plugin>
-    </sensor>
-    <material>Gazebo/Black</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-    <gravity>false</gravity>
-  </gazebo>
   <link name="gpu_voxel_world"/>
   <joint name="gpu_voxel_world_joint" type="fixed">
     <parent link="gpu_voxel_world"/>
@@ -1277,16 +977,16 @@
   </joint>
   <link name="rod">
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0.05"/>
+      <origin rpy="0 0 0" xyz="0 0 0.0"/>
       <geometry>
-        <cylinder length="0.254" radius="0.03"/>
+        <cylinder length="0.234" radius="0.065"/>
       </geometry>
     </collision>
   </link>
   <joint name="rod_joint" type="fixed">
     <parent link="victor_right_gripper_palm"/>
     <child link="rod"/>
-    <origin rpy="1.57 0 0" xyz="0 0 0.1"/>
+    <origin rpy="1.57 0 0" xyz="0 0 0.15"/>
     <axis xyz="0 0 1"/>
   </joint>
 </robot>

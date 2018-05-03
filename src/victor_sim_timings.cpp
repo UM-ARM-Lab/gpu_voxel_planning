@@ -271,6 +271,7 @@ int main(int argc, char* argv[])
 
 
     PROFILE_WRITE_SUMMARY_FOR_ALL("victor_sim_times.txt");
+    PROFILE_WRITE_ALL("victor_sim_times.txt");
     std::cout << "\n\n\n\n\n\nWrote summary!!\n\n\n\n\n\n";
 
     

@@ -6,16 +6,16 @@
     
     <link name="rod">
       <collision>
-        <origin xyz="0 0 0.05" rpy="0 0 0"/>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
         <geometry>
-          <cylinder length="0.254" radius="0.03"/>
+          <cylinder length="0.234" radius="0.065"/>
         </geometry>
       </collision>
     </link>
     <joint name="rod_joint" type="fixed">
       <parent link="victor_right_gripper_palm"/>
       <child link="rod"/>
-      <origin xyz="0 0 0.1" rpy="1.57 0 0"/>
+      <origin xyz="0 0 0.15" rpy="1.57 0 0"/>
       <axis xyz="0 0 1"/>
     </joint>
 </robot>
