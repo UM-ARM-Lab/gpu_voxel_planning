@@ -13,9 +13,9 @@
 
 #define USE_KNOWN_OBSTACLES true
 
-#define MAKE_TABLE false
+#define MAKE_TABLE true
 
-#define MAKE_SLOTTED_WALL true
+#define MAKE_SLOTTED_WALL false
 
 #define ALL_OBSTACLES_KNOWN false
 

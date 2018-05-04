@@ -8,6 +8,7 @@
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/spaces/SE3StateSpace.h>
 #include <ompl/geometric/SimpleSetup.h>
+#include "custom_rrtstar.h"
 
 #include <ompl/config.h>
 #include <iostream>
@@ -82,6 +83,9 @@ public:
     double getColVoxelIntersects(const ompl::base::State *state) const;
     
     double threshold;
+
+    bool use_prob_col;
+    bool use_vox;
 };
 
 
@@ -130,6 +134,28 @@ public:
 protected:
     GpuVoxelsVictor* victor_model_;
 };
+
+
+
+class VictorObjective : public ompl::base::OptimizationObjective
+{
+public:
+    VictorObjective(const ompl::base::SpaceInformationPtr &si,
+                    std::shared_ptr<ompl::geometric::PathValidator> pv);
+    virtual ompl::base::Cost motionCost(const ompl::base::State *s1,
+                                        const ompl::base::State *s2) const override;
+
+    virtual ompl::base::Cost stateCost(const ompl::base::State *state) const override;
+
+    virtual ompl::base::Cost combineCosts(ompl::base::Cost c1, ompl::base::Cost c2) const override;
+    
+    virtual ompl::base::Cost identityCost() const override;
+
+public:
+    std::shared_ptr<ompl::geometric::PathValidator> pv_;
+    bool is_prob_cost;
+};
+
 
 
 

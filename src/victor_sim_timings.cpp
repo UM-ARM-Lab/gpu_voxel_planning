@@ -212,11 +212,21 @@ void runTest(VictorPlanner &planner)
 }
 
 
-void runTest_ThresholdRRTConnect()
+void runTest_ProbThresholdRRTConnect()
 {
     std::cout << "threshold planner\n";
     VictorThresholdRRTConnect planner(&(sim_world->victor_model));
-    planner.name = "Threshold bi_rrt";
+    planner.name = "Prob Threshold bi_rrt";
+    planner.use_prob_col = true;
+    runTest(planner);
+}
+
+void runTest_VoxThresholdRRTConnect()
+{
+    std::cout << "threshold planner\n";
+    VictorThresholdRRTConnect planner(&(sim_world->victor_model));
+    planner.name = "Vox Threshold bi_rrt";
+    planner.vox = true;
     runTest(planner);
 }
 
@@ -254,6 +264,15 @@ void runTest_PlanUpVoxCostRRTConnect()
     runTest(planner);
 }
 
+void runTest_ProbRRTStar()
+{
+    std::cout << "\n\nRRT Star ProbCol test\n\n\n";
+    bool use_prob_cost = true;
+    VictorRRTStar planner(&(sim_world->victor_model), use_prob_cost);
+
+    planner.name = "Prob Col RRTStar";
+    runTest(planner);
+}
 
 
 int main(int argc, char* argv[])
@@ -275,11 +294,14 @@ int main(int argc, char* argv[])
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "\n\n\n\n!!!!!!!!!!!!!!\nTrial " << i + 1<< " of " << num_trials << "!!!!!!!!!!!!!\n\n\n\n\n";
-        // runTest_ThresholdRRTConnect();
-        runTest_ProbColCostRRTConnect();
-        runTest_VoxCostRRTConnect();
-        runTest_PlanUpProbColCostRRTConnect();
-        runTest_PlanUpVoxCostRRTConnect();
+
+        runTest_ProbThresholdRRTConnect();
+        runTest_VoxThresholdRRTConnect();
+        // runTest_ProbColCostRRTConnect();
+        // runTest_VoxCostRRTConnect();
+        // runTest_PlanUpProbColCostRRTConnect();
+        // runTest_PlanUpVoxCostRRTConnect();
+        // runTest_ProbRRTStar();
     }
     
 

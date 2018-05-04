@@ -196,6 +196,7 @@ target_link_libraries(victor_planning
   lazyrrtf
   crrtc
   costrrtc
+  custom_rrtstar
   )
 
 add_executable(wip_victor_sim src/wip_victor_sim.cpp)

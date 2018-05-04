@@ -1175,3 +1175,73 @@ void VictorProbColCostRRTConnect::initializePlanner()
     planner_->setup();
     // std::cout << "Planner max extend dist: " << mcrrt->getRange() << "\n";
 }
+
+
+
+
+
+
+
+
+
+
+
+/************************************
+ **          Victor RRTStar        **
+ ***********************************/
+VictorRRTStar::VictorRRTStar(GpuVoxelsVictor* victor_model,
+                             bool use_prob_cost):
+    VictorPlanner(victor_model)
+{
+    use_prob_cost_ = use_prob_cost;
+    initializePlanner();
+
+}
+
+void VictorRRTStar::initializePlanner()
+{
+    auto rrtstar_planner = std::make_shared<og::cRRTstar>(si_);
+    if(use_prob_cost_)
+    {
+        std::cout << "RRT star with prob col\n";
+        // std::shared_ptr<VictorPathProbCol> pv;
+        vppc = std::make_shared<VictorPathProbCol>(si_, victor_model_);
+        vppc->setProbabilityThreshold(1.0);
+        opt = std::make_shared<VictorObjective>(si_, vppc);
+        opt->is_prob_cost = true;
+    }
+    else
+    {
+        std::cout << "vox cost not yet implemented. No controller yet\n";
+    }
+    
+    planner_ = rrtstar_planner;
+    planner_->setup();
+}
+
+void VictorRRTStar::preparePlanner(ompl::base::ScopedState<> start,
+                                   Goals goals)
+{
+
+    planner_->clear();
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
+    pdef_->setStartAndGoalStates(start, goals);
+
+    pdef_->setOptimizationObjective(opt);
+    planner_->setProblemDefinition(pdef_);
+
+
+}
+
+
+Maybe::Maybe<ob::PathPtr> VictorRRTStar::planPath(ompl::base::ScopedState<> start,
+                                                  Goals goals)
+{
+    preparePlanner(start, goals);
+    ob::PlannerStatus solved = planner_->solve(PLANNING_TIMEOUT);
+    if(solved)
+    {
+        return Maybe::Maybe<ob::PathPtr>(pdef_->getSolutionPath());
+    }
+    return Maybe::Maybe<ob::PathPtr>();
+}

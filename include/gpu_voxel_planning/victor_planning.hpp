@@ -181,6 +181,27 @@ namespace gpu_voxels_planner
     };
 
 
+
+
+    
+
+    class VictorRRTStar: public VictorPlanner
+    {
+    public:
+        VictorRRTStar(GpuVoxelsVictor* victor_model,
+                      bool use_prob_cost);
+        virtual void initializePlanner() override;
+        virtual void preparePlanner(ompl::base::ScopedState<> start,
+                                    Goals goals) override;
+        virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
+                                                           Goals goals) override;
+
+
+        std::shared_ptr<VictorObjective> opt;
+        bool use_prob_cost_;
+    };
+
+
 }
 
         

@@ -157,6 +157,8 @@ VictorStateThresholdValidator::VictorStateThresholdValidator(const ompl::base::S
     VictorValidator(si, victor_model)
 {
     threshold = 1.0;
+    use_prob_col = false;
+    use_vox = false;
 }
 
 
@@ -226,9 +228,21 @@ bool VictorStateThresholdValidator::isValid(const ob::State *state) const
         return false;
     }
     // std::cout << "\n\n\n\n!!!!!!!!!!!11 Validity Check Called !!!!+!!!!\n";
-    // bool valid = getCollisionProb(state) < threshold;
-    bool valid = getColVoxelIntersects(state) < threshold;
-    // std::cout << "Validity Check Called " << valid << "\n";
+    bool valid;
+    if(use_prob_col)
+    {
+        valid = getCollisionProb(state) < threshold;
+    }
+    else if(use_vox)
+    {
+        valid = getColVoxelIntersects(state) < threshold;
+    }
+    else
+    {
+        std::cout << "Threshold isValid called but not use_vox nor use_prob_col indicated\n";
+        assert(false);
+    }
+    std::cout << "Validity Check Called " << valid << "\n";
     return valid;
 }
 
@@ -285,6 +299,19 @@ double VictorStateThresholdValidator::getPathCost(og::PathGeometric *path) const
     }
     return max_cost;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -666,3 +693,67 @@ bool VictorPathVox::checkPath(const std::vector<ob::State*> path,
 
 
 
+
+
+
+
+
+/******************************
+ **     VictorObjective      **
+ *****************************/
+
+VictorObjective::VictorObjective(const ompl::base::SpaceInformationPtr &si,
+                                 std::shared_ptr<ompl::geometric::PathValidator> pv) :
+    ob::OptimizationObjective(si)
+{
+    pv_ = pv;
+}
+
+
+ob::Cost VictorObjective::motionCost(const ob::State *s1,
+                                     const ob::State *s2) const
+{
+    size_t col_index;
+    bool fast=true;
+    std::vector<ob::State*> motion;
+    ob::State *s1_ = si_->allocState();
+    si_->copyState(s1_, s1);
+    ob::State *s2_ = si_->allocState();
+    si_->copyState(s2_, s2);
+    motion.push_back(s1_);
+    motion.push_back(s2_);
+    double cost = pv_->getPathCost(motion, col_index, fast);
+
+    si_->freeState(s1_);
+    si_->freeState(s2_);
+    return ob::Cost(cost);
+}
+
+ob::Cost VictorObjective::stateCost(const ob::State *state) const
+{
+    return motionCost(state, state);
+}
+
+ob::Cost VictorObjective::combineCosts(ob::Cost c1, ob::Cost c2) const 
+{
+    if(is_prob_cost)
+    {
+        return ob::Cost(1 - (1-c1.value())*(1-c2.value()) );
+    }
+    else{
+        return ob::Cost(c1.value() + c2.value());
+    }
+}
+
+
+ob::Cost VictorObjective::identityCost() const
+{
+    if(is_prob_cost)
+    {
+        return ob::Cost(1.0);
+    }
+    else
+    {
+        return ob::Cost(0.0);
+    }
+}
