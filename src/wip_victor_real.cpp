@@ -142,6 +142,7 @@ void runTest_VictorProbCol(std::vector<double> goal)
 {
     VictorProbColCostRRTConnect planner(&(real_world->victor_model));
     planner.name = "prob_col_planner";
+    planner.use_anytime_planner = false;
     std_msgs::String msg;
     std::cout << "Waiting for input to start prob planner...\n";
     std::string unused;
@@ -178,14 +179,14 @@ int main(int argc, char* argv[])
 
     
 
-    std::vector<double> goal_box = {0.548, 0.528, -0.932, -1.354, 0.063, 0.72, 1.431};
+    std::vector<double> goal_box = {0.898, 0.141, -0.578, -1.283, -1.104, 1.537, -1.49};
 
     std::string unused;
     std::cout << "Waiting for user input to start...\n";
     std::getline(std::cin, unused);
 
-    // runTest_VictorProbCol(goal_box);
-    runTest_VictorVox(goal_box);
+    runTest_VictorProbCol(goal_box);
+    // runTest_VictorVox(goal_box);
 
     std::string filename = "./real_robot_trials/box_" + arc_helpers::GetCurrentTimeAsString();
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);

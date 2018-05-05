@@ -157,6 +157,7 @@ public:
 
     bool update_victor_from_messages;
     bool pos_updated;
+    int update_all_joint_count{0};
 };
 
 

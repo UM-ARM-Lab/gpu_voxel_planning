@@ -109,8 +109,8 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
     VictorConfig left_arm_config;
 
-    // std::vector<double> left_arm_joint_values = {1.57, 1.57, 0, 0, 0, 0 ,0};
-    std::vector<double> left_arm_joint_values = {-1.417, 1.566, -1.151, 1.293, 2.437, 1.406, -1.12};
+    std::vector<double> left_arm_joint_values = {1.57, 1.57, 0, 0, 0, 0 ,0};
+    // std::vector<double> left_arm_joint_values = {-1.417, 1.566, -1.151, 1.293, 2.437, 1.406, -1.12};
     
     for(size_t i=0; i<left_arm_joint_values.size(); i++)
     {
@@ -913,14 +913,21 @@ RealWorld::~RealWorld()
 
 void RealWorld::jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
 {
-    // std::vector<double> right_arm_angles(&msg->position[7], &msg->position[14]);
-    // VictorConfig cur = victor_model.toVictorConfig(right_arm_angles.data());
 
     VictorConfig cur;
-    for(size_t i=0; i<msg->position.size(); i++)
+    if( update_all_joint_count++ < 10)
     {
-        cur[msg->name[i]] = msg->position[i];
+        for(size_t i=0; i<msg->position.size(); i++)
+        {
+            cur[msg->name[i]] = msg->position[i];
+        }
     }
+    else{
+
+        std::vector<double> right_arm_angles(&msg->position[7], &msg->position[14]);
+        cur = victor_model.toVictorConfig(right_arm_angles.data());
+    }
+    
     
     victor_model.updateActual(cur);
     victor_model.m1_subtract_m2(KNOWN_OBSTACLES_MAP, VICTOR_ACTUAL_MAP);

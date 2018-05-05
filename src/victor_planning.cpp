@@ -298,9 +298,9 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
             //uniformly sample motion directions, not states
             double *testv = test->as<ob::RealVectorStateSpace::StateType>()->values;
             const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
-            for(int i=0; i<7; i++)
+            for(int j=0; j<7; j++)
             {
-                testv[i] += startv[i];
+                testv[j] += startv[j];
             }
         }
         
@@ -327,7 +327,9 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         // vppc->do_delay = true;
         double pcol = vppc->getPathCost(dpath, col_index);
 
-        if(pcol > 0.97)
+        
+
+        if(pcol > 0.90)
         {
             continue;
         }
