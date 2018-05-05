@@ -229,12 +229,16 @@ bool VictorStateThresholdValidator::isValid(const ob::State *state) const
     }
     // std::cout << "\n\n\n\n!!!!!!!!!!!11 Validity Check Called !!!!+!!!!\n";
     bool valid;
+    // std::cout << "validating for threshold " << threshold << "\n";
     if(use_prob_col)
     {
+        // std::cout << "Using prob col validator";
+        // std::cout << "col prob " << getCollisionProb(state) << "\n";
         valid = getCollisionProb(state) < threshold;
     }
     else if(use_vox)
     {
+        // std::cout << "Using vox validator\n";
         valid = getColVoxelIntersects(state) < threshold;
     }
     else
@@ -242,7 +246,7 @@ bool VictorStateThresholdValidator::isValid(const ob::State *state) const
         std::cout << "Threshold isValid called but not use_vox nor use_prob_col indicated\n";
         assert(false);
     }
-    std::cout << "Validity Check Called " << valid << "\n";
+    // std::cout << "Validity Check Called " << valid << "\n";
     return valid;
 }
 
@@ -287,7 +291,7 @@ double VictorStateThresholdValidator::getPathMaxColProb(og::PathGeometric *path)
     return max_col_prob;
 }
 
-double VictorStateThresholdValidator::getPathCost(og::PathGeometric *path) const
+double VictorStateThresholdValidator::getPathMaxVox(og::PathGeometric *path) const
 {
     std::vector<ob::State*> states = path->getStates();
     double max_cost = 0.0;
@@ -298,6 +302,24 @@ double VictorStateThresholdValidator::getPathCost(og::PathGeometric *path) const
 
     }
     return max_cost;
+
+}
+
+double VictorStateThresholdValidator::getPathCost(og::PathGeometric *path) const
+{
+    if(use_prob_col)
+    {
+        return getPathMaxColProb(path);
+    }
+    else if(use_vox)
+    {
+        return getPathMaxVox(path);
+    }
+    else{
+        std::cout << "Attempted to get path cost without useprobcol or use_vox\n";
+        assert(false);
+    }
+    
 }
 
 

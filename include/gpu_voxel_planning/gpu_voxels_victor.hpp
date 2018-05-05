@@ -146,6 +146,7 @@ public:
     bool attemptPath(const Path &path);
     void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg);
     void spinUntilUpdate();
+    void loadPointCloudFromFile();
     
 public:
     gpu_voxels::GpuVoxelsSharedPtr gvl;

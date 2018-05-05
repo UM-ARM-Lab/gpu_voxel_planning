@@ -77,6 +77,9 @@ public:
     double getMotionColProb(ompl::base::State *s1, ompl::base::State *s2) const;
 
     double getPathMaxColProb(ompl::geometric::PathGeometric *path) const;
+    
+    double getPathMaxVox(ompl::geometric::PathGeometric *path) const;
+    
 
     double getPathCost(ompl::geometric::PathGeometric *path) const;
 

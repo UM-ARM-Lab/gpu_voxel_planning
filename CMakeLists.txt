@@ -10,6 +10,7 @@ set(CATKIN_PACKAGES
   or_victor
   trajectory_msgs
   arc_utilities
+  arm_pointcloud_utilities
   )
 
 ## Find catkin macros and libraries

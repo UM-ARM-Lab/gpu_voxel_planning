@@ -8,6 +8,7 @@
 #include <cmath>
 #include <limits>
 #include <arc_utilities/timing.hpp>
+#include <arc_utilities/arc_helpers.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -61,7 +62,7 @@ bool checkAtGoal(std::vector<double> goal)
 }
 
 
-bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string planner_name)
+bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
 {
 
     VictorConfig goal_config = real_world->victor_model.toVictorConfig(goal.data());
@@ -69,11 +70,14 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
     bool reached_goal = false;
     arc_utilities::Stopwatch stopwatch;
     double timeout = 60* 15; //seconds;
+    double planning_iters=0;
+    std::string planning_iters_name = planner.name + " plan iters";
+    PROFILE_START(planning_iters_name);
     while(!reached_goal)
     {
         if(DO_CONTROL)
         {
-            PROFILE_START(planner_name + " control");
+            PROFILE_START(planner.name + " control");
             Optpath maybe_path = planner.localControlConfig(real_world->victor_model.cur_config,
                                                             goal_config);
             while(maybe_path.Valid())
@@ -90,27 +94,30 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
                 maybe_path = planner.localControlConfig(real_world->victor_model.cur_config,
                                                         goal_config);
             }
-            PROFILE_RECORD(planner_name + " control");
+            PROFILE_RECORD(planner.name + " control");
             if(reached_goal)
                 break;
         }
 
         if(DO_PLAN)
         {
-            PROFILE_START(planner_name + " plan");
+            planning_iters++;
+            PROFILE_START(planner.name + " plan");
             Optpath maybe_path = planner.planPathConfig(real_world->victor_model.cur_config,
                                                         goal_config);
-            PROFILE_RECORD(planner_name + " plan");
+            PROFILE_RECORD(planner.name + " plan");
             if(!maybe_path.Valid())
             {
                 std::cout << "Path planning failed\n";
+                PROFILE_START(planner.name + "_failed");
+                PROFILE_RECORD(planner.name + "_failed");
                 return false;
             }
 
 
-            PROFILE_START(planner_name + " execute");
+            PROFILE_START(planner.name + " execute");
             reached_goal = real_world->attemptPath(maybe_path.Get());
-            PROFILE_RECORD(planner_name + " execute");
+            PROFILE_RECORD(planner.name + " execute");
         }
 
         // M::Maybe<Path> maybe_path = planner.planPathConfig(real_world->victor_model.cur_config,
@@ -122,6 +129,7 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
         // }
         // reached_goal = real_world->attemptPath(maybe_path.Get());
     }
+    PROFILE_RECORD_DOUBLE(planning_iters_name, planning_iters);
     if(reached_goal)
         std::cout << "Goal Reached!\n";
     else
@@ -129,6 +137,31 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal, std::string p
     return true;
 }
 
+
+void runTest_VictorProbCol(std::vector<double> goal)
+{
+    VictorProbColCostRRTConnect planner(&(real_world->victor_model));
+    planner.name = "prob_col_planner";
+    std_msgs::String msg;
+    std::cout << "Waiting for input to start prob planner...\n";
+    std::string unused;
+    std::getline(std::cin, unused);
+    ros::Duration(1.0).sleep();
+    attemptGoal(planner, goal);
+}
+
+void runTest_VictorVox(std::vector<double> goal)
+{
+
+    VictorVoxCostRRTConnect planner(&(real_world->victor_model));
+    planner.name = "vox_planner";
+    std_msgs::String msg;
+    std::cout << "Waiting for input to start vox planner...\n";
+    std::string unused;
+    std::getline(std::cin, unused);
+    ros::Duration(1.0).sleep();
+    attemptGoal(planner, goal);
+}
 
 int main(int argc, char* argv[])
 {
@@ -143,56 +176,21 @@ int main(int argc, char* argv[])
     ros::Duration(0.5).sleep();
     ros::spinOnce();
 
-    VictorProbColCostRRTConnect planner(&(real_world->victor_model));
-    // planner.use_anytime_planner = false;
+    
 
-    std::vector<double> goal1 = {-.25, -.11, -.18, -1.0, .4, .4, -.7};
-    std::vector<double> goal2 = {-.25, .5, .3, -1.0, .4, .4, -.7};
-
-    std::vector<double> goal_test = {0.149, 0.712, -0.307, -0.768, 0.001, 1.238, -0.91};
+    std::vector<double> goal_box = {0.548, 0.528, -0.932, -1.354, 0.063, 0.72, 1.431};
 
     std::string unused;
     std::cout << "Waiting for user input to start...\n";
     std::getline(std::cin, unused);
-    // while(ros::ok())
-    // {
-    //     ros::spinOnce();
-    // }
 
+    // runTest_VictorProbCol(goal_box);
+    runTest_VictorVox(goal_box);
 
-    std_msgs::String msg;
-    std::cout << "Waiting for input for goal test...\n";
-    std::getline(std::cin, unused);
-    ros::Duration(1.0).sleep();
-    attemptGoal(planner, goal_test, "test_planner");
-
-
-
-    // while(ros::ok())
-    // {
-    //     msg.data = "goal one";
-    //     // speaker.publish(msg);
-
-
-
-    //     std::cout << "Waiting for input for goal 1...\n";
-    //     std::getline(std::cin, unused);
-    //     ros::Duration(1.0).sleep();
-    //     attemptGoal(planner, goal1, "test_planner");
-
-        
-    //     msg.data = "goal two";
-    //     // speaker.publish(msg);
-    //     std::cout << "Waiting for input for goal 2...\n";
-    //     std::getline(std::cin, unused);
-    //     ros::Duration(1.0).sleep();
-
-    //     attemptGoal(planner, goal2, "test_planner");
-
-
-    // }
+    std::string filename = "./real_robot_trials/box_" + arc_helpers::GetCurrentTimeAsString();
+    PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
+    PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
     
-
     real_world->gvl.reset();
     
 }

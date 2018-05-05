@@ -41,6 +41,10 @@ namespace gpu_voxels_planner
 
         virtual Maybe::Maybe<ompl::base::PathPtr> localControl(ompl::base::ScopedState<> start, Goals goal);
 
+        virtual Maybe::Maybe<ompl::base::PathPtr> voxLocalControl(ompl::base::ScopedState<> start,
+                                                                  Goals goals);
+
+
     public:
 
         Maybe::Maybe<Path> planPathConfig(VictorConfig start, VictorConfig goal);
@@ -128,12 +132,19 @@ namespace gpu_voxels_planner
     class VictorThresholdRRTConnect: public VictorPlanner
     {
     public:
-        VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model);
+        VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model,
+                                  bool use_vox, bool use_prob_col);
         virtual void initializePlanner() override;
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
                                                            Goals goals) override;
         virtual void preparePlanner(ompl::base::ScopedState<> start,
                                     Goals goals) override;
+        
+        virtual Maybe::Maybe<ompl::base::PathPtr> localControl(ompl::base::ScopedState<> start,
+                                                               Goals goals) override;
+
+        bool use_vox_;
+        bool use_prob_col_;
 
     };
 

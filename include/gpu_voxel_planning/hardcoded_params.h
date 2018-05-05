@@ -13,9 +13,9 @@
 
 #define USE_KNOWN_OBSTACLES true
 
-#define MAKE_TABLE true
+#define MAKE_TABLE false
 
-#define MAKE_SLOTTED_WALL false
+#define MAKE_SLOTTED_WALL true
 
 #define ALL_OBSTACLES_KNOWN false
 
@@ -36,5 +36,7 @@
 #define VIDEO_VISUALIZE true
 
 #define EXECUTION_DELAY_us 10000
+
+#define REAL_ROBOT true
 
 #endif

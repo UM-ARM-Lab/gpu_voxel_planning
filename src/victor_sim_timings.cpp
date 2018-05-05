@@ -214,19 +214,22 @@ void runTest(VictorPlanner &planner)
 
 void runTest_ProbThresholdRRTConnect()
 {
-    std::cout << "threshold planner\n";
-    VictorThresholdRRTConnect planner(&(sim_world->victor_model));
+    std::cout << "prob threshold planner\n";
+    bool use_prob_col = true;
+    bool use_vox = false;
+    VictorThresholdRRTConnect planner(&(sim_world->victor_model), use_vox, use_prob_col);
     planner.name = "Prob Threshold bi_rrt";
-    planner.use_prob_col = true;
     runTest(planner);
 }
 
 void runTest_VoxThresholdRRTConnect()
 {
-    std::cout << "threshold planner\n";
-    VictorThresholdRRTConnect planner(&(sim_world->victor_model));
+    std::cout << "vox threshold planner\n";
+    bool use_prob_col = false;
+    bool use_vox = true;
+    VictorThresholdRRTConnect planner(&(sim_world->victor_model), use_vox, use_prob_col);
     planner.name = "Vox Threshold bi_rrt";
-    planner.vox = true;
+
     runTest(planner);
 }
 

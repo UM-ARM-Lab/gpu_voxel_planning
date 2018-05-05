@@ -9,12 +9,16 @@
 #include <arc_utilities/timing.hpp>
 
 #include <arc_utilities/arc_helpers.hpp>
+#include <arm_pointcloud_utilities/load_save_to_file.h>
 
 
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/locks.hpp>
 #include <mutex>
+#include <math.h>
 
+
+using namespace arm_pointcloud_utilities;
 
 std::vector<std::string> SEEN_OBSTACLE_SETS;
 
@@ -89,7 +93,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
     gvl->insertBoxIntoMap(Vector3f(-1,-1,-1), Vector3f(300*0.02,300*0.02,300*0.02), FULL_MAP, PROB_OCCUPIED);
 
-    if(PEG_IN_HOLE)
+    if(PEG_IN_HOLE || REAL_ROBOT)
     {
         gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_with_rod.urdf", false);
         victor_right_gripper_collision_names.push_back("rod");
@@ -105,8 +109,9 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
     VictorConfig left_arm_config;
 
-    std::vector<double> left_arm_joint_values = {1.57, 1.57, 0, 0, 0, 0 ,0};
-    // std::vector<double> left_arm_joint_values = {-0.91, 1.571, -1.168, 0.676, 2.461, 1.395, -1.235};
+    // std::vector<double> left_arm_joint_values = {1.57, 1.57, 0, 0, 0, 0 ,0};
+    std::vector<double> left_arm_joint_values = {-1.417, 1.566, -1.151, 1.293, 2.437, 1.406, -1.12};
+    
     for(size_t i=0; i<left_arm_joint_values.size(); i++)
     {
         left_arm_config[left_arm_joint_names[i]] = left_arm_joint_values[i];
@@ -120,10 +125,14 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
 
     VictorConfig right_gripper_config;
-    right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
-    right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
-    right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
-    gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
+    if(REAL_ROBOT)
+    {}
+    else{
+        right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
+        right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
+        right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
+        gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
+    }
     
     SEEN_OBSTACLE_SETS.resize(NUM_SETS);
     for(int i=0; i < NUM_SETS; i++)
@@ -886,6 +895,8 @@ RealWorld::RealWorld()
     get_attempt_status_client = n.serviceClient<gpu_voxel_planning::AttemptPathResult>("get_path_status");
     
 
+
+    loadPointCloudFromFile();
     double init_angles[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     VictorConfig init_config = victor_model.toVictorConfig(init_angles);
     victor_model.updateActual(init_config);
@@ -902,9 +913,17 @@ RealWorld::~RealWorld()
 
 void RealWorld::jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
 {
-    std::vector<double> right_arm_angles(&msg->position[7], &msg->position[14]);
-    VictorConfig cur = victor_model.toVictorConfig(right_arm_angles.data());
+    // std::vector<double> right_arm_angles(&msg->position[7], &msg->position[14]);
+    // VictorConfig cur = victor_model.toVictorConfig(right_arm_angles.data());
+
+    VictorConfig cur;
+    for(size_t i=0; i<msg->position.size(); i++)
+    {
+        cur[msg->name[i]] = msg->position[i];
+    }
+    
     victor_model.updateActual(cur);
+    victor_model.m1_subtract_m2(KNOWN_OBSTACLES_MAP, VICTOR_ACTUAL_MAP);
     victor_model.doVis();
     pos_updated = true;
 }
@@ -917,6 +936,32 @@ void RealWorld::spinUntilUpdate()
         ros::Duration(0.001).sleep();
         ros::spinOnce();
     }
+}
+
+void RealWorld::loadPointCloudFromFile()
+{
+    const std::pair<std::string, Eigen::Matrix3Xf> deserialized =
+        LoadPointsetFromFile("./logs/point_cloud_latest.compressed");
+
+    const Eigen::Matrix3Xf &mat = deserialized.second;
+    std::cout << "Loading matrix of size " << mat.rows() << ", " << mat.cols() << "\n";
+    std::vector<Vector3f> points;
+    for(size_t i=0; i<mat.cols(); i++)
+    {
+        if(std::isnan(mat(0,i)) || std::isnan(mat(1,i)) || std::isnan(mat(2,i)))
+        {
+            continue;
+        }
+        // std::cout << mat(0, i) << ", " << mat(1,i) << ", " << mat(2,i) << "\n";
+        Vector3f p(1.0+mat(0,i), 2.0+mat(1,i), mat(2,i));
+
+        if(p.x < 1.7 && p.y < 2.0 && p.z > 1.0)
+            continue;
+        
+        points.push_back(p);
+    }
+    gvl->insertPointCloudIntoMap(points, KNOWN_OBSTACLES_MAP,  PROB_OCCUPIED);
+
 }
 
 bool RealWorld::attemptPath(const Path &path)
