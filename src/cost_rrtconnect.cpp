@@ -234,8 +234,18 @@ ompl::geometric::CostRRTConnect::growTree(TreeData &tree, TreeGrowingInfo &tgi,
         // pv_->do_delay = true;
         // std::cout << "rrt threshold: " << threshold << "\n";
         double new_motion_cost = pv_->getPathCost(path->getStates(), costs);
-        if(pv_->do_delay)
+
+        bool debug = false;
+            
+        if(debug)
+        {
             std::cout << "costs size: " << costs.size() << " path size: " << path->getStates().size() << "\n";
+            // std::cout << "best pcol " << pcol << "";
+            // victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);        
+            std::string unused;
+            std::getline(std::cin, unused);
+        }
+
 
 
         double nd = si_->getStateSpace()->validSegmentCount(nmotion->state, dstate);
@@ -399,6 +409,10 @@ ompl::base::PlannerStatus ompl::geometric::CostRRTConnect::solve(const base::Pla
 
     while (!ptc)
     {
+        // if(!startTree)
+        // {
+        //     std::cout << "Sampling from goal tree\n";
+        // }
         TreeData &tree = startTree ? tStart_ : tGoal_;
         tgi.start = startTree;
         startTree = !startTree;

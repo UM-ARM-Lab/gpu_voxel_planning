@@ -267,7 +267,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
 
     double start_d_to_goal = goals.distance(start);
     
-    double max_motion = space->getLongestValidSegmentLength() * 5;
+    double max_motion = space->getLongestValidSegmentLength() * 2;
 
     ob::State* test(si_->allocState());
     ob::State* best(si_->allocState());
@@ -312,22 +312,41 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         }
 
         double progress_d = start_d_to_goal - goals.distance(test);
+
         
-        if(progress_d <= 0 || progress_d <= best_ev)
+        if(progress_d <= 0)// || progress_d <= best_ev)
         {
+            if(i>2)
+            {
+                i--;
+            }
+            
             continue;
         }
 
 
+        size_t num_interp_points = 3;
+
         std::vector<ob::State*> dpath;
-        dpath.push_back(start.get());
-        dpath.push_back(test);
+
+        si_->getMotionStates(start.get(), test, dpath, num_interp_points, true, true);
+
 
         size_t col_index;
         // vppc->do_delay = true;
         double pcol = vppc->getPathCost(dpath, col_index);
+        si_->freeStates(dpath);
 
-        
+
+        bool debug = false;
+        if(debug)
+        {
+            std::cout << "pcol " << pcol << "\n ";
+            victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);        
+            std::string unused;
+            std::getline(std::cin, unused);
+        }
+
 
         if(pcol > 0.90)
         {

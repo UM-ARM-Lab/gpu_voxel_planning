@@ -116,11 +116,14 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     {
         left_arm_config[left_arm_joint_names[i]] = left_arm_joint_values[i];
     }
-    
-    gvl->setRobotConfiguration(VICTOR_ROBOT_STATIONARY, left_arm_config);
-    gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, KNOWN_OBSTACLES_MAP, PROB_OCCUPIED);
 
-    gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, SIM_OBSTACLES_MAP, PROB_OCCUPIED);
+    if(true != REAL_ROBOT)
+    {
+        gvl->setRobotConfiguration(VICTOR_ROBOT_STATIONARY, left_arm_config);
+        gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, KNOWN_OBSTACLES_MAP, PROB_OCCUPIED);
+
+        gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, SIM_OBSTACLES_MAP, PROB_OCCUPIED);
+    }
 
 
 
@@ -915,12 +918,14 @@ void RealWorld::jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
 {
 
     VictorConfig cur;
-    if( update_all_joint_count++ < 10)
+    if( update_all_joint_count++ < 3)
     {
         for(size_t i=0; i<msg->position.size(); i++)
         {
             cur[msg->name[i]] = msg->position[i];
         }
+        gvl->setRobotConfiguration(VICTOR_ROBOT_STATIONARY, cur);
+        gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, KNOWN_OBSTACLES_MAP, PROB_OCCUPIED);
     }
     else{
 

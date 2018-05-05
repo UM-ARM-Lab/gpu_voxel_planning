@@ -179,14 +179,14 @@ int main(int argc, char* argv[])
 
     
 
-    std::vector<double> goal_box = {0.898, 0.141, -0.578, -1.283, -1.104, 1.537, -1.49};
+    std::vector<double> goal_box = {-0.3, 0.786, 0.772, -1.092, -1.208, 0.573, 0.102};
 
     std::string unused;
     std::cout << "Waiting for user input to start...\n";
     std::getline(std::cin, unused);
 
-    runTest_VictorProbCol(goal_box);
-    // runTest_VictorVox(goal_box);
+    // runTest_VictorProbCol(goal_box);
+    runTest_VictorVox(goal_box);
 
     std::string filename = "./real_robot_trials/box_" + arc_helpers::GetCurrentTimeAsString();
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
