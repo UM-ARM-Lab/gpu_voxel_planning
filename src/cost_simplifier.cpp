@@ -18,7 +18,7 @@ void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials
     cur_cost = pv_->getPathCost(path.getStates(), col_index, fast_check);
     // std::cout << "Current path cost " << cur_cost << "\n";
 
-    pv_->setProbabilityThreshold(cur_cost + eps);
+    pv_->setProbabilityThreshold(cur_cost + 3*eps);
     
     for(size_t i=0; i<num_trials; i++)
     {
@@ -99,8 +99,8 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
 
     if((double)new_segment.size()/(double)orig_segment.size() > .8)
     {
-        // std::cout << "not sufficiently shorter\n";
-        return;
+        std::cout << "not sufficiently shorter\n";
+        // return;
     }
 
 
@@ -122,7 +122,8 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
     //     si_->freeStates(new_segment);
     //     return;
     // }
-    
+
+
 
 
     std::reverse(std::begin(new_path), std::end(new_path));

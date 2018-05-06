@@ -262,7 +262,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         return Maybe::Maybe<ob::PathPtr>();
     }
     
-    int num_samples = 100;
+    int num_samples = 20;
     int i=0;
 
     double start_d_to_goal = goals.distance(start);
@@ -286,7 +286,8 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
     for(i=0; i<num_samples; i++)
     {
         checking_goal_directly = (i==0);
-        if(checking_goal_directly)// && goals.distance(start) <= max_motion*1.5)
+        bool near_goal = goals.distance(start) <= max_motion;
+        if(checking_goal_directly)
         {
             si_->copyState(test, goals.get());
             goal_sampled = true;
@@ -316,7 +317,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         
         if(progress_d <= 0)// || progress_d <= best_ev)
         {
-            if(i>2)
+            if(i>2 && !near_goal)
             {
                 i--;
             }
@@ -325,15 +326,10 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         }
 
 
-        size_t num_interp_points = 3;
-
+        size_t num_interp_points = 2;
         std::vector<ob::State*> dpath;
-
         si_->getMotionStates(start.get(), test, dpath, num_interp_points, true, true);
-
-
         size_t col_index;
-        // vppc->do_delay = true;
         double pcol = vppc->getPathCost(dpath, col_index);
         si_->freeStates(dpath);
 
@@ -348,7 +344,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         }
 
 
-        if(pcol > 0.90)
+        if(pcol > 0.9)
         {
             continue;
         }
@@ -361,6 +357,12 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
             best_ev = ev;
             found_ok = true;
             best_pcol = pcol;
+        }
+
+        if(checking_goal_directly && pcol < .2)
+        {
+            //good enough to go towards goal
+            break;
         }
 
         // if(checking_goal_directly)
@@ -449,7 +451,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::voxLocalControl(ompl::base::ScopedState
 
     double start_d_to_goal = goals.distance(start);
     
-    double max_motion = space->getLongestValidSegmentLength() * 5;
+    double max_motion = space->getLongestValidSegmentLength() * 2;
 
     ob::State* test(si_->allocState());
     ob::State* best(si_->allocState());
@@ -462,12 +464,16 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::voxLocalControl(ompl::base::ScopedState
 
     double goal_sampled = false;
 
+
     
     // while(i < num_samples)
     for(i=0; i<num_samples; i++)
     {
-        if(i==0 && goals.distance(start) <= max_motion*1.5)
+        bool checking_goal_directly = (i==0);
+        bool near_goal = goals.distance(start) <= max_motion*1.5;
+        if(i==0)
         {
+            goal_sampled = true;
             si_->copyState(test, goals.get());
             goal_sampled = true;
         }
@@ -495,17 +501,21 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::voxLocalControl(ompl::base::ScopedState
         
         if(progress_d <= 0 || progress_d <= best_ev)
         {
+            if(i>2 && !near_goal)
+            {
+                i--;
+            }
+            
             continue;
         }
 
-
+        size_t num_interp_points = 2;
         std::vector<ob::State*> dpath;
-        dpath.push_back(start.get());
-        dpath.push_back(test);
-
+        si_->getMotionStates(start.get(), test, dpath, num_interp_points, true, true);
         size_t col_index;
-        // vppc->do_delay = true;
         double num_vox = vppc->getPathCost(dpath, col_index);
+        si_->freeStates(dpath);
+
 
         if(num_vox > VOX_CONTROLLER_THRESHOLD)
         {
@@ -520,6 +530,10 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::voxLocalControl(ompl::base::ScopedState
             best_cost = num_vox;
             found_ok = true;
             // best_pcol = pcol;
+        }
+        if(checking_goal_directly)
+        {
+            break;
         }
     
     }

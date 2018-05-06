@@ -73,8 +73,11 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
     double planning_iters=0;
     std::string planning_iters_name = planner.name + " plan iters";
     PROFILE_START(planning_iters_name);
+    PROFILE_START(planner.name + " success");
+    PROFILE_START(planner.name + " failure");
     while(!reached_goal)
     {
+        std::cout << "Control + Plan iter " << planning_iters << "\n";
         if(DO_CONTROL)
         {
             PROFILE_START(planner.name + " control");
@@ -87,12 +90,14 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
                 std::cout << "Local control found, executing\n";
                 real_world->attemptPath(maybe_path.Get());
                 reached_goal = checkAtGoal(goal);
+                // std::cout << "Goal reached? " << reached_goal << "\n";
                 if(reached_goal){
                     break;
                 }
 
                 maybe_path = planner.localControlConfig(real_world->victor_model.cur_config,
                                                         goal_config);
+                
             }
             PROFILE_RECORD(planner.name + " control");
             if(reached_goal)
@@ -118,7 +123,7 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
             PROFILE_START(planner.name + " execute");
             reached_goal = real_world->attemptPath(maybe_path.Get());
             PROFILE_RECORD(planner.name + " execute");
-        }
+       } 
 
         // M::Maybe<Path> maybe_path = planner.planPathConfig(real_world->victor_model.cur_config,
         //                                             goal_config);
@@ -131,35 +136,91 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
     }
     PROFILE_RECORD_DOUBLE(planning_iters_name, planning_iters);
     if(reached_goal)
-        std::cout << "Goal Reached!\n";
+    {
+        std::cout << "\n\nGoal Reached!\n\n\n";
+        PROFILE_RECORD(planner.name + " success");
+    }
     else
-        std::cout << "Exiting, but goal not reached\n";
+    {
+        std::cout << "\n\nExiting, but goal not reached\n\n\n";
+        PROFILE_RECORD(planner.name + " failure");
+    }
+    real_world->spinUntilUpdate();
     return true;
 }
 
 
-void runTest_VictorProbCol(std::vector<double> goal)
+void setupWorld()
 {
+    if(real_world != nullptr)
+    {
+        real_world->gvl.reset();
+        real_world->victor_model.gvl.reset();
+    }
+
+    real_world = std::make_shared<RealWorld>();
+
+    ros::Duration(0.5).sleep();
+    ros::spinOnce();
+
+}
+
+bool moveToStart(std::vector<double> start)
+{
+    Path path;
+    path.push_back(start);
+    bool at_start = false;
+    while(!at_start)
+    {
+        std::cout << "Moving toward start";
+        at_start = real_world->attemptPath(path);
+        if(!at_start)
+        {
+            std::cout << "Failed to reach startpoint. Enter input to retry\n";
+            std::string unused;
+            std::cin >> unused;
+        }
+    }
+}
+
+
+void runTest_VictorProbCol(std::vector<double> start, std::vector<double> goal)
+{
+    std::cout << "Waiting for input to start prob planner...\n";
+    std::string unused;
+    std::cin >> unused;
+
+
+    setupWorld();
+    moveToStart(start);
+
+    std::cout << "Set up Visualizer now...\n";
+    std::cin >> unused;
+
     VictorProbColCostRRTConnect planner(&(real_world->victor_model));
     planner.name = "prob_col_planner";
     planner.use_anytime_planner = false;
     std_msgs::String msg;
-    std::cout << "Waiting for input to start prob planner...\n";
-    std::string unused;
-    std::getline(std::cin, unused);
     ros::Duration(1.0).sleep();
     attemptGoal(planner, goal);
 }
 
-void runTest_VictorVox(std::vector<double> goal)
+void runTest_VictorVox(std::vector<double> start, std::vector<double> goal)
 {
+    std::cout << "Waiting for input to start vox planner...\n";
+    std::string unused;
+    // std::getline(std::cin, unused);
+    std::cin >> unused;
+
+    setupWorld();
+    moveToStart(start);
+
+    std::cout << "Set up Visualizer now...\n";
+    std::cin >> unused;
 
     VictorVoxCostRRTConnect planner(&(real_world->victor_model));
     planner.name = "vox_planner";
     std_msgs::String msg;
-    std::cout << "Waiting for input to start vox planner...\n";
-    std::string unused;
-    std::getline(std::cin, unused);
     ros::Duration(1.0).sleep();
     attemptGoal(planner, goal);
 }
@@ -171,27 +232,27 @@ int main(int argc, char* argv[])
     ros::init(argc, argv, "gpu_voxels");
     ros::NodeHandle nh;
     speaker = nh.advertise<std_msgs::String>("/polly", 1, true);
-    
-    real_world = std::make_shared<RealWorld>();
 
-    ros::Duration(0.5).sleep();
-    ros::spinOnce();
 
     
 
-    std::vector<double> goal_box = {-0.3, 0.786, 0.772, -1.092, -1.208, 0.573, 0.102};
+    std::vector<double> start = {-2.142, 1.402, 0.363, -0.518, 0.012, -0.34, -1.678};
+    std::vector<double> goal_box = {-1.689, 0.13, 0.933, -1.005, -2.451, -1.201, -0.072};
 
-    std::string unused;
-    std::cout << "Waiting for user input to start...\n";
-    std::getline(std::cin, unused);
 
-    // runTest_VictorProbCol(goal_box);
-    runTest_VictorVox(goal_box);
+    int num_trials = 10;
+    for(int i=0; i<num_trials; i++)
+    {
+        std::cout << "\n\n\n\nTrial " << i+1 << " of " << num_trials << "\n\n\n\n\n";
+        runTest_VictorProbCol(start, goal_box);
+        // runTest_VictorVox(start, goal_box);
+    }
 
     std::string filename = "./real_robot_trials/box_" + arc_helpers::GetCurrentTimeAsString();
+    
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
-    
+    std::cout << "\n\n\n\n\n\nWrote summary!!\n\n\n\n\n\n";
     real_world->gvl.reset();
     
 }

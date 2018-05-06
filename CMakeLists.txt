@@ -270,6 +270,15 @@ target_link_libraries(wip_victor_real
   victor_validator
   )
 
+add_executable(victor_real_timings src/victor_real_timings.cpp)
+target_link_libraries(victor_real_timings
+  ${EXTERN_LIBS}
+  lazyrrtf
+  victor_model
+  victor_planning
+  victor_validator
+  )
+
 
 
 ###########

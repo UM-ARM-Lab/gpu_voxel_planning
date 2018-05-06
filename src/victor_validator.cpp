@@ -457,6 +457,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
                 std::cout << "seen col vox: " << seen_col_voxels[i] << " seen sizes " << seen_sizes[i] << "\n";
                 assert(p_no_collision[i] <= 1.0);
             }
+            // p_no_col_seen = std::min(p_no_collision[i], p_no_col_seen);
             p_no_col_seen *= p_no_collision[i];
         }
 

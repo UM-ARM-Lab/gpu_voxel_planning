@@ -948,6 +948,7 @@ void RealWorld::spinUntilUpdate()
         ros::Duration(0.001).sleep();
         ros::spinOnce();
     }
+    gvl->visualizeMap(VICTOR_ACTUAL_MAP);
 }
 
 void RealWorld::loadPointCloudFromFile()
@@ -967,8 +968,8 @@ void RealWorld::loadPointCloudFromFile()
         // std::cout << mat(0, i) << ", " << mat(1,i) << ", " << mat(2,i) << "\n";
         Vector3f p(1.0+mat(0,i), 2.0+mat(1,i), mat(2,i));
 
-        if(p.x < 1.7 && p.y < 2.0 && p.z > 1.0)
-            continue;
+        // if(p.x < 1.7 && p.y < 2.0 && p.z > 1.0)
+        //     continue;
         
         points.push_back(p);
     }
@@ -1005,6 +1006,7 @@ bool RealWorld::attemptPath(const Path &path)
         get_attempt_status_client.call(path_res);
         path_finished = path_res.response.finished;
         spinUntilUpdate();
+        
     }
     std::cout << "Path finished\n";
 
@@ -1032,5 +1034,7 @@ bool RealWorld::attemptPath(const Path &path)
 
         return false;
     }
+    
+
     return true;
 }

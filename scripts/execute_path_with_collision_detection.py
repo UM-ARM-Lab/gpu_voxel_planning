@@ -183,7 +183,7 @@ def execute_path(path):
     
     cur_pos = vu.jvq_to_list(right_arm_listener.get().measured_joint_position)
 
-    next_poses = pu.densify(pu.travel_along(path, .2, cur_pos), .05)
+    next_poses = pu.densify(pu.travel_along(path, .15, cur_pos), .03)
 
     for pos in next_poses:
         jtp_msg = JointTrajectoryPoint()
