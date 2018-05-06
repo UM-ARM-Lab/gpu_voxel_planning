@@ -30,7 +30,7 @@ ros_path = []
 path_in_progress = False
 
 
-ext_torque_limits = [10, 10, 10, 4, 2, 1, 1]
+ext_torque_limits = [20, 20, 15, 5, 4, 3, .9]
 
 right_arm_listener = None
 vm = None
@@ -46,6 +46,10 @@ def check_collision(motion_status_msg):
 
         col_indicies = [idx for idx in range(len(jt)) if abs(jt[idx]) > ext_torque_limits[idx]]
 
+        if(col_indicies):
+            print jt
+            print(col_indicies)
+        
         g_in_collision = bool(col_indicies)
 
         if not g_in_collision:
@@ -169,9 +173,15 @@ def execute_path(path):
     msg.collided = in_collision
 
 
+    if not in_collision:
+
+        # Check for collision at end of trajectory
+        rospy.sleep(0.2)
+        stop()
+        if in_collision:
+            print("This extra check did something!")
 
     if not in_collision:
-        
         return msg
 
     # speak_collision_link()

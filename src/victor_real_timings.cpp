@@ -27,6 +27,7 @@ typedef Maybe::Maybe<Path> Optpath;
 
 ros::Publisher speaker;
 
+typedef std::vector<std::vector<double>> dGoals;
 
 /***********************************************
  **                   MAIN                    **
@@ -47,6 +48,7 @@ void killhandler(int)
 }
 
 
+
 bool checkAtGoal(std::vector<double> goal)
 {
     std::vector<double> cur_values = real_world->victor_model.toValues(real_world->victor_model.cur_config);
@@ -61,11 +63,36 @@ bool checkAtGoal(std::vector<double> goal)
     return true;
 }
 
+bool checkAtGoal(dGoals goals)
+{
+    for(auto goal: goals)
+    {
+        if(checkAtGoal(goal))
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
-bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
+
+VictorConfig getMinGoal(VictorPlanner &planner, dGoals goals)
+{
+    // double cost = std::numeric_limits<double>::max();
+    // size_t best_goal_ind = 0;
+    // for(auto goal: goals)
+    // {
+    //     VictorConfig c = real_world->victor_model.toVictorConfig(goal.data());
+    //     planner.vppc
+    // }
+    return real_world->victor_model.toVictorConfig(goals[0].data());
+}
+
+
+bool attemptGoal(VictorPlanner &planner, dGoals goals)
 {
 
-    VictorConfig goal_config = real_world->victor_model.toVictorConfig(goal.data());
+    VictorConfig goal_config; 
 
     bool reached_goal = false;
     arc_utilities::Stopwatch stopwatch;
@@ -77,19 +104,23 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
     PROFILE_START(planner.name + " failure");
     while(!reached_goal)
     {
+        goal_config = getMinGoal(planner, goals);
+        
         std::cout << "Control + Plan iter " << planning_iters << "\n";
         if(DO_CONTROL)
         {
+            
             PROFILE_START(planner.name + " control");
             Optpath maybe_path = planner.localControlConfig(real_world->victor_model.cur_config,
                                                             goal_config);
             while(maybe_path.Valid())
             {
+                goal_config = getMinGoal(planner, goals);
                 if(stopwatch() > timeout) break;
                 
                 std::cout << "Local control found, executing\n";
                 real_world->attemptPath(maybe_path.Get());
-                reached_goal = checkAtGoal(goal);
+                reached_goal = checkAtGoal(goals);
                 // std::cout << "Goal reached? " << reached_goal << "\n";
                 if(reached_goal){
                     break;
@@ -106,6 +137,7 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
 
         if(DO_PLAN)
         {
+            goal_config = getMinGoal(planner, goals);
             planning_iters++;
             PROFILE_START(planner.name + " plan");
             Optpath maybe_path = planner.planPathConfig(real_world->victor_model.cur_config,
@@ -184,7 +216,7 @@ bool moveToStart(std::vector<double> start)
 }
 
 
-void runTest_VictorProbCol(std::vector<double> start, std::vector<double> goal)
+void runTest_VictorProbCol(std::vector<double> start, dGoals goals)
 {
     std::cout << "Waiting for input to start prob planner...\n";
     std::string unused;
@@ -194,18 +226,18 @@ void runTest_VictorProbCol(std::vector<double> start, std::vector<double> goal)
     setupWorld();
     moveToStart(start);
 
-    std::cout << "Set up Visualizer now...\n";
-    std::cin >> unused;
+    // std::cout << "Set up Visualizer now...\n";
+    // std::cin >> unused;
 
     VictorProbColCostRRTConnect planner(&(real_world->victor_model));
     planner.name = "prob_col_planner";
     planner.use_anytime_planner = false;
     std_msgs::String msg;
     ros::Duration(1.0).sleep();
-    attemptGoal(planner, goal);
+    attemptGoal(planner, goals);
 }
 
-void runTest_VictorVox(std::vector<double> start, std::vector<double> goal)
+void runTest_VictorVox(std::vector<double> start, dGoals goals)
 {
     std::cout << "Waiting for input to start vox planner...\n";
     std::string unused;
@@ -215,14 +247,14 @@ void runTest_VictorVox(std::vector<double> start, std::vector<double> goal)
     setupWorld();
     moveToStart(start);
 
-    std::cout << "Set up Visualizer now...\n";
-    std::cin >> unused;
+    // std::cout << "Set up Visualizer now...\n";
+    // std::cin >> unused;
 
     VictorVoxCostRRTConnect planner(&(real_world->victor_model));
     planner.name = "vox_planner";
     std_msgs::String msg;
     ros::Duration(1.0).sleep();
-    attemptGoal(planner, goal);
+    attemptGoal(planner, goals);
 }
 
 int main(int argc, char* argv[])
@@ -236,16 +268,18 @@ int main(int argc, char* argv[])
 
     
 
-    std::vector<double> start = {-2.142, 1.402, 0.363, -0.518, 0.012, -0.34, -1.678};
-    std::vector<double> goal_box = {-1.689, 0.13, 0.933, -1.005, -2.451, -1.201, -0.072};
+    std::vector<double> start = {1.881, -0.256, -2.302, -0.492, -2.129, -1.249, 0.444};
+    std::vector<double> goal_box = {1.857, -0.168, -2.445, -0.725, -2.458, -1.183, 1.893};
 
+    dGoals goals;
+    goals.push_back(goal_box);
 
     int num_trials = 10;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "\n\n\n\nTrial " << i+1 << " of " << num_trials << "\n\n\n\n\n";
-        runTest_VictorProbCol(start, goal_box);
-        // runTest_VictorVox(start, goal_box);
+        // runTest_VictorProbCol(start, goals);
+        runTest_VictorVox(start, goals);
     }
 
     std::string filename = "./real_robot_trials/box_" + arc_helpers::GetCurrentTimeAsString();

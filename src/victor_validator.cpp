@@ -390,11 +390,15 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
     {
         std::cout << "Running getPathCost for path of size " << path.size() << "\n";
     }
+
     
-    for(size_t collision_index = 0; collision_index < (path.size() - 1); collision_index ++)
+
+    
+    for(size_t collision_index = 0; collision_index < path.size(); collision_index ++)
     {
+        
         const ob::State *s1 = path[collision_index];
-        const ob::State *s2 = path[collision_index + 1];
+        const ob::State *s2 = path[std::min(collision_index + 1, path.size()-1)];
         if(!si_->isValid(s1))
         {
             PROFILE_RECORD("getProbCost");
@@ -487,10 +491,10 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
 
         if(do_delay)
         {
-            // std::cout << "Prob col: " << prob_col << "\n";
-            // std::cout << "prob colsets: " << 1.0-p_no_col_seen;
-            // std::cout << "   prob void space: " << 1.0 - p_no_col_unseen << "\n";
-            // usleep(30000);
+            std::cout << "Prob col: " << prob_col << "\n";
+            std::cout << "prob colsets: " << 1.0-p_no_col_seen;
+            std::cout << "   prob void space: " << 1.0 - p_no_col_unseen << "\n";
+            usleep(30000);
         }
         
         if(prob_col > threshold)
