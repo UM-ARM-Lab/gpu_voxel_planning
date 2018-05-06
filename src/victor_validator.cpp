@@ -173,7 +173,7 @@ double VictorStateThresholdValidator::getCollisionProb(const ob::State *state) c
     victor_model_->resetQuery();
     victor_model_->addQueryState(config);
 
-    if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+    if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > ALLOWED_KNOWN_OBSTACLES)
     {
         return 1.0;
     }
@@ -212,7 +212,7 @@ double VictorStateThresholdValidator::getColVoxelIntersects(const ob::State *sta
     victor_model_->resetQuery();
     victor_model_->addQueryState(config);
     victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
-    if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+    if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > ALLOWED_KNOWN_OBSTACLES)
     {
         return std::numeric_limits<double>::max();
     }
@@ -394,18 +394,21 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
     
 
     
-    for(size_t collision_index = 0; collision_index < path.size(); collision_index ++)
+    for(size_t collision_index = 0; collision_index < (path.size()-1); collision_index ++)
     {
-        
+        // std::cout << "col index: " << collision_index << " path size: " << path.size() << "\n";
         const ob::State *s1 = path[collision_index];
-        const ob::State *s2 = path[std::min(collision_index + 1, path.size()-1)];
+        const ob::State *s2 = path[collision_index + 1];
+        // const ob::State *s2 = path[std::min(collision_index + 1, path.size()-1)];
         if(!si_->isValid(s1))
         {
             PROFILE_RECORD("getProbCost");
             prob_col = 1.0;
             break;
         }
+        // std::cout << "valid segment count...";
         int nd = stateSpace_->validSegmentCount(s1, s2);
+        // std::cout << "...success\n";
         if(nd==2)
         {
             nd = 1; //path already densified
@@ -431,7 +434,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         }
 
 
-        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > ALLOWED_KNOWN_OBSTACLES)
         {
             PROFILE_RECORD("getProbCost");
             if(do_delay)
@@ -511,7 +514,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
 
     if(fast && prob_col < 1.0)
     {
-        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > ALLOWED_KNOWN_OBSTACLES)
         {
             PROFILE_RECORD("getProbCost");
             prob_col = 1.0;
@@ -644,7 +647,7 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
         PROFILE_RECORD("vox add query");
 
 
-        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > 0)
+        if(victor_model_->countNumCollisions(KNOWN_OBSTACLES_MAP) > ALLOWED_KNOWN_OBSTACLES)
         {
             PROFILE_RECORD("getVoxCost");
             return std::numeric_limits<double>::max();

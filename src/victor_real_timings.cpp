@@ -55,7 +55,7 @@ bool checkAtGoal(std::vector<double> goal)
     
     for(size_t i=0; i<goal.size(); i++)
     {
-        if(std::fabs(cur_values[i] - goal[i]) > 0.05)
+        if(std::fabs(cur_values[i] - goal[i]) > 0.03)
         {
             return false;
         }
@@ -96,7 +96,7 @@ bool attemptGoal(VictorPlanner &planner, dGoals goals)
 
     bool reached_goal = false;
     arc_utilities::Stopwatch stopwatch;
-    double timeout = 60* 15; //seconds;
+    double timeout = 60* 5; //seconds;
     double planning_iters=0;
     std::string planning_iters_name = planner.name + " plan iters";
     PROFILE_START(planning_iters_name);
@@ -104,6 +104,10 @@ bool attemptGoal(VictorPlanner &planner, dGoals goals)
     PROFILE_START(planner.name + " failure");
     while(!reached_goal)
     {
+        if(stopwatch() > timeout)
+        {
+            break;
+        }
         goal_config = getMinGoal(planner, goals);
         
         std::cout << "Control + Plan iter " << planning_iters << "\n";
@@ -226,8 +230,8 @@ void runTest_VictorProbCol(std::vector<double> start, dGoals goals)
     setupWorld();
     moveToStart(start);
 
-    // std::cout << "Set up Visualizer now...\n";
-    // std::cin >> unused;
+    std::cout << "Set up Visualizer now...\n";
+    std::cin >> unused;
 
     VictorProbColCostRRTConnect planner(&(real_world->victor_model));
     planner.name = "prob_col_planner";
@@ -247,8 +251,8 @@ void runTest_VictorVox(std::vector<double> start, dGoals goals)
     setupWorld();
     moveToStart(start);
 
-    // std::cout << "Set up Visualizer now...\n";
-    // std::cin >> unused;
+    std::cout << "Set up Visualizer now...\n";
+    std::cin >> unused;
 
     VictorVoxCostRRTConnect planner(&(real_world->victor_model));
     planner.name = "vox_planner";
@@ -268,17 +272,17 @@ int main(int argc, char* argv[])
 
     
 
-    std::vector<double> start = {1.881, -0.256, -2.302, -0.492, -2.129, -1.249, 0.444};
-    std::vector<double> goal_box = {1.857, -0.168, -2.445, -0.725, -2.458, -1.183, 1.893};
+    std::vector<double> start = {-1.063, 1.558, -0.779, 0.022, 1.042, -0.46, -0.715};
+    std::vector<double> goal_box = {-0.757, 0.89, -0.571, 0.555, 1.046, -0.793, -0.679};
 
     dGoals goals;
     goals.push_back(goal_box);
 
-    int num_trials = 10;
+    int num_trials = 1;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "\n\n\n\nTrial " << i+1 << " of " << num_trials << "\n\n\n\n\n";
-        // runTest_VictorProbCol(start, goals);
+        runTest_VictorProbCol(start, goals);
         runTest_VictorVox(start, goals);
     }
 

@@ -970,6 +970,12 @@ void RealWorld::loadPointCloudFromFile()
 
         // if(p.x < 1.7 && p.y < 2.0 && p.z > 1.0)
         //     continue;
+
+        if(p.z > 0.7 && p.z < 1.05 &&
+           p.y > 1.6)
+        {
+            continue;
+        }
         
         points.push_back(p);
     }
