@@ -127,11 +127,14 @@ public:
     void initializeObstacles();
     void makeTable();
     void makeSlottedWall();
-    bool executePath(const Path &path, size_t &last_index);
+    bool executePath(const Path &path, size_t &last_index, bool add_col_set);
 
     bool attemptPath(const Path &path);
 
+    void executeAndReturn(const Path &path);
+
     Maybe::Maybe<std::string> getCollisionLink(const VictorConfig &c);
+    Maybe::Maybe<std::vector<std::string>> getCollisionLinks(const VictorConfig &c);
 
 public:    
     gpu_voxels::GpuVoxelsSharedPtr gvl;

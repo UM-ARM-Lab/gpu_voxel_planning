@@ -121,6 +121,19 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
                 break;
         }
 
+
+        // DO WIGGLE
+        if(true)
+        {
+            std::cout << "Wiggling\n";
+            for(int i=0; i<50; i++)
+            {
+                Path wiggle_path = planner.randomWiggleConfig(sim_world->victor_model.cur_config);
+                sim_world->executeAndReturn(wiggle_path);
+            }
+        }
+        
+
         if(DO_PLAN)
         {
             num_planner_iterations ++;

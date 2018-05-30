@@ -44,6 +44,10 @@ namespace gpu_voxels_planner
         virtual Maybe::Maybe<ompl::base::PathPtr> voxLocalControl(ompl::base::ScopedState<> start,
                                                                   Goals goals);
 
+        ompl::base::PathPtr randomWiggle(ompl::base::ScopedState<> start);
+
+        Path randomWiggleConfig(VictorConfig start);
+
 
     public:
 

@@ -236,6 +236,43 @@ ob::ScopedState<> VictorPlanner::toScopedState(std::vector<double> ds)
     return s;
 }
 
+Path VictorPlanner::randomWiggleConfig(VictorConfig start)
+{
+    ob::PathPtr ompl_path = randomWiggle(toScopedState(victor_model_->toValues(start)));
+    return omplPathToDoublePath(ompl_path->as<og::PathGeometric>());
+}
+
+ob::PathPtr VictorPlanner::randomWiggle(ob::ScopedState<> start)
+{
+    double max_motion = space->getLongestValidSegmentLength() * 2;
+    
+    ob::State* new_state(si_->allocState());
+    ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
+    sampler_->sampleUniform(new_state);
+
+    //uniformly sample motion directions, not states
+    double *new_vals = new_state->as<ob::RealVectorStateSpace::StateType>()->values;
+    const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
+    for(int j=0; j<7; j++)
+    {
+        new_vals[j] += startv[j];
+    }
+
+    
+    double motion_dist = si_->distance(start.get(), new_state);
+
+    if(motion_dist > max_motion)
+    {
+        space->interpolate(start.get(), new_state, max_motion / motion_dist, new_state);
+    }
+
+    auto path(std::make_shared<og::PathGeometric>(si_));
+    path->append(start.get());
+    path->append(new_state);
+    return path;
+
+}
+
 Maybe::Maybe<Path> VictorPlanner::localControlConfig(VictorConfig start, VictorConfig goal)
 {
     return localControlDouble(victor_model_->toValues(start), victor_model_->toValues(goal));

@@ -736,6 +736,10 @@ void SimWorld::initializeObstacles()
         
 }
 
+/*
+ *  Returns the single link in collision
+ */
+
 Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
 {
     victor_model.resetQuery();
@@ -760,9 +764,40 @@ Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
 
 
 /*
+ *  Returns the set of links that might be in collision (Adds full gripper to link 6)
+ */
+Maybe::Maybe<std::vector<std::string>> SimWorld::getCollisionLinks(const VictorConfig &c)
+{
+    Maybe::Maybe<std::string> col_link = getCollisionLink(c);
+    if(!col_link.Valid())
+    {
+        return Maybe::Maybe<std::vector<std::string>>();
+    }
+
+    std::vector<std::string> collision_links;
+    collision_links.push_back(col_link.Get());
+
+    /*
+     * If collision with gripper add full gripper
+     */
+    if(std::find(victor_right_gripper_collision_names.begin(),
+                 victor_right_gripper_collision_names.end(),
+                 col_link.Get()) != victor_right_gripper_collision_names.end())
+    {
+        for(auto link: victor_right_gripper_collision_names)
+        {
+            collision_links.push_back(link);
+        }
+    }
+    
+    return Maybe::Maybe<std::vector<std::string>>(collision_links);
+}
+
+
+/*
  *  Executes path until completion or collision.
  */
-bool SimWorld::executePath(const Path &path, size_t &last_valid)
+bool SimWorld::executePath(const Path &path, size_t &last_valid, bool add_col_set)
 {
     if(VIDEO_VISUALIZE)
     {
@@ -774,35 +809,25 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
     {
         std::vector<double> joint_angles = path[last_valid];
         VictorConfig c = victor_model.toVictorConfig(joint_angles.data());
-        Maybe::Maybe<std::string> col_link = getCollisionLink(c);
-        if(col_link.Valid())
+        Maybe::Maybe<std::vector<std::string>> col_links = getCollisionLinks(c);
+        if(col_links.Valid())
         {
             std::cout << "Collision while executing!\n";
-            std::vector<std::string> collision_links;
-            collision_links.push_back(col_link.Get());
 
-            /*
-             * If collision with gripper add full gripper
-             */
-            if(std::find(victor_right_gripper_collision_names.begin(),
-                         victor_right_gripper_collision_names.end(),
-                         col_link.Get()) != victor_right_gripper_collision_names.end())
+            if(add_col_set)
             {
-                for(auto link: victor_right_gripper_collision_names)
+                std::vector<VictorConfig> cs;
+                for(size_t j=last_valid; (j<last_valid + NUM_STEPS_FOR_ADDING_COLLISION) && j<path.size(); j++)
                 {
-                    collision_links.push_back(link);
+                    cs.push_back(victor_model.toVictorConfig(path[j].data()));
                 }
+                victor_model.addCollisionSet(cs, col_links.Get());
             }
-
-            std::vector<VictorConfig> cs;
-            for(size_t j=last_valid; (j<last_valid + NUM_STEPS_FOR_ADDING_COLLISION) && j<path.size(); j++)
-            {
-                cs.push_back(victor_model.toVictorConfig(path[j].data()));
-            }
-            victor_model.addCollisionSet(cs, collision_links);
+            
             last_valid--;
             return false;
         }
+        
             
         victor_model.updateActual(c);
         usleep(EXECUTION_DELAY_us/2);
@@ -842,6 +867,24 @@ Path densifyPath(const Path &path, int densify_factor)
 
 
 
+void SimWorld::executeAndReturn(const Path &path)
+{
+    Path dense_path = densifyPath(path, 10);
+    size_t last_valid;
+    executePath(dense_path, last_valid, false);
+    Path backup;
+
+    std::cout << "dense size " << dense_path.size() << "\n";
+    std::cout << "last_valid: ";
+    while(last_valid >= 0)
+    {
+        std::cout << last_valid;
+        backup.push_back(dense_path[last_valid]);
+        last_valid--;
+    }
+    executePath(backup, last_valid, false);
+}
+
 bool SimWorld::attemptPath(const Path &path)
 {
     
@@ -849,7 +892,7 @@ bool SimWorld::attemptPath(const Path &path)
     // std::cout << "Last state in given attempt " << path.back()[0] << "\n";
     // std::cout << "Last state in dense attempt " << dense_path.back()[0] << "\n";
     size_t last_valid;
-    if(executePath(dense_path, last_valid))
+    if(executePath(dense_path, last_valid, true))
     {
         return true;
     }
@@ -867,7 +910,7 @@ bool SimWorld::attemptPath(const Path &path)
         }
         last_valid--;
     }
-    executePath(backup, last_valid);
+    executePath(backup, last_valid, false);
     return false;
 }
 
