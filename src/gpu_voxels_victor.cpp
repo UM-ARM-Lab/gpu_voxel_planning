@@ -543,6 +543,7 @@ SimWorld::SimWorld()
     // {
         gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
     // }
+        
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
 
 
@@ -766,7 +767,6 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
     if(VIDEO_VISUALIZE)
     {
         victor_model.resetQuery();
-        
         gvl->visualizeMap(VICTOR_QUERY_MAP);
     }
     
@@ -858,7 +858,7 @@ bool SimWorld::attemptPath(const Path &path)
     std::cout << "backing up\n";
     std::cout << last_valid << "\n";
     Path backup;
-    for(int i=0; i<30; i++)
+    for(int i=0; i<3; i++)
     {
         backup.push_back(dense_path[last_valid]);
         if(last_valid == 0)

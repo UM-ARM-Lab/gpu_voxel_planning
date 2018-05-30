@@ -301,7 +301,7 @@ int main(int argc, char* argv[])
         // runTest_ProbThresholdRRTConnect();
         // runTest_VoxThresholdRRTConnect();
         runTest_ProbColCostRRTConnect();
-        runTest_VoxCostRRTConnect();
+        // runTest_VoxCostRRTConnect();
         // runTest_PlanUpProbColCostRRTConnect();
         // runTest_PlanUpVoxCostRRTConnect();
         // runTest_ProbRRTStar();
@@ -319,26 +319,6 @@ int main(int argc, char* argv[])
     
 
     return 0;
-    // testAngles();
-    
-    // VictorLBKPiece planner(&(sim_world->victor_model));
-    // VictorThresholdRRTConnect planner(&(sim_world->victor_model));
-    
-    // VictorPRM planner(&(sim_world->victor_model));
-    // VictorLazyRRTF planner(&(sim_world->victor_model));
-
-
-    
-    // Optpath maybe_path = planner.planPathDouble(start, goal);
-
-    // if(!maybe_path.Valid())
-    // {
-    //     std::cout << "no path found\n";
-    //     return 0;
-    // }
-    // std::cout << "Path found\n";
-    // Path path = maybe_path.Get();
-    // sim_world->attemptPath(path);
 
 
 
