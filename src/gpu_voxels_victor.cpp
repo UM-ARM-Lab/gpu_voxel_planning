@@ -131,9 +131,12 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     if(REAL_ROBOT)
     {}
     else{
-        right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
-        right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
-        right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
+        // right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
+        // right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
+        // right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
+        right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 0;
+        right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 0;
+        right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 0;
         gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
     }
     
@@ -752,13 +755,14 @@ Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
             victor_model.addQueryLink(c, link_name);
             if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) > 0)
             {
-                std::cout << "Collides with " << link_name << "\n";
+                victor_model.resetQuery();
                 return Maybe::Maybe<std::string>(link_name);
             }
         }
         std::cout << "Victor collides, but no links collide...\n";
         assert(false);
     }
+    victor_model.resetQuery();
     return Maybe::Maybe<std::string>();
 }
 
@@ -775,20 +779,33 @@ Maybe::Maybe<std::vector<std::string>> SimWorld::getCollisionLinks(const VictorC
     }
 
     std::vector<std::string> collision_links;
-    collision_links.push_back(col_link.Get());
 
+    std::vector<std::string>::iterator iter = std::find(right_arm_collision_link_names.begin(),
+                                                        right_arm_collision_link_names.end(),
+                                                        col_link.Get());
+
+    // Add all links after collision link
+    while(iter != right_arm_collision_link_names.end())
+    {
+        collision_links.push_back(*iter);
+        iter++;
+    }
+        
+    
+
+    // collision_links.push_back(col_link.Get());    
     /*
      * If collision with gripper add full gripper
      */
-    if(std::find(victor_right_gripper_collision_names.begin(),
-                 victor_right_gripper_collision_names.end(),
-                 col_link.Get()) != victor_right_gripper_collision_names.end())
-    {
-        for(auto link: victor_right_gripper_collision_names)
-        {
-            collision_links.push_back(link);
-        }
-    }
+    // if(std::find(victor_right_gripper_collision_names.begin(),
+    //              victor_right_gripper_collision_names.end(),
+    //              col_link.Get()) != victor_right_gripper_collision_names.end())
+    // {
+    //     for(auto link: victor_right_gripper_collision_names)
+    //     {
+    //         collision_links.push_back(link);
+    //     }
+    // }
     
     return Maybe::Maybe<std::vector<std::string>>(collision_links);
 }
@@ -812,8 +829,6 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid, bool add_col_se
         Maybe::Maybe<std::vector<std::string>> col_links = getCollisionLinks(c);
         if(col_links.Valid())
         {
-            std::cout << "Collision while executing!\n";
-
             if(add_col_set)
             {
                 std::vector<VictorConfig> cs;
@@ -827,14 +842,17 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid, bool add_col_se
             last_valid--;
             return false;
         }
+
         
             
         victor_model.updateActual(c);
+        
         usleep(EXECUTION_DELAY_us/2);
         victor_model.doVis();
         usleep(EXECUTION_DELAY_us/2);
 
     }
+    last_valid = path.size() - 1;
     // std::cout << "Path success\n";
     return true;
 }
@@ -874,15 +892,16 @@ void SimWorld::executeAndReturn(const Path &path)
     executePath(dense_path, last_valid, false);
     Path backup;
 
-    std::cout << "dense size " << dense_path.size() << "\n";
-    std::cout << "last_valid: ";
-    while(last_valid >= 0)
+    while(true)
     {
-        std::cout << last_valid;
         backup.push_back(dense_path[last_valid]);
+        if(last_valid == 0)
+        {
+            break;
+        }
         last_valid--;
     }
-    executePath(backup, last_valid, false);
+    executePath(backup, last_valid, true);
 }
 
 bool SimWorld::attemptPath(const Path &path)
@@ -897,9 +916,6 @@ bool SimWorld::attemptPath(const Path &path)
         return true;
     }
     
-
-    std::cout << "backing up\n";
-    std::cout << last_valid << "\n";
     Path backup;
     for(int i=0; i<3; i++)
     {

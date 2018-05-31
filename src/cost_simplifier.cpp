@@ -120,7 +120,7 @@ void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
     double new_seg_cost = pv_->getPathCost(new_segment, col_index, fast_check);
     if(possibly_good && new_seg_cost > cur_cost)
     {
-        std::cout << "new segment has cost (" << new_seg_cost<< ") higher than total path, exiting early\n";
+        // std::cout << "new segment has cost (" << new_seg_cost<< ") higher than total path, exiting early\n";
         possibly_good = false;
         si_->freeStates(new_segment);
         return;

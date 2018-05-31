@@ -97,8 +97,10 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
     while(!reached_goal && stopwatch() < timeout)
     {
 
+
         if(DO_CONTROL)
         {
+            std::cout << "Local Control\n";
             PROFILE_START(planner.name + " control");
             Optpath maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
                                                             goal_config);
@@ -106,7 +108,6 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
             {
                 if(stopwatch() > timeout) break;
                 
-                std::cout << "Local control found, executing\n";
                 sim_world->attemptPath(maybe_path.Get());
                 reached_goal = checkAtGoal(goal);
                 if(reached_goal){
@@ -121,7 +122,6 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
                 break;
         }
 
-
         // DO WIGGLE
         if(true)
         {
@@ -132,6 +132,7 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
                 sim_world->executeAndReturn(wiggle_path);
             }
         }
+
         
 
         if(DO_PLAN)
@@ -203,7 +204,7 @@ void runTest(VictorPlanner &planner)
     std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
     if(TABLE_WORLD)
     {
-        start = std::vector<double>{0, 0, 0, 0, 0.00, 0.00, 0.00};
+        start = std::vector<double>{0.3, 1.0, 0, -0.5, 0.00, 1.00, 0.00};
         goal = std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
     }
     else if(PEG_IN_HOLE)

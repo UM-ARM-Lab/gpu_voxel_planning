@@ -21,7 +21,7 @@
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 
-#define TABLE_WORLD false
+#define TABLE_WORLD true
 
 #define PEG_IN_HOLE false
 
@@ -35,7 +35,7 @@
 
 #define VIDEO_VISUALIZE true
 
-#define EXECUTION_DELAY_us 10000
+#define EXECUTION_DELAY_us 50000
 
 #define REAL_ROBOT false
 
