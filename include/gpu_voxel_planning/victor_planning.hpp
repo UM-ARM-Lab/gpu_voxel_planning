@@ -34,6 +34,8 @@ namespace gpu_voxels_planner
         virtual void post_planning_actions(ompl::base::PathPtr path) {(void) path;};
 
         ompl::base::ScopedState<> toScopedState(std::vector<double> ds);
+
+        ompl::base::ScopedState<> samplePointInRandomDirection(ompl::base::ScopedState<> start);
         
         Maybe::Maybe<Path> localControlConfig(VictorConfig start, VictorConfig goal);
 
@@ -47,6 +49,12 @@ namespace gpu_voxels_planner
         ompl::base::PathPtr randomWiggle(ompl::base::ScopedState<> start);
 
         Path randomWiggleConfig(VictorConfig start);
+
+        ompl::base::PathPtr iouWiggle(ompl::base::ScopedState<> start);
+
+        Path iouWiggleConfig(VictorConfig start);
+
+        
 
 
     public:

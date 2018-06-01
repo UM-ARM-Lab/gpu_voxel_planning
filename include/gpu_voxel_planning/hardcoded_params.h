@@ -41,4 +41,8 @@
 
 #define ALLOWED_KNOWN_OBSTACLES 30
 
+#define DO_RANDOM_WIGGLE true
+
+#define DO_IOU_WIGGLE false
+
 #endif

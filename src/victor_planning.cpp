@@ -213,10 +213,7 @@ Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std:
     ob::ScopedState<> goal_ss(space);
     std::cout << "start: ";
     start_ss = toScopedState(start);
-
     goal_ss = toScopedState(goal);
-    
-
     
     Maybe::Maybe<ob::PathPtr> ompl_path = planPath(start_ss, goal_ss);
     if(!ompl_path.Valid())
@@ -236,6 +233,40 @@ ob::ScopedState<> VictorPlanner::toScopedState(std::vector<double> ds)
     return s;
 }
 
+ob::ScopedState<> VictorPlanner::samplePointInRandomDirection(ob::ScopedState<> start)
+{
+    double max_motion = space->getLongestValidSegmentLength() * 2;
+    
+    ob::ScopedState<> new_state(space);
+    ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
+    sampler_->sampleUniform(new_state.get());
+    const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
+    double *new_vals = new_state->as<ob::RealVectorStateSpace::StateType>()->values;
+    for(int i=0; i<7; i++)
+    {
+        new_vals[i] += startv[i];
+    }
+
+    double motion_dist = si_->distance(start.get(), new_state.get());
+
+    if(motion_dist > max_motion)
+    {
+        space->interpolate(start.get(), new_state.get(), max_motion / motion_dist, new_state.get());
+    }
+
+    return new_state;
+}
+
+Path VictorPlanner::iouWiggleConfig(VictorConfig start)
+{
+    ob::PathPtr ompl_path = randomWiggle(toScopedState(victor_model_->toValues(start)));
+    return omplPathToDoublePath(ompl_path->as<og::PathGeometric>());
+}
+
+ob::PathPtr VictorPlanner::iouWiggle(ob::ScopedState<> start)
+{
+}
+
 Path VictorPlanner::randomWiggleConfig(VictorConfig start)
 {
     ob::PathPtr ompl_path = randomWiggle(toScopedState(victor_model_->toValues(start)));
@@ -244,31 +275,11 @@ Path VictorPlanner::randomWiggleConfig(VictorConfig start)
 
 ob::PathPtr VictorPlanner::randomWiggle(ob::ScopedState<> start)
 {
-    double max_motion = space->getLongestValidSegmentLength() * 2;
-    
-    ob::State* new_state(si_->allocState());
-    ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
-    sampler_->sampleUniform(new_state);
-
-    //uniformly sample motion directions, not states
-    double *new_vals = new_state->as<ob::RealVectorStateSpace::StateType>()->values;
-    const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
-    for(int j=0; j<7; j++)
-    {
-        new_vals[j] += startv[j];
-    }
-
-    
-    double motion_dist = si_->distance(start.get(), new_state);
-
-    if(motion_dist > max_motion)
-    {
-        space->interpolate(start.get(), new_state, max_motion / motion_dist, new_state);
-    }
+    ob::ScopedState<> new_state = samplePointInRandomDirection(start);
 
     auto path(std::make_shared<og::PathGeometric>(si_));
     path->append(start.get());
-    path->append(new_state);
+    path->append(new_state.get());
     return path;
 
 }

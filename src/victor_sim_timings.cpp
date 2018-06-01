@@ -123,14 +123,22 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
         }
 
         // DO WIGGLE
-        if(true)
+        if(DO_RANDOM_WIGGLE)
         {
-            std::cout << "Wiggling\n";
+            std::cout << "Random Wiggling\n";
             for(int i=0; i<50; i++)
             {
                 Path wiggle_path = planner.randomWiggleConfig(sim_world->victor_model.cur_config);
                 sim_world->executeAndReturn(wiggle_path);
             }
+        }
+
+        if(DO_IOU_WIGGLE)
+        {
+            std::cout << "Random Wiggling\n";
+            Path wiggle_path = planner.randomWiggleConfig(sim_world->victor_model.cur_config);
+            sim_world->executeAndReturn(wiggle_path);
+
         }
 
         
