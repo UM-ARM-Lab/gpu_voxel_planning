@@ -27,7 +27,7 @@
 
 #define PLAN_ONLY false
 
-#define DO_CONTROL true
+#define DO_CONTROL false
 
 #define DO_PLAN true
 
@@ -41,8 +41,8 @@
 
 #define ALLOWED_KNOWN_OBSTACLES 30
 
-#define DO_RANDOM_WIGGLE true
+#define DO_RANDOM_WIGGLE false
 
-#define DO_IOU_WIGGLE false
+#define DO_IOU_WIGGLE true
 
 #endif

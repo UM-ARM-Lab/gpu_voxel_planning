@@ -122,27 +122,6 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
                 break;
         }
 
-        // DO WIGGLE
-        if(DO_RANDOM_WIGGLE)
-        {
-            std::cout << "Random Wiggling\n";
-            for(int i=0; i<50; i++)
-            {
-                Path wiggle_path = planner.randomWiggleConfig(sim_world->victor_model.cur_config);
-                sim_world->executeAndReturn(wiggle_path);
-            }
-        }
-
-        if(DO_IOU_WIGGLE)
-        {
-            std::cout << "Random Wiggling\n";
-            Path wiggle_path = planner.randomWiggleConfig(sim_world->victor_model.cur_config);
-            sim_world->executeAndReturn(wiggle_path);
-
-        }
-
-        
-
         if(DO_PLAN)
         {
             num_planner_iterations ++;
@@ -167,6 +146,33 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
         }
 
 
+        // DO WIGGLE
+        if(DO_RANDOM_WIGGLE)
+        {
+            std::string unused;
+            std::getline(std::cin, unused);
+
+            std::cout << "Random Wiggling\n";
+            for(int i=0; i<50; i++)
+            {
+                Path wiggle_path = planner.randomWiggleConfig(sim_world->victor_model.cur_config);
+                sim_world->executeAndReturn(wiggle_path);
+            }
+        }
+
+        if(DO_IOU_WIGGLE)
+        {
+            std::cout << "IouWiggling Wiggling\n";
+            for(int i=0; i<50; i++)
+            {
+                Path wiggle_path = planner.iouWiggleConfig(sim_world->victor_model.cur_config);
+                sim_world->executeAndReturn(wiggle_path);
+            }
+
+        }
+
+        
+        break;
 
     }
 
@@ -208,6 +214,7 @@ void setupWorld()
 
 void runTest(VictorPlanner &planner)
 {
+
     std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
     std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
     if(TABLE_WORLD)
@@ -227,6 +234,9 @@ void runTest(VictorPlanner &planner)
 
     
     sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
+    std::string unused;
+    std::getline(std::cin, unused);
+
     PROFILE_START(planner.name);
     attemptGoal(planner, goal);
     PROFILE_RECORD(planner.name);

@@ -35,6 +35,8 @@ namespace gpu_voxels_planner
 
         ompl::base::ScopedState<> toScopedState(std::vector<double> ds);
 
+        VictorConfig toVictorConfig(ompl::base::ScopedState<> s);
+
         ompl::base::ScopedState<> samplePointInRandomDirection(ompl::base::ScopedState<> start);
         
         Maybe::Maybe<Path> localControlConfig(VictorConfig start, VictorConfig goal);
@@ -54,6 +56,7 @@ namespace gpu_voxels_planner
 
         Path iouWiggleConfig(VictorConfig start);
 
+        double evaluateIouExploration(ompl::base::ScopedState<> new_state);
         
 
 

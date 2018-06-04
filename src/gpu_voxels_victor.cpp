@@ -877,19 +877,17 @@ Path densifyPath(const Path &path, int densify_factor)
             }
             dense_path.push_back(interp);
         }
-    
     }
     dense_path.push_back(path[path.size()-1]);
     return dense_path;
 }
 
 
-
 void SimWorld::executeAndReturn(const Path &path)
 {
     Path dense_path = densifyPath(path, 10);
     size_t last_valid;
-    executePath(dense_path, last_valid, false);
+    executePath(dense_path, last_valid, true);
     Path backup;
 
     while(true)
@@ -901,7 +899,7 @@ void SimWorld::executeAndReturn(const Path &path)
         }
         last_valid--;
     }
-    executePath(backup, last_valid, true);
+    executePath(backup, last_valid, false);
 }
 
 bool SimWorld::attemptPath(const Path &path)

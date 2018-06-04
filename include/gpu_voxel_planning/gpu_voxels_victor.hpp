@@ -37,6 +37,7 @@ typedef robot::JointValueMap VictorConfig;
 typedef std::vector<std::vector<double>> Path;
 
 
+Path densifyPath(const Path &path, int densify_factor);
 
 
 
