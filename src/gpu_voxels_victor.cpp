@@ -904,10 +904,7 @@ void SimWorld::executeAndReturn(const Path &path)
 
 bool SimWorld::attemptPath(const Path &path)
 {
-    
     Path dense_path = densifyPath(path, 10);
-    // std::cout << "Last state in given attempt " << path.back()[0] << "\n";
-    // std::cout << "Last state in dense attempt " << dense_path.back()[0] << "\n";
     size_t last_valid;
     if(executePath(dense_path, last_valid, true))
     {

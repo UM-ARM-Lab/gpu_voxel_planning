@@ -276,9 +276,13 @@ ob::PathPtr VictorPlanner::iouWiggle(ob::ScopedState<> start)
     for(int i=0; i<50; i++)
     {
         ob::ScopedState<> new_state = samplePointInRandomDirection(start);
-        auto path(std::make_shared<og::PathGeometric>(si_));
-        path->append(start.get());
-        path->append(new_state.get());
+        Ompl_Path ompl_path(std::make_shared<og::PathGeometric>(si_));
+        ompl_path->append(start.get());
+        ompl_path->append(new_state.get());
+        ompl_path->interpolate();
+
+        Path path = densifyPath(omplPathToDoublePath(ompl_path.get()), 10);
+        
 
         double iou = evaluateIouExploration(path);
 
@@ -288,7 +292,7 @@ ob::PathPtr VictorPlanner::iouWiggle(ob::ScopedState<> start)
             best_state = new_state;
         }
 
-        std::cout << "Iou: " << iou << "\n";
+
         victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
         std::string unused;
         std::getline(std::cin, unused);
@@ -305,11 +309,16 @@ ob::PathPtr VictorPlanner::iouWiggle(ob::ScopedState<> start)
 /*
  *  Returns the expected IoU compared to the most similar collision hypothesis set
  */
-double VictorPlanner::evaluateIouExploration(ob::ScopedState<> new_state)
+double VictorPlanner::evaluateIouExploration(Path path)
 {
     std::vector<size_t> seen_sizes = victor_model_->seenSizes();
     victor_model_->resetQuery();
-    victor_model_->addQueryState(toVictorConfig(new_state));
+
+    for(auto jvs: path)
+    {
+        victor_model_->addQueryState(victor_model_->toVictorConfig(jvs.data()));
+    }
+    
     victor_model_->m1_subtract_m2(VICTOR_QUERY_MAP, VICTOR_SWEPT_VOLUME_MAP);
 
     size_t query_size = victor_model_->countIntersect(VICTOR_QUERY_MAP, FULL_MAP);
@@ -337,7 +346,10 @@ double VictorPlanner::evaluateIouExploration(ob::ScopedState<> new_state)
         max_iou_if_no_col = std::max(iou_if_no_col, max_iou_if_no_col);
     }
 
-    return p_col * max_iou_if_col + (1-p_col) * max_iou_if_no_col;
+    double iou = p_col * max_iou_if_col + (1-p_col) * max_iou_if_no_col;
+    std::cout << "Iou: " << iou << "\n";
+    std::cout << "pcol: " << p_col << "\n";
+    return iou;
 }
 
 
