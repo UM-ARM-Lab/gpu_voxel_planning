@@ -318,8 +318,8 @@ double VictorPlanner::evaluateIouExploration(Path path)
     {
         victor_model_->addQueryState(victor_model_->toVictorConfig(jvs.data()));
     }
-    
-    victor_model_->m1_subtract_m2(VICTOR_QUERY_MAP, VICTOR_SWEPT_VOLUME_MAP);
+
+    victor_model_->removeSweptVolume(VICTOR_QUERY_MAP);
 
     size_t query_size = victor_model_->countIntersect(VICTOR_QUERY_MAP, FULL_MAP);
     std::vector<size_t> intersections = victor_model_->countSeenCollisionsInQueryForEach();

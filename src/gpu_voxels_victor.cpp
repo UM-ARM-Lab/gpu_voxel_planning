@@ -164,6 +164,10 @@ GpuVoxelsVictor::~GpuVoxelsVictor()
     std::cout << "...gvl reset successful\n";
 }
 
+void GpuVoxelsVictor::removeSweptVolume(const std::string& map_name)
+{
+    getMap(map_name)->subtract(getMap(VICTOR_SWEPT_VOLUME_MAP));
+}
 
 void GpuVoxelsVictor::insertVictorIntoMap(const VictorConfig &c, const std::string &map_name)
 {
@@ -185,26 +189,13 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 
     for(size_t i=0; i<num_observed_sets; i++)
     {
-        m1_subtract_m2(SEEN_OBSTACLE_SETS[i], VICTOR_SWEPT_VOLUME_MAP);
+        removeSweptVolume(SEEN_OBSTACLE_SETS[i]);
     }
-    m1_subtract_m2(COMBINED_COLSETS_MAP, VICTOR_SWEPT_VOLUME_MAP);
+    removeSweptVolume(COMBINED_COLSETS_MAP);
 }
 
 
-void GpuVoxelsVictor::m1_subtract_m2(const std::string& map_1, const std::string& map_2)
-{
-    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(map_1);
-    voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
-    obstacles->subtract(gvl->getMap(map_2)->as<voxelmap::ProbVoxelMap>());
-}
 
-void GpuVoxelsVictor::m1_add_m2(const std::string& map_1, const std::string& map_2)
-{
-    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(map_1);
-    voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
-    obstacles->add(gvl->getMap(map_2)->as<voxelmap::ProbVoxelMap>());
-
-}
 
 void GpuVoxelsVictor::resetQuery()
 {
@@ -374,7 +365,7 @@ void GpuVoxelsVictor::addCollisionLinks(const VictorConfig &c,
         gvl->insertPointCloudIntoMap(cloud, map_name, PROB_OCCUPIED);
     }
 
-    m1_subtract_m2(map_name, VICTOR_SWEPT_VOLUME_MAP);
+    removeSweptVolume(map_name);
 }
 
 void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
@@ -415,7 +406,7 @@ void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
     
     for(size_t i=0; i<num_observed_sets; i++)
     {
-        m1_subtract_m2(SEEN_OBSTACLE_SETS[i], VICTOR_SWEPT_VOLUME_MAP);
+        removeSweptVolume(SEEN_OBSTACLE_SETS[i]);
     }
 
 }
@@ -621,8 +612,7 @@ void SimWorld::makeTable()
         gvl->insertBoxIntoMap(caveholecorner,
                               caveholecorner + caveholesize,
                               TMP_MAP, PROB_OCCUPIED, 2);
-
-        victor_model.m1_subtract_m2(SIM_OBSTACLES_MAP, TMP_MAP);
+        victor_model.getMap(SIM_OBSTACLES_MAP)->subtract(victor_model.getMap(TMP_MAP));
     }
 
 
@@ -998,7 +988,7 @@ void RealWorld::jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
     
     
     victor_model.updateActual(cur);
-    victor_model.m1_subtract_m2(KNOWN_OBSTACLES_MAP, VICTOR_ACTUAL_MAP);
+    victor_model.getMap(KNOWN_OBSTACLES_MAP)->subtract(victor_model.getMap(VICTOR_ACTUAL_MAP));
     victor_model.doVis();
     pos_updated = true;
 }

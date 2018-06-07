@@ -74,8 +74,12 @@ public:
 
     size_t countIntersect(const std::string& map_1, const std::string& map_2);
 
-    void m1_subtract_m2(const std::string& map_1, const std::string& map_2);
-    void m1_add_m2(const std::string& map_1, const std::string& map_2);
+    voxelmap::ProbVoxelMap* getMap(const std::string& map_name)
+        {
+            return gvl->getMap(map_name)->as<voxelmap::ProbVoxelMap>();
+        };
+
+    void removeSweptVolume(const std::string& map_name);
     
     std::vector<size_t> countSeenCollisionsInQueryForEach();
 
