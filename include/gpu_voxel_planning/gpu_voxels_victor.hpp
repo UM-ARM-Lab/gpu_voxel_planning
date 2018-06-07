@@ -75,6 +75,7 @@ public:
     size_t countIntersect(const std::string& map_1, const std::string& map_2);
 
     void m1_subtract_m2(const std::string& map_1, const std::string& map_2);
+    void m1_add_m2(const std::string& map_1, const std::string& map_2);
     
     std::vector<size_t> countSeenCollisionsInQueryForEach();
 

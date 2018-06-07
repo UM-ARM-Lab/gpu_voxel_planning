@@ -159,7 +159,9 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
 GpuVoxelsVictor::~GpuVoxelsVictor()
 {
-    std::cout << "Destructor for gpu voxels victor\n";
+    std::cout << "Destructor for gpu voxels victor...";
+    gvl.reset();
+    std::cout << "...gvl reset successful\n";
 }
 
 
@@ -194,6 +196,13 @@ void GpuVoxelsVictor::m1_subtract_m2(const std::string& map_1, const std::string
     gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(map_1);
     voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
     obstacles->subtract(gvl->getMap(map_2)->as<voxelmap::ProbVoxelMap>());
+}
+
+void GpuVoxelsVictor::m1_add_m2(const std::string& map_1, const std::string& map_2)
+{
+    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(map_1);
+    voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
+    obstacles->add(gvl->getMap(map_2)->as<voxelmap::ProbVoxelMap>());
 
 }
 

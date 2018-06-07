@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
     std::getline(std::cin, unused);
 
     // wiggleFingers();
-    testAngles();
+    // testAngles();
     
     // VictorLBKPiece planner(&(sim_world->victor_model));
     // VictorThresholdRRTConnect planner(&(sim_world->victor_model));
@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
     // VictorPRM planner(&(sim_world->victor_model));
     // VictorLazyRRTF planner(&(sim_world->victor_model));
 
-    attemptGoal(planner, goal);
+    // attemptGoal(planner, goal);
     
     // M::Maybe<Path> maybe_path = planner.planPathDouble(start, goal);
 
@@ -164,6 +164,6 @@ int main(int argc, char* argv[])
 
 
 
-    sim_world->gvl.reset();
+    // sim_world->gvl.reset();
     
 }
