@@ -30,7 +30,7 @@
 #define VICTOR_ROBOT_STATIONARY "victor_robot_stationary"
 
 
-extern std::vector<std::string> SEEN_OBSTACLE_SETS;
+extern std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
 
 
 typedef robot::JointValueMap VictorConfig;

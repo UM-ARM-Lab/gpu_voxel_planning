@@ -20,7 +20,7 @@
 
 using namespace arm_pointcloud_utilities;
 
-std::vector<std::string> SEEN_OBSTACLE_SETS;
+std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
 
 
 // #define PROB_OCCUPIED BitVoxelMeaning(255)
@@ -140,12 +140,12 @@ GpuVoxelsVictor::GpuVoxelsVictor():
         gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
     }
     
-    SEEN_OBSTACLE_SETS.resize(NUM_SETS);
+    COLLISION_HYPOTHESIS_SETS.resize(NUM_SETS);
     for(int i=0; i < NUM_SETS; i++)
     {
-        SEEN_OBSTACLE_SETS[i] = "seen_obstacles_" + std::to_string(i);
-        gvl->addMap(MT_PROBAB_VOXELMAP, SEEN_OBSTACLE_SETS[i]);
-        gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
+        COLLISION_HYPOTHESIS_SETS[i] = "seen_obstacles_" + std::to_string(i);
+        gvl->addMap(MT_PROBAB_VOXELMAP, COLLISION_HYPOTHESIS_SETS[i]);
+        gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[i]);
     }
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
     gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
@@ -189,7 +189,7 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 
     for(size_t i=0; i<num_observed_sets; i++)
     {
-        removeSweptVolume(SEEN_OBSTACLE_SETS[i]);
+        removeSweptVolume(COLLISION_HYPOTHESIS_SETS[i]);
     }
     removeSweptVolume(COMBINED_COLSETS_MAP);
 }
@@ -228,7 +228,7 @@ std::vector<size_t> GpuVoxelsVictor::countSeenCollisionsInQueryForEach()
     std::vector<size_t> collisions_in_seen;
     for(int i=0; i<num_observed_sets; i++)
     {
-        collisions_in_seen.push_back(countNumCollisions(SEEN_OBSTACLE_SETS[i]));
+        collisions_in_seen.push_back(countNumCollisions(COLLISION_HYPOTHESIS_SETS[i]));
     }
     PROFILE_RECORD("Seen sizes, robot intersection")
     return collisions_in_seen;
@@ -267,7 +267,7 @@ std::vector<size_t> GpuVoxelsVictor::seenSizes()
     seen_sizes.resize(num_observed_sets);
     for(int i=0; i < num_observed_sets; i++)
     {
-        seen_sizes[i] = getNumOccupiedVoxels(SEEN_OBSTACLE_SETS[i]);
+        seen_sizes[i] = getNumOccupiedVoxels(COLLISION_HYPOTHESIS_SETS[i]);
     }
     return seen_sizes;
 }
@@ -385,10 +385,10 @@ void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
     }
     for(auto &c: cs)
     {
-        addCollisionLinks(c, collision_links, SEEN_OBSTACLE_SETS[num_observed_sets]);
+        addCollisionLinks(c, collision_links, COLLISION_HYPOTHESIS_SETS[num_observed_sets]);
         addCollisionLinks(c, collision_links, COMBINED_COLSETS_MAP);
     }
-    gvl->visualizeMap(SEEN_OBSTACLE_SETS[num_observed_sets]);
+    gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[num_observed_sets]);
     num_observed_sets++;
 
 
@@ -406,7 +406,7 @@ void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
     
     for(size_t i=0; i<num_observed_sets; i++)
     {
-        removeSweptVolume(SEEN_OBSTACLE_SETS[i]);
+        removeSweptVolume(COLLISION_HYPOTHESIS_SETS[i]);
     }
 
 }
@@ -430,7 +430,7 @@ void GpuVoxelsVictor::doVis()
 {
     gvl->visualizeMap(VICTOR_ACTUAL_MAP, true);
     for(size_t i=0; i<num_observed_sets; i++)
-        gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
+        gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[i]);
 
 }
 
