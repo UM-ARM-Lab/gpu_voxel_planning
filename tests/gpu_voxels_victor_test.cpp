@@ -37,6 +37,17 @@ TEST(GpuVoxelVictor, collisions)
     // std::cin >> dummy;
 }
 
+TEST(GpuVoxelVictor, hypothetical)
+{
+    GpuVoxelsVictor vm;
+    double angles[] = {0,0,0,0,0,0,0};
+    VictorConfig config = vm.toVictorConfig((angles));
+    vm.gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2),
+                             ENV_MAP, PROB_OCCUPIED, 2);
+
+
+}
+
 TEST(GpuVoxels, addMaps)
 {
     GpuVoxelsVictor vm;

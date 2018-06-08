@@ -31,11 +31,11 @@ std::vector<std::string> HCHS;
 #define NUM_SETS 100
 
 
-std::vector<std::string> right_arm_joint_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
+std::vector<std::string> i_right_arm_joint_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
         "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5",
         "victor_right_arm_joint_6", "victor_right_arm_joint_7"};
 
-std::vector<std::string> right_arm_collision_link_names{
+std::vector<std::string> i_right_arm_collision_link_names{
     "victor_right_arm_link_3",
         "victor_right_arm_link_4",
         "victor_right_arm_link_5",
@@ -51,7 +51,7 @@ std::vector<std::string> right_arm_collision_link_names{
         "victor_right_gripper_fingerC_med", "victor_right_gripper_fingerC_prox"
         };
 
-std::vector<std::string> victor_right_gripper_collision_names{
+std::vector<std::string> i_right_gripper_collision_link_names{
     // "victor_right_arm_link_6",
     "victor_right_arm_link_7",
     "victor_right_gripper_palm",
@@ -65,12 +65,16 @@ std::vector<std::string> victor_right_gripper_collision_names{
 
         };
 
-std::vector<std::string> left_arm_joint_names{"victor_left_arm_joint_1", "victor_left_arm_joint_2", "victor_left_arm_joint_3", "victor_left_arm_joint_4", "victor_left_arm_joint_5", "victor_left_arm_joint_6", "victor_left_arm_joint_7"};
+std::vector<std::string> i_left_arm_joint_names{"victor_left_arm_joint_1", "victor_left_arm_joint_2", "victor_left_arm_joint_3", "victor_left_arm_joint_4", "victor_left_arm_joint_5", "victor_left_arm_joint_6", "victor_left_arm_joint_7"};
 
 
 
 GpuVoxelsVictor::GpuVoxelsVictor():
-    num_observed_sets(0)
+    num_observed_sets(0),
+    right_arm_joint_names(i_right_arm_joint_names),
+    right_arm_collision_link_names(i_right_arm_collision_link_names),
+    right_gripper_collision_link_names(i_right_gripper_collision_link_names),
+    left_arm_joint_names(i_left_arm_joint_names)
 {
     std::cout << "Initializing gpu voxels victor\n";
     gvl = gpu_voxels::GpuVoxels::getInstance();
@@ -99,7 +103,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     if(PEG_IN_HOLE || REAL_ROBOT)
     {
         gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_with_rod.urdf", false);
-        victor_right_gripper_collision_names.push_back("rod");
+        right_gripper_collision_link_names.push_back("rod");
         right_arm_collision_link_names.push_back("rod");
     }
     else{
@@ -700,7 +704,7 @@ Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
     if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) > 0)
     {
         victor_model.resetQuery();
-        for(auto &link_name: right_arm_collision_link_names)
+        for(auto &link_name: victor_model.right_arm_collision_link_names)
         {
             victor_model.addQueryLink(c, link_name);
             if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) > 0)
@@ -730,12 +734,12 @@ Maybe::Maybe<std::vector<std::string>> SimWorld::getCollisionLinks(const VictorC
 
     std::vector<std::string> collision_links;
 
-    std::vector<std::string>::iterator iter = std::find(right_arm_collision_link_names.begin(),
-                                                        right_arm_collision_link_names.end(),
+    std::vector<std::string>::iterator iter = std::find(victor_model.right_arm_collision_link_names.begin(),
+                                                        victor_model.right_arm_collision_link_names.end(),
                                                         col_link.Get());
 
     // Add all links after collision link
-    while(iter != right_arm_collision_link_names.end())
+    while(iter != victor_model.right_arm_collision_link_names.end())
     {
         collision_links.push_back(*iter);
         iter++;
@@ -1031,8 +1035,8 @@ bool RealWorld::attemptPath(const Path &path)
             col_configs.push_back(victor_model.toVictorConfig(traj_point.positions.data()));
         }
         std::vector<std::string> col_links = ci.collision_links;
-        col_links.insert(col_links.end(), victor_right_gripper_collision_names.begin(),
-                         victor_right_gripper_collision_names.end());
+        col_links.insert(col_links.end(), victor_model.right_gripper_collision_link_names.begin(),
+                         victor_model.right_gripper_collision_link_names.end());
         victor_model.addCHS(col_configs, col_links);
         std::cout << "added " << col_configs.size() << " collision configs\n";
         std::cout << "for links \n";

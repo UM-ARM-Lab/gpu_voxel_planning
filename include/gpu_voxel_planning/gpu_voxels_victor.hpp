@@ -111,6 +111,11 @@ public:
     void hidePath();
 
 public:
+
+    const std::vector<std::string> right_arm_joint_names;
+    std::vector<std::string> right_arm_collision_link_names;
+    std::vector<std::string> right_gripper_collision_link_names;
+    const std::vector<std::string> left_arm_joint_names;
     
     gpu_voxels::GpuVoxelsSharedPtr gvl;
     int num_observed_sets;
