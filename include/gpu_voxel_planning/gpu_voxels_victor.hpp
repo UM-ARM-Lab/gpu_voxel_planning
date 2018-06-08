@@ -31,6 +31,9 @@
 
 
 extern std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
+extern std::vector<std::string> HCHS; //hypothetical collision hypothesis sets
+#define HFREE "hypothetical_free"
+#define HCHS_NEW "new_hypothetical_chs"
 
 
 typedef robot::JointValueMap VictorConfig;
@@ -70,7 +73,7 @@ public:
 
     void addQueryState(const VictorConfig &c);
 
-    size_t countTotalNumCollisions();
+    size_t countTotalCHSCollisions();
 
     size_t countIntersect(const std::string& map_1, const std::string& map_2);
 
@@ -81,11 +84,11 @@ public:
 
     void removeSweptVolume(const std::string& map_name);
     
-    std::vector<size_t> countSeenCollisionsInQueryForEach();
+    std::vector<size_t> countCHSCollisions();
 
     size_t countNumCollisions(const std::string &map_name);
 
-    size_t countTotalNumCollisionsForConfig(const VictorConfig &c);
+    size_t countTotalCHSCollisionsForConfig(const VictorConfig &c);
 
     std::vector<size_t> seenSizes();
 

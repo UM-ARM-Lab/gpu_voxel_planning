@@ -322,7 +322,7 @@ double VictorPlanner::evaluateIouExploration(Path path)
     victor_model_->removeSweptVolume(VICTOR_QUERY_MAP);
 
     size_t query_size = victor_model_->countIntersect(VICTOR_QUERY_MAP, FULL_MAP);
-    std::vector<size_t> intersections = victor_model_->countSeenCollisionsInQueryForEach();
+    std::vector<size_t> intersections = victor_model_->countCHSCollisions();
 
     double p_no_col = 1.0;
     for(int i=0; i<seen_sizes.size(); i++)

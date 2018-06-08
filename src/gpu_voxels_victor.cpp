@@ -83,9 +83,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, KNOWN_OBSTACLES_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, COMBINED_COLSETS_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
-    // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_BITVECTOR_VOXELLIST, VICTOR_PATH_SOLUTION_MAP);
-    // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP_RED);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_PATH_ENDPOINTS_MAP);
     gvl->addMap(MT_DISTANCE_VOXELMAP, OBSTACLE_DISTANCE_MAP);
@@ -179,8 +177,6 @@ void GpuVoxelsVictor::insertVictorIntoMap(const VictorConfig &c, const std::stri
 void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 {
     cur_config = c;
-    
-
 
     gvl->setRobotConfiguration(VICTOR_ROBOT, c);
     gvl->clearMap(VICTOR_ACTUAL_MAP);
@@ -211,10 +207,10 @@ void GpuVoxelsVictor::addQueryState(const VictorConfig &c)
  *  Count collisions between query and env maps
  *  addQueryState should probably be run at least once first
  */
-size_t GpuVoxelsVictor::countTotalNumCollisions()
+size_t GpuVoxelsVictor::countTotalCHSCollisions()
 {
     size_t total_col = 0;
-    for(auto cols: countSeenCollisionsInQueryForEach())
+    for(auto cols: countCHSCollisions())
     {
         total_col += cols;
     }
@@ -222,7 +218,7 @@ size_t GpuVoxelsVictor::countTotalNumCollisions()
 }
 
 
-std::vector<size_t> GpuVoxelsVictor::countSeenCollisionsInQueryForEach()
+std::vector<size_t> GpuVoxelsVictor::countCHSCollisions()
 {
     PROFILE_START("Seen sizes, robot intersection")
     std::vector<size_t> collisions_in_seen;
@@ -244,7 +240,7 @@ size_t GpuVoxelsVictor::countNumCollisions(const std::string &map_name)
 }
 
 
-size_t GpuVoxelsVictor::countTotalNumCollisionsForConfig(const VictorConfig &c)
+size_t GpuVoxelsVictor::countTotalCHSCollisionsForConfig(const VictorConfig &c)
 {
     PROFILE_START(ISVALID_INSERTION);
     PROFILE_START(QUERY_INSERTION);
@@ -255,7 +251,7 @@ size_t GpuVoxelsVictor::countTotalNumCollisionsForConfig(const VictorConfig &c)
 
     PROFILE_RECORD(ISVALID_INSERTION);
     PROFILE_RECORD(QUERY_INSERTION);
-    return countTotalNumCollisions();
+    return countTotalCHSCollisions();
 }
 
 /*
@@ -280,7 +276,7 @@ size_t GpuVoxelsVictor::getNumOccupiedVoxels(const std::string& map_name)
 
 bool GpuVoxelsVictor::queryFreeConfiguration(const VictorConfig &c)
 {
-    return countTotalNumCollisionsForConfig(c) == 0;
+    return countTotalCHSCollisionsForConfig(c) == 0;
 }
 
 
