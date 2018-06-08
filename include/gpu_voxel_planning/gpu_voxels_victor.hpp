@@ -64,6 +64,8 @@ public:
 
     void addCHS(const std::vector<VictorConfig> &cs,
                 const std::vector<std::string> &collision_links);
+
+    void resetHypothetical();
     
     void addQueryLink(const VictorConfig &c, const std::string &link_name);
 

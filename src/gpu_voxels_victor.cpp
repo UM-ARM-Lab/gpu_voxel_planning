@@ -21,6 +21,7 @@
 using namespace arm_pointcloud_utilities;
 
 std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
+std::vector<std::string> HCHS;
 
 
 // #define PROB_OCCUPIED BitVoxelMeaning(255)
@@ -89,6 +90,10 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_DISTANCE_VOXELMAP, OBSTACLE_DISTANCE_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, FULL_MAP);
 
+    gvl->addMap(MT_PROBAB_VOXELMAP, HFREE);
+    gvl->addMap(MT_PROBAB_VOXELMAP, HCHS_NEW);
+
+
     gvl->insertBoxIntoMap(Vector3f(-1,-1,-1), Vector3f(300*0.02,300*0.02,300*0.02), FULL_MAP, PROB_OCCUPIED);
 
     if(PEG_IN_HOLE || REAL_ROBOT)
@@ -139,11 +144,16 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     }
     
     COLLISION_HYPOTHESIS_SETS.resize(NUM_SETS);
+    HCHS.resize(NUM_SETS);
     for(int i=0; i < NUM_SETS; i++)
     {
         COLLISION_HYPOTHESIS_SETS[i] = "seen_obstacles_" + std::to_string(i);
         gvl->addMap(MT_PROBAB_VOXELMAP, COLLISION_HYPOTHESIS_SETS[i]);
         gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[i]);
+
+        HCHS[i] = "hypothtical_seen_obstacles_" + std::to_string(i);
+        gvl->addMap(MT_PROBAB_VOXELMAP, HCHS[i]);
+                
     }
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
     gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
@@ -191,7 +201,15 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 }
 
 
-
+void GpuVoxelsVictor::resetHypothetical()
+{
+    for(size_t i=0; i < num_observed_sets; i++)
+    {
+        getMap(HCHS[i])->copy(getMap(COLLISION_HYPOTHESIS_SETS[i]));
+    }
+    getMap(HFREE)->copy(getMap(VICTOR_SWEPT_VOLUME_MAP));
+    gvl->clearMap(HCHS_NEW);
+}
 
 void GpuVoxelsVictor::resetQuery()
 {
