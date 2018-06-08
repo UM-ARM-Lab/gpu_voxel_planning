@@ -60,7 +60,7 @@ TEST(GpuVoxels, addMaps)
     EXPECT_EQ(orig_box_vox, vm.countIntersect(m1, m2)) << "added map not identical";
 
     gvl->clearMap(m2);
-    EXPECT_EQ(0, vm.countIntersect(m2, FULL_MAP)) << "clearning did not clear map 2";
+    EXPECT_EQ(0, vm.countIntersect(m2, FULL_MAP)) << "clearing did not clear map 2";
     vm.getMap(m2)->add(vm.getMap(m1));
     EXPECT_EQ(orig_box_vox, vm.countIntersect(m2, m1)) << "re-adding map did not work properly";
     vm.getMap(m2)->add(vm.getMap(m1));
