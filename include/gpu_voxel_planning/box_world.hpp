@@ -83,11 +83,11 @@ public:
 
     std::vector<size_t> countSeenCollisionsInQueryForEach();
 
-    size_t getNumOccupiedVoxels(const std::string& map_name);
+    size_t countVoxels(const std::string& map_name);
 
     size_t countIntersect(const std::string& map_1, const std::string& map_2);
 
-    std::vector<size_t> seenSizes();
+    std::vector<size_t> chsSizes();
 
     void initializeObstacles();
 

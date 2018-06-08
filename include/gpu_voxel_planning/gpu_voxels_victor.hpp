@@ -58,17 +58,15 @@ public:
     void addCollisionPoints(CollisionInformation collision_info);
 
     /* Sets robot config, adds select links to map, removes swept volume */
-    void addCollisionLinks(const VictorConfig &c,
-                           const std::vector<std::string> &collision_links,
-                           const std::string &map_name);
+    void addLinks(const VictorConfig &config,
+                  const std::vector<std::string> &link_names,
+                  const std::string &map_name);
 
-    void addCollisionSet(const std::vector<VictorConfig> &cs,
-                         const std::vector<std::string> &collision_links);
+    void addCHS(const std::vector<VictorConfig> &cs,
+                const std::vector<std::string> &collision_links);
     
     void addQueryLink(const VictorConfig &c, const std::string &link_name);
 
-
-    
     void resetQuery();
 
     void addQueryState(const VictorConfig &c);
@@ -90,9 +88,9 @@ public:
 
     size_t countTotalCHSCollisionsForConfig(const VictorConfig &c);
 
-    std::vector<size_t> seenSizes();
+    std::vector<size_t> chsSizes();
 
-    size_t getNumOccupiedVoxels(const std::string& map_name);
+    size_t countVoxels(const std::string& map_name);
     
     /* Returns true if Victor is not in collision at this config */
     bool queryFreeConfiguration(const VictorConfig &c);
@@ -103,10 +101,6 @@ public:
 
     std::vector<double> toValues(VictorConfig config);
 
-    // template<typename T>
-    // robot::JointValueMap toRightJointValueMap(const T values);
-
-    
     int determineVictorDist();
 
     void doVis();
@@ -125,8 +119,6 @@ public:
 
 
 Path densifyPath(const Path &path, int densify_factor);
-
-
 
 
 class SimWorld

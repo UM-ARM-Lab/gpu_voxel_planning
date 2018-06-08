@@ -311,7 +311,7 @@ ob::PathPtr VictorPlanner::iouWiggle(ob::ScopedState<> start)
  */
 double VictorPlanner::evaluateIouExploration(Path path)
 {
-    std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+    std::vector<size_t> seen_sizes = victor_model_->chsSizes();
     victor_model_->resetQuery();
 
     for(auto jvs: path)

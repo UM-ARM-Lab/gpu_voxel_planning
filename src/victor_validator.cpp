@@ -180,7 +180,7 @@ double VictorStateThresholdValidator::getCollisionProb(const ob::State *state) c
 
 
     std::vector<size_t> seen_col_voxels = victor_model_->countCHSCollisions();
-    std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+    std::vector<size_t> seen_sizes = victor_model_->chsSizes();
 
 
     // std::cout << "Reporting on query\n";
@@ -384,7 +384,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
     double p_no_col_unseen;
     double p_no_col_seen;
     
-    std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+    std::vector<size_t> seen_sizes = victor_model_->chsSizes();
 
     if(do_delay)
     {
@@ -522,7 +522,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         {
             PROFILE_START("prob seen collision");
             std::vector<size_t> seen_col_voxels = victor_model_->countCHSCollisions();
-            std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+            std::vector<size_t> seen_sizes = victor_model_->chsSizes();
             PROFILE_RECORD("prob seen collision");
                 
             std::vector<double> p_no_collision;
