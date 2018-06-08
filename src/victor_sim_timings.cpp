@@ -97,8 +97,10 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
     while(!reached_goal && stopwatch() < timeout)
     {
 
+
         if(DO_CONTROL)
         {
+            std::cout << "Local Control\n";
             PROFILE_START(planner.name + " control");
             Optpath maybe_path = planner.localControlConfig(sim_world->victor_model.cur_config,
                                                             goal_config);
@@ -106,7 +108,6 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
             {
                 if(stopwatch() > timeout) break;
                 
-                std::cout << "Local control found, executing\n";
                 sim_world->attemptPath(maybe_path.Get());
                 reached_goal = checkAtGoal(goal);
                 if(reached_goal){
@@ -145,6 +146,33 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
         }
 
 
+        // DO WIGGLE
+        if(DO_RANDOM_WIGGLE)
+        {
+            std::string unused;
+            std::getline(std::cin, unused);
+
+            std::cout << "Random Wiggling\n";
+            for(int i=0; i<50; i++)
+            {
+                Path wiggle_path = planner.randomWiggleConfig(sim_world->victor_model.cur_config);
+                sim_world->executeAndReturn(wiggle_path);
+            }
+        }
+
+        if(DO_IOU_WIGGLE)
+        {
+            std::cout << "IouWiggling Wiggling\n";
+            for(int i=0; i<50; i++)
+            {
+                Path wiggle_path = planner.iouWiggleConfig(sim_world->victor_model.cur_config);
+                sim_world->executeAndReturn(wiggle_path);
+            }
+
+        }
+
+        
+        break;
 
     }
 
@@ -186,11 +214,12 @@ void setupWorld()
 
 void runTest(VictorPlanner &planner)
 {
+
     std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
     std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
     if(TABLE_WORLD)
     {
-        start = std::vector<double>{0, 0, 0, 0, 0.00, 0.00, 0.00};
+        start = std::vector<double>{0.3, 1.0, 0, -0.5, 0.00, 1.00, 0.00};
         goal = std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
     }
     else if(PEG_IN_HOLE)
@@ -205,6 +234,9 @@ void runTest(VictorPlanner &planner)
 
     
     sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
+    std::string unused;
+    std::getline(std::cin, unused);
+
     PROFILE_START(planner.name);
     attemptGoal(planner, goal);
     PROFILE_RECORD(planner.name);
@@ -301,7 +333,7 @@ int main(int argc, char* argv[])
         // runTest_ProbThresholdRRTConnect();
         // runTest_VoxThresholdRRTConnect();
         runTest_ProbColCostRRTConnect();
-        runTest_VoxCostRRTConnect();
+        // runTest_VoxCostRRTConnect();
         // runTest_PlanUpProbColCostRRTConnect();
         // runTest_PlanUpVoxCostRRTConnect();
         // runTest_ProbRRTStar();
@@ -319,26 +351,6 @@ int main(int argc, char* argv[])
     
 
     return 0;
-    // testAngles();
-    
-    // VictorLBKPiece planner(&(sim_world->victor_model));
-    // VictorThresholdRRTConnect planner(&(sim_world->victor_model));
-    
-    // VictorPRM planner(&(sim_world->victor_model));
-    // VictorLazyRRTF planner(&(sim_world->victor_model));
-
-
-    
-    // Optpath maybe_path = planner.planPathDouble(start, goal);
-
-    // if(!maybe_path.Valid())
-    // {
-    //     std::cout << "no path found\n";
-    //     return 0;
-    // }
-    // std::cout << "Path found\n";
-    // Path path = maybe_path.Get();
-    // sim_world->attemptPath(path);
 
 
 

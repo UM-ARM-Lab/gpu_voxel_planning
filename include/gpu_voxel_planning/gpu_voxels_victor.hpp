@@ -30,13 +30,17 @@
 #define VICTOR_ROBOT_STATIONARY "victor_robot_stationary"
 
 
-extern std::vector<std::string> SEEN_OBSTACLE_SETS;
+extern std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
+extern std::vector<std::string> HCHS; //hypothetical collision hypothesis sets
+#define HFREE "hypothetical_free"
+#define HCHS_NEW "new_hypothetical_chs"
 
 
 typedef robot::JointValueMap VictorConfig;
 typedef std::vector<std::vector<double>> Path;
 
 
+Path densifyPath(const Path &path, int densify_factor);
 
 
 
@@ -54,36 +58,39 @@ public:
     void addCollisionPoints(CollisionInformation collision_info);
 
     /* Sets robot config, adds select links to map, removes swept volume */
-    void addCollisionLinks(const VictorConfig &c,
-                           const std::vector<std::string> &collision_links,
-                           const std::string &map_name);
+    void addLinks(const VictorConfig &config,
+                  const std::vector<std::string> &link_names,
+                  const std::string &map_name);
 
-    void addCollisionSet(const std::vector<VictorConfig> &cs,
-                         const std::vector<std::string> &collision_links);
+    void addCHS(const std::vector<VictorConfig> &cs,
+                const std::vector<std::string> &collision_links);
     
     void addQueryLink(const VictorConfig &c, const std::string &link_name);
 
-
-    
     void resetQuery();
 
     void addQueryState(const VictorConfig &c);
 
-    size_t countTotalNumCollisions();
+    size_t countTotalCHSCollisions();
 
     size_t countIntersect(const std::string& map_1, const std::string& map_2);
 
-    void m1_subtract_m2(const std::string& map_1, const std::string& map_2);
+    voxelmap::ProbVoxelMap* getMap(const std::string& map_name)
+        {
+            return gvl->getMap(map_name)->as<voxelmap::ProbVoxelMap>();
+        };
+
+    void removeSweptVolume(const std::string& map_name);
     
-    std::vector<size_t> countSeenCollisionsInQueryForEach();
+    std::vector<size_t> countCHSCollisions();
 
     size_t countNumCollisions(const std::string &map_name);
 
-    size_t countTotalNumCollisionsForConfig(const VictorConfig &c);
+    size_t countTotalCHSCollisionsForConfig(const VictorConfig &c);
 
-    std::vector<size_t> seenSizes();
+    std::vector<size_t> chsSizes();
 
-    size_t getNumOccupiedVoxels(const std::string& map_name);
+    size_t countVoxels(const std::string& map_name);
     
     /* Returns true if Victor is not in collision at this config */
     bool queryFreeConfiguration(const VictorConfig &c);
@@ -94,10 +101,6 @@ public:
 
     std::vector<double> toValues(VictorConfig config);
 
-    // template<typename T>
-    // robot::JointValueMap toRightJointValueMap(const T values);
-
-    
     int determineVictorDist();
 
     void doVis();
@@ -118,8 +121,6 @@ public:
 Path densifyPath(const Path &path, int densify_factor);
 
 
-
-
 class SimWorld
 {
 public:
@@ -127,11 +128,14 @@ public:
     void initializeObstacles();
     void makeTable();
     void makeSlottedWall();
-    bool executePath(const Path &path, size_t &last_index);
+    bool executePath(const Path &path, size_t &last_index, bool add_col_set);
 
     bool attemptPath(const Path &path);
 
+    void executeAndReturn(const Path &path);
+
     Maybe::Maybe<std::string> getCollisionLink(const VictorConfig &c);
+    Maybe::Maybe<std::vector<std::string>> getCollisionLinks(const VictorConfig &c);
 
 public:    
     gpu_voxels::GpuVoxelsSharedPtr gvl;

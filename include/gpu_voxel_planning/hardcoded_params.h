@@ -21,13 +21,13 @@
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 
-#define TABLE_WORLD false
+#define TABLE_WORLD true
 
 #define PEG_IN_HOLE false
 
 #define PLAN_ONLY false
 
-#define DO_CONTROL true
+#define DO_CONTROL false
 
 #define DO_PLAN true
 
@@ -35,10 +35,14 @@
 
 #define VIDEO_VISUALIZE true
 
-#define EXECUTION_DELAY_us 10000
+#define EXECUTION_DELAY_us 50000
 
 #define REAL_ROBOT false
 
 #define ALLOWED_KNOWN_OBSTACLES 30
+
+#define DO_RANDOM_WIGGLE false
+
+#define DO_IOU_WIGGLE true
 
 #endif

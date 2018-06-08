@@ -20,7 +20,7 @@
 
 using namespace arm_pointcloud_utilities;
 
-std::vector<std::string> SEEN_OBSTACLE_SETS;
+std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
 
 
 // #define PROB_OCCUPIED BitVoxelMeaning(255)
@@ -83,9 +83,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, KNOWN_OBSTACLES_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, COMBINED_COLSETS_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
-    // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_BITVECTOR_VOXELLIST, VICTOR_PATH_SOLUTION_MAP);
-    // gvl->addMap(MT_BITVECTOR_VOXELMAP, ENV_MAP_RED);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_SWEPT_VOLUME_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_PATH_ENDPOINTS_MAP);
     gvl->addMap(MT_DISTANCE_VOXELMAP, OBSTACLE_DISTANCE_MAP);
@@ -131,18 +129,21 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     if(REAL_ROBOT)
     {}
     else{
-        right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
-        right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
-        right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
+        // right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
+        // right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
+        // right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
+        right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 0;
+        right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 0;
+        right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 0;
         gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
     }
     
-    SEEN_OBSTACLE_SETS.resize(NUM_SETS);
+    COLLISION_HYPOTHESIS_SETS.resize(NUM_SETS);
     for(int i=0; i < NUM_SETS; i++)
     {
-        SEEN_OBSTACLE_SETS[i] = "seen_obstacles_" + std::to_string(i);
-        gvl->addMap(MT_PROBAB_VOXELMAP, SEEN_OBSTACLE_SETS[i]);
-        gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
+        COLLISION_HYPOTHESIS_SETS[i] = "seen_obstacles_" + std::to_string(i);
+        gvl->addMap(MT_PROBAB_VOXELMAP, COLLISION_HYPOTHESIS_SETS[i]);
+        gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[i]);
     }
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
     gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
@@ -156,9 +157,15 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
 GpuVoxelsVictor::~GpuVoxelsVictor()
 {
-    std::cout << "Destructor for gpu voxels victor\n";
+    std::cout << "Destructor for gpu voxels victor...";
+    gvl.reset();
+    std::cout << "...gvl reset successful\n";
 }
 
+void GpuVoxelsVictor::removeSweptVolume(const std::string& map_name)
+{
+    getMap(map_name)->subtract(getMap(VICTOR_SWEPT_VOLUME_MAP));
+}
 
 void GpuVoxelsVictor::insertVictorIntoMap(const VictorConfig &c, const std::string &map_name)
 {
@@ -170,8 +177,6 @@ void GpuVoxelsVictor::insertVictorIntoMap(const VictorConfig &c, const std::stri
 void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 {
     cur_config = c;
-    
-
 
     gvl->setRobotConfiguration(VICTOR_ROBOT, c);
     gvl->clearMap(VICTOR_ACTUAL_MAP);
@@ -180,19 +185,13 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 
     for(size_t i=0; i<num_observed_sets; i++)
     {
-        m1_subtract_m2(SEEN_OBSTACLE_SETS[i], VICTOR_SWEPT_VOLUME_MAP);
+        removeSweptVolume(COLLISION_HYPOTHESIS_SETS[i]);
     }
-    m1_subtract_m2(COMBINED_COLSETS_MAP, VICTOR_SWEPT_VOLUME_MAP);
+    removeSweptVolume(COMBINED_COLSETS_MAP);
 }
 
 
-void GpuVoxelsVictor::m1_subtract_m2(const std::string& map_1, const std::string& map_2)
-{
-    gpu_voxels::GpuVoxelsMapSharedPtr obstacles_ptr = gvl->getMap(map_1);
-    voxelmap::ProbVoxelMap* obstacles = obstacles_ptr->as<voxelmap::ProbVoxelMap>();
-    obstacles->subtract(gvl->getMap(map_2)->as<voxelmap::ProbVoxelMap>());
 
-}
 
 void GpuVoxelsVictor::resetQuery()
 {
@@ -208,10 +207,10 @@ void GpuVoxelsVictor::addQueryState(const VictorConfig &c)
  *  Count collisions between query and env maps
  *  addQueryState should probably be run at least once first
  */
-size_t GpuVoxelsVictor::countTotalNumCollisions()
+size_t GpuVoxelsVictor::countTotalCHSCollisions()
 {
     size_t total_col = 0;
-    for(auto cols: countSeenCollisionsInQueryForEach())
+    for(auto cols: countCHSCollisions())
     {
         total_col += cols;
     }
@@ -219,13 +218,13 @@ size_t GpuVoxelsVictor::countTotalNumCollisions()
 }
 
 
-std::vector<size_t> GpuVoxelsVictor::countSeenCollisionsInQueryForEach()
+std::vector<size_t> GpuVoxelsVictor::countCHSCollisions()
 {
     PROFILE_START("Seen sizes, robot intersection")
     std::vector<size_t> collisions_in_seen;
     for(int i=0; i<num_observed_sets; i++)
     {
-        collisions_in_seen.push_back(countNumCollisions(SEEN_OBSTACLE_SETS[i]));
+        collisions_in_seen.push_back(countNumCollisions(COLLISION_HYPOTHESIS_SETS[i]));
     }
     PROFILE_RECORD("Seen sizes, robot intersection")
     return collisions_in_seen;
@@ -241,7 +240,7 @@ size_t GpuVoxelsVictor::countNumCollisions(const std::string &map_name)
 }
 
 
-size_t GpuVoxelsVictor::countTotalNumCollisionsForConfig(const VictorConfig &c)
+size_t GpuVoxelsVictor::countTotalCHSCollisionsForConfig(const VictorConfig &c)
 {
     PROFILE_START(ISVALID_INSERTION);
     PROFILE_START(QUERY_INSERTION);
@@ -252,24 +251,24 @@ size_t GpuVoxelsVictor::countTotalNumCollisionsForConfig(const VictorConfig &c)
 
     PROFILE_RECORD(ISVALID_INSERTION);
     PROFILE_RECORD(QUERY_INSERTION);
-    return countTotalNumCollisions();
+    return countTotalCHSCollisions();
 }
 
 /*
  *  Returns the number of voxels in each seen collision map
  */
-std::vector<size_t> GpuVoxelsVictor::seenSizes()
+std::vector<size_t> GpuVoxelsVictor::chsSizes()
 {
     std::vector<size_t> seen_sizes;
     seen_sizes.resize(num_observed_sets);
     for(int i=0; i < num_observed_sets; i++)
     {
-        seen_sizes[i] = getNumOccupiedVoxels(SEEN_OBSTACLE_SETS[i]);
+        seen_sizes[i] = countVoxels(COLLISION_HYPOTHESIS_SETS[i]);
     }
     return seen_sizes;
 }
 
-size_t GpuVoxelsVictor::getNumOccupiedVoxels(const std::string& map_name)
+size_t GpuVoxelsVictor::countVoxels(const std::string& map_name)
 {
     return countIntersect(FULL_MAP, map_name);
 }
@@ -277,54 +276,16 @@ size_t GpuVoxelsVictor::getNumOccupiedVoxels(const std::string& map_name)
 
 bool GpuVoxelsVictor::queryFreeConfiguration(const VictorConfig &c)
 {
-    return countTotalNumCollisionsForConfig(c) == 0;
+    return countTotalCHSCollisionsForConfig(c) == 0;
 }
 
 
 size_t GpuVoxelsVictor::countIntersect(const std::string& map_1, const std::string& map_2)
 {
-    return gvl->getMap(map_1)->as<voxelmap::ProbVoxelMap>()->collideWith(gvl->getMap(map_2)->as<voxelmap::ProbVoxelMap>());
+    return getMap(map_1)->collideWith(getMap(map_2));
 }
 
 
-
-
-
-
-// void GpuVoxelsVictor::addCollisionPoints(CollisionInformation collision_info)
-// {
-//     std::lock_guard<boost::recursive_timed_mutex> g(gvl->getMap(VICTOR_ACTUAL_MAP)->m_mutex);
-//     if(!collision_info.collision)
-//     {
-//         std::cout << "Asked to add collision, but provided CollisionInformation indicates no collision\n";
-//         return;
-//     }
-//     VictorConfig cur_joints, extended_joints;
-//     for(size_t i = 0; i < collision_info.joints.size(); i++)
-//     {
-//         cur_joints[right_arm_joint_names[i]] = collision_info.joints[i];
-//         extended_joints[right_arm_joint_names[i]] = collision_info.joints[i] + 0.05 * collision_info.dirs[i];
-//     }
-
-//     gvl->setRobotConfiguration(VICTOR_ROBOT, cur_joints);
-
-//     gvl->clearMap(VICTOR_ACTUAL_MAP);
-//     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, PROB_OCCUPIED);
-    
-//     int dist = determineVictorDist();
-//     // if(dist <= 1)
-//     // {
-//     //     std::cout << "Already knew victor would be in collision. Skipping\n";
-//     //     return;
-//     // }
-            
-
-//     // Update robot to be slightly into collision object.
-//     // Insert only the last few links (heuristic to avoid adding too many points)
-
-
-//     addCollisionLinks(extended_joints, collision_info.links_in_contact, ENV_MAP);
-// }
 
 void GpuVoxelsVictor::addQueryLink(const VictorConfig &c,
                                    const std::string &link_name)
@@ -342,17 +303,17 @@ void GpuVoxelsVictor::addQueryLink(const VictorConfig &c,
 }
 
 
-void GpuVoxelsVictor::addCollisionLinks(const VictorConfig &c,
-                                        const std::vector<std::string> &collision_links,
-                                        const std::string &map_name)
+void GpuVoxelsVictor::addLinks(const VictorConfig &config,
+                               const std::vector<std::string> &link_names,
+                               const std::string &map_name)
 {
-    gvl->setRobotConfiguration(VICTOR_ROBOT, c);
+    gvl->setRobotConfiguration(VICTOR_ROBOT, config);
     RobotInterfaceSharedPtr rob = gvl->getRobot(VICTOR_ROBOT);
     const MetaPointCloud* clouds = rob->getTransformedClouds();
     // clouds->syncToHost();
     rob->syncToHost();
 
-    for(auto collision_link_name: collision_links)
+    for(auto collision_link_name: link_names)
     {
         int16_t cloud_num = clouds->getCloudNumber(collision_link_name);
         uint32_t cloud_size = clouds->getPointcloudSizes()[cloud_num];
@@ -362,11 +323,11 @@ void GpuVoxelsVictor::addCollisionLinks(const VictorConfig &c,
         gvl->insertPointCloudIntoMap(cloud, map_name, PROB_OCCUPIED);
     }
 
-    m1_subtract_m2(map_name, VICTOR_SWEPT_VOLUME_MAP);
+    removeSweptVolume(map_name);
 }
 
-void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
-                                      const std::vector<std::string> &collision_links)
+void GpuVoxelsVictor::addCHS(const std::vector<VictorConfig> &cs,
+                             const std::vector<std::string> &collision_links)
 {
     if(collision_links.size() == 0)
     {
@@ -382,10 +343,10 @@ void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
     }
     for(auto &c: cs)
     {
-        addCollisionLinks(c, collision_links, SEEN_OBSTACLE_SETS[num_observed_sets]);
-        addCollisionLinks(c, collision_links, COMBINED_COLSETS_MAP);
+        addLinks(c, collision_links, COLLISION_HYPOTHESIS_SETS[num_observed_sets]);
+        addLinks(c, collision_links, COMBINED_COLSETS_MAP);
     }
-    gvl->visualizeMap(SEEN_OBSTACLE_SETS[num_observed_sets]);
+    gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[num_observed_sets]);
     num_observed_sets++;
 
 
@@ -403,7 +364,7 @@ void GpuVoxelsVictor::addCollisionSet(const std::vector<VictorConfig> &cs,
     
     for(size_t i=0; i<num_observed_sets; i++)
     {
-        m1_subtract_m2(SEEN_OBSTACLE_SETS[i], VICTOR_SWEPT_VOLUME_MAP);
+        removeSweptVolume(COLLISION_HYPOTHESIS_SETS[i]);
     }
 
 }
@@ -417,7 +378,7 @@ int GpuVoxelsVictor::determineVictorDist()
     boost::shared_ptr<voxelmap::ProbVoxelMap> victor = boost::dynamic_pointer_cast<voxelmap::ProbVoxelMap>(gvl->getMap(VICTOR_ACTUAL_MAP));
 
     boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap(OBSTACLE_DISTANCE_MAP));
-
+    
     // std::cout << "closest victor dist: " << dist_map->getClosestObstacleDistance(victor) << "\n";
     return int(dist_map->getClosestObstacleDistance(victor));
 }
@@ -427,11 +388,9 @@ void GpuVoxelsVictor::doVis()
 {
     gvl->visualizeMap(VICTOR_ACTUAL_MAP, true);
     for(size_t i=0; i<num_observed_sets; i++)
-        gvl->visualizeMap(SEEN_OBSTACLE_SETS[i]);
+        gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[i]);
 
 }
-
-
 
 
 void GpuVoxelsVictor::visPath(const Path &path)
@@ -463,25 +422,6 @@ void GpuVoxelsVictor::hidePath()
 
 
 
-// void VictorValidator::insertStartAndGoal(const ob::ScopedState<> &start, const ob::ScopedState<> &goal) const
-// {
-
-//     gvl->clearMap(VICTOR_PATH_ENDPOINTS_MAP);
-//     VictorConfig state_joint_values = toVictorConfig<ob::ScopedState<>>(start);
-
-//     // update the robot joints:
-//     gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
-//     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_PATH_ENDPOINTS_MAP, BitVoxelMeaning(eBVM_SWEPT_VOLUME_START));
-
-//     state_joint_values = toVictorConfig<ob::ScopedState<>>(goal);
-
-//     // update the robot joints:
-//     gvl->setRobotConfiguration(VICTOR_ROBOT, state_joint_values);
-//     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_PATH_ENDPOINTS_MAP, BitVoxelMeaning(eBVM_SWEPT_VOLUME_START+1));
-
-// }
-
-
 
 /*
  *  Checks if values are in joint limits. Currently assuems values is a list of right joint values (length 7).
@@ -502,7 +442,6 @@ bool GpuVoxelsVictor::isInJointLimits(const double *values)
         }
     }
     return true;
-    
 }
 
 
@@ -543,6 +482,7 @@ SimWorld::SimWorld()
     // {
         gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
     // }
+        
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
 
 
@@ -557,8 +497,6 @@ void SimWorld::makeTable()
     Vector3f tc(1.7, 1.4, 0.9); //table corner
     Vector3f tld(.033, 0.033, tc.z); //table leg dims
 
-
-    
     //table top
     gvl->insertBoxIntoMap(tc, tc + td,
                           SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
@@ -608,8 +546,7 @@ void SimWorld::makeTable()
         gvl->insertBoxIntoMap(caveholecorner,
                               caveholecorner + caveholesize,
                               TMP_MAP, PROB_OCCUPIED, 2);
-
-        victor_model.m1_subtract_m2(SIM_OBSTACLES_MAP, TMP_MAP);
+        victor_model.getMap(SIM_OBSTACLES_MAP)->subtract(victor_model.getMap(TMP_MAP));
     }
 
 
@@ -727,13 +664,16 @@ void SimWorld::makeSlottedWall()
     
 void SimWorld::initializeObstacles()
 {
-
     if(MAKE_TABLE)
         makeTable();
     if(MAKE_SLOTTED_WALL)
         makeSlottedWall();
         
 }
+
+/*
+ *  Returns the single link in collision
+ */
 
 Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
 {
@@ -747,26 +687,70 @@ Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
             victor_model.addQueryLink(c, link_name);
             if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) > 0)
             {
-                std::cout << "Collides with " << link_name << "\n";
+                victor_model.resetQuery();
                 return Maybe::Maybe<std::string>(link_name);
             }
         }
         std::cout << "Victor collides, but no links collide...\n";
         assert(false);
     }
+    victor_model.resetQuery();
     return Maybe::Maybe<std::string>();
+}
+
+
+/*
+ *  Returns the set of links that might be in collision (Adds full gripper to link 6)
+ */
+Maybe::Maybe<std::vector<std::string>> SimWorld::getCollisionLinks(const VictorConfig &c)
+{
+    Maybe::Maybe<std::string> col_link = getCollisionLink(c);
+    if(!col_link.Valid())
+    {
+        return Maybe::Maybe<std::vector<std::string>>();
+    }
+
+    std::vector<std::string> collision_links;
+
+    std::vector<std::string>::iterator iter = std::find(right_arm_collision_link_names.begin(),
+                                                        right_arm_collision_link_names.end(),
+                                                        col_link.Get());
+
+    // Add all links after collision link
+    while(iter != right_arm_collision_link_names.end())
+    {
+        collision_links.push_back(*iter);
+        iter++;
+    }
+        
+    
+
+    // collision_links.push_back(col_link.Get());    
+    /*
+     * If collision with gripper add full gripper
+     */
+    // if(std::find(victor_right_gripper_collision_names.begin(),
+    //              victor_right_gripper_collision_names.end(),
+    //              col_link.Get()) != victor_right_gripper_collision_names.end())
+    // {
+    //     for(auto link: victor_right_gripper_collision_names)
+    //     {
+    //         collision_links.push_back(link);
+    //     }
+    // }
+    
+    return Maybe::Maybe<std::vector<std::string>>(collision_links);
 }
 
 
 /*
  *  Executes path until completion or collision.
  */
-bool SimWorld::executePath(const Path &path, size_t &last_valid)
+bool SimWorld::executePath(const Path &path, size_t &last_valid, bool add_col_set)
 {
     if(VIDEO_VISUALIZE)
     {
         victor_model.resetQuery();
-        
         gvl->visualizeMap(VICTOR_QUERY_MAP);
     }
     
@@ -774,42 +758,33 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid)
     {
         std::vector<double> joint_angles = path[last_valid];
         VictorConfig c = victor_model.toVictorConfig(joint_angles.data());
-        Maybe::Maybe<std::string> col_link = getCollisionLink(c);
-        if(col_link.Valid())
+        Maybe::Maybe<std::vector<std::string>> col_links = getCollisionLinks(c);
+        if(col_links.Valid())
         {
-            std::cout << "Collision while executing!\n";
-            std::vector<std::string> collision_links;
-            collision_links.push_back(col_link.Get());
-
-            /*
-             * If collision with gripper add full gripper
-             */
-            if(std::find(victor_right_gripper_collision_names.begin(),
-                         victor_right_gripper_collision_names.end(),
-                         col_link.Get()) != victor_right_gripper_collision_names.end())
+            if(add_col_set)
             {
-                for(auto link: victor_right_gripper_collision_names)
+                std::vector<VictorConfig> cs;
+                for(size_t j=last_valid; (j<last_valid + NUM_STEPS_FOR_ADDING_COLLISION) && j<path.size(); j++)
                 {
-                    collision_links.push_back(link);
+                    cs.push_back(victor_model.toVictorConfig(path[j].data()));
                 }
+                victor_model.addCHS(cs, col_links.Get());
             }
-
-            std::vector<VictorConfig> cs;
-            for(size_t j=last_valid; (j<last_valid + NUM_STEPS_FOR_ADDING_COLLISION) && j<path.size(); j++)
-            {
-                cs.push_back(victor_model.toVictorConfig(path[j].data()));
-            }
-            victor_model.addCollisionSet(cs, collision_links);
+            
             last_valid--;
             return false;
         }
+
+        
             
         victor_model.updateActual(c);
+        
         usleep(EXECUTION_DELAY_us/2);
         victor_model.doVis();
         usleep(EXECUTION_DELAY_us/2);
 
     }
+    last_valid = path.size() - 1;
     // std::cout << "Path success\n";
     return true;
 }
@@ -834,31 +809,20 @@ Path densifyPath(const Path &path, int densify_factor)
             }
             dense_path.push_back(interp);
         }
-    
     }
     dense_path.push_back(path[path.size()-1]);
     return dense_path;
 }
 
 
-
-bool SimWorld::attemptPath(const Path &path)
+void SimWorld::executeAndReturn(const Path &path)
 {
-    
     Path dense_path = densifyPath(path, 10);
-    // std::cout << "Last state in given attempt " << path.back()[0] << "\n";
-    // std::cout << "Last state in dense attempt " << dense_path.back()[0] << "\n";
     size_t last_valid;
-    if(executePath(dense_path, last_valid))
-    {
-        return true;
-    }
-    
-
-    std::cout << "backing up\n";
-    std::cout << last_valid << "\n";
+    executePath(dense_path, last_valid, true);
     Path backup;
-    for(int i=0; i<30; i++)
+
+    while(true)
     {
         backup.push_back(dense_path[last_valid]);
         if(last_valid == 0)
@@ -867,7 +831,29 @@ bool SimWorld::attemptPath(const Path &path)
         }
         last_valid--;
     }
-    executePath(backup, last_valid);
+    executePath(backup, last_valid, false);
+}
+
+bool SimWorld::attemptPath(const Path &path)
+{
+    Path dense_path = densifyPath(path, 10);
+    size_t last_valid;
+    if(executePath(dense_path, last_valid, true))
+    {
+        return true;
+    }
+    
+    Path backup;
+    for(int i=0; i<3; i++)
+    {
+        backup.push_back(dense_path[last_valid]);
+        if(last_valid == 0)
+        {
+            break;
+        }
+        last_valid--;
+    }
+    executePath(backup, last_valid, false);
     return false;
 }
 
@@ -935,7 +921,7 @@ void RealWorld::jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
     
     
     victor_model.updateActual(cur);
-    victor_model.m1_subtract_m2(KNOWN_OBSTACLES_MAP, VICTOR_ACTUAL_MAP);
+    victor_model.getMap(KNOWN_OBSTACLES_MAP)->subtract(victor_model.getMap(VICTOR_ACTUAL_MAP));
     victor_model.doVis();
     pos_updated = true;
 }
@@ -1029,7 +1015,7 @@ bool RealWorld::attemptPath(const Path &path)
         std::vector<std::string> col_links = ci.collision_links;
         col_links.insert(col_links.end(), victor_right_gripper_collision_names.begin(),
                          victor_right_gripper_collision_names.end());
-        victor_model.addCollisionSet(col_configs, col_links);
+        victor_model.addCHS(col_configs, col_links);
         std::cout << "added " << col_configs.size() << " collision configs\n";
         std::cout << "for links \n";
         for(auto &link_name: col_links)

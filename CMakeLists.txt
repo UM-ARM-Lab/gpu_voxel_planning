@@ -289,16 +289,12 @@ target_link_libraries(victor_real_timings
 # https://github.com/google/googletest/
 
 IF(GTEST_FOUND)
-  MESSAGE("-----------------------")
-  MESSAGE("${ARC_UTILITIES_LIBRARIES}")
-  MESSAGE("-----------------------")
   include_directories(${GTEST_INCLUDE_DIRS})
   add_executable(test_gpu_voxels_victor tests/gpu_voxels_victor_test.cpp)
   target_link_libraries(test_gpu_voxels_victor
     victor_model
     ${EXTERN_LIBS}
     ${GTEST_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
     )
 
   add_executable(test_validators tests/validators_test.cpp)
@@ -307,7 +303,6 @@ IF(GTEST_FOUND)
     victor_validator
     ${EXTERN_LIBS}
     ${GTEST_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
     )
 
   
@@ -318,7 +313,5 @@ IF(GTEST_FOUND)
     victor_planning
     ${EXTERN_LIBS}
     ${GTEST_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
-
     )
 ENDIF(GTEST_FOUND)

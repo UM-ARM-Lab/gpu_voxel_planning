@@ -160,7 +160,7 @@ std::vector<size_t> BoxWorld::countSeenCollisionsInQueryForEach()
     return query_collisions;
 }
 
-size_t BoxWorld::getNumOccupiedVoxels(const std::string& map_name)
+size_t BoxWorld::countVoxels(const std::string& map_name)
 {
     return countIntersect(FULL_MAP, map_name);
 }
@@ -173,13 +173,13 @@ size_t BoxWorld::countIntersect(const std::string& map_1, const std::string& map
 /*
  *  Returns the number of voxels in each seen collision map
  */
-std::vector<size_t> BoxWorld::seenSizes()
+std::vector<size_t> BoxWorld::chsSizes()
 {
     std::vector<size_t> seen_sizes;
     seen_sizes.resize(num_observed_sets);
     for(int i=0; i < num_observed_sets; i++)
     {
-        seen_sizes[i] = getNumOccupiedVoxels(SEEN_OBSTACLE_SETS[i]);
+        seen_sizes[i] = countVoxels(SEEN_OBSTACLE_SETS[i]);
     }
     return seen_sizes;
 
@@ -334,7 +334,7 @@ bool BoxPathValidator::checkPath(const std::vector<ompl::base::State*> path,
             box_world_ptr->addQueryState(box_world_ptr->stateToBox(test));
         }
         std::vector<size_t> seen_col_voxels = box_world_ptr->countSeenCollisionsInQueryForEach();
-        std::vector<size_t> seen_sizes = box_world_ptr->seenSizes();
+        std::vector<size_t> seen_sizes = box_world_ptr->chsSizes();
         std::vector<double> p_no_collision;
         p_no_collision.resize(seen_col_voxels.size());
         double p_no_col_seen = 1.0;
@@ -463,7 +463,7 @@ ob::Cost BoxMinColProbObjective::motionCost(const ob::State *s1,
     spi_ptr->freeState(test);
     // std::cout << "Motion cost is " << box_world_ptr->countSeenCollisionsInQuery() << "\n";
     std::vector<size_t> seen_col_voxels = box_world_ptr->countSeenCollisionsInQueryForEach();
-    std::vector<size_t> seen_sizes = box_world_ptr->seenSizes();
+    std::vector<size_t> seen_sizes = box_world_ptr->chsSizes();
 
     std::vector<double> p_no_collision;
     p_no_collision.resize(seen_col_voxels.size());
@@ -521,7 +521,7 @@ ob::Cost BoxMinColProbSweptObjective::motionCost(const ob::State *s1,
     spi_ptr->freeState(test);
     // std::cout << "Motion cost is " << box_world_ptr->countSeenCollisionsInQuery() << "\n";
     std::vector<size_t> seen_col_voxels = box_world_ptr->countSeenCollisionsInQueryForEach();
-    std::vector<size_t> seen_sizes = box_world_ptr->seenSizes();
+    std::vector<size_t> seen_sizes = box_world_ptr->chsSizes();
 
     std::vector<double> p_no_collision;
     p_no_collision.resize(seen_col_voxels.size());

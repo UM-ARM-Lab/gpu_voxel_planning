@@ -16,6 +16,7 @@ namespace gpu_voxels_planner
 
 
     typedef ompl::base::ScopedState<> Goals;
+    typedef std::shared_ptr<ompl::geometric::PathGeometric> Ompl_Path;
         
     class VictorPlanner
     {
@@ -34,6 +35,10 @@ namespace gpu_voxels_planner
         virtual void post_planning_actions(ompl::base::PathPtr path) {(void) path;};
 
         ompl::base::ScopedState<> toScopedState(std::vector<double> ds);
+
+        VictorConfig toVictorConfig(ompl::base::ScopedState<> s);
+
+        ompl::base::ScopedState<> samplePointInRandomDirection(ompl::base::ScopedState<> start);
         
         Maybe::Maybe<Path> localControlConfig(VictorConfig start, VictorConfig goal);
 
@@ -43,6 +48,17 @@ namespace gpu_voxels_planner
 
         virtual Maybe::Maybe<ompl::base::PathPtr> voxLocalControl(ompl::base::ScopedState<> start,
                                                                   Goals goals);
+
+        ompl::base::PathPtr randomWiggle(ompl::base::ScopedState<> start);
+
+        Path randomWiggleConfig(VictorConfig start);
+
+        ompl::base::PathPtr iouWiggle(ompl::base::ScopedState<> start);
+
+        Path iouWiggleConfig(VictorConfig start);
+
+        double evaluateIouExploration(Path path);
+        
 
 
     public:

@@ -142,7 +142,7 @@ bool VictorConservativeValidator::isValid(const ob::State *state) const
     const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
     VictorConfig config = victor_model_->toVictorConfig(values);
     
-    return victor_model_->countTotalNumCollisionsForConfig(config) == 0;
+    return victor_model_->countTotalCHSCollisionsForConfig(config) == 0;
 }
 
 
@@ -179,8 +179,8 @@ double VictorStateThresholdValidator::getCollisionProb(const ob::State *state) c
     }
 
 
-    std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
-    std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+    std::vector<size_t> seen_col_voxels = victor_model_->countCHSCollisions();
+    std::vector<size_t> seen_sizes = victor_model_->chsSizes();
 
 
     // std::cout << "Reporting on query\n";
@@ -384,7 +384,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
     double p_no_col_unseen;
     double p_no_col_seen;
     
-    std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+    std::vector<size_t> seen_sizes = victor_model_->chsSizes();
 
     if(do_delay)
     {
@@ -447,7 +447,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
 
 
         PROFILE_START("prob seen collision");
-        std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
+        std::vector<size_t> seen_col_voxels = victor_model_->countCHSCollisions();
 
         PROFILE_RECORD("prob seen collision")
                     
@@ -521,8 +521,8 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         } else
         {
             PROFILE_START("prob seen collision");
-            std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
-            std::vector<size_t> seen_sizes = victor_model_->seenSizes();
+            std::vector<size_t> seen_col_voxels = victor_model_->countCHSCollisions();
+            std::vector<size_t> seen_sizes = victor_model_->chsSizes();
             PROFILE_RECORD("prob seen collision");
                 
             std::vector<double> p_no_collision;
@@ -658,7 +658,7 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
             PROFILE_START("vox collision");
             total_col = victor_model_->countIntersect(VICTOR_QUERY_MAP, COMBINED_COLSETS_MAP);
 
-            // std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
+            // std::vector<size_t> seen_col_voxels = victor_model_->countCHSCollisions();
             // for(size_t i=0; i < seen_col_voxels.size(); i++)
             // {
             //     total_col += seen_col_voxels[i];
@@ -691,7 +691,7 @@ double VictorPathVox::getPathCost(const std::vector<ob::State*> path,
     {
         total_col=0;
         PROFILE_START("vox collision");
-        std::vector<size_t> seen_col_voxels = victor_model_->countSeenCollisionsInQueryForEach();
+        std::vector<size_t> seen_col_voxels = victor_model_->countCHSCollisions();
         PROFILE_RECORD("vox collision");
 
         for(size_t i=0; i < seen_col_voxels.size(); i++)

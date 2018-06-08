@@ -213,10 +213,7 @@ Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std:
     ob::ScopedState<> goal_ss(space);
     std::cout << "start: ";
     start_ss = toScopedState(start);
-
     goal_ss = toScopedState(goal);
-    
-
     
     Maybe::Maybe<ob::PathPtr> ompl_path = planPath(start_ss, goal_ss);
     if(!ompl_path.Valid())
@@ -234,6 +231,144 @@ ob::ScopedState<> VictorPlanner::toScopedState(std::vector<double> ds)
         s[i] = ds[i];
     }
     return s;
+}
+
+VictorConfig VictorPlanner::toVictorConfig(ob::ScopedState<> s)
+{
+    return victor_model_->toVictorConfig(s->as<ob::RealVectorStateSpace::StateType>()->values);
+}
+
+ob::ScopedState<> VictorPlanner::samplePointInRandomDirection(ob::ScopedState<> start)
+{
+    double max_motion = space->getLongestValidSegmentLength() * 2;
+    
+    ob::ScopedState<> new_state(space);
+    ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
+    sampler_->sampleUniform(new_state.get());
+    const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
+    double *new_vals = new_state->as<ob::RealVectorStateSpace::StateType>()->values;
+    for(int i=0; i<7; i++)
+    {
+        new_vals[i] += startv[i];
+    }
+
+    double motion_dist = si_->distance(start.get(), new_state.get());
+
+    if(motion_dist > max_motion)
+    {
+        space->interpolate(start.get(), new_state.get(), max_motion / motion_dist, new_state.get());
+    }
+
+    return new_state;
+}
+
+Path VictorPlanner::iouWiggleConfig(VictorConfig start)
+{
+    ob::PathPtr ompl_path = iouWiggle(toScopedState(victor_model_->toValues(start)));
+    return omplPathToDoublePath(ompl_path->as<og::PathGeometric>());
+}
+
+ob::PathPtr VictorPlanner::iouWiggle(ob::ScopedState<> start)
+{
+    double min_iou = 1.1;
+    ob::ScopedState<> best_state(space);
+
+    for(int i=0; i<50; i++)
+    {
+        ob::ScopedState<> new_state = samplePointInRandomDirection(start);
+        Ompl_Path ompl_path(std::make_shared<og::PathGeometric>(si_));
+        ompl_path->append(start.get());
+        ompl_path->append(new_state.get());
+        ompl_path->interpolate();
+
+        Path path = densifyPath(omplPathToDoublePath(ompl_path.get()), 10);
+        
+
+        double iou = evaluateIouExploration(path);
+
+        if(iou < min_iou)
+        {
+            min_iou = iou;
+            best_state = new_state;
+        }
+
+
+        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
+        std::string unused;
+        std::getline(std::cin, unused);
+    }
+
+    
+    auto path(std::make_shared<og::PathGeometric>(si_));
+    path->append(start.get());
+    path->append(best_state.get());
+    return path;
+
+}
+
+/*
+ *  Returns the expected IoU compared to the most similar collision hypothesis set
+ */
+double VictorPlanner::evaluateIouExploration(Path path)
+{
+    std::vector<size_t> seen_sizes = victor_model_->chsSizes();
+    victor_model_->resetQuery();
+
+    for(auto jvs: path)
+    {
+        victor_model_->addQueryState(victor_model_->toVictorConfig(jvs.data()));
+    }
+
+    victor_model_->removeSweptVolume(VICTOR_QUERY_MAP);
+
+    size_t query_size = victor_model_->countIntersect(VICTOR_QUERY_MAP, FULL_MAP);
+    std::vector<size_t> intersections = victor_model_->countCHSCollisions();
+
+    double p_no_col = 1.0;
+    for(int i=0; i<seen_sizes.size(); i++)
+    {
+        p_no_col *= 1 - (double)intersections[i] / (double)seen_sizes[i];
+    }
+    double p_col = 1.0 - p_no_col;
+    
+
+    double max_iou_if_col = 0;
+    for(int i=0; i<seen_sizes.size(); i++)
+    {
+        double iou_if_col = (double)intersections[i] / (double)(query_size + seen_sizes[i] - intersections[i]);
+        max_iou_if_col = std::max(iou_if_col, max_iou_if_col);
+    }
+
+    double max_iou_if_no_col = 0;
+    for(int i=0; i<seen_sizes.size(); i++)
+    {
+        double iou_if_no_col = (double)(seen_sizes[i] - intersections[i]) / (double)(seen_sizes[i]);
+        max_iou_if_no_col = std::max(iou_if_no_col, max_iou_if_no_col);
+    }
+
+    double iou = p_col * max_iou_if_col + (1-p_col) * max_iou_if_no_col;
+    std::cout << "Iou: " << iou << "\n";
+    std::cout << "pcol: " << p_col << "\n";
+    return iou;
+}
+
+
+
+
+Path VictorPlanner::randomWiggleConfig(VictorConfig start)
+{
+    ob::PathPtr ompl_path = randomWiggle(toScopedState(victor_model_->toValues(start)));
+    return omplPathToDoublePath(ompl_path->as<og::PathGeometric>());
+}
+
+ob::PathPtr VictorPlanner::randomWiggle(ob::ScopedState<> start)
+{
+    ob::ScopedState<> new_state = samplePointInRandomDirection(start);
+
+    auto path(std::make_shared<og::PathGeometric>(si_));
+    path->append(start.get());
+    path->append(new_state.get());
+    return path;
 }
 
 Maybe::Maybe<Path> VictorPlanner::localControlConfig(VictorConfig start, VictorConfig goal)
@@ -269,12 +404,11 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
     
     double max_motion = space->getLongestValidSegmentLength() * 2;
 
-    ob::State* test(si_->allocState());
+    ob::ScopedState<> test(space);
     ob::State* best(si_->allocState());
     double best_ev = 0;
     bool found_ok = false;
 
-    ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
     vppc->setProbabilityThreshold(std::numeric_limits<double>::max());
     double best_pcol = std::numeric_limits<double>::max();
 
@@ -289,31 +423,16 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         bool near_goal = goals.distance(start) <= max_motion;
         if(checking_goal_directly)
         {
-            si_->copyState(test, goals.get());
+            si_->copyState(test.get(), goals.get());
             goal_sampled = true;
         }
         else
         {
-            sampler_->sampleUniform(test);
-
-            //uniformly sample motion directions, not states
-            double *testv = test->as<ob::RealVectorStateSpace::StateType>()->values;
-            const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
-            for(int j=0; j<7; j++)
-            {
-                testv[j] += startv[j];
-            }
+            test = samplePointInRandomDirection(start);
         }
         
-        double motion_dist = si_->distance(start.get(), test);
 
-        if(motion_dist > max_motion)
-        {
-            space->interpolate(start.get(), test, max_motion / motion_dist, test);
-        }
-
-        double progress_d = start_d_to_goal - goals.distance(test);
-
+        double progress_d = start_d_to_goal - goals.distance(test.get());
         
         if(progress_d <= 0)// || progress_d <= best_ev)
         {
@@ -321,14 +440,13 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
             {
                 i--;
             }
-            
             continue;
         }
 
 
         size_t num_interp_points = 2;
         std::vector<ob::State*> dpath;
-        si_->getMotionStates(start.get(), test, dpath, num_interp_points, true, true);
+        si_->getMotionStates(start.get(), test.get(), dpath, num_interp_points, true, true);
         size_t col_index;
         double pcol = vppc->getPathCost(dpath, col_index);
         si_->freeStates(dpath);
@@ -353,7 +471,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         double ev = (1.0 - pcol);
         if(ev > best_ev)
         {
-            si_->copyState(best, test);
+            si_->copyState(best, test.get());
             best_ev = ev;
             found_ok = true;
             best_pcol = pcol;
@@ -379,7 +497,6 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
 
 
 
-    si_->freeState(test);
     
     if(!found_ok)
     {
