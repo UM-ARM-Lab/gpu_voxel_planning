@@ -108,34 +108,34 @@ include_directories(
   ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
   )
 
-add_library(cost_simp src/cost_simplifier.cpp
+add_library(path_smoothing src/ompl_modifications/path_smoothing.cpp
   ${OMPL_LIBRARIES}
   )
 
-add_library(lazyrrtf src/lazyrrt_fullpath.cpp)
+add_library(lazyrrtf src/ompl_modifications/lazyrrt_fullpath.cpp)
 target_link_libraries(lazyrrtf
   ${OMPL_LIBRARIES}
   )
 
-add_library(custom_rrtstar src/custom_rrtstar.cpp)
+add_library(custom_rrtstar src/ompl_modifications/custom_rrtstar.cpp)
 target_link_libraries(custom_rrtstar
   ${OMPL_LIBRARIES}
   )
 
-add_library(flrrtc src/fullpath_lrrtconnect.cpp)
+add_library(flrrtc src/ompl_modifications/fullpath_lrrtconnect.cpp)
 target_link_libraries(flrrtc
   ${OMPL_LIBRARIES}
   )
 
-add_library(crrtc src/custom_rrtconnect.cpp)
+add_library(crrtc src/ompl_modifications/custom_rrtconnect.cpp)
 target_link_libraries(crrtc
   ${OMPL_LIBRARIES}
   )
 
-add_library(costrrtc src/cost_rrtconnect.cpp)
+add_library(costrrtc src/ompl_modifications/cost_rrtconnect.cpp)
 target_link_libraries(costrrtc
   ${OMPL_LIBRARIES}
-  cost_simp
+  path_smoothing
   )
 
 
@@ -256,7 +256,7 @@ target_link_libraries(victor_sim_timings
 #   )
 
 
-add_executable(collision_link_node src/collision_link_node.cpp)
+add_executable(collision_link_node src/wip/collision_link_node.cpp)
 target_link_libraries(collision_link_node
   ${catkin_LIBRARIES}
   )

@@ -11,7 +11,7 @@
 #include "hardcoded_params.h"
 #include "custom_rrtconnect.h"
 
-#include "cost_simplifier.h"
+#include "path_smoothing.h"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <ompl/geometric/PathSimplifier.h>
 
@@ -1094,7 +1094,7 @@ void VictorMotionCostRRTConnect::smooth(ob::PathPtr &path)
     bool tmp =    rplanner_->pv_->do_delay;
     rplanner_->pv_->do_delay = false;
 
-    og::CostSimplifier cost_simp(si_, rplanner_->pv_.get());
+    og::PathSmoother cost_simp(si_, rplanner_->pv_.get());
     cost_simp.shortcutPath(*(path->as<og::PathGeometric>()), SMOOTHING_ITERATIONS);
 
     rplanner_->pv_->do_delay = tmp;
