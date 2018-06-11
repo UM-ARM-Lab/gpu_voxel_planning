@@ -37,6 +37,47 @@ TEST(GpuVoxelVictor, collisions)
     // std::cin >> dummy;
 }
 
+TEST(GpuVoxelVictor, hypothetical)
+{
+    GpuVoxelsVictor vm;
+    std::vector<double> start = {0,0,0,0,0,0,0};
+    std::vector<double> mid = {.1, .1, .1, .1, .1, .1, .1};
+    std::vector<double> end = {.2, .2, .2, .2, .2, .2, .2};
+
+    VictorConfig config = vm.toVictorConfig(start.data());
+    vm.updateActual(config);
+
+    std::vector<std::string> col_links = vm.right_arm_collision_link_names;
+    std::vector<VictorConfig> col_configs;
+    col_configs.push_back(vm.toVictorConfig(end.data()));
+    vm.addCHS(col_configs, col_links);
+
+    EXPECT_TRUE(vm.countVoxels(COLLISION_HYPOTHESIS_SETS[0]) > 0);
+
+    // std::string unused;
+    // std::getline(std::cin, unused);
+    
+    vm.gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2),
+                             ENV_MAP, PROB_OCCUPIED, 2);
+    vm.resetHypothetical();
+    EXPECT_TRUE(vm.countVoxels(VICTOR_SWEPT_VOLUME_MAP) > 0) << "freespace is empty";
+    EXPECT_TRUE(vm.countVoxels(HFREE) > 0) << "hypothetical free space is empty";
+    EXPECT_EQ(vm.countVoxels(VICTOR_SWEPT_VOLUME_MAP), vm.countIntersect(VICTOR_SWEPT_VOLUME_MAP, HFREE)) << "freespace and hypothetical free space are not equal after initialization";
+
+    EXPECT_EQ(vm.countVoxels(COLLISION_HYPOTHESIS_SETS[0]), vm.countIntersect(COLLISION_HYPOTHESIS_SETS[0], HCHS[0])) << "hypothetical and original chs are not equal";
+
+    vm.resetQuery();
+    vm.addQueryState(vm.toVictorConfig(mid.data()));
+    vm.getMap(HFREE)->add(vm.getMap(VICTOR_QUERY_MAP));
+    vm.getMap(HCHS[0])->subtract(vm.getMap(HFREE));
+    
+    EXPECT_TRUE(vm.countVoxels(HFREE) > vm.countVoxels(VICTOR_SWEPT_VOLUME_MAP)) << "hypothtical free is not larger than original free after adding a new config";
+    EXPECT_EQ(vm.countVoxels(VICTOR_SWEPT_VOLUME_MAP), vm.countIntersect(VICTOR_SWEPT_VOLUME_MAP, HFREE)) << "hfree is not a superset of original freespace";
+
+    EXPECT_TRUE(vm.countVoxels(HCHS[0]) < vm.countVoxels(COLLISION_HYPOTHESIS_SETS[0])) << "hypothtical chs is not smaller that original after adding config";
+    EXPECT_EQ(vm.countVoxels(HCHS[0]), vm.countIntersect(HCHS[0], COLLISION_HYPOTHESIS_SETS[0])) << "HCHS[0] is not a subset of original chs";
+}
+
 TEST(GpuVoxels, addMaps)
 {
     GpuVoxelsVictor vm;

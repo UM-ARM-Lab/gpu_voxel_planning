@@ -1,6 +1,6 @@
 
-#ifndef OMPL_PATH_COST_SIMPLIFIER_H
-#define OMPL_PATH_COST_SIMPLIFIER_H
+#ifndef OMPL_PATH_PATH_SMOOTHING_H
+#define OMPL_PATH_PATH_SMOOTHING_H
 
 #include <ompl/geometric/planners/PlannerIncludes.h>
 #include "path_validator.h"
@@ -9,10 +9,10 @@ namespace ompl
 {
     namespace geometric
     {
-        class CostSimplifier
+        class PathSmoother
         {
         public:
-            CostSimplifier(ompl::base::SpaceInformationPtr si,
+            PathSmoother(ompl::base::SpaceInformationPtr si,
                            PathValidator* pv)
             {
                 si_ = si;

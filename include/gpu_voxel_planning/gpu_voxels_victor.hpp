@@ -1,14 +1,14 @@
-#ifndef GPU_VOXELS_VICTOR
-#define GPU_VOXELS_VICTOR
+#ifndef GPU_VOXELS_VICTOR_HPP
+#define GPU_VOXELS_VICTOR_HPP
 
 
 #include <gpu_voxels/GpuVoxels.h>
-#include "collision_detection.hpp"
+// #include "collision_detection.hpp"
 
 #include <arc_utilities/maybe.hpp>
 
 #include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
+
 
 
 #define VICTOR_ACTUAL_MAP "victor_actual_map"
@@ -55,8 +55,6 @@ public:
 
     void updateActual(const VictorConfig &c);
 
-    void addCollisionPoints(CollisionInformation collision_info);
-
     /* Sets robot config, adds select links to map, removes swept volume */
     void addLinks(const VictorConfig &config,
                   const std::vector<std::string> &link_names,
@@ -64,6 +62,8 @@ public:
 
     void addCHS(const std::vector<VictorConfig> &cs,
                 const std::vector<std::string> &collision_links);
+
+    void resetHypothetical();
     
     void addQueryLink(const VictorConfig &c, const std::string &link_name);
 
@@ -109,61 +109,15 @@ public:
     void hidePath();
 
 public:
+
+    const std::vector<std::string> right_arm_joint_names;
+    std::vector<std::string> right_arm_collision_link_names;
+    std::vector<std::string> right_gripper_collision_link_names;
+    const std::vector<std::string> left_arm_joint_names;
     
     gpu_voxels::GpuVoxelsSharedPtr gvl;
     int num_observed_sets;
     VictorConfig cur_config;
 };
-
-
-
-
-Path densifyPath(const Path &path, int densify_factor);
-
-
-class SimWorld
-{
-public:
-    SimWorld();
-    void initializeObstacles();
-    void makeTable();
-    void makeSlottedWall();
-    bool executePath(const Path &path, size_t &last_index, bool add_col_set);
-
-    bool attemptPath(const Path &path);
-
-    void executeAndReturn(const Path &path);
-
-    Maybe::Maybe<std::string> getCollisionLink(const VictorConfig &c);
-    Maybe::Maybe<std::vector<std::string>> getCollisionLinks(const VictorConfig &c);
-
-public:    
-    gpu_voxels::GpuVoxelsSharedPtr gvl;
-    GpuVoxelsVictor victor_model;
-};
-
-class RealWorld
-{
-public:
-    RealWorld();
-    ~RealWorld();
-    bool attemptPath(const Path &path);
-    void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg);
-    void spinUntilUpdate();
-    void loadPointCloudFromFile();
-    
-public:
-    gpu_voxels::GpuVoxelsSharedPtr gvl;
-    GpuVoxelsVictor victor_model;
-    ros::Subscriber joint_sub;
-    ros::ServiceClient attempt_path_client;
-    ros::ServiceClient get_attempt_status_client;
-
-    bool update_victor_from_messages;
-    bool pos_updated;
-    int update_all_joint_count{0};
-};
-
-
 
 #endif

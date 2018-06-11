@@ -1,4 +1,5 @@
 #include "gpu_voxels_victor.hpp"
+#include "worlds.hpp"
 #include "victor_planning.hpp"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <csignal>

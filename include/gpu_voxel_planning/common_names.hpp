@@ -13,6 +13,10 @@ const std::string INSERT_VIZ_SOLUTION = "insert into viz solution";
 
 
 
+#define PROB_OCCUPIED eBVM_OCCUPIED
+#define PROB_FREE eBVM_FREE
+
+
 
 
 

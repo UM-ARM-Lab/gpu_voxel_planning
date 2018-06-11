@@ -1,4 +1,4 @@
-#include "cost_simplifier.h"
+#include "path_smoothing.h"
 #include <random>
 
 namespace ob = ompl::base;
@@ -6,7 +6,7 @@ namespace og = ompl::geometric;
 
 
 
-void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials)
+void og::PathSmoother::shortcutPath(og::PathGeometric &path, size_t num_trials)
 {
     rng.seed(std::random_device()());
 
@@ -37,7 +37,7 @@ void og::CostSimplifier::shortcutPath(og::PathGeometric &path, size_t num_trials
     // std::cout << " and after: "<< path.getStates().size() << "\n";   
 }
 
-void og::CostSimplifier::sampleInd(int &start, int &end, int max_exclusive)
+void og::PathSmoother::sampleInd(int &start, int &end, int max_exclusive)
 {
     start = 0;
     end = 0;
@@ -60,7 +60,7 @@ void og::CostSimplifier::sampleInd(int &start, int &end, int max_exclusive)
  *   Shortcut smoothing where there is not a state validity check,
  *    but instead a motion cost check
  */
-void og::CostSimplifier::singleShortcut(og::PathGeometric &path)
+void og::PathSmoother::singleShortcut(og::PathGeometric &path)
 {
 
     bool fast_check = true;
