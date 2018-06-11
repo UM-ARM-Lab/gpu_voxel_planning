@@ -55,7 +55,7 @@ std::vector<std::string> i_left_arm_joint_names{"victor_left_arm_joint_1", "vict
 
 
 GpuVoxelsVictor::GpuVoxelsVictor():
-    num_observed_sets(0),
+    num_observed_chs(0),
     right_arm_joint_names(i_right_arm_joint_names),
     right_arm_collision_link_names(i_right_arm_collision_link_names),
     right_gripper_collision_link_names(i_right_gripper_collision_link_names),
@@ -151,7 +151,7 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, PROB_OCCUPIED);
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_SWEPT_VOLUME_MAP, PROB_OCCUPIED);
 
-    for(size_t i=0; i<num_observed_sets; i++)
+    for(size_t i=0; i<num_observed_chs; i++)
     {
         removeSweptVolume(COLLISION_HYPOTHESIS_SETS[i]);
     }
@@ -161,7 +161,7 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 
 void GpuVoxelsVictor::resetHypothetical()
 {
-    for(size_t i=0; i < num_observed_sets; i++)
+    for(size_t i=0; i < num_observed_chs; i++)
     {
         getMap(HCHS[i])->copy(getMap(COLLISION_HYPOTHESIS_SETS[i]));
     }
@@ -198,7 +198,7 @@ std::vector<size_t> GpuVoxelsVictor::countCHSCollisions()
 {
     PROFILE_START("Chs sizes, robot intersection")
     std::vector<size_t> collisions_in_chs;
-    for(int i=0; i<num_observed_sets; i++)
+    for(int i=0; i<num_observed_chs; i++)
     {
         collisions_in_chs.push_back(countNumCollisions(COLLISION_HYPOTHESIS_SETS[i]));
     }
@@ -235,8 +235,8 @@ size_t GpuVoxelsVictor::countTotalCHSCollisionsForConfig(const VictorConfig &c)
 std::vector<size_t> GpuVoxelsVictor::chsSizes()
 {
     std::vector<size_t> chs_sizes;
-    chs_sizes.resize(num_observed_sets);
-    for(int i=0; i < num_observed_sets; i++)
+    chs_sizes.resize(num_observed_chs);
+    for(int i=0; i < num_observed_chs; i++)
     {
         chs_sizes[i] = countVoxels(COLLISION_HYPOTHESIS_SETS[i]);
     }
@@ -316,24 +316,24 @@ void GpuVoxelsVictor::addCHS(const std::vector<VictorConfig> &cs,
     }
     for(auto &c: cs)
     {
-        addLinks(c, collision_links, COLLISION_HYPOTHESIS_SETS[num_observed_sets]);
+        addLinks(c, collision_links, COLLISION_HYPOTHESIS_SETS[num_observed_chs]);
         addLinks(c, collision_links, COMBINED_COLSETS_MAP);
     }
-    gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[num_observed_sets]);
-    num_observed_sets++;
+    gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[num_observed_chs]);
+    num_observed_chs++;
 
-    if(num_observed_sets >= NUM_SETS - 3)
+    if(num_observed_chs >= NUM_SETS - 3)
     {
         std::cout << "Getting close to set limit\n";
     }
            
-    if(num_observed_sets >= NUM_SETS)
+    if(num_observed_chs >= NUM_SETS)
     {
         std::cout << "Set limit reached!. Everything now going in last set\n";
-        num_observed_sets--;
+        num_observed_chs--;
     }
     
-    for(int i=0; i<num_observed_sets; i++)
+    for(int i=0; i<num_observed_chs; i++)
     {
         removeSweptVolume(COLLISION_HYPOTHESIS_SETS[i]);
     }
@@ -358,7 +358,7 @@ int GpuVoxelsVictor::determineVictorDist()
 void GpuVoxelsVictor::doVis()
 {
     gvl->visualizeMap(VICTOR_ACTUAL_MAP, true);
-    for(int i=0; i<num_observed_sets; i++)
+    for(int i=0; i<num_observed_chs; i++)
         gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[i]);
 
 }

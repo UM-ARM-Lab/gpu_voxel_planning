@@ -116,7 +116,7 @@ public:
     const std::vector<std::string> left_arm_joint_names;
     
     gpu_voxels::GpuVoxelsSharedPtr gvl;
-    int num_observed_sets;
+    int num_observed_chs;
     VictorConfig cur_config;
 };
 
