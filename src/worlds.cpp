@@ -249,25 +249,25 @@ Maybe::Maybe<std::string> SimWorld::getCollisionLink(const VictorConfig &c)
 {
     victor_model.resetQuery();
     victor_model.addQueryState(c);
-    if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) > 0)
+    if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) == 0)
     {
         victor_model.resetQuery();
-        for(auto &link_name: victor_model.right_arm_collision_link_names)
-        {
-            victor_model.addQueryLink(c, link_name);
-            if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) > 0)
-            {
-                victor_model.resetQuery();
-                return Maybe::Maybe<std::string>(link_name);
-            }
-        }
-        std::cout << "Victor collides, but no links collide...\n";
-        assert(false);
+        return Maybe::Maybe<std::string>();
     }
+    
     victor_model.resetQuery();
-    return Maybe::Maybe<std::string>();
+    for(auto &link_name: victor_model.right_arm_collision_link_names)
+    {
+        victor_model.addQueryLink(c, link_name);
+        if(victor_model.countNumCollisions(SIM_OBSTACLES_MAP) > 0)
+        {
+            victor_model.resetQuery();
+            return Maybe::Maybe<std::string>(link_name);
+        }
+    }
+    std::cout << "Victor collides, but no links collide...\n";
+    assert(false);
 }
-
 
 /*
  *  Returns the set of links that might be in collision (Adds full gripper to link 6)
@@ -344,8 +344,6 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid, bool add_col_se
             last_valid--;
             return false;
         }
-
-        
             
         victor_model.updateActual(c);
         
