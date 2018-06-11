@@ -164,7 +164,9 @@ target_link_libraries(costrrtc
 #   box_world_lib
 #   )
 
-add_library(victor_model src/gpu_voxels_victor.cpp)
+add_library(victor_model
+  src/gpu_voxels_victor.cpp
+  src/worlds.cpp)
 add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
 target_link_libraries(victor_model
   ${catkin_LIBRARIES}
