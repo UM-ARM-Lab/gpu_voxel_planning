@@ -6,20 +6,12 @@
 #include <arc_utilities/timing.hpp>
 
 #include <arc_utilities/arc_helpers.hpp>
-
-
-
-// #include <boost/thread/lock_guard.hpp>
-// #include <boost/thread/locks.hpp>
-// #include <mutex>
 #include <math.h>
 
 
 std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
 std::vector<std::string> HCHS;
 
-
-// #define PROB_OCCUPIED BitVoxelMeaning(255)
 
 #define NUM_SETS 100
 
@@ -235,14 +227,14 @@ size_t GpuVoxelsVictor::countTotalCHSCollisions()
 
 std::vector<size_t> GpuVoxelsVictor::countCHSCollisions()
 {
-    PROFILE_START("Seen sizes, robot intersection")
-    std::vector<size_t> collisions_in_seen;
+    PROFILE_START("Chs sizes, robot intersection")
+    std::vector<size_t> collisions_in_chs;
     for(int i=0; i<num_observed_sets; i++)
     {
-        collisions_in_seen.push_back(countNumCollisions(COLLISION_HYPOTHESIS_SETS[i]));
+        collisions_in_chs.push_back(countNumCollisions(COLLISION_HYPOTHESIS_SETS[i]));
     }
-    PROFILE_RECORD("Seen sizes, robot intersection")
-    return collisions_in_seen;
+    PROFILE_RECORD("Chs sizes, robot intersection")
+    return collisions_in_chs;
 }
 
 /*
@@ -261,7 +253,6 @@ size_t GpuVoxelsVictor::countTotalCHSCollisionsForConfig(const VictorConfig &c)
     PROFILE_START(QUERY_INSERTION);
     
     resetQuery();
-
     addQueryState(c);
 
     PROFILE_RECORD(ISVALID_INSERTION);
@@ -270,17 +261,17 @@ size_t GpuVoxelsVictor::countTotalCHSCollisionsForConfig(const VictorConfig &c)
 }
 
 /*
- *  Returns the number of voxels in each seen collision map
+ *  Returns the number of voxels in each chs collision map
  */
 std::vector<size_t> GpuVoxelsVictor::chsSizes()
 {
-    std::vector<size_t> seen_sizes;
-    seen_sizes.resize(num_observed_sets);
+    std::vector<size_t> chs_sizes;
+    chs_sizes.resize(num_observed_sets);
     for(int i=0; i < num_observed_sets; i++)
     {
-        seen_sizes[i] = countVoxels(COLLISION_HYPOTHESIS_SETS[i]);
+        chs_sizes[i] = countVoxels(COLLISION_HYPOTHESIS_SETS[i]);
     }
-    return seen_sizes;
+    return chs_sizes;
 }
 
 size_t GpuVoxelsVictor::countVoxels(const std::string& map_name)
@@ -299,7 +290,6 @@ size_t GpuVoxelsVictor::countIntersect(const std::string& map_1, const std::stri
 {
     return getMap(map_1)->collideWith(getMap(map_2));
 }
-
 
 
 void GpuVoxelsVictor::addQueryLink(const VictorConfig &c,
@@ -328,16 +318,15 @@ void GpuVoxelsVictor::addLinks(const VictorConfig &config,
     // clouds->syncToHost();
     rob->syncToHost();
 
-    for(auto collision_link_name: link_names)
+    for(auto link_name: link_names)
     {
-        int16_t cloud_num = clouds->getCloudNumber(collision_link_name);
+        int16_t cloud_num = clouds->getCloudNumber(link_name);
         uint32_t cloud_size = clouds->getPointcloudSizes()[cloud_num];
-        // std::cout << collision_link_name << " has " << cloud_size << " points \n";
+        // std::cout << link_name << " has " << cloud_size << " points \n";
         const gpu_voxels::Vector3f* cloud_ptr = clouds->getPointCloud(cloud_num);
         const std::vector<gpu_voxels::Vector3f> cloud(cloud_ptr, cloud_ptr + cloud_size);
         gvl->insertPointCloudIntoMap(cloud, map_name, PROB_OCCUPIED);
     }
-
     removeSweptVolume(map_name);
 }
 
@@ -364,8 +353,6 @@ void GpuVoxelsVictor::addCHS(const std::vector<VictorConfig> &cs,
     gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[num_observed_sets]);
     num_observed_sets++;
 
-
-    
     if(num_observed_sets >= NUM_SETS - 3)
     {
         std::cout << "Getting close to set limit\n";
@@ -377,11 +364,11 @@ void GpuVoxelsVictor::addCHS(const std::vector<VictorConfig> &cs,
         num_observed_sets--;
     }
     
-    for(size_t i=0; i<num_observed_sets; i++)
+    for(int i=0; i<num_observed_sets; i++)
     {
         removeSweptVolume(COLLISION_HYPOTHESIS_SETS[i]);
     }
-
+    removeSweptVolume(COMBINED_COLSETS_MAP);
 }
 
 
@@ -402,7 +389,7 @@ int GpuVoxelsVictor::determineVictorDist()
 void GpuVoxelsVictor::doVis()
 {
     gvl->visualizeMap(VICTOR_ACTUAL_MAP, true);
-    for(size_t i=0; i<num_observed_sets; i++)
+    for(int i=0; i<num_observed_sets; i++)
         gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[i]);
 
 }
