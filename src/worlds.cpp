@@ -25,6 +25,7 @@ SimWorld::SimWorld()
         
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
 
+    
 
     double init_angles[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     VictorConfig init_config = victor_model.toVictorConfig(init_angles);
@@ -204,11 +205,40 @@ void SimWorld::makeSlottedWall()
     
 void SimWorld::initializeObstacles()
 {
+    initializeVictor();
     if(MAKE_TABLE)
         makeTable();
     if(MAKE_SLOTTED_WALL)
         makeSlottedWall();
         
+}
+
+void SimWorld::initializeVictor()
+{
+    VictorConfig left_arm_config;
+
+    std::vector<double> left_arm_joint_values = {1.57, 1.57, 0, 0, 0, 0 ,0};
+    // std::vector<double> left_arm_joint_values = {-1.417, 1.566, -1.151, 1.293, 2.437, 1.406, -1.12};
+    
+    for(size_t i=0; i<left_arm_joint_values.size(); i++)
+    {
+        left_arm_config[victor_model.left_arm_joint_names[i]] = left_arm_joint_values[i];
+    }
+    gvl->setRobotConfiguration(VICTOR_ROBOT_STATIONARY, left_arm_config);
+    gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, KNOWN_OBSTACLES_MAP, PROB_OCCUPIED);
+
+    gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, SIM_OBSTACLES_MAP, PROB_OCCUPIED);
+    
+    VictorConfig right_gripper_config;
+    right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 0;
+    right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 0;
+    right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 0;
+    // right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
+    // right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
+    // right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
+
+    gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
+
 }
 
 /*

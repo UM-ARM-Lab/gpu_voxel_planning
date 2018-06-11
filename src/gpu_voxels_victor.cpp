@@ -39,7 +39,7 @@ std::vector<std::string> i_right_arm_collision_link_names{
 std::vector<std::string> i_right_gripper_collision_link_names{
     // "victor_right_arm_link_6",
     "victor_right_arm_link_7",
-    "victor_right_gripper_palm",
+        "victor_right_gripper_palm",
         "victor_right_gripper_mounting_bracket",
         "victor_right_gripper_fingerA_base", "victor_right_gripper_fingerA_dist",
         "victor_right_gripper_fingerA_med", "victor_right_gripper_fingerA_prox",
@@ -99,38 +99,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
     gvl->addRobot(VICTOR_ROBOT_STATIONARY, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf", false);
 
-    VictorConfig left_arm_config;
 
-    std::vector<double> left_arm_joint_values = {1.57, 1.57, 0, 0, 0, 0 ,0};
-    // std::vector<double> left_arm_joint_values = {-1.417, 1.566, -1.151, 1.293, 2.437, 1.406, -1.12};
-    
-    for(size_t i=0; i<left_arm_joint_values.size(); i++)
-    {
-        left_arm_config[left_arm_joint_names[i]] = left_arm_joint_values[i];
-    }
-
-    if(true != REAL_ROBOT)
-    {
-        gvl->setRobotConfiguration(VICTOR_ROBOT_STATIONARY, left_arm_config);
-        gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, KNOWN_OBSTACLES_MAP, PROB_OCCUPIED);
-
-        gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, SIM_OBSTACLES_MAP, PROB_OCCUPIED);
-    }
-
-
-
-    VictorConfig right_gripper_config;
-    if(REAL_ROBOT)
-    {}
-    else{
-        // right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
-        // right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
-        // right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
-        right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 0;
-        right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 0;
-        right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 0;
-        gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
-    }
     
     COLLISION_HYPOTHESIS_SETS.resize(NUM_SETS);
     HCHS.resize(NUM_SETS);

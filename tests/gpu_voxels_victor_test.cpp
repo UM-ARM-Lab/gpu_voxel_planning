@@ -21,7 +21,6 @@ TEST(GpuVoxelVictor, collisions)
     victor_model.gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2),
                                        ENV_MAP, PROB_OCCUPIED, 2);
 
-
     // is_valid = victor_model.queryFreeConfiguration(map);
     // col_count = victor_model.countTotalCHSCollisionsForConfig(map);
     victor_model.resetQuery();
@@ -78,6 +77,8 @@ TEST(GpuVoxelVictor, hypothetical)
     EXPECT_EQ(vm.countVoxels(HCHS[0]), vm.countIntersect(HCHS[0], COLLISION_HYPOTHESIS_SETS[0])) << "HCHS[0] is not a subset of original chs";
 }
 
+
+
 TEST(GpuVoxels, addMaps)
 {
     GpuVoxelsVictor vm;
@@ -87,15 +88,15 @@ TEST(GpuVoxels, addMaps)
     gvl->addMap(MT_PROBAB_VOXELMAP, m1);
     gvl->addMap(MT_PROBAB_VOXELMAP, m2);
 
-    EXPECT_EQ(0, vm.countIntersect(m1, m2)) << "two empty maps have an intersection";
+    EXPECT_EQ(0, vm.countIntersect(m1, m2)) << "two empty maps have a non-empty intersection";
     gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2),
                           m1, PROB_OCCUPIED, 2);
 
-    size_t orig_box_vox = vm.countIntersect(m1, FULL_MAP);
+    size_t orig_box_vox = vm.countVoxels(m1);
     EXPECT_TRUE(orig_box_vox > 0) << "Inserted box, but not seeing any voxels";
 
     vm.getMap(m2)->add(vm.getMap(m1));
-    size_t new_box_vox = vm.countIntersect(m2, FULL_MAP);
+    size_t new_box_vox = vm.countVoxels(m2);
     EXPECT_TRUE(new_box_vox > 0) << "Added map, but not seeing any voxels";
     EXPECT_EQ(orig_box_vox, new_box_vox) << "Added map, but they have a different number of voxels";
     EXPECT_EQ(orig_box_vox, vm.countIntersect(m1, m2)) << "added map not identical";

@@ -26,6 +26,9 @@ public:
     Maybe::Maybe<std::string> getCollisionLink(const VictorConfig &c);
     Maybe::Maybe<std::vector<std::string>> getCollisionLinks(const VictorConfig &c);
 
+private:
+    void initializeVictor();
+
 public:    
     gpu_voxels::GpuVoxelsSharedPtr gvl;
     GpuVoxelsVictor victor_model;
