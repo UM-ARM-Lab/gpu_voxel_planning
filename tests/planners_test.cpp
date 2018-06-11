@@ -10,7 +10,7 @@
 
 
 #define PROB_OCCUPIED eBVM_OCCUPIED
-#define COLLISION_SET "seen_obstacles_0"
+#define COLLISION_SET "chs_0"
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;

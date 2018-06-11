@@ -105,11 +105,11 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     HCHS.resize(NUM_SETS);
     for(int i=0; i < NUM_SETS; i++)
     {
-        COLLISION_HYPOTHESIS_SETS[i] = "seen_obstacles_" + std::to_string(i);
+        COLLISION_HYPOTHESIS_SETS[i] = "chs_" + std::to_string(i);
         gvl->addMap(MT_PROBAB_VOXELMAP, COLLISION_HYPOTHESIS_SETS[i]);
         gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[i]);
 
-        HCHS[i] = "hypothtical_seen_obstacles_" + std::to_string(i);
+        HCHS[i] = "hypothtical_chs_" + std::to_string(i);
         gvl->addMap(MT_PROBAB_VOXELMAP, HCHS[i]);
                 
     }
