@@ -21,6 +21,8 @@
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 
+#define DISTANCE_FOR_ADDING_CHS 0.05
+
 #define TABLE_WORLD true
 
 #define PEG_IN_HOLE false

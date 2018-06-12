@@ -65,6 +65,10 @@ TEST(PathUtils, followPartial_3_points)
     std::vector<double> c{1.0, 1.0};
     Path path{a, b, c};
 
+    Path shortpath = PathUtils::followPartial(path, 0.5);
+    EXPECT_EQ(2, shortpath.size());
+
+
     Path ppath = PathUtils::followPartial(path, 1.5);
     EXPECT_EQ(3, ppath.size());
     EXPECT_EQ(0.0, ppath[0][0]);

@@ -333,12 +333,16 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid, bool add_col_se
         {
             if(add_col_set)
             {
-                std::vector<VictorConfig> cs;
-                for(size_t j=last_valid; (j<last_valid + NUM_STEPS_FOR_ADDING_COLLISION) && j<path.size(); j++)
-                {
-                    cs.push_back(victor_model.toVictorConfig(path[j].data()));
-                }
-                victor_model.addCHS(cs, col_links.Get());
+                Path col_path(path.begin()+last_valid, path.end());
+                // std::copy(path.begin() + last_valid, path.end(), col_path.begin());
+                victor_model.addCHS(col_path, col_links.Get());
+                
+                // std::vector<VictorConfig> cs;
+                // for(size_t j=last_valid; (j<last_valid + NUM_STEPS_FOR_ADDING_COLLISION) && j<path.size(); j++)
+                // {
+                //     cs.push_back(victor_model.toVictorConfig(path[j].data()));
+                // }
+                // victor_model.addCHS(cs, col_links.Get());
             }
             
             last_valid--;

@@ -299,6 +299,18 @@ void GpuVoxelsVictor::addLinks(const VictorConfig &config,
     removeSweptVolume(map_name);
 }
 
+void GpuVoxelsVictor::addCHS(const Path &path,
+                             const std::vector<std::string> &collision_links)
+{
+    Path collision_boundary_path = PathUtils::followPartial(path, DISTANCE_FOR_ADDING_CHS);
+    std::vector<VictorConfig> configs;
+    for(const auto &point: collision_boundary_path)
+    {
+        configs.push_back(toVictorConfig(point.data()));
+    }
+    addCHS(configs, collision_links);
+}
+
 void GpuVoxelsVictor::addCHS(const std::vector<VictorConfig> &cs,
                              const std::vector<std::string> &collision_links)
 {

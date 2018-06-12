@@ -58,6 +58,9 @@ public:
                   const std::vector<std::string> &link_names,
                   const std::string &map_name);
 
+    void addCHS(const Path &path,
+                const std::vector<std::string> &collision_links);
+
     void addCHS(const std::vector<VictorConfig> &cs,
                 const std::vector<std::string> &collision_links);
 
