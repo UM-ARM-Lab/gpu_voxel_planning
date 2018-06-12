@@ -61,7 +61,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     right_gripper_collision_link_names(i_right_gripper_collision_link_names),
     left_arm_joint_names(i_left_arm_joint_names)
 {
-    std::cout << "Initializing gpu voxels victor\n";
+    // std::cout << "Initializing gpu voxels victor\n";
     gvl = gpu_voxels::GpuVoxels::getInstance();
     gvl->initialize(200, 200, 200, 0.02);
 
@@ -125,9 +125,9 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
 GpuVoxelsVictor::~GpuVoxelsVictor()
 {
-    std::cout << "Destructor for gpu voxels victor...";
+    // std::cout << "Destructor for gpu voxels victor...";
     gvl.reset();
-    std::cout << "...gvl reset successful\n";
+    // std::cout << "...gvl reset successful\n";
 }
 
 void GpuVoxelsVictor::removeSweptVolume(const std::string& map_name)

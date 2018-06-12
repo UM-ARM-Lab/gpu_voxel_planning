@@ -47,7 +47,7 @@ TEST(GpuVoxelVictor, collisions)
     // std::cin >> dummy;
 }
 
-TEST(GpuVoxelVictor, addCHS)
+TEST(GpuVoxelVictor, addCHS_MultipleSets)
 {
     GpuVoxelsVictor vm;
     std::vector<double> start = {0,0,0,0,0,0,0};
@@ -81,7 +81,27 @@ TEST(GpuVoxelVictor, addCHS)
     size_t intersect = vm.countIntersect(COLLISION_HYPOTHESIS_SETS[0], COLLISION_HYPOTHESIS_SETS[1]);
     EXPECT_TRUE(intersect < chs0_t2) << "chs0 is a subset of chs1";
     EXPECT_TRUE(intersect < chs1_t2) << "chs1 is a subset of chs0";
+}
 
+TEST(GpuVoxelVictor, addCHS_PartialDistance)
+{
+    GpuVoxelsVictor vm;
+    std::vector<double> start = {0,0,0,0,0,0,0};
+    std::vector<double> end = {.9, .9, .9, .9, .9, .9, .9};
+    Path path{start, end};
+
+    vm.addCHS(path, vm.right_gripper_collision_link_names);
+    EXPECT_TRUE(vm.countVoxels(COLLISION_HYPOTHESIS_SETS[0]) > 0) << "empty chs after adding";
+
+    vm.resetQuery();
+    vm.addQueryState(vm.toVictorConfig(start.data()));
+
+    EXPECT_TRUE(vm.countIntersect(VICTOR_QUERY_MAP, COLLISION_HYPOTHESIS_SETS[0]) > 0) << "CHS did not add voxels in the right place";
+
+    vm.resetQuery();
+    vm.addQueryState(vm.toVictorConfig(end.data()));
+
+    EXPECT_EQ(0, vm.countIntersect(VICTOR_QUERY_MAP, COLLISION_HYPOTHESIS_SETS[0]) > 0) << "Far away config overlaps with CHS";
 
 }
 
@@ -160,6 +180,7 @@ TEST(GpuVoxels, addMaps)
 
 GTEST_API_ int main(int argc, char **argv) {
     icl_core::logging::initialize(argc, argv);
+    icl_core::logging::setLogLevel(icl_core::logging::LogLevel::eLL_ERROR);
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
