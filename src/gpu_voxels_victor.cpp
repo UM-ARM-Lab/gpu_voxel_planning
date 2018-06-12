@@ -304,6 +304,7 @@ void GpuVoxelsVictor::addCHS(const Path &path,
 {
     addCHSToMap(path, collision_links, COLLISION_HYPOTHESIS_SETS[num_observed_chs]);
     addCHSToMap(path, collision_links, COMBINED_COLSETS_MAP);
+    gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[num_observed_chs]);
     
     num_observed_chs++;
     if(num_observed_chs >= NUM_SETS - 3)
@@ -334,7 +335,6 @@ void GpuVoxelsVictor::addCHSToMap(const Path &path,
         addLinks(toVictorConfig(point.data()), collision_links, map);
     }
     removeSweptVolume(map);
-    gvl->visualizeMap(map);
 }
 
 
