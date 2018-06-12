@@ -151,7 +151,7 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_ACTUAL_MAP, PROB_OCCUPIED);
     gvl->insertRobotIntoMap(VICTOR_ROBOT, VICTOR_SWEPT_VOLUME_MAP, PROB_OCCUPIED);
 
-    for(size_t i=0; i<num_observed_chs; i++)
+    for(int i=0; i<num_observed_chs; i++)
     {
         removeSweptVolume(COLLISION_HYPOTHESIS_SETS[i]);
     }
@@ -161,7 +161,7 @@ void GpuVoxelsVictor::updateActual(const VictorConfig &c)
 
 void GpuVoxelsVictor::resetHypothetical()
 {
-    for(size_t i=0; i < num_observed_chs; i++)
+    for(int i=0; i < num_observed_chs; i++)
     {
         getMap(HCHS[i])->copy(getMap(COLLISION_HYPOTHESIS_SETS[i]));
     }
