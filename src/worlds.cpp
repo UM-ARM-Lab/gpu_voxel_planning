@@ -586,16 +586,16 @@ bool RealWorld::attemptPath(const Path &path)
         gpu_voxel_planning::CollisionInformation &ci = path_res.response.ci;
         std::cout << "Collision found on path\n";
 
-        std::vector<VictorConfig> col_configs;
+        Path col_points;
         for(auto &traj_point: ci.collision_path.points)
         {
-            col_configs.push_back(victor_model.toVictorConfig(traj_point.positions.data()));
+            col_points.push_back(traj_point.positions);
         }
         std::vector<std::string> col_links = ci.collision_links;
         col_links.insert(col_links.end(), victor_model.right_gripper_collision_link_names.begin(),
                          victor_model.right_gripper_collision_link_names.end());
-        victor_model.addCHS(col_configs, col_links);
-        std::cout << "added " << col_configs.size() << " collision configs\n";
+        victor_model.addCHS(col_points, col_links);
+        std::cout << "added " << col_points.size() << " collision configs\n";
         std::cout << "for links \n";
         for(auto &link_name: col_links)
         {

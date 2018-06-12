@@ -6,6 +6,17 @@
 #define PROB_OCCUPIED eBVM_OCCUPIED
 #define ENV_MAP "env_map"
 
+/*
+ * returns true if either map1 is a subset of map2, or map2 is a subset of map 1
+ */
+bool isSubset(GpuVoxelsVictor &vm, const std::string &map1, const std::string &map2)
+{
+    size_t intersect = vm.countIntersect(map1, map2);
+    size_t tot1 = vm.countVoxels(map1);
+    size_t tot2 = vm.countVoxels(map2);
+    return (tot1 == intersect) || (tot2 == intersect);
+}
+
 TEST(GpuVoxelVictor, collisions)
 {
 
@@ -36,20 +47,56 @@ TEST(GpuVoxelVictor, collisions)
     // std::cin >> dummy;
 }
 
-TEST(GpuVoxelVictor, hypothetical)
+TEST(GpuVoxelVictor, addCHS)
+{
+    GpuVoxelsVictor vm;
+    std::vector<double> start = {0,0,0,0,0,0,0};
+    std::vector<double> mid1 = {.1, .1, .1, .1, .1, .1, .1};
+    std::vector<double> end1 = {.2, .2, .2, .2, .2, .2, .2};
+    std::vector<double> mid2 = {.1, .5, .8, .0, .11, .9, 1.0};
+    std::vector<double> end2 = {.4, .8, 1.9, -1.0, .1, 1.5, 1.9};
+
+    Path col0{mid1, end1};
+    Path col1{mid2, end2};
+
+    vm.updateActual(vm.toVictorConfig(start.data()));
+
+    EXPECT_EQ(0, vm.countVoxels(COLLISION_HYPOTHESIS_SETS[0])) << "non-empty initial CHS 0";
+    EXPECT_EQ(0, vm.countVoxels(COLLISION_HYPOTHESIS_SETS[1])) << "non-empty initial CHS 1";
+
+    vm.addCHS(col0, vm.right_arm_collision_link_names);
+
+    size_t chs0_t1 = vm.countVoxels(COLLISION_HYPOTHESIS_SETS[0]);
+
+    EXPECT_TRUE(chs0_t1 > 0) << "empty CHS 0 after collision";
+    EXPECT_EQ(0, vm.countVoxels(COLLISION_HYPOTHESIS_SETS[1])) << "non-empty CHS 1 after first collision";
+
+    vm.addCHS(col1, vm.right_arm_collision_link_names);
+    size_t chs0_t2 = vm.countVoxels(COLLISION_HYPOTHESIS_SETS[0]);
+    size_t chs1_t2 = vm.countVoxels(COLLISION_HYPOTHESIS_SETS[1]);
+    
+    EXPECT_TRUE(chs0_t2 <= chs0_t1) << "CHS 0 increased in size at t2";
+    EXPECT_TRUE(chs0_t2 > 0) << "CHS 0 is size 0 at t2";
+    EXPECT_TRUE(chs1_t2 > 0) << "CHS 1 is size 0 at t2";
+    size_t intersect = vm.countIntersect(COLLISION_HYPOTHESIS_SETS[0], COLLISION_HYPOTHESIS_SETS[1]);
+    EXPECT_TRUE(intersect < chs0_t2) << "chs0 is a subset of chs1";
+    EXPECT_TRUE(intersect < chs1_t2) << "chs1 is a subset of chs0";
+
+
+}
+
+TEST(GpuVoxelVictor, hypothetical_reset)
 {
     GpuVoxelsVictor vm;
     std::vector<double> start = {0,0,0,0,0,0,0};
     std::vector<double> mid = {.1, .1, .1, .1, .1, .1, .1};
     std::vector<double> end = {.2, .2, .2, .2, .2, .2, .2};
 
-    VictorConfig config = vm.toVictorConfig(start.data());
-    vm.updateActual(config);
+    vm.updateActual(vm.toVictorConfig(start.data()));
 
-    std::vector<std::string> col_links = vm.right_arm_collision_link_names;
-    std::vector<VictorConfig> col_configs;
-    col_configs.push_back(vm.toVictorConfig(end.data()));
-    vm.addCHS(col_configs, col_links);
+    Path col_path{mid, end};
+
+    vm.addCHS(col_path, vm.right_arm_collision_link_names);
 
     EXPECT_TRUE(vm.countVoxels(COLLISION_HYPOTHESIS_SETS[0]) > 0);
 

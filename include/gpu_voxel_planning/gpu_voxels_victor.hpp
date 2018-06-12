@@ -61,8 +61,9 @@ public:
     void addCHS(const Path &path,
                 const std::vector<std::string> &collision_links);
 
-    void addCHS(const std::vector<VictorConfig> &cs,
-                const std::vector<std::string> &collision_links);
+    void addCHSToMap(const Path &path,
+                     const std::vector<std::string> &collision_links,
+                     const std::string &map);
 
     void resetHypothetical();
     

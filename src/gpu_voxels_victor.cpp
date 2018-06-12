@@ -302,38 +302,10 @@ void GpuVoxelsVictor::addLinks(const VictorConfig &config,
 void GpuVoxelsVictor::addCHS(const Path &path,
                              const std::vector<std::string> &collision_links)
 {
-    Path collision_boundary_path = PathUtils::followPartial(path, DISTANCE_FOR_ADDING_CHS);
-    std::vector<VictorConfig> configs;
-    for(const auto &point: collision_boundary_path)
-    {
-        configs.push_back(toVictorConfig(point.data()));
-    }
-    addCHS(configs, collision_links);
-}
-
-void GpuVoxelsVictor::addCHS(const std::vector<VictorConfig> &cs,
-                             const std::vector<std::string> &collision_links)
-{
-    if(collision_links.size() == 0)
-    {
-        std::cout << "Attempted to add a collision set with no links, exiting\n";
-        assert(false);
-        return;
-    }
-    if(cs.size() == 0)
-    {
-        std::cout << "Attempted to add a collision set with no configurations, exiting\n";
-        assert(false);
-        return;
-    }
-    for(auto &c: cs)
-    {
-        addLinks(c, collision_links, COLLISION_HYPOTHESIS_SETS[num_observed_chs]);
-        addLinks(c, collision_links, COMBINED_COLSETS_MAP);
-    }
-    gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[num_observed_chs]);
+    addCHSToMap(path, collision_links, COLLISION_HYPOTHESIS_SETS[num_observed_chs]);
+    addCHSToMap(path, collision_links, COMBINED_COLSETS_MAP);
+    
     num_observed_chs++;
-
     if(num_observed_chs >= NUM_SETS - 3)
     {
         std::cout << "Getting close to set limit\n";
@@ -344,12 +316,25 @@ void GpuVoxelsVictor::addCHS(const std::vector<VictorConfig> &cs,
         std::cout << "Set limit reached!. Everything now going in last set\n";
         num_observed_chs--;
     }
-    
-    for(int i=0; i<num_observed_chs; i++)
+
+}
+
+void GpuVoxelsVictor::addCHSToMap(const Path &path,
+                                  const std::vector<std::string> &collision_links,
+                                  const std::string &map)
+{
+    Path collision_boundary_path = PathUtils::followPartial(path, DISTANCE_FOR_ADDING_CHS);
+    collision_boundary_path = PathUtils::densify(collision_boundary_path, 0.01);
+
+    assert(collision_links.size() > 0 && "Attempted to add a collision set with no links");
+    assert(collision_boundary_path.size() > 0 && "Attempt to add chs with empty path specified");
+
+    for(const auto &point: collision_boundary_path)
     {
-        removeSweptVolume(COLLISION_HYPOTHESIS_SETS[i]);
+        addLinks(toVictorConfig(point.data()), collision_links, map);
     }
-    removeSweptVolume(COMBINED_COLSETS_MAP);
+    removeSweptVolume(map);
+    gvl->visualizeMap(map);
 }
 
 
