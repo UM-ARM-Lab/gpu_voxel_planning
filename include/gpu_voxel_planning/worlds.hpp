@@ -7,7 +7,7 @@
 #include <sensor_msgs/JointState.h>
 
 
-Path densifyPath(const Path &path, int densify_factor);
+// Path densifyPath(const Path &path, int densify_factor);
 
 
 class SimWorld

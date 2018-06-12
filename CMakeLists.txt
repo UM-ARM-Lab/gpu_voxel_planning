@@ -166,7 +166,8 @@ target_link_libraries(costrrtc
 
 add_library(victor_model
   src/gpu_voxels_victor.cpp
-  src/worlds.cpp)
+  src/worlds.cpp
+  src/path_utils.cpp)
 add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
 target_link_libraries(victor_model
   ${catkin_LIBRARIES}
@@ -310,6 +311,15 @@ IF(GTEST_FOUND)
   
   add_executable(test_planners tests/planners_test.cpp)
   target_link_libraries(test_planners
+    victor_model
+    victor_validator
+    victor_planning
+    ${EXTERN_LIBS}
+    ${GTEST_LIBRARIES}
+    )
+  
+  add_executable(test_path_utils tests/test_path_utils.cpp)
+  target_link_libraries(test_path_utils
     victor_model
     victor_validator
     victor_planning

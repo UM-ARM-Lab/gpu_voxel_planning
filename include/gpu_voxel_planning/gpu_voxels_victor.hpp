@@ -6,7 +6,7 @@
 // #include "collision_detection.hpp"
 
 #include <arc_utilities/maybe.hpp>
-
+#include "path_utils.hpp"
 #include <ros/ros.h>
 
 
@@ -37,10 +37,8 @@ extern std::vector<std::string> HCHS; //hypothetical collision hypothesis sets
 
 
 typedef robot::JointValueMap VictorConfig;
-typedef std::vector<std::vector<double>> Path;
 
 
-Path densifyPath(const Path &path, int densify_factor);
 
 
 

@@ -281,7 +281,7 @@ ob::PathPtr VictorPlanner::iouWiggle(ob::ScopedState<> start)
         ompl_path->append(new_state.get());
         ompl_path->interpolate();
 
-        Path path = densifyPath(omplPathToDoublePath(ompl_path.get()), 10);
+        Path path = PathUtils::densify(omplPathToDoublePath(ompl_path.get()), 0.01);
         
 
         double iou = evaluateIouExploration(path);

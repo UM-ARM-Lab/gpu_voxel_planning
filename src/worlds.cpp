@@ -359,33 +359,40 @@ bool SimWorld::executePath(const Path &path, size_t &last_valid, bool add_col_se
 
 
 
-Path densifyPath(const Path &path, int densify_factor)
-{
-    // std::cout << "densifying path\n";
-    Path dense_path;
-    double dt = 1.0/(double)densify_factor;
-    for(size_t i=0; i < (path.size()-1); i++)
-    {
-        for(int new_seg=0; new_seg < densify_factor; new_seg++)
-        {
-            const std::vector<double> &cur = path[i];
-            const std::vector<double> &next = path[i+1];
-            std::vector<double> interp;
-            for(size_t j=0; j<cur.size(); j++)
-            {
-                interp.push_back(cur[j] + (next[j] - cur[j]) * new_seg *dt);
-            }
-            dense_path.push_back(interp);
-        }
-    }
-    dense_path.push_back(path[path.size()-1]);
-    return dense_path;
-}
+// Path densifyPath(const Path &path, int densify_factor)
+// {
+//     // std::cout << "densifying path\n";
+//     Path dense_path;
+//     double dt = 1.0/(double)densify_factor;
+//     for(size_t i=0; i < (path.size()-1); i++)
+//     {
+//         for(int new_seg=0; new_seg < densify_factor; new_seg++)
+//         {
+//             const std::vector<double> &cur = path[i];
+//             const std::vector<double> &next = path[i+1];
+//             std::vector<double> interp;
+//             for(size_t j=0; j<cur.size(); j++)
+//             {
+//                 interp.push_back(cur[j] + (next[j] - cur[j]) * new_seg *dt);
+//             }
+
+//             dense_path.push_back(interp);
+//         }
+//     }
+//     dense_path.push_back(path[path.size()-1]);
+//     for(int i=0; i<(int)dense_path.size()-1; i++)
+//     {
+//         std::cout << PathUtils::dist(dense_path[i], dense_path[i+1]) << "\n";
+//     }
+
+
+//     return dense_path;
+// }
 
 
 void SimWorld::executeAndReturn(const Path &path)
 {
-    Path dense_path = densifyPath(path, 10);
+    Path dense_path = PathUtils::densify(path, 0.01);
     size_t last_valid;
     executePath(dense_path, last_valid, true);
     Path backup;
@@ -404,7 +411,7 @@ void SimWorld::executeAndReturn(const Path &path)
 
 bool SimWorld::attemptPath(const Path &path)
 {
-    Path dense_path = densifyPath(path, 10);
+    Path dense_path = PathUtils::densify(path, 0.01);
     size_t last_valid;
     if(executePath(dense_path, last_valid, true))
     {
