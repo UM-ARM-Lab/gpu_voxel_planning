@@ -325,7 +325,7 @@ double VictorPlanner::evaluateIouExploration(Path path)
     std::vector<size_t> intersections = victor_model_->countCHSCollisions();
 
     double p_no_col = 1.0;
-    for(int i=0; i<seen_sizes.size(); i++)
+    for(size_t i=0; i<seen_sizes.size(); i++)
     {
         p_no_col *= 1 - (double)intersections[i] / (double)seen_sizes[i];
     }
@@ -333,14 +333,14 @@ double VictorPlanner::evaluateIouExploration(Path path)
     
 
     double max_iou_if_col = 0;
-    for(int i=0; i<seen_sizes.size(); i++)
+    for(size_t i=0; i<seen_sizes.size(); i++)
     {
         double iou_if_col = (double)intersections[i] / (double)(query_size + seen_sizes[i] - intersections[i]);
         max_iou_if_col = std::max(iou_if_col, max_iou_if_col);
     }
 
     double max_iou_if_no_col = 0;
-    for(int i=0; i<seen_sizes.size(); i++)
+    for(size_t i=0; i<seen_sizes.size(); i++)
     {
         double iou_if_no_col = (double)(seen_sizes[i] - intersections[i]) / (double)(seen_sizes[i]);
         max_iou_if_no_col = std::max(iou_if_no_col, max_iou_if_no_col);
