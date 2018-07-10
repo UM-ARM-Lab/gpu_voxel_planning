@@ -176,6 +176,19 @@ TEST(GpuVoxels, addMaps)
     EXPECT_EQ(orig_box_vox, vm.countIntersect(m2, m1)) << "re-adding map did not work properly";
 }
 
+TEST(GpuVoxels, allBinaryPossibilities)
+{
+    auto all = allBinaryPossibilities<2>();
+    EXPECT_EQ(all[0][0], false);
+    EXPECT_EQ(all[0][1], false);
+    EXPECT_EQ(all[1][0], true);
+    EXPECT_EQ(all[1][1], false);
+    EXPECT_EQ(all[2][0], false);
+    EXPECT_EQ(all[2][1], true);
+    EXPECT_EQ(all[3][0], true);
+    EXPECT_EQ(all[2][1], true);
+}
+
 
 
 GTEST_API_ int main(int argc, char **argv) {

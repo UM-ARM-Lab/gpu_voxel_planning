@@ -9,6 +9,8 @@
 #include "path_utils.hpp"
 #include <ros/ros.h>
 
+#include <bitset>
+
 
 
 #define VICTOR_ACTUAL_MAP "victor_actual_map"
@@ -38,6 +40,19 @@ extern std::vector<std::string> HCHS; //hypothetical collision hypothesis sets
 
 typedef robot::JointValueMap VictorConfig;
 
+
+template<size_t N>
+std::vector<std::bitset<N>> allBinaryPossibilities()
+{
+    const long len = (long)N;
+    std::vector<std::bitset<N>> all;
+    all.reserve(std::pow(2, len));
+    for(long i=0; i<std::pow(2, len); i++)
+    {
+        all.push_back((std::bitset<N>)i);
+    }
+    return all;
+}
 
 
 
@@ -109,6 +124,16 @@ public:
     
     void visPath(const Path &path);
     void hidePath();
+
+    // double calc_prob_chss(double p_occ, std::vector<std::string> chs_maps);
+
+
+    // double calc_prob_chss_and_freespace(double p_occ, std::vector<std::string> chs_maps,
+    //                                     std::string freespace_map_name);
+
+    
+
+        
 
 public:
 

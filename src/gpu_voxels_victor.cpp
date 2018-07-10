@@ -54,6 +54,7 @@ std::vector<std::string> i_left_arm_joint_names{"victor_left_arm_joint_1", "vict
 
 
 
+
 GpuVoxelsVictor::GpuVoxelsVictor():
     num_observed_chs(0),
     right_arm_joint_names(i_right_arm_joint_names),
@@ -433,7 +434,26 @@ std::vector<double> GpuVoxelsVictor::toValues(VictorConfig config)
     return values;
 }
 
+// double GpuVoxelsVictor::calc_prob_chss(double p_occ, std::vector<std::string> chs_maps)
+// {
+//     return 1.0;
+// }
 
+
+// double GpuVoxelsVictor::calc_prob_chss_and_freespace(double p_occ,
+//                                                      std::vector<std::string> chs_maps,
+//                                                      std::string freespace_map_name)
+// {
+    
+//     double p = std::pow((1.0 - p_occ), countVoxels(freespace_map_name));
+//     std::vector<std::string> updated_chss;
+//     for(size_t i=0; i<chs_maps.size(); i++)
+//     {
+//         gvl->cleapMap(HCHS[i]);
+//         updated_chss.push_back(HCHS[i]);
+//     }
+//     return 1.0;
+// }
 
 
 
