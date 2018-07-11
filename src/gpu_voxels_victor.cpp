@@ -71,6 +71,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     gvl->addMap(MT_PROBAB_VOXELMAP, VICTOR_ACTUAL_MAP); //map for victors current state
     gvl->addMap(MT_PROBAB_VOXELMAP, ENV_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, TMP_MAP);
+    gvl->addMap(MT_PROBAB_VOXELMAP, SAMPLED_WORLD_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, KNOWN_OBSTACLES_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, COMBINED_COLSETS_MAP);
     gvl->addMap(MT_PROBAB_VOXELMAP, SIM_OBSTACLES_MAP);
@@ -259,6 +260,11 @@ bool GpuVoxelsVictor::queryFreeConfiguration(const VictorConfig &c)
 size_t GpuVoxelsVictor::countIntersect(const std::string& map_1, const std::string& map_2)
 {
     return getMap(map_1)->collideWith(getMap(map_2));
+}
+
+bool GpuVoxelsVictor::overlaps(const std::string& map_1, const std::string& map_2)
+{
+    return getMap(map_1)->overlapsWith(getMap(map_2));
 }
 
 

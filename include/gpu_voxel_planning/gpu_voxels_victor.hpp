@@ -16,6 +16,7 @@
 #define VICTOR_ACTUAL_MAP "victor_actual_map"
 #define VICTOR_QUERY_MAP "victor_query_map"
 #define ENV_MAP "env_map"
+#define SAMPLED_WORLD_MAP "sampled_world_map"
 
 #define VICTOR_SWEPT_VOLUME_MAP "victor_swept_volume_map"
 #define VICTOR_PATH_ENDPOINTS_MAP "victor_path_endpoints_map"
@@ -24,6 +25,7 @@
 #define FULL_MAP "full_map"
 #define KNOWN_OBSTACLES_MAP "known_obstacles_map"
 #define COMBINED_COLSETS_MAP "combined_colsets_map"
+
 
 
 #define SIM_OBSTACLES_MAP "sim_obstacles_map"
@@ -91,6 +93,8 @@ public:
     size_t countTotalCHSCollisions();
 
     size_t countIntersect(const std::string& map_1, const std::string& map_2);
+    
+    bool overlaps(const std::string& map_1, const std::string& map_2);
 
     voxelmap::ProbVoxelMap* getMap(const std::string& map_name)
         {

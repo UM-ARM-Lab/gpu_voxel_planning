@@ -129,33 +129,33 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::planPath(ob::ScopedState<> start, Goals
         return Maybe::Maybe<ob::PathPtr>();
     }
     
-    PROFILE_RECORD(POST_PROCESSING);
-    PROFILE_RECORD(FULL_PLANNING);
+    // PROFILE_RECORD(POST_PROCESSING);
+    // PROFILE_RECORD(FULL_PLANNING);
 
-    std::vector<std::string> summary_names = {
-        FULL_PLANNING,
-        "~~~~~~~~~~~~",
-        PLANNING,
-        POST_PROCESSING,
-        "~~~~~~~~~~~~",
-        SMOOTHING,
-        VISUALIZE_SOLUTION,
-        INSERT_VIZ_SOLUTION,
-        "~~~~~~~~~~~~",
-        ISVALID_INSERTION,
-        ISVALID_COLLISION_TEST,
-        "~~~~~~~~~~~~",
-        CHECK_MOTION_SIMPLE_CHECK,
-        CHECK_MOTION_SIMPLE_INSERTION,
-        CHECK_MOTION_SIMPLE_COLLISION_TEST,
-        "~~~~~~~~~~~~",
-        CHECK_MOTION_COMP_CHECK,
-        "~~~~~~~~~",
-        STATE_COST,
-        MOTION_COST};
+    // std::vector<std::string> summary_names = {
+    //     FULL_PLANNING,
+    //     "~~~~~~~~~~~~",
+    //     PLANNING,
+    //     POST_PROCESSING,
+    //     "~~~~~~~~~~~~",
+    //     SMOOTHING,
+    //     VISUALIZE_SOLUTION,
+    //     INSERT_VIZ_SOLUTION,
+    //     "~~~~~~~~~~~~",
+    //     ISVALID_INSERTION,
+    //     ISVALID_COLLISION_TEST,
+    //     "~~~~~~~~~~~~",
+    //     CHECK_MOTION_SIMPLE_CHECK,
+    //     CHECK_MOTION_SIMPLE_INSERTION,
+    //     CHECK_MOTION_SIMPLE_COLLISION_TEST,
+    //     "~~~~~~~~~~~~",
+    //     CHECK_MOTION_COMP_CHECK,
+    //     "~~~~~~~~~",
+    //     STATE_COST,
+    //     MOTION_COST};
     
         
-    PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
+    // PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
 
     return Maybe::Maybe<ob::PathPtr>(path);
 }
@@ -724,8 +724,6 @@ void VictorLBKPiece::initializePlanner()
     vv_ptr = std::make_shared<VictorConservativeValidator>(si_, victor_model_);
     setupSpaceInformation();
 
-
-
     planner_ = std::make_shared<og::LBKPIECE1>(si_);
     planner_->setup();
 }
@@ -872,10 +870,8 @@ VictorRRTConnect::VictorRRTConnect(GpuVoxelsVictor* victor_model)
 
 void VictorRRTConnect::initializePlanner()
 {
-    vv_ptr = std::make_shared<VictorConservativeValidator>(si_, victor_model_);
+    vv_ptr = std::make_shared<VictorSampledWorldValidator>(si_, victor_model_);
     setupSpaceInformation();
-
-
 
     planner_ = std::make_shared<og::RRTConnect>(si_);
     planner_->setup();
@@ -889,7 +885,6 @@ void VictorRRTConnect::preparePlanner(ob::ScopedState<> start, Goals goals)
     pdef_->setStartAndGoalStates(start, goals);
 
     planner_->setProblemDefinition(pdef_);
-
 }
 
 

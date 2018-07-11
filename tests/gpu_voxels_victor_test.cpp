@@ -1,4 +1,6 @@
 #include "gpu_voxels_victor.hpp"
+#define ENABLE_PROFILING
+#include <arc_utilities/timing.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 
@@ -34,10 +36,21 @@ TEST(GpuVoxelVictor, collisions)
 
     // is_valid = victor_model.queryFreeConfiguration(map);
     // col_count = victor_model.countTotalCHSCollisionsForConfig(map);
+    PROFILE_START("setting_query")
     victor_model.resetQuery();
     victor_model.addQueryState(map);
+    PROFILE_RECORD("setting_query")
+    PROFILE_START("counting_collision");
     col_count = victor_model.countNumCollisions(ENV_MAP);
+    PROFILE_RECORD("counting_collision");
     EXPECT_TRUE(col_count > 0) << "Victor with box obstacle has no collision";
+
+    PROFILE_START("overlap");
+    EXPECT_TRUE(victor_model.overlaps(VICTOR_QUERY_MAP, ENV_MAP));
+    PROFILE_RECORD("overlap");
+
+    std::vector<std::string> summary_names = {"setting_query", "counting_collision", "overlap"};
+    PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
     // EXPECT_TRUE(!is_valid) << "Victor with box obstacle is not in collision";
 
     

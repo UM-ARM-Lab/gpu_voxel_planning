@@ -146,6 +146,48 @@ bool VictorConservativeValidator::isValid(const ob::State *state) const
 }
 
 
+/****************************************
+ **    Victor SampledWorld Validator   **
+ ***************************************/
+
+VictorSampledWorldValidator::VictorSampledWorldValidator(const ompl::base::SpaceInformationPtr &si,
+                                                         GpuVoxelsVictor* victor_model):
+    VictorValidator(si, victor_model)
+{
+}
+
+
+bool VictorSampledWorldValidator::isValid(const ob::State *state) const
+{
+    if(!VictorValidator::isValid(state))
+    {
+        return false;
+    }
+    const double *values = state->as<ob::RealVectorStateSpace::StateType>()->values;
+    VictorConfig config = victor_model_->toVictorConfig(values);
+
+    victor_model_->resetQuery();
+    victor_model_->addQueryState(config);
+
+
+        
+    // bool from_counting = victor_model_->countNumCollisions(SAMPLED_WORLD_MAP) == 0;
+    // bool from_overlap = !victor_model_->overlaps(SAMPLED_WORLD_MAP, VICTOR_QUERY_MAP);
+
+    // if(from_counting != from_overlap)
+    // {
+    //     std::cout << "From counting gives " << from_counting << ". From overlap gives "<< from_overlap <<"\n";
+    //     victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
+    //     std::string dummy;
+    //     std::getline(std::cin, dummy);
+
+
+    // }
+
+    return !victor_model_->overlaps(SAMPLED_WORLD_MAP, VICTOR_QUERY_MAP);
+}
+
+
 
 
 /****************************************
