@@ -356,6 +356,15 @@ void GpuVoxelsVictor::copyOneOccupiedRandom(const std::string &map1, const std::
     getMap(map1)->copyIthOccupied(getMap(map2), rand_index);
 }
 
+void GpuVoxelsVictor::sampleValidWorld()
+{
+    gvl->clearMap(SAMPLED_WORLD_MAP);
+    for(int i=0; i<num_observed_chs; i++)
+    {
+        copyOneOccupiedRandom(COLLISION_HYPOTHESIS_SETS[i], SAMPLED_WORLD_MAP);
+    }
+}
+
 
 /**
  *  Return the number of cells victor is from the nearest obstacle

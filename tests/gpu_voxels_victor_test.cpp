@@ -129,6 +129,42 @@ TEST(GpuVoxelVictor, addCHS_MultipleSets)
     EXPECT_TRUE(intersect < chs1_t2) << "chs1 is a subset of chs0";
 }
 
+TEST(GpuVoxelVictor, sampleValidWorld)
+{
+    GpuVoxelsVictor vm;
+    std::vector<double> q0 = {0,0,0,0,0,0,0};
+    std::vector<double> q1 = {.1, .1, .1, .1, .1, .1, .1};
+    std::vector<double> q2 = {.2, .2, .2, .2, .2, .2, .2};
+    std::vector<double> q3 = {.1, .5, .8, .0, .11, .9, 1.0};
+    std::vector<double> q4 = {.4, .8, 1.9, -1.0, .1, 1.5, 1.9};
+    std::vector<double> q5 = {.2, 1.0, -.3, .5, 3.1, 1.1, 0.0};
+
+    std::vector<std::vector<double>> all_configs = {q0, q1, q2, q3, q4, q5};
+
+    for(auto qa: all_configs)
+    {
+        for(auto qb: all_configs)
+        {
+            Path chs_path{qa, qb};
+            vm.addCHS(chs_path, vm.right_arm_collision_link_names);
+        }
+    }
+
+    size_t n = all_configs.size();
+    EXPECT_EQ(n*n, vm.num_observed_chs);
+
+    for(size_t i=0; i<vm.num_observed_chs; i++)
+    {
+        EXPECT_FALSE(vm.overlaps(SAMPLED_WORLD_MAP, COLLISION_HYPOTHESIS_SETS[i]));
+    }
+    vm.sampleValidWorld();
+    for(size_t i=0; i<vm.num_observed_chs; i++)
+    {
+        EXPECT_TRUE(vm.overlaps(SAMPLED_WORLD_MAP, COLLISION_HYPOTHESIS_SETS[i]));
+    }
+
+}
+
 TEST(GpuVoxelVictor, addCHS_PartialDistance)
 {
     GpuVoxelsVictor vm;
