@@ -60,6 +60,39 @@ TEST(GpuVoxelVictor, collisions)
     // std::cin >> dummy;
 }
 
+TEST(GpuVoxelVictor, copyOneOccupiedRandom)
+{
+    GpuVoxelsVictor victor_model;
+    std::string map1 = ENV_MAP;
+    std::string map2 = TMP_MAP;
+    std::string map3 = SAMPLED_WORLD_MAP;
+
+    
+    victor_model.gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2),
+                                       map1, PROB_OCCUPIED, 2);
+
+
+    size_t map1_num_occupied = victor_model.countVoxels(map1);
+    // std::cout << "total_occupied " << map1_num_occupied << "\n";
+    EXPECT_TRUE(map1_num_occupied > 0);
+    EXPECT_EQ(0, victor_model.countVoxels(map2));
+    
+    victor_model.copyOneOccupiedRandom(map1, map2);
+
+    EXPECT_EQ(1, victor_model.countIntersect(map1, map2));
+    EXPECT_EQ(1, victor_model.countVoxels(map2));
+    EXPECT_EQ(map1_num_occupied, victor_model.countVoxels(map1));
+
+    victor_model.copyOneOccupiedRandom(map1, map3);
+    EXPECT_EQ(1, victor_model.countIntersect(map1, map3));
+    EXPECT_EQ(1, victor_model.countVoxels(map3));
+    EXPECT_EQ(map1_num_occupied, victor_model.countVoxels(map1));
+    
+    EXPECT_EQ(0, victor_model.countIntersect(map2, map3)) << "Not guaranteed, but probabilistically very unlikely these two will overlap";
+
+    
+}
+
 TEST(GpuVoxelVictor, addCHS_MultipleSets)
 {
     GpuVoxelsVictor vm;

@@ -112,6 +112,8 @@ public:
     std::vector<size_t> chsSizes();
 
     size_t countVoxels(const std::string& map_name);
+
+    void copyOneOccupiedRandom(const std::string &map1, const std::string &map2);
     
     /* Returns true if Victor is not in collision at this config */
     bool queryFreeConfiguration(const VictorConfig &c);

@@ -7,6 +7,7 @@
 
 #include <arc_utilities/arc_helpers.hpp>
 #include <math.h>
+#include <random>
 
 
 std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
@@ -342,6 +343,17 @@ void GpuVoxelsVictor::addCHSToMap(const Path &path,
         addLinks(toVictorConfig(point.data()), collision_links, map);
     }
     removeSweptVolume(map);
+}
+
+void GpuVoxelsVictor::copyOneOccupiedRandom(const std::string &map1, const std::string &map2)
+{
+    size_t map1_occupied = countVoxels(map1);
+    std::mt19937 generator;
+    generator.seed(std::random_device()());
+    std::uniform_int_distribution<unsigned long> dist(0, map1_occupied);
+    unsigned long rand_index = dist(generator);
+
+    getMap(map1)->copyIthOccupied(getMap(map2), rand_index);
 }
 
 
