@@ -10,6 +10,8 @@
 #include <iostream>
 #include <fstream>
 
+#define PROB_OCCUPIED eBVM_OCCUPIED
+
 
 std::shared_ptr<SimWorld> sim_world;
 
@@ -118,6 +120,38 @@ void testAngles()
     }
 }
 
+void wip_SamplingRRTConnect(std::shared_ptr<SimWorld> sim_world)
+{
+    GpuVoxelsVictor& vm = sim_world->victor_model;
+    vm.gvl->insertBoxIntoMap(Vector3f(1.6, 1.4, 0.5), Vector3f(3.0 ,1.5,1.5), 
+                             SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+    std::string unused;
+    std::cout << "Waiting for user input to start...\n";
+    std::getline(std::cin, unused);
+
+
+    double start[] = {-0.15,0,0,0,0,0,0};
+    double goal[] = {-0.15, 1.2, 0, -0.5, 0, 1.0, 0};
+    robot::JointValueMap sconfig = vm.toVictorConfig(start);
+    robot::JointValueMap gconfig = vm.toVictorConfig(goal);
+
+    VictorSamplingRRTConnect planner(&vm);
+    bool reached_goal = false;
+    while(!reached_goal)
+    {
+        sconfig = vm.cur_config;
+        // vm.sampleValidWorld();
+        // std::cout << "Sampled world has " << vm.countVoxels(SAMPLED_WORLD_MAP) << " voxels\n";
+        // std::cout << "Victor has " << vm.num_observed_chs << " chss\n";
+
+        // Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
+        Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
+        reached_goal = sim_world->attemptPath(path.Get());
+    }
+
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -128,24 +162,26 @@ int main(int argc, char* argv[])
     signal(SIGINT, ctrlchandler);
     signal(SIGTERM, killhandler);
 
-    sim_world->initializeObstacles();
+    wip_SamplingRRTConnect(sim_world);
+
+    // sim_world->initializeObstacles();
 // 
     // std::vector<double> start = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
-    std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
-    std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
+    // std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
+    // std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
 
-    sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
+    // sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
 
-    std::string unused;
-    std::cout << "Waiting for user input to start...\n";
-    std::getline(std::cin, unused);
+    // std::string unused;
+    // std::cout << "Waiting for user input to start...\n";
+    // std::getline(std::cin, unused);
 
     // wiggleFingers();
     // testAngles();
     
     // VictorLBKPiece planner(&(sim_world->victor_model));
     // VictorThresholdRRTConnect planner(&(sim_world->victor_model));
-    VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
+    // VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
     
     // VictorPRM planner(&(sim_world->victor_model));
     // VictorLazyRRTF planner(&(sim_world->victor_model));
@@ -165,6 +201,6 @@ int main(int argc, char* argv[])
 
 
 
-    // sim_world->gvl.reset();
+    sim_world->gvl.reset();
     
 }

@@ -144,6 +144,23 @@ namespace gpu_voxels_planner
     };
 
 
+
+    class VictorSamplingRRTConnect: public VictorPlanner
+    {
+    public:
+        VictorSamplingRRTConnect(GpuVoxelsVictor* victor_model);
+        virtual void initializePlanner() override;
+
+        virtual void preparePlanner(ompl::base::ScopedState<> start,
+                                     Goals goals) override;
+        virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
+                                                           Goals goals) override;
+    protected:
+        std::shared_ptr<VictorPathProbCol> path_prob_validator;
+
+    };
+
+
     
     class VictorThresholdRRTConnect: public VictorPlanner
     {
