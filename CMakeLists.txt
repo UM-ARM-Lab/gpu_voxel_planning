@@ -203,6 +203,14 @@ target_link_libraries(victor_planning
   custom_rrtstar
   )
 
+
+add_library(victor_local_controller src/victor_local_controller.cpp)
+target_link_libraries(victor_local_controller
+  # victor_validator
+  victor_model                 
+  ${EXTERN_LIBS}
+  )
+
 add_executable(wip_victor_sim src/wip_victor_sim.cpp)
 target_link_libraries(wip_victor_sim
   ${EXTERN_LIBS}
