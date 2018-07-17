@@ -72,9 +72,11 @@ TEST(GpuVoxelVictor, RRTConnectPlanner)
     victor_model.updateActual(sconfig);
 
 
-    victor_model.gvl->insertBoxIntoMap(Vector3f(1.6, 1.4, 0.5), Vector3f(3.0 ,1.5,1.5), 
+    // Inflate the sampled world because corners could be cut slightly by rrt
+    victor_model.gvl->insertBoxIntoMap(Vector3f(1.6, 1.4, 0.5), Vector3f(3.2 ,1.7,1.7), 
                                        SAMPLED_WORLD_MAP, PROB_OCCUPIED, 2);
-    victor_model.gvl->insertBoxIntoMap(Vector3f(1.6, 1.4, 0.5), Vector3f(3.0 ,1.5,1.5), 
+    
+    victor_model.gvl->insertBoxIntoMap(Vector3f(1.7, 1.5, 0.6), Vector3f(3.0 ,1.5,1.5), 
                                        SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
     victor_model.gvl->visualizeMap(SIM_OBSTACLES_MAP);
 
@@ -89,8 +91,8 @@ TEST(GpuVoxelVictor, RRTConnectPlanner)
     {
         victor_model.addQueryState(victor_model.toVictorConfig(p.data()));
     }
-    EXPECT_EQ(0, victor_model.countIntersect(VICTOR_QUERY_MAP, SAMPLED_WORLD_MAP));
-    EXPECT_FALSE(victor_model.overlaps(SAMPLED_WORLD_MAP, VICTOR_QUERY_MAP));
+    EXPECT_EQ(0, victor_model.countIntersect(VICTOR_QUERY_MAP, SIM_OBSTACLES_MAP));
+    EXPECT_FALSE(victor_model.overlaps(VICTOR_QUERY_MAP, SIM_OBSTACLES_MAP));
 
     // victor_model.visPath(path.Get());
     // std::cout << "Waiting for user input to exit\n";

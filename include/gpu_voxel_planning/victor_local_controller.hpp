@@ -23,6 +23,8 @@ namespace gpu_voxels_planner
     public:
         VictorLocalController(GpuVoxelsVictor* victor_model);
 
+        ompl::base::ScopedState<> samplePointInRandomDirection(ompl::base::ScopedState<> start);        
+
     protected:
         std::shared_ptr<ompl::base::RealVectorStateSpace> space;
         std::shared_ptr<ompl::base::SpaceInformation> si_;

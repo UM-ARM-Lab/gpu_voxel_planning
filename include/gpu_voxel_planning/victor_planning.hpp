@@ -34,11 +34,9 @@ namespace gpu_voxels_planner
         
         virtual void post_planning_actions(ompl::base::PathPtr path) {(void) path;};
 
-        ompl::base::ScopedState<> toScopedState(std::vector<double> ds);
-
         VictorConfig toVictorConfig(ompl::base::ScopedState<> s);
 
-        ompl::base::ScopedState<> samplePointInRandomDirection(ompl::base::ScopedState<> start);
+        // ompl::base::ScopedState<> samplePointInRandomDirection(ompl::base::ScopedState<> start);
         
         Maybe::Maybe<Path> localControlConfig(VictorConfig start, VictorConfig goal);
 
@@ -67,7 +65,7 @@ namespace gpu_voxels_planner
         
         Maybe::Maybe<Path> planPathDouble(std::vector<double> start, std::vector<double> goal);
 
-        Path omplPathToDoublePath(ompl::geometric::PathGeometric* ompl_path);
+
         std::shared_ptr<VictorValidator> vv_ptr;
         std::shared_ptr<ompl::base::RealVectorStateSpace> space;
 
