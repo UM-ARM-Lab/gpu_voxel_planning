@@ -58,7 +58,8 @@ Path VictorLocalController::maxExpectedChsIG(std::vector<double> start_values,
 
 
         double p_no_col = 1 - pCollision(chs_overlaps, chs_sizes);
-        double expected_IG = -p_no_col * log2(p_no_col);
+        // double expected_IG = -p_no_col * log2(p_no_col);
+        double expected_IG = p_no_col * IG(chs_overlaps, chs_sizes);
 
 
         // std::cout << "p_no_col: " << p_no_col << "  IG: " << expected_IG << "\n";
@@ -73,7 +74,7 @@ Path VictorLocalController::maxExpectedChsIG(std::vector<double> start_values,
         }
     }
 
-    // std::cout << "best IG: " << best_IG << "\n";
+    std::cout << "best IG: " << best_IG << "\n";
     // victor_model_->resetQuery();
     // victor_model_->addQueryState(victor_model_->toVictorConfig(best_point.reals().data()));
     // victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
