@@ -152,7 +152,7 @@ void wip_SamplingRRTConnect(std::shared_ptr<SimWorld> sim_world)
         Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
         reached_goal = sim_world->attemptPath(path.Get());
 
-        for(int i=0; i<100; i++)
+        for(int i=0; i<10; i++)
         {
             sconfig = vm.cur_config;
             sim_world->attemptPath(controller.maxExpectedChsIG(vm.toValues(sconfig), 0.1, 40));
