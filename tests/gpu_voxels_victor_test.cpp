@@ -157,11 +157,16 @@ TEST(GpuVoxelVictor, sampleValidWorld)
     {
         EXPECT_FALSE(vm.overlaps(SAMPLED_WORLD_MAP, COLLISION_HYPOTHESIS_SETS[i]));
     }
+    
+    PROFILE_START("Sampling valid world");
     vm.sampleValidWorld();
+    PROFILE_RECORD("Sampling valid world");
     for(size_t i=0; i<vm.num_observed_chs; i++)
     {
         EXPECT_TRUE(vm.overlaps(SAMPLED_WORLD_MAP, COLLISION_HYPOTHESIS_SETS[i]));
     }
+    std::vector<std::string> summary_names = {"Sampling valid world"};
+    PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
 
 }
 
