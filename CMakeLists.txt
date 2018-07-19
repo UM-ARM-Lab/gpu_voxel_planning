@@ -217,6 +217,7 @@ target_link_libraries(wip_victor_sim
   lazyrrtf
   victor_model
   victor_planning
+  victor_local_controller
   victor_validator
   )
 

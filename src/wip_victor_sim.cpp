@@ -1,6 +1,8 @@
 #include "gpu_voxels_victor.hpp"
 #include "worlds.hpp"
 #include "victor_planning.hpp"
+#include "victor_local_controller.hpp"
+#include "helpers.hpp"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <csignal>
 #include <vector>
@@ -137,6 +139,7 @@ void wip_SamplingRRTConnect(std::shared_ptr<SimWorld> sim_world)
     robot::JointValueMap gconfig = vm.toVictorConfig(goal);
 
     VictorSamplingRRTConnect planner(&vm);
+    VictorLocalController controller(&vm);
     bool reached_goal = false;
     while(!reached_goal)
     {
@@ -148,6 +151,15 @@ void wip_SamplingRRTConnect(std::shared_ptr<SimWorld> sim_world)
         // Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
         Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
         reached_goal = sim_world->attemptPath(path.Get());
+
+        for(int i=0; i<100; i++)
+        {
+            sconfig = vm.cur_config;
+            sim_world->attemptPath(controller.maxExpectedChsIG(vm.toValues(sconfig), 0.1, 40));
+            // vm.gvl->visualizeMap(VICTOR_QUERY_MAP);
+            // waitForKeypress();
+
+        }
     }
 
 }

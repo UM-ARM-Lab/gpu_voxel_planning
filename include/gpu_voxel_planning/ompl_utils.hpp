@@ -9,7 +9,7 @@ namespace ompl_utils
 
 {
     ompl::base::ScopedState<> toScopedState(std::vector<double> ds,
-                                            std::shared_ptr<ompl::base::RealVectorStateSpace> space)
+                                            const std::shared_ptr<ompl::base::RealVectorStateSpace> space)
     {
         ompl::base::ScopedState<> s(space);
         for(size_t i=0; i<ds.size(); i++)

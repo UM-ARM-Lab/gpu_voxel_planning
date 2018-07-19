@@ -23,7 +23,10 @@ namespace gpu_voxels_planner
     public:
         VictorLocalController(GpuVoxelsVictor* victor_model);
 
-        ompl::base::ScopedState<> samplePointInRandomDirection(ompl::base::ScopedState<> start);        
+        Path maxExpectedChsIG(std::vector<double> start_values,
+                              double max_motion,
+                              int num_samples);
+
 
     protected:
         std::shared_ptr<ompl::base::RealVectorStateSpace> space;

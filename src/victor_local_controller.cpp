@@ -1,4 +1,6 @@
 #include "victor_local_controller.hpp"
+#include "ompl_utils.hpp"
+#include "helpers.hpp"
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
@@ -26,26 +28,61 @@ VictorLocalController::VictorLocalController(GpuVoxelsVictor* victor_model)
 }
 
 
-ob::ScopedState<> VictorLocalController::samplePointInRandomDirection(ob::ScopedState<> start)
+
+Path VictorLocalController::maxExpectedChsIG(std::vector<double> start_values,
+                                             double max_motion,
+                                             int num_samples)
 {
-    double max_motion = space->getLongestValidSegmentLength() * 2;
+    ob::ScopedState<> start = ompl_utils::toScopedState(start_values, space);
+    double best_IG = 0;
+    ob::ScopedState<> best_point(si_);
     
-    ob::ScopedState<> new_state(space);
-    ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
-    sampler_->sampleUniform(new_state.get());
-    const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
-    double *new_vals = new_state->as<ob::RealVectorStateSpace::StateType>()->values;
-    for(int i=0; i<7; i++)
+    std::vector<size_t> chs_sizes = victor_model_->chsSizes();
+    for(int i=0; i<num_samples; i++)
     {
-        new_vals[i] += startv[i];
+        ob::ScopedState<> new_point = ompl_utils::samplePointInRandomDirection(start, si_, max_motion);
+        std::vector<ob::State*> query_path;
+        size_t num_interp_points = max_motion / si_->getStateSpace()->getLongestValidSegmentLength();
+        si_->getMotionStates(start.get(), new_point.get(), query_path, num_interp_points, true, true);
+
+        
+        victor_model_->getMap(VICTOR_QUERY_MAP)->clearMap();
+        for(const ob::State *s: query_path)
+        {
+            const double *values = s->as<ob::RealVectorStateSpace::StateType>()->values;
+            victor_model_->addQueryState(victor_model_->toVictorConfig(values));
+        }
+        std::vector<size_t> chs_overlaps = victor_model_->countCHSCollisions();
+
+        si_->freeStates(query_path);
+
+
+        double p_no_col = 1 - pCollision(chs_overlaps, chs_sizes);
+        double expected_IG = -p_no_col * log2(p_no_col);
+
+
+        // std::cout << "p_no_col: " << p_no_col << "  IG: " << expected_IG << "\n";
+        // victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
+        // waitForKeypress();
+
+
+        if(expected_IG > best_IG)
+        {
+            best_IG = expected_IG;
+            best_point = new_point;
+        }
     }
 
-    double motion_dist = si_->distance(start.get(), new_state.get());
+    // std::cout << "best IG: " << best_IG << "\n";
+    // victor_model_->resetQuery();
+    // victor_model_->addQueryState(victor_model_->toVictorConfig(best_point.reals().data()));
+    // victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
+    // waitForKeypress();
 
-    if(motion_dist > max_motion)
-    {
-        space->interpolate(start.get(), new_state.get(), max_motion / motion_dist, new_state.get());
-    }
 
-    return new_state;
+    Path path;
+    path.push_back(start.reals());
+    path.push_back(best_point.reals());
+    return path;
+    
 }
