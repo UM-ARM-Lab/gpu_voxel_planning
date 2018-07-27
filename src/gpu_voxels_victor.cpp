@@ -395,6 +395,14 @@ void GpuVoxelsVictor::visPath(const Path &path)
     std::cout << "Visualizing path\n";
 
     // Some new voxels seem to be needed to force the map to refresh in the visualizer
+    if(path.size()==0)
+    {
+        gvl->insertBoxIntoMap(Vector3f(0.0, 0.0, 0.), Vector3f(0.1, 0.1, 0.1),
+                              VICTOR_PATH_SOLUTION_MAP, eBVM_SWEPT_VOLUME_START, 2);
+        usleep(100000);
+        gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP, true);
+        return;
+    }
 
     for(size_t step = 0; step < path.size(); step++)
     {

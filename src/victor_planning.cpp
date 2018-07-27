@@ -879,7 +879,8 @@ Maybe::Maybe<ob::PathPtr> VictorSamplingRRTConnect::planPath(ompl::base::ScopedS
                                      maybe_path.Get()->as<og::PathGeometric>()->getStates(),
                                      col_index));
             
-            // victor_model_->visPath(omplPathToDoublePath(maybe_path.Get()->as<og::PathGeometric>()));
+            victor_model_->visPath(omplPathToDoublePath(maybe_path.Get()->as<og::PathGeometric>(),
+                                       si_));
             
             // std::string unused;
             // std::cout << "Waiting for user input to start...\n";
@@ -887,6 +888,8 @@ Maybe::Maybe<ob::PathPtr> VictorSamplingRRTConnect::planPath(ompl::base::ScopedS
         }
 
     }
+
+    victor_model_->hidePath();
 
     size_t best_ind = std::distance(path_costs.begin(),
                                     std::min_element(path_costs.begin(), path_costs.end()));
