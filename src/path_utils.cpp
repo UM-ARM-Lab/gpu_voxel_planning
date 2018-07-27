@@ -37,6 +37,23 @@ double PathUtils::dist(const std::vector<double> &p1, const std::vector<double> 
     return sqrt(d);
 }
 
+size_t PathUtils::closestIndex(const Path &path, const std::vector<double> &point)
+{
+    assert(path.size() > 0);
+    double d = dist(path[0], point);
+    size_t ind = 0;
+
+    for(size_t i=1; i<path.size(); i++)
+    {
+        if(dist(path[i], point) < d)
+        {
+            d = dist(path[i], point);
+            ind = i;
+        }
+    }
+    return ind;
+}
+
 Path PathUtils::followPartial(const Path& path, double max_dist)
 {
     Path new_path;

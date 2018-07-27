@@ -97,6 +97,18 @@ TEST(PathUtils, followPartial_3_points_all_the_way)
     EXPECT_EQ(1.0, ppath[2][1]);
 }
 
+TEST(PathUtils, closestIndex)
+{
+    std::vector<double> a{0.0, 0.0};
+    std::vector<double> b{1.0, 0.0};
+    std::vector<double> c{1.0, 1.0};
+    Path path{a, b, c};
+
+    EXPECT_EQ(0, PathUtils::closestIndex(path, a));
+    EXPECT_EQ(1, PathUtils::closestIndex(path, b));
+    EXPECT_EQ(2, PathUtils::closestIndex(path, c));
+}
+
 GTEST_API_ int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
