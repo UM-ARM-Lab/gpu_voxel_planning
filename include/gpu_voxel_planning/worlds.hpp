@@ -14,8 +14,8 @@ class SimWorld
 {
 public:
     SimWorld();
-    void initializeObstacles();
-    void makeTable();
+    virtual void initializeObstacles();
+
     void makeSlottedWall();
     bool executePath(const Path &path, size_t &last_index, bool add_col_set);
 
@@ -26,12 +26,30 @@ public:
     Maybe::Maybe<std::string> getCollisionLink(const VictorConfig &c);
     Maybe::Maybe<std::vector<std::string>> getCollisionLinks(const VictorConfig &c);
 
-private:
+protected:
     void initializeVictor();
 
 public:    
     gpu_voxels::GpuVoxelsSharedPtr gvl;
     GpuVoxelsVictor victor_model;
+    VictorConfig init_config;
+    VictorConfig goal_config;
+};
+
+class SimTable : public SimWorld
+{
+public:
+    SimTable();
+    virtual void initializeObstacles() override;
+    void makeTable();
+};
+
+class SimSlottedWall : public SimWorld
+{
+public:
+    SimSlottedWall();
+    virtual void initializeObstacles() override;
+    void makeSlottedWall();
 };
 
 class RealWorld

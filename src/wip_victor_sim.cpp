@@ -15,7 +15,7 @@
 #define PROB_OCCUPIED eBVM_OCCUPIED
 
 
-std::shared_ptr<SimWorld> sim_world;
+SimWorld* g_sim_world;
 
 
 using namespace gpu_voxels_planner;
@@ -30,33 +30,33 @@ namespace M = Maybe;
 void ctrlchandler(int)
 {
     std::cout << "Resetting\n";
-    sim_world->gvl.reset();
+    g_sim_world->gvl.reset();
     exit(EXIT_SUCCESS);
 }
 void killhandler(int)
 {
     std::cout << "Resetting\n";
-    sim_world->gvl.reset();
+    g_sim_world->gvl.reset();
     exit(EXIT_SUCCESS);
 }
 
 
 bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
 {
-    VictorConfig goal_config = sim_world->victor_model.toVictorConfig(goal.data());
+    VictorConfig goal_config = g_sim_world->victor_model.toVictorConfig(goal.data());
 
     bool reached_goal = false;
 
     while(!reached_goal)
     {
-        M::Maybe<Path> maybe_path = planner.planPathConfig(sim_world->victor_model.cur_config,
+        M::Maybe<Path> maybe_path = planner.planPathConfig(g_sim_world->victor_model.cur_config,
                                                     goal_config);
         if(!maybe_path.Valid())
         {
             std::cout << "Path planning failed\n";
             return false;
         }
-        reached_goal = sim_world->attemptPath(maybe_path.Get());
+        reached_goal = g_sim_world->attemptPath(maybe_path.Get());
     }
     return true;
 }
@@ -74,8 +74,8 @@ void wiggleFingers()
             right_gripper_config["victor_right_gripper_fingerA_joint_2"] = p;
             right_gripper_config["victor_right_gripper_fingerB_joint_2"] = p;
             right_gripper_config["victor_right_gripper_fingerC_joint_2"] = p;
-            sim_world->victor_model.updateActual(right_gripper_config);
-            sim_world->victor_model.doVis();
+            g_sim_world->victor_model.updateActual(right_gripper_config);
+            g_sim_world->victor_model.doVis();
             usleep(100000);
             std::cout << "fingers at " << p << "\n";
             
@@ -85,8 +85,8 @@ void wiggleFingers()
             right_gripper_config["victor_right_gripper_fingerA_joint_2"] = p;
             right_gripper_config["victor_right_gripper_fingerB_joint_2"] = p;
             right_gripper_config["victor_right_gripper_fingerC_joint_2"] = p;
-            sim_world->victor_model.updateActual(right_gripper_config);
-            sim_world->victor_model.doVis();
+            g_sim_world->victor_model.updateActual(right_gripper_config);
+            g_sim_world->victor_model.doVis();
             usleep(100000);
             std::cout << "fingers at " << p << "\n";
         }
@@ -117,33 +117,34 @@ void testAngles()
         }
         std::cout << "\n";
         myfile.close();
-        sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(goal_tmp.data()));
-        sim_world->victor_model.doVis();
+        g_sim_world->victor_model.updateActual(g_sim_world->victor_model.toVictorConfig(goal_tmp.data()));
+        g_sim_world->victor_model.doVis();
     }
 }
 
-void wip_SamplingRRTConnect(std::shared_ptr<SimWorld> sim_world)
+void wip_SamplingRRTConnect(SimWorld* sim_world)
 {
     GpuVoxelsVictor& vm = sim_world->victor_model;
-    vm.gvl->insertBoxIntoMap(Vector3f(1.6, 1.4, 0.5), Vector3f(3.0 ,1.5,1.5), 
-                             SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    // vm.gvl->insertBoxIntoMap(Vector3f(1.6, 1.4, 0.5), Vector3f(3.0 ,1.5,1.5), 
+    //                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
 
     std::string unused;
     std::cout << "Waiting for user input to start...\n";
     std::getline(std::cin, unused);
 
 
-    double start[] = {-0.15,0,0,0,0,0,0};
-    double goal[] = {-0.15, 1.2, 0, -0.5, 0, 1.0, 0};
-    robot::JointValueMap sconfig = vm.toVictorConfig(start);
-    robot::JointValueMap gconfig = vm.toVictorConfig(goal);
+    // double start[] = {-0.15,0,0,0,0,0,0};
+    // double goal[] = {-0.15, 1.2, 0, -0.5, 0, 1.0, 0};
+    // robot::JointValueMap sconfig = vm.toVictorConfig(start);
+    
+    robot::JointValueMap gconfig = sim_world->goal_config;
 
     VictorSamplingRRTConnect planner(&vm);
     VictorLocalController controller(&vm);
     bool reached_goal = false;
     while(!reached_goal)
     {
-        sconfig = vm.cur_config;
+        robot::JointValueMap sconfig = vm.cur_config;
         // vm.sampleValidWorld();
         // std::cout << "Sampled world has " << vm.countVoxels(SAMPLED_WORLD_MAP) << " voxels\n";
         // std::cout << "Victor has " << vm.num_observed_chs << " chss\n";
@@ -170,11 +171,11 @@ int main(int argc, char* argv[])
     
     icl_core::logging::initialize(argc, argv);
 
-    sim_world = std::make_shared<SimWorld>();
+    g_sim_world = new SimTable;
     signal(SIGINT, ctrlchandler);
     signal(SIGTERM, killhandler);
 
-    wip_SamplingRRTConnect(sim_world);
+    wip_SamplingRRTConnect(g_sim_world);
 
     // sim_world->initializeObstacles();
 // 
@@ -213,6 +214,6 @@ int main(int argc, char* argv[])
 
 
 
-    sim_world->gvl.reset();
+    g_sim_world->gvl.reset();
     
 }

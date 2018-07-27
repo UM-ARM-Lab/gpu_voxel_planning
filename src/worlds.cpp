@@ -25,192 +25,15 @@ SimWorld::SimWorld()
         
     gvl->visualizeMap(SIM_OBSTACLES_MAP);
 
-    
-
     double init_angles[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    VictorConfig init_config = victor_model.toVictorConfig(init_angles);
-    victor_model.updateActual(init_config);
+    init_config = victor_model.toVictorConfig(init_angles);
 }
 
-void SimWorld::makeTable()
-{
-    Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
-    Vector3f tc(1.7, 1.4, 0.9); //table corner
-    Vector3f tld(.033, 0.033, tc.z); //table leg dims
 
-    //table top
-    gvl->insertBoxIntoMap(tc, tc + td,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0),
-                          Vector3f(tc.x, tc.y, 0) + tld,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
-                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
-                          Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
-                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    
-
-    Vector3f cavecorner;
-    if(PEG_IN_HOLE)
-    {
-        cavecorner = Vector3f(1.7, 1.7, 0.9);
-    }
-    else
-    {
-        cavecorner = Vector3f(1.7, 2.0, 0.9);
-    }
-    Vector3f caveheight(0.0, 0.0, 0.4);
-    Vector3f cavetopd(0.4, 0.5, 0.033);
-    Vector3f cavesidedim(0.033, cavetopd.y, caveheight.z);
-    Vector3f cavesideoffset(cavetopd.x, 0.0, 0.0);
-    Vector3f caveholecorner = cavecorner + cavesideoffset + Vector3f(0, 0.15, 0.15);
-    Vector3f caveholesize(.04, .15, .15);
-
-    gvl->insertBoxIntoMap(cavecorner+caveheight,
-                          cavecorner+caveheight+cavetopd,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(cavecorner,
-                          cavecorner+cavesidedim,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(cavecorner+cavesideoffset,
-                          cavecorner+cavesideoffset+cavesidedim,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-
-
-    if(PEG_IN_HOLE)
-    {
-        gvl->insertBoxIntoMap(caveholecorner,
-                              caveholecorner + caveholesize,
-                              TMP_MAP, PROB_OCCUPIED, 2);
-        victor_model.getMap(SIM_OBSTACLES_MAP)->subtract(victor_model.getMap(TMP_MAP));
-    }
-
-
-    
-
-
-    
-    if(USE_KNOWN_OBSTACLES)
-    {
-        gvl->insertBoxIntoMap(tc, tc + td - Vector3f(0, .405, 0),
-                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-        gvl->insertBoxIntoMap(cavecorner+caveheight,
-                              cavecorner+caveheight+cavetopd,
-                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-        gvl->insertBoxIntoMap(cavecorner,
-                              cavecorner+cavesidedim,
-                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-
-        if(ALL_OBSTACLES_KNOWN)
-        {
-            gvl->insertBoxIntoMap(tc, tc + td,
-                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-
-            gvl->insertBoxIntoMap(cavecorner+cavesideoffset,
-                                  cavecorner+cavesideoffset+cavesidedim,
-                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-        }
-
-
-        gvl->visualizeMap(SIM_OBSTACLES_MAP);
-        gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
-    }
-
-
-}
-
-void SimWorld::makeSlottedWall()
-{
-
-    std::cout << "Making slotted walls\n";
-    // Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 0.0 * 0.0254); //table dimensions
-    // Vector3f tc(1.7, 1.4, 0.9); //table corner
-    // Vector3f tld(.033, 0.033, tc.z); //table leg dims
-
-
-
-    double lower_wall_height = 1.1;
-    double gap_height = .4;
-
-    Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
-    Vector3f lfwd(0.04, 1.5, lower_wall_height);
-    
-    Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front call
-    Vector3f ufwd(0.04, 1.5, 0.3);
-    
-    Vector3f mfwc(1.5, 1.8, 0);  //middle front wall
-    Vector3f mfwd(0.04, 1.4, 1.5);
-   
-    Vector3f lswc = lfwc;  // lower side wall corner
-    Vector3f lswd(1.5, 0.04, lower_wall_height); //lower side wall dims
-    Vector3f cswc = ufwc; //close side wall corner
-    Vector3f cswd(0.2, 0.04, 0.3);
-    Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
-    Vector3f fswd(0.3, 0.04, 0.6);
-    Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
-    Vector3f mswd(0.3, 0.04, 0.2);
-    
-    
-    gvl->insertBoxIntoMap(lfwc, lfwc+lfwd,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(ufwc, ufwc+ufwd,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(mfwc, mfwc+mfwd,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    
-    gvl->insertBoxIntoMap(lswc, lswc+lswd,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(cswc, cswc+cswd,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(fswc, fswc+fswd,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    gvl->insertBoxIntoMap(mswc, mswc+mswd,
-                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-    
-    if(USE_KNOWN_OBSTACLES)
-    {
-        gvl->insertBoxIntoMap(lfwc, lfwc+lfwd,
-                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-        gvl->insertBoxIntoMap(lswc, lswc+lswd,
-                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-
-        gvl->insertBoxIntoMap(ufwc, ufwc+ufwd,
-                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-        gvl->insertBoxIntoMap(mfwc, mfwc+mfwd,
-                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-        if(ALL_OBSTACLES_KNOWN)
-        {
-            gvl->insertBoxIntoMap(lswc, lswc+lswd,
-                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-            gvl->insertBoxIntoMap(cswc, cswc+cswd,
-                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-            gvl->insertBoxIntoMap(fswc, fswc+fswd,
-                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-            gvl->insertBoxIntoMap(mswc, mswc+mswd,
-                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
-
-
-        }
-        
-    }
-    gvl->visualizeMap(SIM_OBSTACLES_MAP);
-    gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
-
-}
     
 void SimWorld::initializeObstacles()
 {
     initializeVictor();
-    if(MAKE_TABLE)
-        makeTable();
-    if(MAKE_SLOTTED_WALL)
-        makeSlottedWall();
-        
 }
 
 void SimWorld::initializeVictor()
@@ -239,6 +62,7 @@ void SimWorld::initializeVictor()
 
     gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
 
+    victor_model.updateActual(init_config);
 }
 
 /*
@@ -439,7 +263,213 @@ bool SimWorld::attemptPath(const Path &path)
 
 
 
+/***
+ **   Simulated Table World
+ ***/
+SimTable::SimTable()
+{
+    double init_angles[] = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
+    double goal_angles[] = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
+    init_config = victor_model.toVictorConfig(init_angles);
+    goal_config = victor_model.toVictorConfig(goal_angles);
 
+    initializeObstacles();
+    initializeVictor();
+}
+
+void SimTable::initializeObstacles()
+{
+    makeTable();
+}
+
+
+void SimTable::makeTable()
+{
+    Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
+    Vector3f tc(1.7, 1.4, 0.9); //table corner
+    Vector3f tld(.033, 0.033, tc.z); //table leg dims
+
+    //table top
+    gvl->insertBoxIntoMap(tc, tc + td,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    
+
+    Vector3f cavecorner;
+    if(PEG_IN_HOLE)
+    {
+        cavecorner = Vector3f(1.7, 1.7, 0.9);
+    }
+    else
+    {
+        cavecorner = Vector3f(1.7, 2.0, 0.9);
+    }
+    Vector3f caveheight(0.0, 0.0, 0.4);
+    Vector3f cavetopd(0.4, 0.5, 0.033);
+    Vector3f cavesidedim(0.033, cavetopd.y, caveheight.z);
+    Vector3f cavesideoffset(cavetopd.x, 0.0, 0.0);
+    Vector3f caveholecorner = cavecorner + cavesideoffset + Vector3f(0, 0.15, 0.15);
+    Vector3f caveholesize(.04, .15, .15);
+
+    gvl->insertBoxIntoMap(cavecorner+caveheight,
+                          cavecorner+caveheight+cavetopd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(cavecorner,
+                          cavecorner+cavesidedim,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(cavecorner+cavesideoffset,
+                          cavecorner+cavesideoffset+cavesidedim,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+
+    if(PEG_IN_HOLE)
+    {
+        gvl->insertBoxIntoMap(caveholecorner,
+                              caveholecorner + caveholesize,
+                              TMP_MAP, PROB_OCCUPIED, 2);
+        victor_model.getMap(SIM_OBSTACLES_MAP)->subtract(victor_model.getMap(TMP_MAP));
+    }
+
+
+    
+
+
+    
+    if(USE_KNOWN_OBSTACLES)
+    {
+        gvl->insertBoxIntoMap(tc, tc + td - Vector3f(0, .405, 0),
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->insertBoxIntoMap(cavecorner+caveheight,
+                              cavecorner+caveheight+cavetopd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->insertBoxIntoMap(cavecorner,
+                              cavecorner+cavesidedim,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+        if(ALL_OBSTACLES_KNOWN)
+        {
+            gvl->insertBoxIntoMap(tc, tc + td,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+            gvl->insertBoxIntoMap(cavecorner+cavesideoffset,
+                                  cavecorner+cavesideoffset+cavesidedim,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        }
+
+
+        gvl->visualizeMap(SIM_OBSTACLES_MAP);
+        gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
+    }
+
+
+}
+
+
+
+
+/***
+ **   Simulated SlottedWall
+ ***/
+SimSlottedWall::SimSlottedWall()
+{
+    initializeObstacles();
+    initializeVictor();
+}
+
+void SimSlottedWall::initializeObstacles()
+{
+    makeSlottedWall();
+}
+
+void SimSlottedWall::makeSlottedWall()
+{
+
+    std::cout << "Making slotted walls\n";
+    // Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 0.0 * 0.0254); //table dimensions
+    // Vector3f tc(1.7, 1.4, 0.9); //table corner
+    // Vector3f tld(.033, 0.033, tc.z); //table leg dims
+
+
+
+    double lower_wall_height = 1.1;
+    double gap_height = .4;
+
+    Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
+    Vector3f lfwd(0.04, 1.5, lower_wall_height);
+    
+    Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front call
+    Vector3f ufwd(0.04, 1.5, 0.3);
+    
+    Vector3f mfwc(1.5, 1.8, 0);  //middle front wall
+    Vector3f mfwd(0.04, 1.4, 1.5);
+   
+    Vector3f lswc = lfwc;  // lower side wall corner
+    Vector3f lswd(1.5, 0.04, lower_wall_height); //lower side wall dims
+    Vector3f cswc = ufwc; //close side wall corner
+    Vector3f cswd(0.2, 0.04, 0.3);
+    Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
+    Vector3f fswd(0.3, 0.04, 0.6);
+    Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
+    Vector3f mswd(0.3, 0.04, 0.2);
+    
+    
+    gvl->insertBoxIntoMap(lfwc, lfwc+lfwd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(ufwc, ufwc+ufwd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(mfwc, mfwc+mfwd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    
+    gvl->insertBoxIntoMap(lswc, lswc+lswd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(cswc, cswc+cswd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(fswc, fswc+fswd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(mswc, mswc+mswd,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    
+    if(USE_KNOWN_OBSTACLES)
+    {
+        gvl->insertBoxIntoMap(lfwc, lfwc+lfwd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->insertBoxIntoMap(lswc, lswc+lswd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+        gvl->insertBoxIntoMap(ufwc, ufwc+ufwd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        gvl->insertBoxIntoMap(mfwc, mfwc+mfwd,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+        if(ALL_OBSTACLES_KNOWN)
+        {
+            gvl->insertBoxIntoMap(lswc, lswc+lswd,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+            gvl->insertBoxIntoMap(cswc, cswc+cswd,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+            gvl->insertBoxIntoMap(fswc, fswc+fswd,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+            gvl->insertBoxIntoMap(mswc, mswc+mswd,
+                                  KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+
+        }
+        
+    }
+    gvl->visualizeMap(SIM_OBSTACLES_MAP);
+    gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
+
+}
 
 
 
