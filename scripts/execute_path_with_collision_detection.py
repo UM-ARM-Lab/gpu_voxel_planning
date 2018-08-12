@@ -232,7 +232,7 @@ if __name__ == "__main__":
     rospy.init_node("execute_path_with_collision_detection")
     voice = rospy.Publisher("polly", String, queue_size=10)
 
-    vm = or_victor.motion.MotionEnabledVictor(viewer=False)
+    vm = or_victor.motion_victor.MotionEnabledVictor(viewer=False)
     vm.set_manipulator("right_arm")
     vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
 
