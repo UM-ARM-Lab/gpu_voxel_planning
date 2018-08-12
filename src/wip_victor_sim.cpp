@@ -153,12 +153,12 @@ void wip_SamplingRRTConnect(SimWorld* sim_world)
         Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
         reached_goal = sim_world->attemptPath(path.Get());
 
-        for(int i=0; i<10; i++)
+        for(int i=0; i<20; i++)
         {
             sconfig = vm.cur_config;
             sim_world->attemptPath(controller.maxExpectedChsIG(vm.toValues(sconfig), 0.1, 40));
             // vm.gvl->visualizeMap(VICTOR_QUERY_MAP);
-            // waitForKeypress();
+            waitForKeypress();
 
         }
     }
@@ -171,19 +171,13 @@ int main(int argc, char* argv[])
     
     icl_core::logging::initialize(argc, argv);
 
-    g_sim_world = new SimTable;
+    // g_sim_world = new SimEmptyTable;
+    g_sim_world = new SimWall;
     signal(SIGINT, ctrlchandler);
     signal(SIGTERM, killhandler);
 
     wip_SamplingRRTConnect(g_sim_world);
 
-    // sim_world->initializeObstacles();
-// 
-    // std::vector<double> start = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
-    // std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
-    // std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
-
-    // sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
 
     // std::string unused;
     // std::cout << "Waiting for user input to start...\n";

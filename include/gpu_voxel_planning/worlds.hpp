@@ -36,6 +36,21 @@ public:
     VictorConfig goal_config;
 };
 
+class SimWall : public SimWorld
+{
+public:
+    SimWall();
+    virtual void initializeObstacles() override;
+};
+
+class SimEmptyTable : public SimWorld
+{
+public:
+    SimEmptyTable();
+    virtual void initializeObstacles() override;
+    void makeTable();
+};
+
 class SimTable : public SimWorld
 {
 public:
@@ -51,6 +66,7 @@ public:
     virtual void initializeObstacles() override;
     void makeSlottedWall();
 };
+
 
 class RealWorld
 {

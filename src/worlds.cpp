@@ -268,7 +268,8 @@ bool SimWorld::attemptPath(const Path &path)
  ***/
 SimTable::SimTable()
 {
-    double init_angles[] = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
+    // double init_angles[] = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
+    double init_angles[] = {0,0,0,0,0,0,0};
     double goal_angles[] = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
     init_config = victor_model.toVictorConfig(init_angles);
     goal_config = victor_model.toVictorConfig(goal_angles);
@@ -373,6 +374,77 @@ void SimTable::makeTable()
     }
 
 
+}
+
+
+
+/***
+ **   Simulated Table World
+ ***/
+SimEmptyTable::SimEmptyTable()
+{
+    // double init_angles[] = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
+    double init_angles[] = {-0.5, 0.4, 0, -0.1, 0,0,0};
+    double goal_angles[] = {-0.5, 1.5, 0.0, -0.7, 0.0, 0.0, 0.0};
+    init_config = victor_model.toVictorConfig(init_angles);
+    goal_config = victor_model.toVictorConfig(goal_angles);
+
+    initializeObstacles();
+    initializeVictor();
+}
+
+void SimEmptyTable::initializeObstacles()
+{
+    makeTable();
+}
+
+
+void SimEmptyTable::makeTable()
+{
+    Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
+    Vector3f tc(1.7, 1.4, 0.9); //table corner
+    Vector3f tld(.033, 0.033, tc.z); //table leg dims
+
+    //table top
+    gvl->insertBoxIntoMap(tc, tc + td,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    
+    gvl->visualizeMap(SIM_OBSTACLES_MAP);
+}
+
+
+/*
+ *   Simulated Solid Wall
+ */
+SimWall::SimWall()
+{
+    double init_angles[] = {0,0,0,0,0,0,0};
+    double goal_angles[] = {-0.15, 1.2, 0, -0.5, 0, 1.0, 0};
+    init_config = victor_model.toVictorConfig(init_angles);
+    goal_config = victor_model.toVictorConfig(goal_angles);
+
+    initializeObstacles();
+    initializeVictor();
+
+}
+
+void SimWall::initializeObstacles()
+{
+    gvl->insertBoxIntoMap(Vector3f(1.6, 1.4, 0.5), Vector3f(3.0 ,1.5,1.5), 
+                             SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->visualizeMap(SIM_OBSTACLES_MAP);
 }
 
 

@@ -2,6 +2,7 @@
 #define PATH_UTILS_HPP
 
 #include <vector>
+#include <cstddef>
 
 typedef std::vector<std::vector<double>> Path;
 
@@ -13,6 +14,8 @@ namespace PathUtils
 
     // std::vector<double> interpolate(const std::vector<double> &p0, const std::vector<double> &p1,
     //                                 double interp_dist);
+
+    size_t closestIndex(const Path &path, const std::vector<double> &point);
 
     Path followPartial(const Path& path, double dist);
 
