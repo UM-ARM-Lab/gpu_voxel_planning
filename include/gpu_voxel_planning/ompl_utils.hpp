@@ -19,6 +19,17 @@ namespace ompl_utils
         return s;
     };
 
+    std::vector<ompl::base::ScopedState<>> toScopedStates(std::vector<std::vector<double>> dss,
+                                                          const std::shared_ptr<ompl::base::RealVectorStateSpace> space)
+    {
+        std::vector<ompl::base::ScopedState<>> states;
+        for(auto const& ds:dss)
+        {
+            states.push_back(toScopedState(ds, space));
+        }
+        return states;
+    }
+
     Path omplPathToDoublePath(ompl::geometric::PathGeometric* ompl_path,
                               std::shared_ptr<ompl::base::SpaceInformation> si_)
     {

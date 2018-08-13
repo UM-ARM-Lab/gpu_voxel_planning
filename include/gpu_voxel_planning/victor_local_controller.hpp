@@ -15,7 +15,7 @@ namespace gpu_voxels_planner
 {
 
 
-    typedef ompl::base::ScopedState<> Goals;
+    // typedef ompl::base::ScopedState<> Goals;
     typedef std::shared_ptr<ompl::geometric::PathGeometric> Ompl_Path;
         
     class VictorLocalController

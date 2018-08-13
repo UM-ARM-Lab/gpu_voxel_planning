@@ -94,7 +94,13 @@ VictorConfig getMinGoal(VictorPlanner &planner, dGoals goals)
 bool attemptGoal(VictorPlanner &planner, dGoals goals)
 {
 
-    VictorConfig goal_config; 
+    VictorConfig goal_config;
+    std::vector<VictorConfig> goal_configs;
+
+    for(auto const& goal: goals)
+    {
+        goal_configs.push_back(real_world->victor_model.toVictorConfig(goal.data()));
+    }
 
     bool reached_goal = false;
     arc_utilities::Stopwatch stopwatch;
@@ -104,13 +110,14 @@ bool attemptGoal(VictorPlanner &planner, dGoals goals)
     PROFILE_START(planning_iters_name);
     PROFILE_START(planner.name + " success");
     PROFILE_START(planner.name + " failure");
+    goal_config = getMinGoal(planner, goals);
     while(!reached_goal)
     {
         if(stopwatch() > timeout)
         {
             break;
         }
-        goal_config = getMinGoal(planner, goals);
+        
         
         std::cout << "Control + Plan iter " << planning_iters << "\n";
         if(DO_CONTROL && !(DO_PLANNING_FIRST && planning_iters == 0))
@@ -121,7 +128,7 @@ bool attemptGoal(VictorPlanner &planner, dGoals goals)
                                                             goal_config);
             while(maybe_path.Valid())
             {
-                goal_config = getMinGoal(planner, goals);
+                // goal_config = getMinGoal(planner, goals);
                 if(stopwatch() > timeout) break;
                 
                 std::cout << "Local control found, executing\n";
@@ -143,11 +150,11 @@ bool attemptGoal(VictorPlanner &planner, dGoals goals)
 
         if(DO_PLAN)
         {
-            goal_config = getMinGoal(planner, goals);
+            // goal_config = getMinGoal(planner, goals);
             planning_iters++;
             PROFILE_START(planner.name + " plan");
             Optpath maybe_path = planner.planPathConfig(real_world->victor_model.cur_config,
-                                                        goal_config);
+                                                        goal_configs);
             PROFILE_RECORD(planner.name + " plan");
             if(!maybe_path.Valid())
             {
@@ -156,7 +163,7 @@ bool attemptGoal(VictorPlanner &planner, dGoals goals)
                 PROFILE_RECORD(planner.name + "_failed");
                 return false;
             }
-
+            goal_config = real_world->victor_model.toVictorConfig(maybe_path.Get().back().data());
 
             PROFILE_START(planner.name + " execute");
             reached_goal = real_world->attemptPath(maybe_path.Get());
@@ -275,10 +282,10 @@ int main(int argc, char* argv[])
     
 
     std::vector<double> start = {-0.047, 1.128, -0.525, -0.82, -1.815, -1.054, -0.08};
-    std::vector<double> goal_box = {-0.313, 0.848, -0.732, -0.711, -1.758, -0.943, -0.029};
+    std::vector<double> goal_2 = {-0.313, 0.848, -0.732, -0.711, -1.758, -0.943, -0.029};
+    std::vector<double> goal_1 = {0.348, 0.757, -0.43, -0.412, -1.66, -1.178, -0.095};
 
-    dGoals goals;
-    goals.push_back(goal_box);
+    dGoals goals = {goal_1, goal_2};
 
     int num_trials = 5;
     for(int i=0; i<num_trials; i++)

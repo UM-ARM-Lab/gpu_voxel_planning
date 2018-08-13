@@ -15,6 +15,7 @@
 #include "path_smoothing.h"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <ompl/geometric/PathSimplifier.h>
+#include <ompl/base/goals/GoalStates.h>
 
 
 #include <stdlib.h>
@@ -87,6 +88,20 @@ void VictorPlanner::setupSpaceInformation()
     si_->setStateValidityChecker(vv_ptr->getptr());
     si_->setMotionValidator(vv_ptr->getptr());
     si_->setup();
+}
+
+void VictorPlanner::setStartAndGoals(ompl::base::ScopedState<> start, Goals goals)
+{
+    pdef_->addStartState(start);
+    ob::GoalPtr generic_goal_ptr = std::make_shared<ob::GoalStates>(si_);
+    std::shared_ptr<ob::GoalStates> goal_states = std::make_shared<ob::GoalStates>(si_);
+    std::cout << "Setting " << goals.size() << " goal states\n";
+    for(auto const& goal:goals)
+    {
+        goal_states->addState(goal);
+        std::cout << "Goal: " << goal[0] << "\n";
+    }
+    pdef_->setGoal(goal_states);
 }
 
 Maybe::Maybe<ob::PathPtr> VictorPlanner::planPath(ob::ScopedState<> start, Goals goals)
@@ -166,22 +181,30 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::planPath(ob::ScopedState<> start, Goals
 }
 
 
-
-
-Maybe::Maybe<Path> VictorPlanner::planPathConfig(VictorConfig start, VictorConfig goals)
+Maybe::Maybe<Path> VictorPlanner::planPathConfig(VictorConfig start, VictorConfig goal)
 {
-    return planPathDouble(victor_model_->toValues(start), victor_model_->toValues(goals));
+    std::vector<VictorConfig> goals = {goal};
+    return planPathConfig(start, goals);
 }
 
-Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std::vector<double> goal)
+Maybe::Maybe<Path> VictorPlanner::planPathConfig(VictorConfig start, std::vector<VictorConfig> goals)
+{
+    std::vector<std::vector<double>> d_goals;
+    for(auto const& goal: goals)
+    {
+        d_goals.push_back(victor_model_->toValues(goal));
+    }
+    return planPathDouble(victor_model_->toValues(start), d_goals);
+}
+
+Maybe::Maybe<Path> VictorPlanner::planPathDouble(std::vector<double> start, std::vector<std::vector<double>> goals)
 {
     ob::ScopedState<> start_ss(space);
-    ob::ScopedState<> goal_ss(space);
+    Goals goals_ss = toScopedStates(goals, space);
     std::cout << "start: ";
     start_ss = toScopedState(start, space);
-    goal_ss = toScopedState(goal, space);
     
-    Maybe::Maybe<ob::PathPtr> ompl_path = planPath(start_ss, goal_ss);
+    Maybe::Maybe<ob::PathPtr> ompl_path = planPath(start_ss, goals_ss);
     if(!ompl_path.Valid())
     {
         return Maybe::Maybe<Path>();
@@ -312,13 +335,25 @@ ob::PathPtr VictorPlanner::randomWiggle(ob::ScopedState<> start)
 
 Maybe::Maybe<Path> VictorPlanner::localControlConfig(VictorConfig start, VictorConfig goal)
 {
-    return localControlDouble(victor_model_->toValues(start), victor_model_->toValues(goal));
+    return localControlConfig(start, std::vector<VictorConfig>{goal});
 }
 
-Maybe::Maybe<Path> VictorPlanner::localControlDouble(std::vector<double> start, std::vector<double> goal)
+
+Maybe::Maybe<Path> VictorPlanner::localControlConfig(VictorConfig start, std::vector<VictorConfig> goals)
+{
+    std::vector<std::vector<double>> d_goals;
+    for(auto const& goal: goals)
+    {
+        d_goals.push_back(victor_model_->toValues(goal));
+    }
+
+    return localControlDouble(victor_model_->toValues(start), d_goals);
+}
+
+Maybe::Maybe<Path> VictorPlanner::localControlDouble(std::vector<double> start, std::vector<std::vector<double>> goals)
 {
     Maybe::Maybe<ob::PathPtr> ompl_path = localControl(toScopedState(start, space),
-                                                       toScopedState(goal, space));
+                                                       toScopedStates(goals, space));
     if(!ompl_path.Valid())
     {
         return Maybe::Maybe<Path>();
@@ -339,8 +374,9 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
     
     int num_samples = 20;
     int i=0;
+    ob::ScopedState<> goal = goals[0];
 
-    double start_d_to_goal = goals.distance(start);
+    double start_d_to_goal = goal.distance(start);
     
     double max_motion = space->getLongestValidSegmentLength() * 2;
 
@@ -360,10 +396,10 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
     for(i=0; i<num_samples; i++)
     {
         checking_goal_directly = (i==0);
-        bool near_goal = goals.distance(start) <= max_motion;
+        bool near_goal = goal.distance(start) <= max_motion;
         if(checking_goal_directly)
         {
-            si_->copyState(test.get(), goals.get());
+            si_->copyState(test.get(), goal.get());
             goal_sampled = true;
         }
         else
@@ -373,7 +409,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         }
         
 
-        double progress_d = start_d_to_goal - goals.distance(test.get());
+        double progress_d = start_d_to_goal - goal.distance(test.get());
         
         if(progress_d <= 0)// || progress_d <= best_ev)
         {
@@ -471,7 +507,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         size_t col_index;
         std::cout << "best pcol " << best_pcol << ", when reevaluated ";
         std::cout << vppc->getPathCost(dpath, col_index) << "\n";
-        std::cout << "distance from goal " << goals.distance(best) << "\n";
+        std::cout << "distance from goal " << goal.distance(best) << "\n";
         
         victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);        
         std::string unused;
@@ -497,6 +533,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
 Maybe::Maybe<ob::PathPtr> VictorPlanner::voxLocalControl(ompl::base::ScopedState<> start,
                                                          Goals goals)
 {
+    ob::ScopedState<> goal = goals[0];
     // std::cout << "Using vox local control\n";
     if(vppc.get() == nullptr)
     {
@@ -507,7 +544,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::voxLocalControl(ompl::base::ScopedState
     int num_samples = 100;
     int i=0;
 
-    double start_d_to_goal = goals.distance(start);
+    double start_d_to_goal = goal.distance(start);
     
     double max_motion = space->getLongestValidSegmentLength() * 2;
 
@@ -528,11 +565,11 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::voxLocalControl(ompl::base::ScopedState
     for(i=0; i<num_samples; i++)
     {
         bool checking_goal_directly = (i==0);
-        bool near_goal = goals.distance(start) <= max_motion*1.5;
+        bool near_goal = goal.distance(start) <= max_motion*1.5;
         if(i==0)
         {
             goal_sampled = true;
-            si_->copyState(test, goals.get());
+            si_->copyState(test, goal.get());
             goal_sampled = true;
         }
         else
@@ -555,7 +592,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::voxLocalControl(ompl::base::ScopedState
             space->interpolate(start.get(), test, max_motion / motion_dist, test);
         }
 
-        double progress_d = start_d_to_goal - goals.distance(test);
+        double progress_d = start_d_to_goal - goal.distance(test);
         
         if(progress_d <= 0 || progress_d <= best_ev)
         {
@@ -630,7 +667,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::voxLocalControl(ompl::base::ScopedState
         size_t col_index;
         std::cout << "best cost " << best_cost << ", when reevaluated ";
         std::cout << vppc->getPathCost(dpath, col_index) << "\n";
-        std::cout << "distance from goal " << goals.distance(best) << "\n";
+        std::cout << "distance from goal " << goal.distance(best) << "\n";
         
         victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);        
         std::string unused;
@@ -673,7 +710,8 @@ void VictorLBKPiece::preparePlanner(ob::ScopedState<> start, Goals goals)
 {
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
-    pdef_->setStartAndGoalStates(start, goals);
+    setStartAndGoals(start, goals);
+    
 
     planner_->setProblemDefinition(pdef_);
 
@@ -750,7 +788,7 @@ Maybe::Maybe<ob::PathPtr> VictorLazyRRTF::planPath(ompl::base::ScopedState<> sta
 void VictorLazyRRTF::preparePlanner(ob::ScopedState<> start, Goals goals)
 {
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
-    pdef_->setStartAndGoalStates(start, goals);
+    setStartAndGoals(start, goals);
     planner_->setProblemDefinition(pdef_);
 
 }
@@ -786,7 +824,7 @@ void VictorPRM::preparePlanner(ob::ScopedState<> start, Goals goals)
 {
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
-    pdef_->setStartAndGoalStates(start, goals);
+    setStartAndGoals(start, goals);
 
     planner_->setProblemDefinition(pdef_);
 
@@ -823,7 +861,7 @@ void VictorRRTConnect::preparePlanner(ob::ScopedState<> start, Goals goals)
 {
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
-    pdef_->setStartAndGoalStates(start, goals);
+    setStartAndGoals(start, goals);
 
     planner_->setProblemDefinition(pdef_);
 }
@@ -853,7 +891,7 @@ void VictorSamplingRRTConnect::preparePlanner(ob::ScopedState<> start, Goals goa
 {
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
-    pdef_->setStartAndGoalStates(start, goals);
+    setStartAndGoals(start, goals);
 
     planner_->setProblemDefinition(pdef_);
 }
@@ -1004,8 +1042,10 @@ Maybe::Maybe<ob::PathPtr> VictorThresholdRRTConnect::planPath(ompl::base::Scoped
             // std::cout << "Max cost on path: " << threshold + eps << "\n";
             vv_thresh->setCostThreshold(threshold);
             preparePlanner(start, goals);
-            if(!vv_thresh->isValid(start.get()) || !vv_thresh->isValid(goals.get()))
+            if(!vv_thresh->isValid(start.get()))
             {
+                // I used to check goal position. Need to rework for multiple goals
+                // || !vv_thresh->isValid(goals.get()))
                 std::cout << "Found best path for given start/goal with threshold " << (threshold + eps) <<"\n";
                 vv_thresh->setCostThreshold(threshold + 2*eps);
                 break;
@@ -1036,7 +1076,7 @@ void VictorThresholdRRTConnect::preparePlanner(ob::ScopedState<> start, Goals go
 {
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
-    pdef_->setStartAndGoalStates(start, goals);
+    setStartAndGoals(start, goals);
     planner_->setProblemDefinition(pdef_);
 }
 
@@ -1315,7 +1355,7 @@ void VictorMotionCostRRTConnect::preparePlanner(ob::ScopedState<> start, Goals g
 {
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
-    pdef_->setStartAndGoalStates(start, goals);
+    setStartAndGoals(start, goals);
     planner_->setProblemDefinition(pdef_);
 }
 
@@ -1445,7 +1485,7 @@ void VictorRRTStar::preparePlanner(ompl::base::ScopedState<> start,
 
     planner_->clear();
     pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
-    pdef_->setStartAndGoalStates(start, goals);
+    setStartAndGoals(start, goals);
 
     pdef_->setOptimizationObjective(opt);
     planner_->setProblemDefinition(pdef_);
