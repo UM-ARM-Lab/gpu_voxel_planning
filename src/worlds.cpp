@@ -635,14 +635,20 @@ void RealWorld::loadPointCloudFromFile()
         // std::cout << mat(0, i) << ", " << mat(1,i) << ", " << mat(2,i) << "\n";
         Vector3f p(1.0+mat(0,i), 2.0+mat(1,i), mat(2,i));
 
-        // if(p.x < 1.7 && p.y < 2.0 && p.z > 1.0)
-        //     continue;
-
-        if(p.z > 0.7 && p.z < 1.05 &&
-           p.y > 1.6)
-        {
+        //right arm
+        if(p.x < 1.7 && p.y < 2.0 && p.z > 1.0)
             continue;
-        }
+
+        // if(p.z > 0.5 && p.z < 1.05 &&
+        //    p.y > 1.6)
+        // {
+        //     continue;
+        // }
+
+
+
+        //no point cloud
+        continue;
         
         points.push_back(p);
     }

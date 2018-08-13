@@ -10,14 +10,15 @@
 #include <limits>
 #include <arc_utilities/timing.hpp>
 #include <arc_utilities/arc_helpers.hpp>
+#include "hardcoded_params.h"
 
 #include <iostream>
 #include <fstream>
 
 
 
-#define DO_CONTROL true
-#define DO_PLAN true
+// #define DO_CONTROL true
+// #define DO_PLAN true
 
 std::shared_ptr<RealWorld> real_world;
 
@@ -112,7 +113,7 @@ bool attemptGoal(VictorPlanner &planner, dGoals goals)
         goal_config = getMinGoal(planner, goals);
         
         std::cout << "Control + Plan iter " << planning_iters << "\n";
-        if(DO_CONTROL)
+        if(DO_CONTROL && !(DO_PLANNING_FIRST && planning_iters == 0))
         {
             
             PROFILE_START(planner.name + " control");
@@ -273,21 +274,21 @@ int main(int argc, char* argv[])
 
     
 
-    std::vector<double> start = {-1.063, 1.558, -0.779, 0.022, 1.042, -0.46, -0.715};
-    std::vector<double> goal_box = {-0.757, 0.89, -0.571, 0.555, 1.046, -0.793, -0.679};
+    std::vector<double> start = {-0.047, 1.128, -0.525, -0.82, -1.815, -1.054, -0.08};
+    std::vector<double> goal_box = {-0.313, 0.848, -0.732, -0.711, -1.758, -0.943, -0.029};
 
     dGoals goals;
     goals.push_back(goal_box);
 
-    int num_trials = 1;
+    int num_trials = 5;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "\n\n\n\nTrial " << i+1 << " of " << num_trials << "\n\n\n\n\n";
         runTest_VictorProbCol(start, goals);
-        runTest_VictorVox(start, goals);
+        // runTest_VictorVox(start, goals);
     }
 
-    std::string filename = "./real_robot_trials/box_" + arc_helpers::GetCurrentTimeAsString();
+    std::string filename = "./real_robot_trials/tmp/tmp_clamp_chs_" + arc_helpers::GetCurrentTimeAsString();
     
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);

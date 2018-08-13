@@ -423,8 +423,8 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
     ob::State *test = si_->allocState();
 
     double prob_col = 0.0;
-    double p_no_col_unseen;
-    double p_no_col_seen;
+    double p_no_col_unseen = 1.0;
+    double p_no_col_chs;
     
     std::vector<size_t> seen_sizes = victor_model_->chsSizes();
 
@@ -495,7 +495,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
                     
         std::vector<double> p_no_collision;
         p_no_collision.resize(seen_col_voxels.size());
-        p_no_col_seen = 1.0;
+        p_no_col_chs = 1.0;
 
         for(size_t i=0; i < seen_sizes.size(); i++)
         {
@@ -506,29 +506,32 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
                 std::cout << "seen col vox: " << seen_col_voxels[i] << " seen sizes " << seen_sizes[i] << "\n";
                 assert(p_no_collision[i] <= 1.0);
             }
-            // p_no_col_seen = std::min(p_no_collision[i], p_no_col_seen);
-            p_no_col_seen *= p_no_collision[i];
+            // p_no_col_chs = std::min(p_no_collision[i], p_no_col_chs);
+            p_no_col_chs *= p_no_collision[i];
         }
 
         victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
 
-        PROFILE_START("prob free space collisions");
-        size_t path_size = victor_model_->countIntersect(FULL_MAP, VICTOR_QUERY_MAP);
-        size_t total_size = victor_model_->countIntersect(FULL_MAP, FULL_MAP);
-        size_t known_free_size = victor_model_->countIntersect(VICTOR_SWEPT_VOLUME_MAP, VICTOR_QUERY_MAP);
-        PROFILE_RECORD("prob free space collisions");
+        if(UNEXPLORED_BIAS != 0.0)
+        {
+            PROFILE_START("prob free space collisions");
+            size_t path_size = victor_model_->countIntersect(FULL_MAP, VICTOR_QUERY_MAP);
+            size_t total_size = victor_model_->countIntersect(FULL_MAP, FULL_MAP);
+            size_t known_free_size = victor_model_->countIntersect(VICTOR_SWEPT_VOLUME_MAP, VICTOR_QUERY_MAP);
+            PROFILE_RECORD("prob free space collisions");
 
-        double num_occupied = (double)(path_size - known_free_size);
-        double frac_occupied = num_occupied / (double) total_size;
+            double num_occupied = (double)(path_size - known_free_size);
+            double frac_occupied = num_occupied / (double) total_size;
         
-        p_no_col_unseen = std::pow(1.0 - frac_occupied, UNEXPLORED_BIAS);
+            p_no_col_unseen = std::pow(1.0 - frac_occupied, UNEXPLORED_BIAS);
+        }
 
-        prob_col = 1.0 - p_no_col_seen * p_no_col_unseen;
+        prob_col = 1.0 - p_no_col_chs * p_no_col_unseen;
         
         if (prob_col > 1.0)
         {
             std::cout << "Prob_col " << prob_col;
-            std::cout << ", p_no_col_seen " << p_no_col_seen;
+            std::cout << ", p_no_col_chs " << p_no_col_chs;
             std::cout << ", p_no_col_unseen " << p_no_col_unseen;
             std::cout << "\n";
             assert (prob_col <= 1.0);
@@ -537,7 +540,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         if(do_delay)
         {
             std::cout << "Prob col: " << prob_col << "\n";
-            std::cout << "prob colsets: " << 1.0-p_no_col_seen;
+            std::cout << "prob colsets: " << 1.0-p_no_col_chs;
             std::cout << "   prob void space: " << 1.0 - p_no_col_unseen << "\n";
             usleep(30000);
         }
@@ -569,13 +572,13 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
                 
             std::vector<double> p_no_collision;
             p_no_collision.resize(seen_col_voxels.size());
-            p_no_col_seen = 1.0;
+            p_no_col_chs = 1.0;
 
             for(size_t i=0; i < seen_sizes.size(); i++)
             {
                 p_no_collision[i] = 1.0 - (double)seen_col_voxels[i] / (double)seen_sizes[i];
                 assert(p_no_collision[i] <= 1.0);
-                p_no_col_seen *= p_no_collision[i];
+                p_no_col_chs *= p_no_collision[i];
             }
 
             victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
@@ -591,7 +594,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         
             p_no_col_unseen = std::pow(1.0 - frac_occupied, UNEXPLORED_BIAS);
 
-            prob_col = 1.0 - p_no_col_seen * p_no_col_unseen;
+            prob_col = 1.0 - p_no_col_chs * p_no_col_unseen;
         }
 
     }

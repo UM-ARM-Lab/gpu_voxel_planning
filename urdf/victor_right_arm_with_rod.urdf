@@ -991,39 +991,24 @@
   <!--   <axis xyz="0 0 1"/> -->
   <!-- </joint> -->
   <!-- Clamp -->
-  <!-- <link name="rod"> -->
-  <!--   <collision> -->
-  <!--     <origin xyz="0 0 0.12" rpy="0 0 0"/> -->
-  <!--     <geometry> -->
-  <!--       <mesh filename="package://gpu_voxel_planning/urdf/BarClamp_6in_scaled.stl" -->
-  <!--             scale="1 1 1"/> -->
-  <!--     </geometry> -->
-  <!--   </collision> -->
-  <!-- </link> -->
-  <!-- <joint name="rod_joint" type="fixed"> -->
-  <!--   <parent link="victor_right_gripper_palm"/> -->
-  <!--   <child link="rod"/> -->
-  <!--   <origin xyz="0 0 0.0" rpy="0 0 0"/> -->
-  <!--   <axis xyz="0 0 1"/> -->
-  <!-- </joint> -->
-  <!-- Pringles -->
   <link name="rod">
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.02"/>
+      <origin rpy="0 0 0" xyz="0 0 0.12"/>
       <geometry>
-        <cylinder length="0.234" radius="0.038"/>
+        <mesh filename="package://gpu_voxel_planning/urdf/BarClamp_6in_scaled.stl" scale="1 1 1"/>
       </geometry>
     </collision>
   </link>
   <joint name="rod_joint" type="fixed">
     <parent link="victor_right_gripper_palm"/>
     <child link="rod"/>
-    <origin rpy="1.57 0 0" xyz="0 0 0.15"/>
+    <origin rpy="0 0 0" xyz="0 0 0.0"/>
     <axis xyz="0 0 1"/>
   </joint>
+  <!-- Pringles -->
   <!-- <link name="rod"> -->
   <!--   <collision> -->
-  <!--     <origin xyz="0 0 0.2" rpy="0 0 0"/> -->
+  <!--     <origin xyz="0 0 -0.02" rpy="0 0 0"/> -->
   <!--     <geometry> -->
   <!--       <cylinder length="0.234" radius="0.038"/> -->
   <!--     </geometry> -->
@@ -1032,7 +1017,7 @@
   <!-- <joint name="rod_joint" type="fixed"> -->
   <!--   <parent link="victor_right_gripper_palm"/> -->
   <!--   <child link="rod"/> -->
-  <!--   <origin xyz="0 0 0.0" rpy="1.57 0 0"/> -->
+  <!--   <origin xyz="0 0 0.15" rpy="1.57 0 0"/> -->
   <!--   <axis xyz="0 0 1"/> -->
   <!-- </joint> -->
 </robot>
