@@ -90,9 +90,11 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
     if(PEG_IN_HOLE || REAL_ROBOT)
     {
-        gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_with_rod.urdf", false);
-        right_gripper_collision_link_names.push_back("rod");
-        right_arm_collision_link_names.push_back("rod");
+        // gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_with_rod.urdf", false);
+        // right_gripper_collision_link_names.push_back("rod");
+        // right_arm_collision_link_names.push_back("rod");
+        gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf", false);
+
     }
     else{
         gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf", false);

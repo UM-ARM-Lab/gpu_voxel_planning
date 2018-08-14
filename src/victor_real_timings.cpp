@@ -281,21 +281,26 @@ int main(int argc, char* argv[])
 
     
 
-    std::vector<double> start = {-0.047, 1.128, -0.525, -0.82, -1.815, -1.054, -0.08};
-    std::vector<double> goal_2 = {-0.313, 0.848, -0.732, -0.711, -1.758, -0.943, -0.029};
-    std::vector<double> goal_1 = {0.348, 0.757, -0.43, -0.412, -1.66, -1.178, -0.095};
+    std::vector<double> start = {-0.01, 1.426, -1.463, -0.752, -1.313, -1.002, 2.145};
+    std::vector<double> goal_1 = {-1.295, 1.39, -0.34, 0.043, -0.354, -1.124, 2.255};
+    // std::vector<double> goal_2 = {-0.531, 0.749, -0.628, -0.609, -1.705, -1.074, -0.002};
+    // std::vector<double> goal_3 = {-0.452, 0.737, -0.633, -0.622, -1.796, -1.055, 0.01};
+    // std::vector<double> goal_4 = {-0.326, 0.688, -0.642, -0.696, -1.94, -1.034, 0.094};
+    // std::vector<double> goal_5 = {-0.623, 0.756, -0.588, -0.594, -1.629, -1.099, -0.103};
+    // std::vector<double> goal_6 = {};
+    // std::vector<double> goal_7 = {};
 
-    dGoals goals = {goal_1, goal_2};
+    dGoals goals = {goal_1};
 
     int num_trials = 5;
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "\n\n\n\nTrial " << i+1 << " of " << num_trials << "\n\n\n\n\n";
-        runTest_VictorProbCol(start, goals);
-        // runTest_VictorVox(start, goals);
+        // runTest_VictorProbCol(start, goals);
+        runTest_VictorVox(start, goals);
     }
 
-    std::string filename = "./real_robot_trials/tmp/tmp_clamp_chs_" + arc_helpers::GetCurrentTimeAsString();
+    std::string filename = "./real_robot_trials/tmp/narrow_unified_1in" + arc_helpers::GetCurrentTimeAsString();
     
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
