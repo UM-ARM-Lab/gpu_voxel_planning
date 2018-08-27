@@ -275,11 +275,11 @@ int main(int argc, char* argv[])
     for(int i=0; i<num_trials; i++)
     {
         std::cout << "\n\n\n\n!!!!!!!!!!!!!!\nTrial " << i + 1<< " of " << num_trials << "!!!!!!!!!!!!!\n\n\n\n\n";
-        // runTest_ThresholdRRTConnect();
-        runTest_ProbColCostRRTConnect();
-        runTest_VoxCostRRTConnect();
-        runTest_PlanUpProbColCostRRTConnect();
-        runTest_PlanUpVoxCostRRTConnect();
+        runTest_ThresholdRRTConnect();
+        // runTest_ProbColCostRRTConnect();
+        // runTest_VoxCostRRTConnect();
+        // runTest_PlanUpProbColCostRRTConnect();
+        // runTest_PlanUpVoxCostRRTConnect();
     }
     
 

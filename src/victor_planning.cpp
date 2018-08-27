@@ -261,7 +261,7 @@ Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, G
         return Maybe::Maybe<ob::PathPtr>();
     }
     
-    int num_samples = 100;
+    int num_samples = 20;
     int i=0;
 
     double start_d_to_goal = goals.distance(start);
@@ -1010,7 +1010,7 @@ Maybe::Maybe<ob::PathPtr> VictorVoxCostRRTConnect::localControl(ob::ScopedState<
         return Maybe::Maybe<ob::PathPtr>();
     }
     
-    int num_samples = 100;
+    int num_samples = 20;
     int i=0;
 
     double start_d_to_goal = goals.distance(start);

@@ -3,7 +3,7 @@
 
 
 /* Number of iterations to run shortcut smoothing */
-#define SMOOTHING_ITERATIONS 30
+#define SMOOTHING_ITERATIONS 100
 
 /* Expected num total voxels in world in collision */
 #define UNEXPLORED_BIAS 0
@@ -31,7 +31,7 @@
 
 #define DO_PLAN true
 
-#define VOX_CONTROLLER_THRESHOLD 20
+#define VOX_CONTROLLER_THRESHOLD 50
 
 #define VIDEO_VISUALIZE true
 
