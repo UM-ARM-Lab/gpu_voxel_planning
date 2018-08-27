@@ -37,4 +37,6 @@
 
 #define EXECUTION_DELAY_us 10000
 
+#define NUM_CONTROLLER_SAMPLES 20
+
 #endif

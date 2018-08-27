@@ -41,7 +41,7 @@ TEST(GpuVoxelVictor, collisions)
     ASSERT_TRUE(victor_model.queryFreeConfiguration(sconfig)) << "Victor at initial position is in collision";
     ASSERT_TRUE(victor_model.queryFreeConfiguration(gconfig)) << "Victor at goal position is in collision";
 
-    VictorThresholdRRTConnect planner(&victor_model);
+    VictorThresholdRRTConnect planner(&victor_model, true);
 
     Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
 

@@ -4,6 +4,8 @@
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
 
+#include "victor_controller.hpp"
+
 
 #include <signal.h>
 #include <iostream>
@@ -74,6 +76,7 @@ VictorPlanner::VictorPlanner(GpuVoxelsVictor* victor_model)
     // vv_ptr = std::shared_ptr<VictorValidator>(std::make_shared<VictorValidator>(si_, victor_model));
     simp_ = std::make_shared<og::PathSimplifier>(si_);
     victor_model_ = victor_model;
+    use_chs = true;
 
 }
 
@@ -255,155 +258,18 @@ Maybe::Maybe<Path> VictorPlanner::localControlDouble(std::vector<double> start, 
 
 Maybe::Maybe<ob::PathPtr> VictorPlanner::localControl(ob::ScopedState<> start, Goals goals)
 {
-    if(vppc.get() == nullptr)
+    double cost_limit = 0.9;
+    if(use_chs)
     {
-        std::cout << "Cannot run local controller without allocated rplanner\n";
-        return Maybe::Maybe<ob::PathPtr>();
+        cost_limit = 0.9;
+    }
+    else //UCG
+    {
+        cost_limit = VOX_CONTROLLER_THRESHOLD;
     }
     
-    int num_samples = 20;
-    int i=0;
-
-    double start_d_to_goal = goals.distance(start);
-    
-    double max_motion = space->getLongestValidSegmentLength() * 5;
-
-    ob::State* test(si_->allocState());
-    ob::State* best(si_->allocState());
-    double best_ev = 0;
-    bool found_ok = false;
-
-    ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
-    vppc->setProbabilityThreshold(std::numeric_limits<double>::max());
-    double best_pcol = std::numeric_limits<double>::max();
-
-    double goal_sampled = false;
-
-    bool checking_goal_directly = false;
-    
-    // while(i < num_samples)
-    for(i=0; i<num_samples; i++)
-    {
-        checking_goal_directly = (i==0);
-        if(checking_goal_directly)// && goals.distance(start) <= max_motion*1.5)
-        {
-            si_->copyState(test, goals.get());
-            goal_sampled = true;
-        }
-        else
-        {
-            sampler_->sampleUniform(test);
-
-            //uniformly sample motion directions, not states
-            double *testv = test->as<ob::RealVectorStateSpace::StateType>()->values;
-            const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
-            for(int i=0; i<7; i++)
-            {
-                testv[i] += startv[i];
-            }
-        }
-        
-        double motion_dist = si_->distance(start.get(), test);
-
-        if(motion_dist > max_motion)
-        {
-            space->interpolate(start.get(), test, max_motion / motion_dist, test);
-        }
-
-        double progress_d = start_d_to_goal - goals.distance(test);
-        
-        if(progress_d <= 0 || progress_d <= best_ev)
-        {
-            continue;
-        }
-
-
-        std::vector<ob::State*> dpath;
-        dpath.push_back(start.get());
-        dpath.push_back(test);
-
-        size_t col_index;
-        // vppc->do_delay = true;
-        double pcol = vppc->getPathCost(dpath, col_index);
-
-        if(pcol > 0.8)
-        {
-            continue;
-        }
-
-        // double ev = (1.0 - pcol) * (progress_d);
-        double ev = (1.0 - pcol);
-        if(ev > best_ev)
-        {
-            si_->copyState(best, test);
-            best_ev = ev;
-            found_ok = true;
-            best_pcol = pcol;
-        }
-
-        // if(checking_goal_directly)
-        // {
-        //     std::cout << "Direct path towards goal has pcol " << pcol << "\n";
-        //     if(pcol < .1)
-        //     {
-        //         break;
-        //     }
-        // }
-    
-    }
-
-
-
-
-    si_->freeState(test);
-    
-    if(!found_ok)
-    {
-        return Maybe::Maybe<ob::PathPtr>();
-    }
-
-    bool debug = false;
-    if(debug = false)
-    {
-        std::vector<ob::State*> dpath;
-        dpath.push_back(start.get());
-        dpath.push_back(best);
-        
-        size_t col_index;
-        std::cout << "best pcol " << best_pcol << ", when reevaluated ";
-        std::cout << vppc->getPathCost(dpath, col_index) << "\n";
-        
-        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);        
-        std::string unused;
-        std::getline(std::cin, unused);
-
-    }
-
-    
-    if(debug && goal_sampled)
-    {
-        std::vector<ob::State*> dpath;
-        dpath.push_back(start.get());
-        dpath.push_back(best);
-        
-        size_t col_index;
-        std::cout << "best pcol " << best_pcol << ", when reevaluated ";
-        std::cout << vppc->getPathCost(dpath, col_index) << "\n";
-        std::cout << "distance from goal " << goals.distance(best) << "\n";
-        
-        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);        
-        std::string unused;
-        std::getline(std::cin, unused);
-
-    }
-
-    auto path(std::make_shared<og::PathGeometric>(si_));
-    path->append(start.get());
-    path->append(best);
-
-    return Maybe::Maybe<ob::PathPtr>(path);
-
-    
+    Controller controller(si_, space, vppc, cost_limit);
+    return controller.localControl(start, goals);
 }
 
 
@@ -602,15 +468,16 @@ void VictorRRTConnect::preparePlanner(ob::ScopedState<> start, Goals goals)
  **    Victor ThresholdRRTConnect     **
  ***************************************/
 
-VictorThresholdRRTConnect::VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model)
+VictorThresholdRRTConnect::VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model, bool chs)
     : VictorPlanner(victor_model)
 {
+    use_chs = chs;
     initializePlanner();
 }
 
 void VictorThresholdRRTConnect::initializePlanner()
 {
-    vv_ptr = std::make_shared<VictorStateThresholdValidator>(si_, victor_model_);
+    vv_ptr = std::make_shared<VictorStateThresholdValidator>(si_, victor_model_, use_chs);
     setupSpaceInformation();
 
 
@@ -619,7 +486,14 @@ void VictorThresholdRRTConnect::initializePlanner()
     crrt->setRange(0.1);
     planner_ = crrt;
     planner_->setup();
-    vppc = std::make_shared<VictorPathProbCol>(si_, victor_model_);
+    if(use_chs)
+    {
+        vppc = std::make_shared<VictorPathProbCol>(si_, victor_model_);
+    }
+    else
+    {
+        vppc = std::make_shared<VictorPathVox>(si_, victor_model_);
+    }
 }
 
 
@@ -981,6 +855,7 @@ VictorVoxCostRRTConnect::VictorVoxCostRRTConnect(GpuVoxelsVictor* victor_model)
     std::cout << "Using Voxel Cost planner\n";
     initializePlanner();
     cost_upper_bound = 400;
+    use_chs = false;
 }
 
 
@@ -998,150 +873,6 @@ void VictorVoxCostRRTConnect::initializePlanner()
     planner_->setup();
     // std::cout << "Planner max extend dist: " << mcrrt->getRange() << "\n";
 }
-
-
-
-Maybe::Maybe<ob::PathPtr> VictorVoxCostRRTConnect::localControl(ob::ScopedState<> start, Goals goals)
-{
-    std::cout << "Using vox local planner\n";
-    if(vppc.get() == nullptr)
-    {
-        std::cout << "Cannot run local controller without allocated rplanner\n";
-        return Maybe::Maybe<ob::PathPtr>();
-    }
-    
-    int num_samples = 20;
-    int i=0;
-
-    double start_d_to_goal = goals.distance(start);
-    
-    double max_motion = space->getLongestValidSegmentLength() * 5;
-
-    ob::State* test(si_->allocState());
-    ob::State* best(si_->allocState());
-    double best_ev = 0;
-    bool found_ok = false;
-
-    ob::StateSamplerPtr sampler_ = si_->allocStateSampler();
-    vppc->setProbabilityThreshold(std::numeric_limits<double>::max());
-    double best_cost = std::numeric_limits<double>::max();
-
-    double goal_sampled = false;
-
-    
-    // while(i < num_samples)
-    for(i=0; i<num_samples; i++)
-    {
-        if(i==0 && goals.distance(start) <= max_motion*1.5)
-        {
-            si_->copyState(test, goals.get());
-            goal_sampled = true;
-        }
-        else
-        {
-            sampler_->sampleUniform(test);
-
-            //uniformly sample motion directions, not states
-            double *testv = test->as<ob::RealVectorStateSpace::StateType>()->values;
-            const double *startv = start->as<ob::RealVectorStateSpace::StateType>()->values;
-            for(int i=0; i<7; i++)
-            {
-                testv[i] += startv[i];
-            }
-        }
-        
-        double motion_dist = si_->distance(start.get(), test);
-
-        if(motion_dist > max_motion)
-        {
-            space->interpolate(start.get(), test, max_motion / motion_dist, test);
-        }
-
-        double progress_d = start_d_to_goal - goals.distance(test);
-        
-        if(progress_d <= 0 || progress_d <= best_ev)
-        {
-            continue;
-        }
-
-
-        std::vector<ob::State*> dpath;
-        dpath.push_back(start.get());
-        dpath.push_back(test);
-
-        size_t col_index;
-        // vppc->do_delay = true;
-        double num_vox = vppc->getPathCost(dpath, col_index);
-
-        if(num_vox > VOX_CONTROLLER_THRESHOLD)
-        {
-            continue;
-        }
-
-        // double ev = (1.0 - pcol) * (progress_d);
-        // double ev = (1.0 - pcol);
-        if(num_vox < best_cost)
-        {
-            si_->copyState(best, test);
-            best_cost = num_vox;
-            found_ok = true;
-            // best_pcol = pcol;
-        }
-    
-    }
-
-    si_->freeState(test);
-    
-    if(!found_ok)
-    {
-        return Maybe::Maybe<ob::PathPtr>();
-    }
-
-    bool debug = false;
-    if(debug)
-    {
-        std::vector<ob::State*> dpath;
-        dpath.push_back(start.get());
-        dpath.push_back(best);
-        
-        size_t col_index;
-        std::cout << "best cost " << best_cost << ", when reevaluated ";
-        std::cout << vppc->getPathCost(dpath, col_index) << "\n";
-        
-        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);        
-        std::string unused;
-        std::getline(std::cin, unused);
-
-    }
-
-    
-    if(debug && goal_sampled)
-    {
-        std::vector<ob::State*> dpath;
-        dpath.push_back(start.get());
-        dpath.push_back(best);
-        
-        size_t col_index;
-        std::cout << "best cost " << best_cost << ", when reevaluated ";
-        std::cout << vppc->getPathCost(dpath, col_index) << "\n";
-        std::cout << "distance from goal " << goals.distance(best) << "\n";
-        
-        victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);        
-        std::string unused;
-        std::getline(std::cin, unused);
-
-    }
-
-    auto path(std::make_shared<og::PathGeometric>(si_));
-    path->append(start.get());
-    path->append(best);
-
-    return Maybe::Maybe<ob::PathPtr>(path);
-
-    
-}
-
-
 
 
 

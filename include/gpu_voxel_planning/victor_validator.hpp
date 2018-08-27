@@ -62,7 +62,7 @@ class VictorStateThresholdValidator : public VictorValidator
 {
 public:
     VictorStateThresholdValidator(const ompl::base::SpaceInformationPtr &si,
-                                  GpuVoxelsVictor* victor_model);
+                                  GpuVoxelsVictor* victor_model, bool chs);
     
     virtual bool isValid(const ompl::base::State *state) const;
     // virtual bool checkMotion(const ompl::base::State *s1, const ompl::base::State *s2,
@@ -82,6 +82,8 @@ public:
     double getColVoxelIntersects(const ompl::base::State *state) const;
     
     double threshold;
+
+    bool use_chs; //as opposed to UCG
 };
 
 

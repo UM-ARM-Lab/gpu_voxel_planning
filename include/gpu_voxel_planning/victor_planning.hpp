@@ -57,6 +57,8 @@ namespace gpu_voxels_planner
         double controller_threshold;
 
         std::string name;
+
+        bool use_chs; //as opposed to UCG
         
     protected:
 
@@ -128,7 +130,7 @@ namespace gpu_voxels_planner
     class VictorThresholdRRTConnect: public VictorPlanner
     {
     public:
-        VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model);
+        VictorThresholdRRTConnect(GpuVoxelsVictor* victor_model, bool chs);
         virtual void initializePlanner() override;
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
                                                            Goals goals) override;
@@ -168,8 +170,6 @@ namespace gpu_voxels_planner
     public:
         VictorVoxCostRRTConnect(GpuVoxelsVictor* victor_model);
         virtual void initializePlanner() override;
-        virtual Maybe::Maybe<ompl::base::PathPtr> localControl(ompl::base::ScopedState<> start,
-                                                       Goals goals) override;
     };
     
         

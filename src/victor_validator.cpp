@@ -153,10 +153,11 @@ bool VictorConservativeValidator::isValid(const ob::State *state) const
  ***************************************/
 
 VictorStateThresholdValidator::VictorStateThresholdValidator(const ompl::base::SpaceInformationPtr &si,
-                                                   GpuVoxelsVictor* victor_model):
+                                                             GpuVoxelsVictor* victor_model, bool chs):
     VictorValidator(si, victor_model)
 {
     threshold = 1.0;
+    use_chs = chs;
 }
 
 
@@ -226,8 +227,13 @@ bool VictorStateThresholdValidator::isValid(const ob::State *state) const
         return false;
     }
     // std::cout << "\n\n\n\n!!!!!!!!!!!11 Validity Check Called !!!!+!!!!\n";
-    bool valid = getCollisionProb(state) < threshold;
-    // bool valid = getColVoxelIntersects(state) < threshold;
+    bool valid;
+    if(use_chs)
+        valid = getCollisionProb(state) < threshold;
+    else
+    {
+        valid = getColVoxelIntersects(state) < threshold;
+    }
     // std::cout << "Validity Check Called " << valid << "\n";
     return valid;
 }
@@ -275,16 +281,20 @@ double VictorStateThresholdValidator::getPathMaxColProb(og::PathGeometric *path)
 
 double VictorStateThresholdValidator::getPathCost(og::PathGeometric *path) const
 {
-    return getPathMaxColProb(path);
-    // std::vector<ob::State*> states = path->getStates();
-    // double max_cost = 0.0;
-    // for(size_t i = 0; i < states.size(); i++)
-    // {
-    //     double scost = getColVoxelIntersects(states[i]);
-    //     max_cost = std::max(max_cost, scost);
+    if(use_chs)
+    {
+        return getPathMaxColProb(path);
+    }
+    
+    std::vector<ob::State*> states = path->getStates();
+    double max_cost = 0.0;
+    for(size_t i = 0; i < states.size(); i++)
+    {
+        double scost = getColVoxelIntersects(states[i]);
+        max_cost = std::max(max_cost, scost);
 
-    // }
-    // return max_cost;
+    }
+    return max_cost;
 }
 
 

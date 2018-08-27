@@ -188,15 +188,23 @@ add_library(victor_validator src/victor_validator.cpp)
 target_link_libraries(victor_validator
   victor_model)
 
+add_library(victor_controller src/victor_controller.cpp)
+target_link_libraries(victor_controller
+  victor_validator
+  )
+
+
 add_library(victor_planning src/victor_planning.cpp)
 target_link_libraries(victor_planning
   victor_validator
+  victor_controller
   victor_model
   ${EXTERN_LIBS}
   lazyrrtf
   crrtc
   costrrtc
   )
+
 
 add_executable(wip_victor_sim src/wip_victor_sim.cpp)
 target_link_libraries(wip_victor_sim

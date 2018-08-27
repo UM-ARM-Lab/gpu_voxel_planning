@@ -66,7 +66,7 @@ TEST(GpuVoxelVictor, collisions)
 
     VictorValidator vv = VictorValidator(si_, &victor_model);
     VictorConservativeValidator vv_cons = VictorConservativeValidator(si_, &victor_model);
-    VictorStateThresholdValidator vv_thresh = VictorStateThresholdValidator(si_, &victor_model);
+    VictorStateThresholdValidator vv_thresh = VictorStateThresholdValidator(si_, &victor_model, true);
 
     EXPECT_TRUE(vv.isValid(test)) << "Basic validator failed unexpectedly";
     EXPECT_TRUE(!vv_cons.isValid(test)) << "Conservative validator does not report collision";
