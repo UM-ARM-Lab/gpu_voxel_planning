@@ -281,8 +281,14 @@ int main(int argc, char* argv[])
 
     
 
-    std::vector<double> start = {-0.01, 1.426, -1.463, -0.752, -1.313, -1.002, 2.145};
-    std::vector<double> goal_1 = {-1.295, 1.39, -0.34, 0.043, -0.354, -1.124, 2.255};
+    // Moved Table Trials
+    std::vector<double> start = {-1.544, 1.028, -0.49, -0.435, 0.183, 0.665, -1.168};
+    std::vector<double> goal_1 = {-0.183, 0.508, 0.15, -1.552, -0.358, 0.659, -1.763};
+
+    
+    // Narrow passage trials
+    // std::vector<double> start = {-0.01, 1.426, -1.463, -0.752, -1.313, -1.002, 2.145};
+    // std::vector<double> goal_1 = {-1.295, 1.39, -0.34, 0.043, -0.354, -1.124, 2.255};
     // std::vector<double> goal_2 = {-0.531, 0.749, -0.628, -0.609, -1.705, -1.074, -0.002};
     // std::vector<double> goal_3 = {-0.452, 0.737, -0.633, -0.622, -1.796, -1.055, 0.01};
     // std::vector<double> goal_4 = {-0.326, 0.688, -0.642, -0.696, -1.94, -1.034, 0.094};

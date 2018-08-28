@@ -648,7 +648,7 @@ void RealWorld::loadPointCloudFromFile()
 
 
         //no point cloud
-        continue;
+        // continue;
         
         points.push_back(p);
     }
