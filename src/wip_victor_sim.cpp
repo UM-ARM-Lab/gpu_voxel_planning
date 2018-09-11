@@ -162,7 +162,24 @@ void wip_SamplingRRTConnect(SimWorld* sim_world)
 
         }
     }
+}
 
+void wip_Diverse(SimWorld* sim_world)
+{
+    GpuVoxelsVictor& vm = sim_world->victor_model;
+    std::string unused;
+    std::cout << "Waiting for user input to start...\n";
+    std::getline(std::cin, unused);
+    robot::JointValueMap gconfig = sim_world->goal_config;
+
+    DiversePlanner planner(&vm);
+    bool reached_goal = false;
+    while(!reached_goal)
+    {
+        robot::JointValueMap sconfig = vm.cur_config;
+        Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
+        reached_goal = sim_world->attemptPath(path.Get());
+    }
 }
 
 
@@ -171,12 +188,13 @@ int main(int argc, char* argv[])
     
     icl_core::logging::initialize(argc, argv);
 
-    // g_sim_world = new SimEmptyTable;
-    g_sim_world = new SimWall;
+    g_sim_world = new SimTable;
+    // g_sim_world = new SimWall;
     signal(SIGINT, ctrlchandler);
     signal(SIGTERM, killhandler);
 
-    wip_SamplingRRTConnect(g_sim_world);
+    // wip_SamplingRRTConnect(g_sim_world);
+    wip_Diverse(g_sim_world);
 
 
     // std::string unused;

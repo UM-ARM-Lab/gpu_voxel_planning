@@ -11,7 +11,7 @@
 /* Max planning time in seconds */
 #define PLANNING_TIMEOUT 30
 
-#define USE_KNOWN_OBSTACLES false
+#define USE_KNOWN_OBSTACLES true
 
 #define MAKE_TABLE true
 
@@ -39,7 +39,7 @@
 
 #define EXECUTION_DELAY_us 50000
 
-#define REAL_ROBOT true
+#define REAL_ROBOT false
 
 #define ALLOWED_KNOWN_OBSTACLES 0
 

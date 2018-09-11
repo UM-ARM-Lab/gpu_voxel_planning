@@ -1,0 +1,1800 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+If the color is not specified by a word, the RGBA-values will be used instead.
+The RGBA-values should be between 0 and 1.
+Currently supported colors are: black, white, red, green, blue, gray, yellow, cyan, magenta
+To get a darker version of the color add "dark" infront of the name
+(e.g. dark blue), that doesn't work with black or white.
+-->
+
+<visualizer_context>
+<background>
+  <rgba>
+    <r> .9 </r>
+    <g> .9 </g>
+    <b> .9 </b>
+  </rgba>
+</background>
+
+<sampled_world_map>
+  <all_types>
+    <rgba>
+      <r> 0.1 </r>
+      <g> 0.1 </g>
+      <b> 0.1 </b>
+    </rgba>
+    
+  </all_types>
+</sampled_world_map>
+
+<known_obstacles_map>
+  <!-- only voxels with an occupancy >= occupancy_threshold will be drawn. Has to be in the range of 1 to 255 -->
+  <occupancy_threshold> 1 </occupancy_threshold>
+
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+
+  <all_types>
+    <rgba>
+      <r> 0.1 </r>
+      <g> 0.1 </g>
+      <b> 0.1 </b>
+    </rgba>
+    
+  </all_types>
+</known_obstacles_map>
+
+
+
+
+<!--  The parameter for the voxel map 0 -->
+<victor_actual_map>
+  <!-- only voxels with an occupancy >= occupancy_threshold will be drawn. Has to be in the range of 1 to 255 -->
+  <occupancy_threshold> 1 </occupancy_threshold>
+
+  <all_types>
+    <rgba>
+      <r> 0.0 </r>
+      <g> .7 </g>
+      <b> 0.0 </b>
+    </rgba>
+    
+  </all_types>
+</victor_actual_map>
+
+
+
+
+<victor_path_solutions_map>
+</victor_path_solutions_map>
+  
+
+
+<!-- ============- The parameter for the voxel map 1====== -->
+
+<sim_obstacles_map>
+  <occupancy_threshold> 255 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 0.7 </r>
+      <g> 0.7 </g>
+      <b> 0.7 </b>
+    </rgba>
+    
+  </all_types>
+</sim_obstacles_map>
+
+<chs>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs>
+
+
+
+
+
+
+
+<!-- =============== The parameter for camera============ -->
+<camera>
+  <position>
+    <x> 200.681 </x>
+    <y> 24.225 </y>
+    <z> 50.993 </z>
+  </position>
+  <focus>
+    <x> 50 </x>
+    <y> 50 </y>
+    <z> 50 </z>
+  </focus>
+  <horizontal_angle> 186.993 </horizontal_angle> <!-- given in Deg -->
+  <vertical_angle> -9.50091 </vertical_angle> <!-- given in Deg -->
+  <field_of_view> 60 </field_of_view> <!-- given in Deg -->
+  <window_width> 1024 </window_width>
+  <window_height> 768 </window_height>
+</camera>
+
+<!-- =============== some miscellaneous parameter============ -->
+<miscellaneous>
+  <interpolation_repeat> 500 </interpolation_repeat>   <!-- interpolation color repeats after x voxels -->
+  <min_view_dim> 200 </min_view_dim>
+  <min_xyz_value>   <!--minimal x,y,z value that will be drawn. Input will be treated as unsigned integer-->
+    <x> 0 </x>
+    <y> 0 </y>
+    <z> 0 </z>
+  </min_xyz_value>
+  <max_xyz_value>    <!--exclusive upper x,y,z boundary. Input will be treated as unsigned integer-->
+    <x> -1 </x>
+    <y> -1 </y>
+    <z> -1 </z>
+  </max_xyz_value>
+  <max_memory_usage> 0 </max_memory_usage>  <!--In MByte, 0 <=> no limit -->
+  <max_fps> 60 </max_fps>  <!--0 <=> no limit -->
+  <draw_edges_of_triangles> true </draw_edges_of_triangles>
+  <draw_filled_triangles> true </draw_filled_triangles>
+  <draw_whole_map> true </draw_whole_map> <!-- disables the view cutting -->
+  <grid_distance> 25 </grid_distance> <!-- the distance between two grid lines -->
+  <grid_height> 0 </grid_height> <!-- the height where the grid will be drawn -->
+  <grid_max_x> 199 </grid_max_x> <!-- the x dimension of the grid -->
+  <grid_max_y> 199 </grid_max_y> <!-- the y dimension of the grid -->
+  <grid_color> black </grid_color>
+  <unit_scale> 1 cm </unit_scale>
+</miscellaneous>
+
+<!-- =============== the parameters for the cubeoid of the primitive list============ -->
+<defaultCuboid>
+  cyan
+  <position>
+    <x> 0 </x>
+    <y> 0 </y>
+    <z> 0 </z>
+  </position>
+  <side_length>
+    <x> 1 </x>
+    <y> 1 </y>
+    <z> 1 </z>
+  </side_length>
+</defaultCuboid>
+
+<!-- =============== example to insert one cuboid/sphere into the szene============ -->
+<!--
+    <cuboid>
+    cyan
+    <position>
+    <x> 0 </x>
+    <y> 20 </y>
+    <z> 0 </z>
+    </position>
+    <side_length>
+    <x> -100 </x>
+    <y> 20 </y>
+    <z> 1 </z>
+    </side_length>
+    </cuboid>
+-->
+
+
+<chs_0>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_0>
+
+<chs_1>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_1>
+
+<chs_2>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_2>
+
+<chs_3>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_3>
+
+<chs_4>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_4>
+
+<chs_5>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_5>
+
+<chs_6>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_6>
+
+<chs_7>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_7>
+
+<chs_8>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_8>
+
+<chs_9>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_9>
+
+<chs_10>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_10>
+
+<chs_11>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_11>
+
+<chs_12>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_12>
+
+<chs_13>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_13>
+
+<chs_14>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_14>
+
+<chs_15>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_15>
+
+<chs_16>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_16>
+
+<chs_17>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_17>
+
+<chs_18>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_18>
+
+<chs_19>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_19>
+
+<chs_20>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_20>
+
+<chs_21>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_21>
+
+<chs_22>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_22>
+
+<chs_23>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_23>
+
+<chs_24>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_24>
+
+<chs_25>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_25>
+
+<chs_26>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_26>
+
+<chs_27>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_27>
+
+<chs_28>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_28>
+
+<chs_29>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_29>
+
+<chs_30>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_30>
+
+<chs_31>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_31>
+
+<chs_32>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_32>
+
+<chs_33>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_33>
+
+<chs_34>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_34>
+
+<chs_35>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_35>
+
+<chs_36>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_36>
+
+<chs_37>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_37>
+
+<chs_38>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_38>
+
+<chs_39>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_39>
+
+<chs_40>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_40>
+
+<chs_41>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_41>
+
+<chs_42>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_42>
+
+<chs_43>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_43>
+
+<chs_44>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_44>
+
+<chs_45>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_45>
+
+<chs_46>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_46>
+
+<chs_47>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_47>
+
+<chs_48>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_48>
+
+<chs_49>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_49>
+
+<chs_50>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_50>
+
+<chs_51>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_51>
+
+<chs_52>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_52>
+
+<chs_53>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_53>
+
+<chs_54>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_54>
+
+<chs_55>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_55>
+
+<chs_56>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_56>
+
+<chs_57>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_57>
+
+<chs_58>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_58>
+
+<chs_59>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_59>
+
+<chs_60>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_60>
+
+<chs_61>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_61>
+
+<chs_62>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_62>
+
+<chs_63>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_63>
+
+<chs_64>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_64>
+
+<chs_65>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_65>
+
+<chs_66>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_66>
+
+<chs_67>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_67>
+
+<chs_68>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_68>
+
+<chs_69>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_69>
+
+<chs_70>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_70>
+
+<chs_71>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_71>
+
+<chs_72>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_72>
+
+<chs_73>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_73>
+
+<chs_74>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_74>
+
+<chs_75>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_75>
+
+<chs_76>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_76>
+
+<chs_77>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_77>
+
+<chs_78>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_78>
+
+<chs_79>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_79>
+
+<chs_80>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_80>
+
+<chs_81>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_81>
+
+<chs_82>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_82>
+
+<chs_83>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_83>
+
+<chs_84>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_84>
+
+<chs_85>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_85>
+
+<chs_86>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_86>
+
+<chs_87>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_87>
+
+<chs_88>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_88>
+
+<chs_89>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_89>
+
+<chs_90>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_90>
+
+<chs_91>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_91>
+
+<chs_92>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_92>
+
+<chs_93>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_93>
+
+<chs_94>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_94>
+
+<chs_95>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_95>
+
+<chs_96>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_96>
+
+<chs_97>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_97>
+
+<chs_98>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_98>
+
+<chs_99>
+  <occupancy_threshold> 1 </occupancy_threshold>
+  <offset>
+    <x>10000 </x>
+    <y>10000 </y>
+    <z>10000 </z>
+  </offset>
+  <all_types>
+    <rgba>
+      <r> 1.0 </r>
+      <g> 0.3 </g>
+      <b> 0.3 </b>
+    </rgba>
+  </all_types>
+</chs_99>
+
+
+
+</visualizer_context>
+
+
+
+
+

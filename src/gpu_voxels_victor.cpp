@@ -118,6 +118,7 @@ GpuVoxelsVictor::GpuVoxelsVictor():
     }
     gvl->visualizeMap(VICTOR_ACTUAL_MAP);
     gvl->visualizeMap(VICTOR_PATH_SOLUTION_MAP);
+    gvl->visualizeMap(SAMPLED_WORLD_MAP);
 
     if(VIDEO_VISUALIZE)
     {
@@ -363,6 +364,7 @@ void GpuVoxelsVictor::sampleValidWorld()
     {
         copyOneOccupiedRandom(COLLISION_HYPOTHESIS_SETS[i], SAMPLED_WORLD_MAP);
     }
+    getMap(SAMPLED_WORLD_MAP)->add(getMap(KNOWN_OBSTACLES_MAP));
 }
 
 

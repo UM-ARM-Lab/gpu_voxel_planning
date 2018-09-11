@@ -867,11 +867,13 @@ bool DiversePlanner::sampleBlockingWorld(std::vector<ompl::base::PathPtr> paths)
     {
         victor_model_->sampleValidWorld();
         i++;
-        if(i>100)
+        if(i>500)
         {
+            std::cout << "Could not sample a blocking world\n";
             return false;
         }
     }
+    std::cout << "Sampled a blocking world after " << i << "\n";
     return true;
 }
 
@@ -914,7 +916,12 @@ Maybe::Maybe<ob::PathPtr> DiversePlanner::planPath(ompl::base::ScopedState<> sta
 
     for(int i=0; i < num_paths; i++)
     {
-        victor_model_->sampleValidWorld();
+        // victor_model_->sampleValidWorld();
+        if(!sampleBlockingWorld(paths)){
+            break;
+        }
+        victor_model_->gvl->visualizeMap(SAMPLED_WORLD_MAP);
+            
         // auto maybe_path = VictorPlanner::planPath(start, goals);
         auto maybe_path = planSinglePathInSampledWorld(start, goals);
         
