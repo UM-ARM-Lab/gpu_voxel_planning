@@ -158,6 +158,29 @@ namespace gpu_voxels_planner
 
     };
 
+    
+    class DiversePlanner: public VictorPlanner
+    {
+    public:
+        DiversePlanner(GpuVoxelsVictor* victor_model);
+        virtual void initializePlanner() override;
+
+        virtual void preparePlanner(ompl::base::ScopedState<> start,
+                                     Goals goals) override;
+        virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
+                                                           Goals goals) override;
+
+        bool sampleBlockingWorld(std::vector<ompl::base::PathPtr> paths);
+
+        bool isPathSetValid(std::vector<ompl::base::PathPtr> paths);
+
+        
+    protected:
+        std::shared_ptr<VictorPathProbCol> path_prob_validator;
+        std::shared_ptr<VictorSampledWorldValidator> vv_sampled_world_ptr;
+
+    };
+
 
     
     class VictorThresholdRRTConnect: public VictorPlanner

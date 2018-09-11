@@ -831,6 +831,106 @@ void VictorRRTConnect::preparePlanner(ob::ScopedState<> start, Goals goals)
 
 
 /*************************************
+ **         DiversePlanner         **
+ ************************************/
+DiversePlanner::DiversePlanner(GpuVoxelsVictor* victor_model)
+    : VictorPlanner(victor_model)
+{
+    initializePlanner();
+}
+
+void DiversePlanner::initializePlanner()
+{
+    vv_sampled_world_ptr = std::make_shared<VictorSampledWorldValidator>(si_, victor_model_);
+    vv_ptr = vv_sampled_world_ptr;
+    setupSpaceInformation();
+    path_prob_validator = std::make_shared<VictorPathProbCol>(si_, victor_model_);
+
+    planner_ = std::make_shared<og::RRTConnect>(si_);
+    planner_->setup();
+}
+
+void DiversePlanner::preparePlanner(ob::ScopedState<> start, Goals goals)
+{
+    planner_->clear();
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
+    pdef_->setStartAndGoalStates(start, goals);
+
+    planner_->setProblemDefinition(pdef_);
+}
+
+bool DiversePlanner::sampleBlockingWorld(std::vector<ompl::base::PathPtr> paths)
+{
+    victor_model_->sampleValidWorld();
+}
+
+bool DiversePlanner::isPathSetValid(std::vector<ompl::base::PathPtr> paths)
+{
+    for(auto& path: paths)
+    {
+        if(vv_sampled_world_ptr->isPathValid(path->as<og::PathGeometric>()->getStates()))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+Maybe::Maybe<ob::PathPtr> DiversePlanner::planPath(ompl::base::ScopedState<> start,
+                                                             Goals goals)
+{
+    int num_paths = 10;
+
+    std::cout << "Using Sampling planner\n";
+    std::vector<ob::PathPtr> paths;
+    std::vector<double> path_costs;
+
+    for(int i=0; i < num_paths; i++)
+    {
+        victor_model_->sampleValidWorld();
+        auto maybe_path = VictorPlanner::planPath(start, goals);
+        if(maybe_path.Valid())
+        {
+            paths.push_back(maybe_path.Get());
+            size_t col_index;
+            path_costs.push_back(path_prob_validator->getPathCost(
+                                     maybe_path.Get()->as<og::PathGeometric>()->getStates(),
+                                     col_index));
+            
+            victor_model_->visPath(omplPathToDoublePath(maybe_path.Get()->as<og::PathGeometric>(),
+                                       si_));
+            
+            // std::string unused;
+            // std::cout << "Waiting for user input to start...\n";
+            // std::getline(std::cin, unused);
+        }
+
+    }
+
+    victor_model_->hidePath();
+
+    size_t best_ind = std::distance(path_costs.begin(),
+                                    std::min_element(path_costs.begin(), path_costs.end()));
+    std::cout << "Path costs: \n";
+    for(auto cost: path_costs)
+    {
+        std::cout << cost << "\n";
+    }
+    std::cout << "best cost is in ind: " << best_ind << "\n";
+    
+    if(paths.size() > 0)
+    {
+        return Maybe::Maybe<ob::PathPtr>(paths[best_ind]);
+    }
+    return Maybe::Maybe<ob::PathPtr>();
+}
+
+
+
+
+
+
+/*************************************
  **  Victor SamplingRRTConnect      **
  ************************************/
 VictorSamplingRRTConnect::VictorSamplingRRTConnect(GpuVoxelsVictor* victor_model)

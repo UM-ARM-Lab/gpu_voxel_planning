@@ -56,6 +56,7 @@ public:
     virtual bool isValid(const ompl::base::State *state) const;
 };
 
+
 class VictorSampledWorldValidator : public VictorValidator
 {
 public:
@@ -63,6 +64,8 @@ public:
                                 GpuVoxelsVictor* victor_model);
 
     virtual bool isValid(const ompl::base::State *state) const;
+
+    bool isPathValid(const std::vector<ompl::base::State*>& states) const;
 };
 
 

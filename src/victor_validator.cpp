@@ -188,6 +188,19 @@ bool VictorSampledWorldValidator::isValid(const ob::State *state) const
 }
 
 
+bool VictorSampledWorldValidator::isPathValid(const std::vector<ompl::base::State*>& states) const
+{
+    for(auto & state: states)
+    {
+        if(!isValid(state))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 
 
 /****************************************
