@@ -167,6 +167,9 @@ namespace gpu_voxels_planner
 
         virtual void preparePlanner(ompl::base::ScopedState<> start,
                                      Goals goals) override;
+
+        Maybe::Maybe<ompl::base::PathPtr> planSinglePathInSampledWorld(ompl::base::ScopedState<> start, Goals goals);
+
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
                                                            Goals goals) override;
 

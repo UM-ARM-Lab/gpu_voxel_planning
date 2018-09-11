@@ -862,6 +862,17 @@ void DiversePlanner::preparePlanner(ob::ScopedState<> start, Goals goals)
 bool DiversePlanner::sampleBlockingWorld(std::vector<ompl::base::PathPtr> paths)
 {
     victor_model_->sampleValidWorld();
+    int i=0;
+    while(isPathSetValid(paths))
+    {
+        victor_model_->sampleValidWorld();
+        i++;
+        if(i>100)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool DiversePlanner::isPathSetValid(std::vector<ompl::base::PathPtr> paths)
@@ -876,8 +887,24 @@ bool DiversePlanner::isPathSetValid(std::vector<ompl::base::PathPtr> paths)
     return false;
 }
 
+Maybe::Maybe<ob::PathPtr> DiversePlanner::planSinglePathInSampledWorld(ob::ScopedState<> start,
+                                                                       Goals goals)
+{
+    preparePlanner(start, goals);
+    ob::PlannerStatus solved = planner_->solve(5);
+    if(!solved)
+    {
+        return Maybe::Maybe<ob::PathPtr>();
+    }
+
+    ob::PathPtr path = pdef_->getSolutionPath();
+    simp_->shortcutPath(*(path->as<og::PathGeometric>()), 200, 200);
+    return Maybe::Maybe<ob::PathPtr>(path);
+
+}
+
 Maybe::Maybe<ob::PathPtr> DiversePlanner::planPath(ompl::base::ScopedState<> start,
-                                                             Goals goals)
+                                                   Goals goals)
 {
     int num_paths = 10;
 
@@ -888,7 +915,9 @@ Maybe::Maybe<ob::PathPtr> DiversePlanner::planPath(ompl::base::ScopedState<> sta
     for(int i=0; i < num_paths; i++)
     {
         victor_model_->sampleValidWorld();
-        auto maybe_path = VictorPlanner::planPath(start, goals);
+        // auto maybe_path = VictorPlanner::planPath(start, goals);
+        auto maybe_path = planSinglePathInSampledWorld(start, goals);
+        
         if(maybe_path.Valid())
         {
             paths.push_back(maybe_path.Get());
