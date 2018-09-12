@@ -60,7 +60,7 @@ TEST(GpuVoxelVictor, collisions)
     // std::cin >> dummy;
 }
 
-TEST(GpuVoxelVictor, copyOneOccupiedRandom)
+TEST(GpuVoxelVictor, copyRandom)
 {
     GpuVoxelsVictor victor_model;
     std::string map1 = ENV_MAP;
@@ -77,13 +77,13 @@ TEST(GpuVoxelVictor, copyOneOccupiedRandom)
     EXPECT_TRUE(map1_num_occupied > 0);
     EXPECT_EQ(0, victor_model.countVoxels(map2));
     
-    victor_model.copyOneOccupiedRandom(map1, map2);
+    victor_model.copyRandom(map1, map2);
 
     EXPECT_EQ(1, victor_model.countIntersect(map1, map2));
     EXPECT_EQ(1, victor_model.countVoxels(map2));
     EXPECT_EQ(map1_num_occupied, victor_model.countVoxels(map1));
 
-    victor_model.copyOneOccupiedRandom(map1, map3);
+    victor_model.copyRandom(map1, map3);
     EXPECT_EQ(1, victor_model.countIntersect(map1, map3));
     EXPECT_EQ(1, victor_model.countVoxels(map3));
     EXPECT_EQ(map1_num_occupied, victor_model.countVoxels(map1));

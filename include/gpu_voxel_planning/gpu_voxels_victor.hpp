@@ -113,7 +113,7 @@ public:
 
     size_t countVoxels(const std::string& map_name);
 
-    void copyOneOccupiedRandom(const std::string &map1, const std::string &map2);
+    void copyRandom(const std::string &map1, const std::string &map2, int n=1);
 
     void sampleValidWorld();
     

@@ -893,7 +893,7 @@ Maybe::Maybe<ob::PathPtr> DiversePlanner::planSinglePathInSampledWorld(ob::Scope
                                                                        Goals goals)
 {
     preparePlanner(start, goals);
-    ob::PlannerStatus solved = planner_->solve(5);
+    ob::PlannerStatus solved = planner_->solve(10);
     if(!solved)
     {
         return Maybe::Maybe<ob::PathPtr>();
@@ -914,12 +914,19 @@ Maybe::Maybe<ob::PathPtr> DiversePlanner::planPath(ompl::base::ScopedState<> sta
     std::vector<ob::PathPtr> paths;
     std::vector<double> path_costs;
 
-    for(int i=0; i < num_paths; i++)
+    arc_utilities::Stopwatch stopwatch;
+    double planning_time = PLANNING_TIMEOUT;
+    // double planning_time = 120;
+
+
+    // for(int i=0; i < num_paths; i++)
+    while(stopwatch() < planning_time && paths.size() < num_paths)
     {
         // victor_model_->sampleValidWorld();
         if(!sampleBlockingWorld(paths)){
             break;
         }
+        victor_model_->hidePath();
         victor_model_->gvl->visualizeMap(SAMPLED_WORLD_MAP);
             
         // auto maybe_path = VictorPlanner::planPath(start, goals);
@@ -940,6 +947,10 @@ Maybe::Maybe<ob::PathPtr> DiversePlanner::planPath(ompl::base::ScopedState<> sta
             // std::cout << "Waiting for user input to start...\n";
             // std::getline(std::cin, unused);
         }
+        else
+        {
+            std::cout << "No path found\n";
+        }
 
     }
 
@@ -958,6 +969,7 @@ Maybe::Maybe<ob::PathPtr> DiversePlanner::planPath(ompl::base::ScopedState<> sta
     {
         return Maybe::Maybe<ob::PathPtr>(paths[best_ind]);
     }
+    std::cout << "Path set is empty\n";
     return Maybe::Maybe<ob::PathPtr>();
 }
 

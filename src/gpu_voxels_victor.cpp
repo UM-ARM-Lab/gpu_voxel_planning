@@ -102,7 +102,6 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
     gvl->addRobot(VICTOR_ROBOT_STATIONARY, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf", false);
 
-
     
     COLLISION_HYPOTHESIS_SETS.resize(NUM_SETS);
     HCHS.resize(NUM_SETS);
@@ -346,15 +345,18 @@ void GpuVoxelsVictor::addCHSToMap(const Path &path,
     removeSweptVolume(map);
 }
 
-void GpuVoxelsVictor::copyOneOccupiedRandom(const std::string &map1, const std::string &map2)
+void GpuVoxelsVictor::copyRandom(const std::string &map1, const std::string &map2, int n)
 {
     size_t map1_occupied = countVoxels(map1);
     std::mt19937 generator;
     generator.seed(std::random_device()());
     std::uniform_int_distribution<unsigned long> dist(0, map1_occupied);
-    unsigned long rand_index = dist(generator);
 
-    getMap(map1)->copyIthOccupied(getMap(map2), rand_index);
+    for(int i=0; i<n; i++)
+    {
+        unsigned long rand_index = dist(generator);
+        getMap(map1)->copyIthOccupied(getMap(map2), rand_index);
+    }
 }
 
 void GpuVoxelsVictor::sampleValidWorld()
@@ -362,9 +364,16 @@ void GpuVoxelsVictor::sampleValidWorld()
     gvl->clearMap(SAMPLED_WORLD_MAP);
     for(int i=0; i<num_observed_chs; i++)
     {
-        copyOneOccupiedRandom(COLLISION_HYPOTHESIS_SETS[i], SAMPLED_WORLD_MAP);
+        copyRandom(COLLISION_HYPOTHESIS_SETS[i], SAMPLED_WORLD_MAP, 1);
     }
+
+    
+    gvl->clearMap(TMP_MAP);
+    getMap(SAMPLED_WORLD_MAP)->dialate(getMap(TMP_MAP), 1);
+    getMap(SAMPLED_WORLD_MAP)->copy(getMap(TMP_MAP));
+
     getMap(SAMPLED_WORLD_MAP)->add(getMap(KNOWN_OBSTACLES_MAP));
+    removeSweptVolume(SAMPLED_WORLD_MAP);
 }
 
 
