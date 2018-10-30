@@ -173,7 +173,8 @@ namespace gpu_voxels_planner
         virtual Maybe::Maybe<ompl::base::PathPtr> planPath(ompl::base::ScopedState<> start,
                                                            Goals goals) override;
 
-        bool sampleBlockingWorld(std::vector<ompl::base::PathPtr> paths);
+        bool sampleBlockingWorld(std::vector<ompl::base::PathPtr> paths, double time_allowed);
+        
 
         bool isPathSetValid(std::vector<ompl::base::PathPtr> paths);
 

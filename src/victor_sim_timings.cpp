@@ -2,6 +2,7 @@
 #include "worlds.hpp"
 #include "victor_planning.hpp"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
+#include <arc_utilities/arc_helpers.hpp>
 #include <csignal>
 #include <vector>
 #include <cmath>
@@ -90,7 +91,7 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
     
 
     arc_utilities::Stopwatch stopwatch;
-    double timeout = 60* 15; //seconds;
+    double timeout = 60* 5; //seconds;
     // double timeout = 30; //seconds;
     double num_planner_iterations;
     PROFILE_START(planner.name + " planner iters");
@@ -125,24 +126,18 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
 
         if(DO_PLAN)
         {
+            std::cout << "Attemting to plan\n";
             num_planner_iterations ++;
             PROFILE_START(planner.name + " plan");
             Optpath maybe_path = planner.planPathConfig(sim_world->victor_model.cur_config,
                                                         goal_config);
             PROFILE_RECORD(planner.name + " plan");
-            if(!maybe_path.Valid())
-            {
-                std::cout << "Path planning failed\n";
-                return false;
-            }
 
-            if(PLAN_ONLY)
-            {
-                reached_goal = true;
-                break;
-            }
             PROFILE_START(planner.name + " execute");
-            reached_goal = sim_world->attemptPath(maybe_path.Get());
+            if(maybe_path.Valid())
+            {
+                reached_goal = sim_world->attemptPath(maybe_path.Get());
+            }
             PROFILE_RECORD(planner.name + " execute");
         }
 
@@ -171,9 +166,6 @@ bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
             }
 
         }
-
-        
-        break;
 
     }
 
@@ -208,37 +200,20 @@ void setupWorld()
         sim_world->victor_model.gvl.reset();
     }
 
-    sim_world = std::make_shared<SimWorld>();
-    sim_world->initializeObstacles();
+    sim_world = std::make_shared<SimTable>();
+    // sim_world->initializeObstacles();
 }
 
 
 void runTest(VictorPlanner &planner)
 {
 
-    std::vector<double> start = {0, 0, 0, 0, 0.00, 0.00, 0.00};
-    std::vector<double> goal = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
-    if(TABLE_WORLD)
-    {
-        start = std::vector<double>{0.3, 1.0, 0, -0.5, 0.00, 1.00, 0.00};
-        goal = std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
-    }
-    else if(PEG_IN_HOLE)
-    {
-        goal = std::vector<double>{-0.15, 0.52, 0.0, -0.72, 0.0, 1.0, -2.5};
-    } else if(MAKE_SLOTTED_WALL)
-    {
-        start = std::vector<double>{1, -1.5, 1.5,    0.5,   0, 0.9,   0};
-        goal = std::vector<double>{ 0, 0.32, 0.0, -1.32, -0.2, 0.9, 0.3};
-    }
-
-
-    
-    sim_world->victor_model.updateActual(sim_world->victor_model.toVictorConfig(start.data()));
-    std::string unused;
-    std::getline(std::cin, unused);
+    robot::JointValueMap gconfig = sim_world->goal_config;
+    std::vector<double> goal = sim_world->victor_model.toValues(gconfig);
 
     PROFILE_START(planner.name);
+    std::string unused;
+    std::getline(std::cin, unused);
     attemptGoal(planner, goal);
     PROFILE_RECORD(planner.name);
     setupWorld();
@@ -310,6 +285,14 @@ void runTest_ProbRRTStar()
     runTest(planner);
 }
 
+void runTest_Diverse()
+{
+    std::cout << "\n\nDiverse test\n\n\n";
+    DiversePlanner planner(&(sim_world->victor_model));
+    planner.name = "DiversePlanner";
+    runTest(planner);
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -331,9 +314,10 @@ int main(int argc, char* argv[])
     {
         std::cout << "\n\n\n\n!!!!!!!!!!!!!!\nTrial " << i + 1<< " of " << num_trials << "!!!!!!!!!!!!!\n\n\n\n\n";
 
+        runTest_Diverse();
         // runTest_ProbThresholdRRTConnect();
         // runTest_VoxThresholdRRTConnect();
-        runTest_ProbColCostRRTConnect();
+        // runTest_ProbColCostRRTConnect();
         // runTest_VoxCostRRTConnect();
         // runTest_PlanUpProbColCostRRTConnect();
         // runTest_PlanUpVoxCostRRTConnect();
@@ -342,8 +326,10 @@ int main(int argc, char* argv[])
     
 
 
-    PROFILE_WRITE_SUMMARY_FOR_ALL("victor_sim_times.txt");
-    PROFILE_WRITE_ALL_FEWER_THAN("victor_sim_times.txt", 10000);
+    std::string filename = "victor_sim_times_" + arc_helpers::GetCurrentTimeAsString();
+    // PROFILE_WRITE_SUMMARY_FOR_ALL("victor_sim_times.txt");
+    PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
+    PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
     std::cout << "\n\n\n\n\n\nWrote summary!!\n\n\n\n\n\n";
 
     

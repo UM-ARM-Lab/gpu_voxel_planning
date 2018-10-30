@@ -373,7 +373,10 @@ void GpuVoxelsVictor::sampleValidWorld()
     getMap(SAMPLED_WORLD_MAP)->copy(getMap(TMP_MAP));
 
     getMap(SAMPLED_WORLD_MAP)->add(getMap(KNOWN_OBSTACLES_MAP));
+    getMap(SAMPLED_WORLD_MAP)->dialate(getMap(TMP_MAP), 1);
+    getMap(SAMPLED_WORLD_MAP)->add(getMap(TMP_MAP));
     removeSweptVolume(SAMPLED_WORLD_MAP);
+        
 }
 
 

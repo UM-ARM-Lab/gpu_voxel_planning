@@ -53,12 +53,12 @@ void SimWorld::initializeVictor()
     gvl->insertRobotIntoMap(VICTOR_ROBOT_STATIONARY, SIM_OBSTACLES_MAP, PROB_OCCUPIED);
     
     VictorConfig right_gripper_config;
-    right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 0;
-    right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 0;
-    right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 0;
-    // right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
-    // right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
-    // right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
+    // right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 0;
+    // right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 0;
+    // right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 0;
+    right_gripper_config["victor_right_gripper_fingerA_joint_2"] = 1.5;
+    right_gripper_config["victor_right_gripper_fingerB_joint_2"] = 1.5;
+    right_gripper_config["victor_right_gripper_fingerC_joint_2"] = 1.5;
 
     gvl->setRobotConfiguration(VICTOR_ROBOT, right_gripper_config);
 

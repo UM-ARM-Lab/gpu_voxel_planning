@@ -9,6 +9,8 @@
 #include <cmath>
 #include <limits>
 
+#include <arc_utilities/timing.hpp>
+
 #include <iostream>
 #include <fstream>
 
@@ -174,11 +176,16 @@ void wip_Diverse(SimWorld* sim_world)
 
     DiversePlanner planner(&vm);
     bool reached_goal = false;
-    while(!reached_goal)
+    arc_utilities::Stopwatch stopwatch;
+    double allowed_time = 60*4;
+    while(!reached_goal && stopwatch() < allowed_time)
     {
         robot::JointValueMap sconfig = vm.cur_config;
         Maybe::Maybe<Path> path = planner.planPathConfig(sconfig, gconfig);
-        reached_goal = sim_world->attemptPath(path.Get());
+        if(path.Valid())
+        {
+            reached_goal = sim_world->attemptPath(path.Get());
+        }
     }
 }
 

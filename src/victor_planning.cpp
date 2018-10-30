@@ -71,6 +71,8 @@ VictorPlanner::VictorPlanner(GpuVoxelsVictor* victor_model)
     space->addDimension(-120*torad, 120*torad);
     space->addDimension(-175*torad, 175*torad);
 
+    // space->setLongestValidSegmentFraction(0.01);
+
     
     si_ = std::make_shared<ob::SpaceInformation>(space);
     // std::cout << "Original resolution " << si_->getStateValidityCheckingResolution();
@@ -859,15 +861,17 @@ void DiversePlanner::preparePlanner(ob::ScopedState<> start, Goals goals)
     planner_->setProblemDefinition(pdef_);
 }
 
-bool DiversePlanner::sampleBlockingWorld(std::vector<ompl::base::PathPtr> paths)
+bool DiversePlanner::sampleBlockingWorld(std::vector<ompl::base::PathPtr> paths,
+                                         double time_allowed)
 {
+    arc_utilities::Stopwatch stopwatch;
     victor_model_->sampleValidWorld();
     int i=0;
     while(isPathSetValid(paths))
     {
         victor_model_->sampleValidWorld();
         i++;
-        if(i>500)
+        if(stopwatch() > time_allowed)
         {
             std::cout << "Could not sample a blocking world\n";
             return false;
@@ -923,7 +927,7 @@ Maybe::Maybe<ob::PathPtr> DiversePlanner::planPath(ompl::base::ScopedState<> sta
     while(stopwatch() < planning_time && paths.size() < num_paths)
     {
         // victor_model_->sampleValidWorld();
-        if(!sampleBlockingWorld(paths)){
+        if(!sampleBlockingWorld(paths, stopwatch() - planning_time)){
             break;
         }
         victor_model_->hidePath();
@@ -943,9 +947,9 @@ Maybe::Maybe<ob::PathPtr> DiversePlanner::planPath(ompl::base::ScopedState<> sta
             victor_model_->visPath(omplPathToDoublePath(maybe_path.Get()->as<og::PathGeometric>(),
                                        si_));
             
-            // std::string unused;
-            // std::cout << "Waiting for user input to start...\n";
-            // std::getline(std::cin, unused);
+            std::string unused;
+            std::cout << "Waiting for user input to start...\n";
+            std::getline(std::cin, unused);
         }
         else
         {

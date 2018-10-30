@@ -27,9 +27,9 @@
 
 #define PEG_IN_HOLE false
 
-#define PLAN_ONLY false
+#define PLAN_ONLY true
 
-#define DO_CONTROL true
+#define DO_CONTROL false
 
 #define DO_PLAN true
 

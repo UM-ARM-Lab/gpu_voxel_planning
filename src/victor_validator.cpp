@@ -184,6 +184,9 @@ bool VictorSampledWorldValidator::isValid(const ob::State *state) const
 
     // }
 
+    victor_model_->gvl->visualizeMap(VICTOR_QUERY_MAP);
+
+
     return !victor_model_->overlaps(SAMPLED_WORLD_MAP, VICTOR_QUERY_MAP);
 }
 
