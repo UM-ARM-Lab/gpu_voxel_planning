@@ -5,7 +5,7 @@
 
 1. Install [gpu-voxels](http://www.gpu-voxels.org/documentation/)
 
-   * Install Cuda Drivers
+   * Install Cuda Drivers (Works with Cuda 9.1, has failed with Cuda 8.0 and Cuda 10.0)
    * Install [required libraries](http://www.gpu-voxels.org/documentation/prerequisites/)
    * Patch the GLM visualizer (still needed as of 01/01/18)
    
