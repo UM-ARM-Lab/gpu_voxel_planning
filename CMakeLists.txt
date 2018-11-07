@@ -7,7 +7,7 @@ project(gpu_voxel_planning)
 set(CATKIN_PACKAGES
   roscpp
   victor_hardware_interface
-  or_victor
+  arm_or_robots
   trajectory_msgs
   arc_utilities
   arm_pointcloud_utilities
@@ -16,13 +16,18 @@ set(CATKIN_PACKAGES
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation gazebo_victor)
+find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation)
 FIND_PACKAGE(icl_core REQUIRED )
 FIND_PACKAGE(gpu_voxels REQUIRED)
 FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
+# SET(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 FIND_PACKAGE(CUDA REQUIRED)
 FIND_PACKAGE(ompl REQUIRED)
 FIND_PACKAGE(orocos_kdl REQUIRED)
+
+
+# MESSAGE(WARNING "INFO: CUDA_INCLUDE_DIRS= ${CUDA_INCLUDE_DIRS}")
+
 
 find_package(GTest)
 
@@ -91,6 +96,7 @@ set(EXTERN_LIBS
   ${Boost_SYSTEM_LIBRARY}
   ${icl_core_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
+  ${CUDA_LIBRARIES}
   ${OMPL_LIBRARIES}
   )
 
