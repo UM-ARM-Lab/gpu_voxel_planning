@@ -178,21 +178,25 @@ int main(int argc, char* argv[])
     ros::Duration(0.5).sleep();
     ros::spinOnce();
 
-    
+    //above table
+    //std::vector<double> goal_box = {-0.145, 0.438, 0.242, -1.164, 0.495, 0.687, -0.804};
 
-    std::vector<double> goal_box = {-0.3, 0.786, 0.772, -1.092, -1.208, 0.573, 0.102};
+    //below table
+    // std::vector<double> goal_box = {-1.222, 1.031, 0.984, -0.11, 0.577, 0.246, -0.342};
+
+    std::vector<double> goal_box = {0.047, 0.331, -0.16, -1.286, -0.613, 1.242, 2.02};
+
 
     std::string unused;
     std::cout << "Waiting for user input to start...\n";
     std::getline(std::cin, unused);
 
-    // runTest_VictorProbCol(goal_box);
-    runTest_VictorVox(goal_box);
+    runTest_VictorProbCol(goal_box);
+    // runTest_VictorVox(goal_box);
 
     std::string filename = "./real_robot_trials/box_" + arc_helpers::GetCurrentTimeAsString();
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
     
-    real_world->gvl.reset();
-    
+    // real_world->gvl.reset();
 }

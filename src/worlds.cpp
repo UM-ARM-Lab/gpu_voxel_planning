@@ -566,7 +566,7 @@ RealWorld::RealWorld()
     
 
 
-    loadPointCloudFromFile();
+    // loadPointCloudFromFile();
     double init_angles[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     VictorConfig init_config = victor_model.toVictorConfig(init_angles);
     victor_model.updateActual(init_config);

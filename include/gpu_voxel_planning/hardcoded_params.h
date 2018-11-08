@@ -9,7 +9,7 @@
 #define UNEXPLORED_BIAS 0.0
 
 /* Max planning time in seconds */
-#define PLANNING_TIMEOUT 30
+#define PLANNING_TIMEOUT 10
 
 #define USE_KNOWN_OBSTACLES true
 
@@ -39,7 +39,7 @@
 
 #define EXECUTION_DELAY_us 50000
 
-#define REAL_ROBOT false
+#define REAL_ROBOT true
 
 #define ALLOWED_KNOWN_OBSTACLES 0
 

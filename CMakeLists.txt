@@ -108,6 +108,8 @@ include_directories(
   ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
   )
 
+MESSAGE(WARNING "INFO: CUDA_INCLUDE_DIRS= ${CUDA_INCLUDE_DIRS}")
+
 add_library(path_smoothing src/ompl_modifications/path_smoothing.cpp
   ${OMPL_LIBRARIES}
   )
