@@ -11,6 +11,7 @@ set(CATKIN_PACKAGES
   trajectory_msgs
   arc_utilities
   arm_pointcloud_utilities
+  graph_planner
   )
 
 ## Find catkin macros and libraries
@@ -166,6 +167,7 @@ target_link_libraries(costrrtc
 #   box_world_lib
 #   )
 
+
 add_library(victor_model
   src/gpu_voxels_victor.cpp
   src/worlds.cpp
@@ -221,6 +223,25 @@ target_link_libraries(wip_victor_sim
   victor_planning
   victor_local_controller
   victor_validator
+  )
+
+
+add_library(victor_halton_roadmap
+  src/victor_halton_roadmap.cpp)
+target_link_libraries(victor_halton_roadmap
+  # graph
+  )
+
+add_executable(wip_roadmap
+  src/wip_roadmap.cpp)
+
+target_link_libraries(wip_roadmap
+  ${EXTERN_LIBS}
+  victor_model
+  victor_planning
+  victor_local_controller
+  victor_validator
+  victor_halton_roadmap
   )
 
 add_executable(victor_sim_timings src/victor_sim_timings.cpp)
