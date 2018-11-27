@@ -1,6 +1,7 @@
 #include "victor_planning.hpp"
 
 #include "ompl_utils.hpp"
+#include "hacky_functions.hpp"
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
@@ -56,20 +57,15 @@ VictorPlanner::VictorPlanner(GpuVoxelsVictor* victor_model)
 {
     space = std::make_shared<ob::RealVectorStateSpace>();
 
-    double torad=3.1415/180;
     // ob::RealVectorBounds bounds(7);
     // bounds.setLow(-3.14159265);
     // bounds.setHigh(3.14159265);
     // space->setBounds(bounds);
 
-
-    space->addDimension(-170*torad, 170*torad);
-    space->addDimension(-120*torad, 120*torad);
-    space->addDimension(-170*torad, 170*torad);
-    space->addDimension(-120*torad, 120*torad);
-    space->addDimension(-170*torad, 170*torad);
-    space->addDimension(-120*torad, 120*torad);
-    space->addDimension(-175*torad, 175*torad);
+    for(int i=0; i<7; i++)
+    {
+        space->addDimension(right_joint_lower_deg[i]*torad, right_joint_upper_deg[i]*torad);
+    }
 
     // space->setLongestValidSegmentFraction(0.01);
 

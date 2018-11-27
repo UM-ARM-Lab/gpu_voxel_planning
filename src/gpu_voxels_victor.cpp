@@ -1,6 +1,7 @@
 #include "gpu_voxels_victor.hpp"
 #include "common_names.hpp"
 #include "hardcoded_params.h"
+#include "hacky_functions.hpp"
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
@@ -446,16 +447,13 @@ void GpuVoxelsVictor::hidePath()
  */
 bool GpuVoxelsVictor::isInJointLimits(const double *values)
 {
-    // TODO: Remove hardcoded joint limits:
-    std::vector<double> right_joint_lower_deg = {-170, -120, -170, -120, -170, -120, -175};
-    std::vector<double> right_joint_upper_deg = {170, 120,  170,  120,  170,  120,  175};
 
     for(int i=0; i<7; i++)
     {
-        if (values[i] < (right_joint_lower_deg[i] * 3.1415/180)){
+        if (values[i] < (right_joint_lower_deg[i] * torad)){
             return false;
         }
-        if (values[i] > (right_joint_upper_deg[i] * 3.1415/180)){
+        if (values[i] > (right_joint_upper_deg[i] * torad)){
             return false;
         }
     }

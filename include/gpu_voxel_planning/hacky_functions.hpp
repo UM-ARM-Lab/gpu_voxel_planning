@@ -1,13 +1,17 @@
 #ifndef HACKY_HELPERS
 #define HACKY_HELPERS
 
+#include <vector>
 
+static const std::vector<double> right_joint_lower_deg = {-170, -120, -170, -120, -170, -120, -175};
+static const std::vector<double> right_joint_upper_deg = {170, 120,  170,  120,  170,  120,  175};
+static const double torad=3.1415/180;
 
-std::vector<std::string> right_arm_joint_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
+static const std::vector<std::string> right_arm_joint_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",
         "victor_right_arm_joint_3", "victor_right_arm_joint_4", "victor_right_arm_joint_5",
         "victor_right_arm_joint_6", "victor_right_arm_joint_7"};
 
-std::vector<std::string> right_arm_collision_link_names{
+static const std::vector<std::string> right_arm_collision_link_names{
     "victor_right_arm_link_3",
         "victor_right_arm_link_4",
         "victor_right_arm_link_5",

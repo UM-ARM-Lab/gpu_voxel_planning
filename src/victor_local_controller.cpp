@@ -1,6 +1,7 @@
 #include "victor_local_controller.hpp"
 #include "ompl_utils.hpp"
 #include "helpers.hpp"
+#include "hacky_functions.hpp"
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
@@ -12,13 +13,10 @@ VictorLocalController::VictorLocalController(GpuVoxelsVictor* victor_model)
 {
     double torad=3.1415/180;
     space = std::make_shared<ob::RealVectorStateSpace>();
-    space->addDimension(-170*torad, 170*torad);
-    space->addDimension(-120*torad, 120*torad);
-    space->addDimension(-170*torad, 170*torad);
-    space->addDimension(-120*torad, 120*torad);
-    space->addDimension(-170*torad, 170*torad);
-    space->addDimension(-120*torad, 120*torad);
-    space->addDimension(-175*torad, 175*torad);
+    for(int i=0; i<7; i++)
+    {
+        space->addDimension(right_joint_lower_deg[i]*torad, right_joint_upper_deg[i]*torad);
+    }
 
     
     si_ = std::make_shared<ob::SpaceInformation>(space);
