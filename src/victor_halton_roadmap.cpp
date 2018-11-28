@@ -3,6 +3,7 @@
 
 
 
+
 Roadmap::Roadmap(GpuVoxelsVictor* victor):
     victor_(victor)
 {

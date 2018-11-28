@@ -17,7 +17,7 @@
 
 #define MAKE_SLOTTED_WALL false
 
-#define ALL_OBSTACLES_KNOWN true
+#define ALL_OBSTACLES_KNOWN false
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 

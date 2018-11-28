@@ -11,6 +11,7 @@
 
 #include <arc_utilities/timing.hpp>
 #include "victor_halton_roadmap.hpp"
+#include "lazysp_voxels.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -44,25 +45,31 @@ void killhandler(int)
 }
 
 
-bool attemptGoal(VictorPlanner &planner, std::vector<double> goal)
+
+/*
+ *  Attempts a single step along the path and returns teh robot location
+ */
+int attemptStep(const std::vector<int> &full_path, Graph &g, GpuVoxelsVictor* victor)
 {
-    VictorConfig goal_config = g_sim_world->victor_model.toVictorConfig(goal.data());
+    Edge &e = g.getEdge(full_path[0], full_path[1]);
+    assert(e.validity != EDGE_VALIDITY::INVALID);
+    
+    // if(e.validity == EDGE_VALIDITY::UNKNOWN)
+    // {
+    //     checkEdge(e, g, victor);
+    // }
 
-    bool reached_goal = false;
+    auto start = g.V[full_path[0]].q;
+    auto end = g.V[full_path[1]].q;
 
-    while(!reached_goal)
-    {
-        M::Maybe<Path> maybe_path = planner.planPathConfig(g_sim_world->victor_model.cur_config,
-                                                    goal_config);
-        if(!maybe_path.Valid())
-        {
-            std::cout << "Path planning failed\n";
-            return false;
-        }
-        reached_goal = g_sim_world->attemptPath(maybe_path.Get());
-    }
-    return true;
+    
+    Path path{start, end};
+    bool valid = g_sim_world->attemptPath(path);
+    e.validity = valid ? EDGE_VALIDITY::VALID : EDGE_VALIDITY::INVALID;
+    
+    return e.validity == EDGE_VALIDITY::VALID ? full_path[1] : full_path[0];
 }
+
 
 
 void showVert(Roadmap &rm)
@@ -77,9 +84,22 @@ void showVert(Roadmap &rm)
     }
 }
 
+void attemptBestPath(Roadmap &rm, int start, int goal)
+{
+    waitForKeypress();
+    while(start != goal)
+    {
+        // auto path_ind = A_star(start, goal, rm);
+        auto path_ind = planPath(start, goal, rm, &(g_sim_world->victor_model));
+        start = attemptStep(path_ind, rm, &(g_sim_world->victor_model));
+    }
+}
+
 void showPath(Roadmap &rm, int start, int goal)
 {
-    auto path_ind = A_star(start, goal, rm);
+    waitForKeypress();
+    // auto path_ind = A_star(start, goal, rm);
+    auto path_ind = planPath(start, goal, rm, &(g_sim_world->victor_model));
 
     while(true)
     {
@@ -125,7 +145,8 @@ int main(int argc, char* argv[])
     int start_ind = rm.insertVertex(vm.toValues(g_sim_world->init_config));
     int goal_ind = rm.insertVertex(vm.toValues(g_sim_world->goal_config));
     // showVert(rm);
-    showPath(rm, start_ind, goal_ind);
+    // showPath(rm, start_ind, goal_ind);
+    attemptBestPath(rm, start_ind, goal_ind);
 
 
     // g_sim_world->gvl.reset();
