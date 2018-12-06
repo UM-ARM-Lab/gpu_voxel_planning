@@ -3,7 +3,8 @@
 #include <stddef.h>
 #include <math.h>
 #include <arc_utilities/eigen_helpers.hpp>
-#include <arc_utilities/shortcut_smoothing.hpp>
+// #include <arc_utilities/shortcut_smoothing.hpp>
+#include <arc_utilities/path_utils.hpp>
 
 using namespace PathUtils;
 
@@ -20,7 +21,7 @@ Path PathUtils::densify(const Path &path, double max_dist)
         return PathUtils::dist(p1, p2);
     };
     
-    Path p = shortcut_smoothing::ResamplePath(path, max_dist, dist_fn, interp_fn);
+    Path p = path_utils::ResamplePath(path, max_dist, dist_fn, interp_fn);
     // Path p = shortcut_smoothing::ResamplePath(path, max_dist, dist, EigenHelpers::Interpolate);
     return p;
 }

@@ -1,5 +1,8 @@
-#ifndef PATH_UTILS_HPP
-#define PATH_UTILS_HPP
+#pragma once
+
+// #ifndef PATH_UTILS_HPP
+// #define PATH_UTILS_HPP
+
 
 #include <vector>
 #include <cstddef>
@@ -24,4 +27,4 @@ namespace PathUtils
 
 
 
-#endif
+// #endif
