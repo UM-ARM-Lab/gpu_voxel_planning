@@ -398,6 +398,7 @@ int GpuVoxelsVictor::determineVictorDist()
 void GpuVoxelsVictor::doVis()
 {
     gvl->visualizeMap(VICTOR_ACTUAL_MAP, true);
+    gvl->visualizeMap(VICTOR_QUERY_MAP, true);
     for(int i=0; i<num_observed_chs; i++)
         gvl->visualizeMap(COLLISION_HYPOTHESIS_SETS[i]);
 
