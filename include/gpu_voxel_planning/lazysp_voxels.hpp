@@ -24,14 +24,18 @@ bool checkEdge(Edge &e, Graph &g, GpuVoxelsVictor* victor)
 {
     bool valid = isValidFromKnownObs(g.V[e.v1_ind].q, g.V[e.v2_ind].q, victor);
     e.validity = valid ? EDGE_VALIDITY::VALID : EDGE_VALIDITY::INVALID;
+    return valid;
 }
 
+
+enum FORWARD_LAZY_CHECK_RESULT {EDGE_INVALID, EDGE_VALID, PATH_VALID};
 
 /*
  *  Checks the first unknown edge of $path$ in $g$ for collision
  *   $path$ is a path of node indices through g
  */
-bool forwardLazyCheck(const std::vector<int> &path, Graph &g, GpuVoxelsVictor* victor)
+FORWARD_LAZY_CHECK_RESULT
+forwardLazyCheck(const std::vector<int> &path, Graph &g, GpuVoxelsVictor* victor)
 {
     int i=0;
     while(i < path.size() - 1)
@@ -44,14 +48,17 @@ bool forwardLazyCheck(const std::vector<int> &path, Graph &g, GpuVoxelsVictor* v
             continue;
         }
 
-        checkEdge(e, g, victor);
+        if(checkEdge(e, g, victor))
+        {
+            return FORWARD_LAZY_CHECK_RESULT::EDGE_VALID;
+        }
+        return FORWARD_LAZY_CHECK_RESULT::EDGE_INVALID;
         // std::cout << "Edge from point " << path[i] << " is " << 
         //     (valid ? "valid" : "invalid") << "\n";
         // std::cout << "Edge from point " << i << " is " << e.validity << "\n";
-        return false;
     }
     victor->resetQuery();
-    return true;
+    return FORWARD_LAZY_CHECK_RESULT::PATH_VALID;
 }
 
 
@@ -75,13 +82,18 @@ std::vector<int> planPath(int start, int goal, Graph &g, GpuVoxelsVictor* victor
         double dt = PROFILE_RECORD("a_star");
         std::cout << "A_star in " << dt << "\n";
         
-        PROFILE_START("forward_check");
-        if(forwardLazyCheck(path, g, victor))
+
+        auto result = FORWARD_LAZY_CHECK_RESULT::EDGE_VALID;
+        while(result == FORWARD_LAZY_CHECK_RESULT::EDGE_VALID)
         {
-            return path;
+            PROFILE_START("forward_check");
+            result = forwardLazyCheck(path, g, victor);
+            std::cout << "Edge check in " << PROFILE_RECORD("forward_check") << "\n";
+            if(result == FORWARD_LAZY_CHECK_RESULT::PATH_VALID)
+            {
+                return path;
+            }
         }
-        dt = PROFILE_RECORD("forward_check");
-        std::cout << "Edge check in " << dt << "\n";
     }
 }
 

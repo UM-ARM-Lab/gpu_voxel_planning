@@ -9,12 +9,15 @@ Roadmap::Roadmap(GpuVoxelsVictor* victor):
 {
     // int num_vert = 1000;
     // edge_dist = 4.0;
-    int num_vert = 10000;
-    edge_dist = 2.0;
+    // int num_vert = 10000;
+    // edge_dist = 2.0;
+    int num_vert = 100000;
+    edge_dist = 1.5;
     
     std::vector<int> bases{2,3,5,7,11,13,17};
     std::vector<int> offsets{100, 120, 234, 182, 102, 192, 476};
-    auto nodes = toNodes(scaleToVictorDims(haltonPoints(bases, num_vert, offsets)));
+    // auto nodes = toNodes(scaleToVictorDims(halton::haltonPoints(num_vert, 7)));
+    auto nodes = toNodes(scaleToVictorDims(halton::haltonPoints(bases, num_vert, offsets)));
 
     for(auto n:nodes)
     {
