@@ -507,7 +507,7 @@ double VictorPathProbCol::getPathCost(const std::vector<ob::State*> path,
         PROFILE_START("prob seen collision");
         std::vector<size_t> seen_col_voxels = victor_model_->countCHSCollisions();
 
-        PROFILE_RECORD("prob seen collision")
+        PROFILE_RECORD("prob seen collision");
                     
         std::vector<double> p_no_collision;
         p_no_collision.resize(seen_col_voxels.size());

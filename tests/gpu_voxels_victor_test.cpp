@@ -36,10 +36,10 @@ TEST(GpuVoxelVictor, collisions)
 
     // is_valid = victor_model.queryFreeConfiguration(map);
     // col_count = victor_model.countTotalCHSCollisionsForConfig(map);
-    PROFILE_START("setting_query")
+    PROFILE_START("setting_query");
     victor_model.resetQuery();
     victor_model.addQueryState(map);
-    PROFILE_RECORD("setting_query")
+    PROFILE_RECORD("setting_query");
     PROFILE_START("counting_collision");
     col_count = victor_model.countNumCollisions(ENV_MAP);
     PROFILE_RECORD("counting_collision");

@@ -200,13 +200,13 @@ size_t GpuVoxelsVictor::countTotalCHSCollisions()
 
 std::vector<size_t> GpuVoxelsVictor::countCHSCollisions()
 {
-    PROFILE_START("Chs sizes, robot intersection")
+    PROFILE_START("Chs sizes, robot intersection");
     std::vector<size_t> collisions_in_chs;
     for(int i=0; i<num_observed_chs; i++)
     {
         collisions_in_chs.push_back(countNumCollisions(COLLISION_HYPOTHESIS_SETS[i]));
     }
-    PROFILE_RECORD("Chs sizes, robot intersection")
+    PROFILE_RECORD("Chs sizes, robot intersection");
     return collisions_in_chs;
 }
 

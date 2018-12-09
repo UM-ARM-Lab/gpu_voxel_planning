@@ -75,7 +75,7 @@ std::vector<int> planPath(int start, int goal, Graph &g, GpuVoxelsVictor* victor
         double dt = PROFILE_RECORD("a_star");
         std::cout << "A_star in " << dt << "\n";
         
-        PROFILE_START("forward_check")        
+        PROFILE_START("forward_check");
         if(forwardLazyCheck(path, g, victor))
         {
             return path;
