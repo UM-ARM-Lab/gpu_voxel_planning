@@ -23,6 +23,7 @@ SimWorld* g_sim_world;
 
 
 using namespace gpu_voxels_planner;
+using namespace arc_dijkstras;
 namespace M = Maybe;
 
 
@@ -49,25 +50,29 @@ void killhandler(int)
 /*
  *  Attempts a single step along the path and returns teh robot location
  */
-int attemptStep(const std::vector<int> &full_path, Graph &g, GpuVoxelsVictor* victor)
+int attemptStep(const std::vector<int64_t> &full_path, HaltonGraph &g, GpuVoxelsVictor* victor)
 {
-    Edge &e = g.getEdge(full_path[0], full_path[1]);
-    assert(e.validity != EDGE_VALIDITY::INVALID);
+    GraphEdge &e = g.GetNodeMutable(full_path[0]).GetEdgeMutable(full_path[1]);
+    assert(e.GetValidity() != EDGE_VALIDITY::INVALID);
     
     // if(e.validity == EDGE_VALIDITY::UNKNOWN)
     // {
     //     checkEdge(e, g, victor);
     // }
 
-    auto start = g.V[full_path[0]].q;
-    auto end = g.V[full_path[1]].q;
+    auto start = g.GetNodeMutable(full_path[0]).GetValueMutable();
+    auto end = g.GetNodeMutable(full_path[1]).GetValueMutable();
 
+
+    double w = g.GetNodeMutable(full_path[0]).GetEdgeMutable(full_path[1]).GetWeight();
+
+    std::cout << "Attempting edge with weight " << w << "\n";
     
     Path path{start, end};
     bool valid = g_sim_world->attemptPath(path);
-    e.validity = valid ? EDGE_VALIDITY::VALID : EDGE_VALIDITY::INVALID;
+    e.SetValidity(valid ? EDGE_VALIDITY::VALID : EDGE_VALIDITY::INVALID);
     
-    return e.validity == EDGE_VALIDITY::VALID ? full_path[1] : full_path[0];
+    return e.GetValidity() == EDGE_VALIDITY::VALID ? full_path[1] : full_path[0];
 }
 
 
@@ -75,9 +80,9 @@ int attemptStep(const std::vector<int> &full_path, Graph &g, GpuVoxelsVictor* vi
 void showVert(Roadmap &rm)
 {
     // ros::Rate r(1);
-    for(auto v: rm.V)
+    for(auto n: rm.GetNodesMutable())
     {
-        VictorConfig c = g_sim_world->victor_model.toVictorConfig(v.q.data());
+        VictorConfig c = g_sim_world->victor_model.toVictorConfig(n.GetValueImmutable().data());
         g_sim_world->victor_model.updateActual(c);
         g_sim_world->victor_model.doVis();
         usleep(100000);
@@ -101,12 +106,12 @@ void showPath(Roadmap &rm, int start, int goal)
     // auto path_ind = A_star(start, goal, rm);
     auto path_ind = planPath(start, goal, rm, &(g_sim_world->victor_model));
 
-    while(true)
-    {
+    // while(true)
+    // {
         for(int i=0; i<path_ind.size()-1; i++)
         {
-            auto p1 = rm.V[path_ind[i]].q;
-            auto p2 = rm.V[path_ind[i+1]].q;
+            auto p1 = rm.GetNodeImmutable(path_ind[i]).GetValueImmutable();
+            auto p2 = rm.GetNodeImmutable(path_ind[i+1]).GetValueImmutable();
             auto path = interpolatePath(p1, p2, 0.1);
 
             for(auto &point: path)
@@ -124,7 +129,7 @@ void showPath(Roadmap &rm, int start, int goal)
         //     g_sim_world->victor_model.doVis();
         //     usleep(1000000);
         // }
-    }
+    // }
 }
 
 
@@ -140,10 +145,16 @@ int main(int argc, char* argv[])
     signal(SIGINT, ctrlchandler);
     signal(SIGTERM, killhandler);
 
+    std::string graph_filename = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph";
+    // std::string graph_filename = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/tmp.graph";
+    
+    // Roadmap rm_orig = Roadmap(&vm);
+    // rm_orig.saveToFile(graph_filename);
 
-    Roadmap rm = Roadmap(&vm);
-    int start_ind = rm.insertVertex(vm.toValues(g_sim_world->init_config));
-    int goal_ind = rm.insertVertex(vm.toValues(g_sim_world->goal_config));
+    Roadmap rm = Roadmap(&vm, graph_filename);
+    
+    int start_ind = rm.addVertexAndEdges(vm.toValues(g_sim_world->init_config));
+    int goal_ind = rm.addVertexAndEdges(vm.toValues(g_sim_world->goal_config));
     // showVert(rm);
     // showPath(rm, start_ind, goal_ind);
     attemptBestPath(rm, start_ind, goal_ind);
