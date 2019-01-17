@@ -3,6 +3,8 @@
 #include <arc_utilities/timing.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
+#include "prob_map.hpp"
+#include <gpu_voxels/helpers/GeometryGeneration.h>
 
 
 #define PROB_OCCUPIED eBVM_OCCUPIED
@@ -18,6 +20,59 @@ bool isSubset(GpuVoxelsVictor &vm, const std::string &map1, const std::string &m
     size_t tot2 = vm.countVoxels(map2);
     return (tot1 == intersect) || (tot2 == intersect);
 }
+
+TEST(GpuVoxelVictor, prob_grid_basics)
+{
+    using namespace gpu_voxels;
+    ProbGrid g1;
+    ProbGrid g2;
+    PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
+                                                          Vector3f(2.0,1.0,1.2),
+                                                          VOXEL_SIDE_LENGTH/2));
+    g1.insertPointCloud(box, PROB_OCCUPIED);
+
+    EXPECT_TRUE(g1.collideWith(&g2) == 0) << "Collided an empty voxel map but found collisions";
+    g2.insertPointCloud(box, PROB_OCCUPIED);
+    EXPECT_TRUE(g1.collideWith(&g2) > 0) << "Collided voxels maps but found no collision";
+    EXPECT_EQ(g1.collideWith(&g2), g1.countOccupied()) << "Occupied count not the same as colliding with itself count";
+}
+
+TEST(GpuVoxelVictor, prob_grid_copy_constructor)
+{
+    ProbGrid g1;
+    ProbGrid g2(g1);
+
+    PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
+                                                          Vector3f(2.0,1.0,1.2),
+                                                          VOXEL_SIDE_LENGTH/2));
+    g1.insertPointCloud(box, PROB_OCCUPIED);
+    EXPECT_TRUE(g1.countOccupied() > 0) << "Added box, but no occupied voxels in grid";
+    EXPECT_TRUE(g2.countOccupied() == 0) << "Added box to base grid, but it effected copied grid";
+    EXPECT_TRUE(g1.collideWith(&g2) == 0) << "Collided an empty voxel map but found collisions. Copy did not work properly";
+}
+
+
+TEST(GpuVoxelVictor, prob_grid_assignment)
+{
+    ProbGrid g1;
+    ProbGrid g2;
+
+    PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
+                                                          Vector3f(2.0,1.0,1.2),
+                                                          VOXEL_SIDE_LENGTH/2));
+    g1.insertPointCloud(box, PROB_OCCUPIED);
+
+    g2 = g1;
+    size_t occ = g1.countOccupied(); 
+    EXPECT_TRUE(occ > 0) << "Added box, but no occupied voxels in grid";
+    EXPECT_EQ(occ, g1.collideWith(&g2)) << "ProbGrid made with assignment operator has different number of occupied voxels";
+    EXPECT_EQ(occ, g2.countOccupied()) << "assigned map has wrong number of voxels";
+
+    g1.clearMap();
+    EXPECT_EQ(0, g1.countOccupied()) << "Clearing the map did not clear the voxel grid";
+    EXPECT_EQ(occ, g2.countOccupied()) << "Clearing map 1 affected map 2";
+}
+
 
 TEST(GpuVoxelVictor, collisions)
 {
@@ -36,21 +91,21 @@ TEST(GpuVoxelVictor, collisions)
 
     // is_valid = victor_model.queryFreeConfiguration(map);
     // col_count = victor_model.countTotalCHSCollisionsForConfig(map);
-    PROFILE_START("setting_query");
+    // PROFILE_START("setting_query");
     victor_model.resetQuery();
     victor_model.addQueryState(map);
-    PROFILE_RECORD("setting_query");
-    PROFILE_START("counting_collision");
+    // PROFILE_RECORD("setting_query");
+    // PROFILE_START("counting_collision");
     col_count = victor_model.countNumCollisions(ENV_MAP);
-    PROFILE_RECORD("counting_collision");
+    // PROFILE_RECORD("counting_collision");
     EXPECT_TRUE(col_count > 0) << "Victor with box obstacle has no collision";
 
-    PROFILE_START("overlap");
+    // PROFILE_START("overlap");
     EXPECT_TRUE(victor_model.overlaps(VICTOR_QUERY_MAP, ENV_MAP));
-    PROFILE_RECORD("overlap");
+    // PROFILE_RECORD("overlap");
 
-    std::vector<std::string> summary_names = {"setting_query", "counting_collision", "overlap"};
-    PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
+    // std::vector<std::string> summary_names = {"setting_query", "counting_collision", "overlap"};
+    // PROFILE_PRINT_SUMMARY_FOR_GROUP(summary_names);
     // EXPECT_TRUE(!is_valid) << "Victor with box obstacle is not in collision";
 
     

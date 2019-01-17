@@ -16,7 +16,7 @@ namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 
-TEST(GpuVoxelVictor, collisions)
+TEST(Validators, collisions)
 {
 
     std::shared_ptr<ompl::base::RealVectorStateSpace> space =

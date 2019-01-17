@@ -232,6 +232,12 @@ target_link_libraries(victor_halton_roadmap
   # graph
   )
 
+
+add_executable(wip_prob_map src/wip/wip_prob_map.cpp)
+target_link_libraries(wip_prob_map
+  ${EXTERN_LIBS}
+  )
+
 add_executable(wip_roadmap
   src/wip_roadmap.cpp)
 
@@ -323,39 +329,39 @@ target_link_libraries(victor_real_timings
 # To build tests, install google's testing framework
 # https://github.com/google/googletest/
 
-IF(GTEST_FOUND)
-  include_directories(${GTEST_INCLUDE_DIRS})
-  add_executable(test_gpu_voxels_victor tests/gpu_voxels_victor_test.cpp)
-  target_link_libraries(test_gpu_voxels_victor
-    victor_model
-    ${EXTERN_LIBS}
-    ${GTEST_LIBRARIES}
-    )
 
-  add_executable(test_validators tests/validators_test.cpp)
-  target_link_libraries(test_validators
-    victor_model
-    victor_validator
-    ${EXTERN_LIBS}
-    ${GTEST_LIBRARIES}
-    )
+catkin_add_gtest(test_gpu_voxels_victor tests/gpu_voxels_victor_test.cpp)
+target_link_libraries(test_gpu_voxels_victor
+  victor_model
+  ${EXTERN_LIBS}
+  ${GTEST_LIBRARIES}
+  )
 
-  
-  add_executable(test_planners tests/planners_test.cpp)
-  target_link_libraries(test_planners
-    victor_model
-    victor_validator
-    victor_planning
-    ${EXTERN_LIBS}
-    ${GTEST_LIBRARIES}
-    )
-  
-  add_executable(test_path_utils tests/test_path_utils.cpp)
-  target_link_libraries(test_path_utils
-    victor_model
-    victor_validator
-    victor_planning
-    ${EXTERN_LIBS}
-    ${GTEST_LIBRARIES}
-    )
-ENDIF(GTEST_FOUND)
+# catkin_add_gtest(test_validators tests/validators_test.cpp)
+# target_link_libraries(test_validators
+#   victor_model
+#   victor_validator
+#   ${EXTERN_LIBS}
+#   ${GTEST_LIBRARIES}
+#   )
+
+# catkin_add_gtest(test_planners tests/planners_test.cpp)
+# target_link_libraries(test_planners
+#   victor_model
+#   victor_validator
+#   victor_planning
+#   ${EXTERN_LIBS}
+#   ${GTEST_LIBRARIES}
+#   )
+
+catkin_add_gtest(test_path_utils tests/test_path_utils.cpp)
+target_link_libraries(test_path_utils
+  victor_model
+  victor_validator
+  victor_planning
+  ${EXTERN_LIBS}
+  ${GTEST_LIBRARIES}
+  )
+
+
+
