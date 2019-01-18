@@ -73,6 +73,30 @@ TEST(GpuVoxelVictor, prob_grid_assignment)
     EXPECT_EQ(occ, g2.countOccupied()) << "Clearing map 1 affected map 2";
 }
 
+TEST(GpuVoxelVictor, prob_grid_get_occupied_indices)
+{
+    ProbGrid g;
+    Vector3f lower_left(Vector3f(1.0,0.8,1.0));
+    Vector3f upper_right(Vector3f(2.0,1.0,1.2));
+    PointCloud box(geometry_generation::createBoxOfPoints(lower_left,
+                                                          upper_right,
+                                                          VOXEL_SIDE_LENGTH/2));
+    g.insertPointCloud(box, PROB_OCCUPIED);
+
+    EXPECT_TRUE(g.countOccupied() > 0);
+    EXPECT_TRUE(g.countOccupied() == g.getOccupiedCenters().size());
+
+    for(auto oc: g.getOccupiedCenters())
+    {
+        EXPECT_TRUE(oc.x > lower_left.x);
+        EXPECT_TRUE(oc.y > lower_left.y);
+        EXPECT_TRUE(oc.z > lower_left.z);
+        EXPECT_TRUE(oc.x < upper_right.x);
+        EXPECT_TRUE(oc.y < upper_right.y);
+        EXPECT_TRUE(oc.z < upper_right.z);
+    }
+}
+
 
 TEST(GpuVoxelVictor, collisions)
 {
