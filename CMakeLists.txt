@@ -101,6 +101,7 @@ set(EXTERN_LIBS
 include_directories(
   include
   include/${PROJECT_NAME}
+  include/${PROJECT_NAME}/old
   ${catkin_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${gpu_voxels_INCLUDE_DIRS}
@@ -109,7 +110,6 @@ include_directories(
   ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
   )
 
-MESSAGE(WARNING "INFO: CUDA_INCLUDE_DIRS= ${CUDA_INCLUDE_DIRS}")
 
 add_library(path_smoothing src/ompl_modifications/path_smoothing.cpp
   ${OMPL_LIBRARIES}
@@ -169,8 +169,8 @@ target_link_libraries(costrrtc
 
 
 add_library(victor_model
-  src/gpu_voxels_victor.cpp
-  src/worlds.cpp
+  src/old/gpu_voxels_victor.cpp
+  src/old/worlds.cpp
   src/path_utils.cpp)
 add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
 target_link_libraries(victor_model
@@ -192,11 +192,11 @@ target_link_libraries(victor_model
 #   )
 
 
-add_library(victor_validator src/victor_validator.cpp)
+add_library(victor_validator src/old/victor_validator.cpp)
 target_link_libraries(victor_validator
   victor_model)
 
-add_library(victor_planning src/victor_planning.cpp)
+add_library(victor_planning src/old/victor_planning.cpp)
 target_link_libraries(victor_planning
   victor_validator
   victor_model
@@ -208,14 +208,14 @@ target_link_libraries(victor_planning
   )
 
 
-add_library(victor_local_controller src/victor_local_controller.cpp)
+add_library(victor_local_controller src/old/victor_local_controller.cpp)
 target_link_libraries(victor_local_controller
   # victor_validator
   victor_model                 
   ${EXTERN_LIBS}
   )
 
-add_executable(wip_victor_sim src/wip_victor_sim.cpp)
+add_executable(wip_victor_sim src/old/wip_victor_sim.cpp)
 target_link_libraries(wip_victor_sim
   ${EXTERN_LIBS}
   lazyrrtf
@@ -250,7 +250,7 @@ target_link_libraries(wip_roadmap
   victor_halton_roadmap
   )
 
-add_executable(victor_sim_timings src/victor_sim_timings.cpp)
+add_executable(victor_sim_timings src/old/victor_sim_timings.cpp)
 target_link_libraries(victor_sim_timings
   ${EXTERN_LIBS}
   lazyrrtf
@@ -261,7 +261,7 @@ target_link_libraries(victor_sim_timings
 
 
 
-# add_library(wip_optimization_objective src/wip_optimization_objective.cpp)
+# add_library(wip_optimization_objective src/old/wip_optimization_objective.cpp)
 # target_link_libraries(wip_optimization_objective
 #   victor_model
 #   # victor_planning_base
@@ -269,7 +269,7 @@ target_link_libraries(victor_sim_timings
 
 
 
-# add_executable(ros_planning_node src/ros_planner.cpp)
+# add_executable(ros_planning_node src/old/ros_planner.cpp)
 # target_link_libraries (ros_planning_node
 #   victor_lbkpiece
 #   victor_trrt
@@ -281,7 +281,7 @@ target_link_libraries(victor_sim_timings
 #   ${gpu_voxels_LIBRARIES}
 #   )
 
-# add_executable(validator_timing src/validator_timing.cpp)
+# add_executable(validator_timing src/old/validator_timing.cpp)
 # target_link_libraries (validator_timing
 #   victor_planning_lbkpiece
 #   ${catkin_LIBRARIES}
@@ -302,7 +302,7 @@ target_link_libraries(collision_link_node
   ${catkin_LIBRARIES}
   )
 
-add_executable(wip_victor_real src/wip_victor_real.cpp)
+add_executable(wip_victor_real src/old/wip_victor_real.cpp)
 target_link_libraries(wip_victor_real
   ${EXTERN_LIBS}
   lazyrrtf
@@ -311,7 +311,7 @@ target_link_libraries(wip_victor_real
   victor_validator
   )
 
-add_executable(victor_real_timings src/victor_real_timings.cpp)
+add_executable(victor_real_timings src/old/victor_real_timings.cpp)
 target_link_libraries(victor_real_timings
   ${EXTERN_LIBS}
   lazyrrtf
