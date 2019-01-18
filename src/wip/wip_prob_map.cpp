@@ -3,7 +3,8 @@
 #include "common_names.hpp"
 #include <arc_utilities/timing.hpp>
 
-
+#include <ros/ros.h>
+#include "gpu_voxel_rviz_visualization.hpp"
 
 
 void checkNoGpuMemoryLeaks()
@@ -40,18 +41,23 @@ void checkNoGpuMemoryLeaks()
 int main(int argc, char* argv[])
 {
     icl_core::logging::initialize(argc, argv);
+    ros::init(argc, argv, "graph_publisher");
+    ros::NodeHandle n;
+    GpuVoxelRvizVisualizer viz(n);
+
     ProbGrid g1;
     PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
                                                           Vector3f(1.1,1.0,1.2),
                                                           VOXEL_SIDE_LENGTH/2));
     g1.insertPointCloud(box, PROB_OCCUPIED);
 
-    std::cout <<g1.getOccupiedCenters().size() << "\n";
-    for(auto c:g1.getOccupiedCenters())
-    {
-        std::cout << "(" << c.x << ", " << c.y << ", " << c.z << "), ";
-    }
-    std::cout << "\n";
+    ros::Duration(1.0).sleep();
 
+    while(ros::ok())
+    {
+        viz.vizChs(g1);
+        ros::Duration(1.0).sleep();
+    }
+    
     
 }

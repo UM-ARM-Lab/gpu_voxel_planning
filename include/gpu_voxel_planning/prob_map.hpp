@@ -2,6 +2,7 @@
 #define PROB_MAP_HPP
 
 #include <gpu_voxels/GpuVoxels.h>
+#include <visualization_msgs/Marker.h>
 
 #define GRID_X_DIM 200
 #define GRID_Y_DIM 200
@@ -27,6 +28,8 @@ public:
         return *this;
     }
 };
+
+
 
 
 
