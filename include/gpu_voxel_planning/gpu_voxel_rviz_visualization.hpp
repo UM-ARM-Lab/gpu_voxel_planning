@@ -3,6 +3,7 @@
 
 #include <visualization_msgs/Marker.h>
 #include "prob_map.hpp"
+#include "state.hpp"
 #include <ros/ros.h>
 
 
@@ -57,6 +58,23 @@ public:
         color.a = 0.3;
         color.r = 1.0;
         vizGrid(grid, ns, color);
+    }
+
+    void vizState(const GVP::State &s)
+    {
+        std_msgs::ColorRGBA color;
+        color.a = 1.0;
+        grid_pub.publish(visualizeProbGrid(s.passive_robot.occupied_space, global_frame,
+                                           "passive_robot", color));
+        grid_pub.publish(visualizeProbGrid(s.known_obstacles, global_frame,
+                                           "known_obstacles", color));
+
+        color.r = 0.5;
+        color.g = 0.5;
+        color.b = 0.5;
+        grid_pub.publish(visualizeProbGrid(s.active_robot.occupied_space, global_frame,
+                                           "active_robot", color));
+
     }
 };
 
