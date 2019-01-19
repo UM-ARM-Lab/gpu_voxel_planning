@@ -8,6 +8,7 @@
 #include "robot_model.hpp"
 #include "state.hpp"
 
+using namespace GVP;
 
 void checkNoGpuMemoryLeaks()
 {
@@ -56,7 +57,6 @@ void checkBasicViz(GpuVoxelRvizVisualizer &viz)
         viz.vizChs(g1);
         ros::Duration(1.0).sleep();
     }
-
 }
 
 int main(int argc, char* argv[])
@@ -74,10 +74,15 @@ int main(int argc, char* argv[])
 
     GVP::State s(victor_right, victor_left);
 
+    double i = 0;
+    
     while(ros::ok())
     {
+        victor_left.set(VictorLeftArmConfig(std::vector<double>{i, i, i, i, i, i, i}).asMap());
+        i+= 0.1;
+        
         viz.vizState(s);
-        ros::Duration(1.0).sleep();
+        ros::Duration(0.1).sleep();
     }
     
     

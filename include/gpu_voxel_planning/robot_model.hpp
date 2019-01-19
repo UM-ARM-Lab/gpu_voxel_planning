@@ -20,41 +20,48 @@ namespace GVP
             robot_chain.setConfiguration(jvm);
             occupied_space.insertMetaPointCloud(*robot_chain.getTransformedClouds(), PROB_OCCUPIED);
         }
+
+        void set(const robot::JointValueMap &map)
+        {
+            robot_chain.setConfiguration(map);
+            occupied_space.clearMap();
+            occupied_space.insertMetaPointCloud(*robot_chain.getTransformedClouds(), PROB_OCCUPIED);
+        }
     };
 
 
 
     
 
-
-    class VictorRightArmConfig
+    template<const std::vector<std::string>* joint_names>
+    class VictorArmConfig
     {
     public:
         std::vector<double> joint_values;
 
-        VictorRightArmConfig(std::vector<double> joint_values) : joint_values(joint_values){};
+        VictorArmConfig(std::vector<double> joint_values) : joint_values(joint_values){};
 
-        VictorRightArmConfig(const double* values) {
-            for(size_t i=0; i<right_arm_joint_names.size(); i++)
+        VictorArmConfig(const double* values) {
+            for(size_t i=0; i<joint_names->size(); i++)
             {
                 joint_values.push_back(values[i]);
             }
         }
 
-        VictorRightArmConfig(const robot::JointValueMap &jvm)
+        VictorArmConfig(const robot::JointValueMap &jvm)
         {
-            for(size_t i=0; i<right_arm_joint_names.size(); i++)
+            for(size_t i=0; i<joint_names->size(); i++)
             {
-                joint_values.push_back(jvm[right_arm_joint_names[i]]);
+                joint_values.push_back(jvm.at(joint_names->at(i)));
             }
         }
 
         robot::JointValueMap asMap() const
         {
             robot::JointValueMap jvm;
-            for(size_t i=0; i<right_arm_joint_names.size(); i++)
+            for(size_t i=0; i<joint_names->size(); i++)
             {
-                jvm[right_arm_joint_names[i]] = joint_values[i];
+                jvm[joint_names->at(i)] = joint_values[i];
             }
             return jvm;
         }
@@ -65,6 +72,9 @@ namespace GVP
         }
     };
 
+    typedef VictorArmConfig<&right_arm_joint_names> VictorRightArmConfig;
+    typedef VictorArmConfig<&left_arm_joint_names> VictorLeftArmConfig;
+
 
 
     
@@ -73,12 +83,6 @@ namespace GVP
     public:
         Victor(const std::string &path_to_urdf_file) : Robot(path_to_urdf_file)
         {
-        }
-
-        void set(const VictorRightArmConfig &config)
-        {
-            robot_chain.setConfiguration(config.asMap());
-            occupied_space.insertMetaPointCloud(*robot_chain.getTransformedClouds(), PROB_OCCUPIED);
         }
     };
 }
