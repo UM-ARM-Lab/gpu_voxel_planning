@@ -27,6 +27,11 @@ namespace GVP
             occupied_space.clearMap();
             occupied_space.insertMetaPointCloud(*robot_chain.getTransformedClouds(), PROB_OCCUPIED);
         }
+
+        virtual bool isValid()
+        {
+            return true;
+        }
     };
 
 
@@ -38,6 +43,8 @@ namespace GVP
     {
     public:
         std::vector<double> joint_values;
+
+        VictorArmConfig() {};
 
         VictorArmConfig(std::vector<double> joint_values) : joint_values(joint_values){};
 
@@ -78,12 +85,22 @@ namespace GVP
 
 
     
-    class Victor : public Robot
+    class VictorRightArm: public Robot
     {
     public:
-        Victor(const std::string &path_to_urdf_file) : Robot(path_to_urdf_file)
+        VictorRightArm() :
+            Robot("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf")
+            
         {
         }
+    };
+
+    class VictorLeftArmAndBase: public Robot
+    {
+    public:
+        VictorLeftArmAndBase() :
+            Robot("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf")
+        {}
     };
 }
 

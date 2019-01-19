@@ -9,19 +9,20 @@ namespace GVP
     class State
     {
     public:
-        Robot &active_robot;
-        Robot &passive_robot;
+        Robot &robot;
+        ProbGrid robot_self_collide_obstacles;
         ProbGrid known_obstacles;
         std::vector<ProbGrid> chs;
+        GVP::VictorRightArmConfig current_config;
+        VictorRightArmConfig goal_config;
 
-        State(Robot &active, Robot &passive) : active_robot(active),
-                                               passive_robot(passive)
+        State(Robot &robot) : robot(robot)
         {
         };
+
+        
     };
 }
 
-// passive_robot("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf"),
-//     active_robot("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf")
 
 #endif

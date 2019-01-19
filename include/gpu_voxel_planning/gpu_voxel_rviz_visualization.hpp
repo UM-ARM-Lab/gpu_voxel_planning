@@ -4,6 +4,7 @@
 #include <visualization_msgs/Marker.h>
 #include "prob_map.hpp"
 #include "state.hpp"
+#include "scenarios.hpp"
 #include <ros/ros.h>
 
 
@@ -36,6 +37,13 @@ visualization_msgs::Marker visualizeProbGrid(const ProbGrid &grid,
 
 
 
+static inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double a)
+{
+    std_msgs::ColorRGBA color;
+    color.r = r;     color.g = g;    color.b = b;     color.a = a;
+    return color;
+}
+
 class GpuVoxelRvizVisualizer
 {
 public:
@@ -62,19 +70,22 @@ public:
 
     void vizState(const GVP::State &s)
     {
-        std_msgs::ColorRGBA color;
-        color.a = 1.0;
-        grid_pub.publish(visualizeProbGrid(s.passive_robot.occupied_space, global_frame,
-                                           "passive_robot", color));
         grid_pub.publish(visualizeProbGrid(s.known_obstacles, global_frame,
-                                           "known_obstacles", color));
+                                           "known_obstacles", makeColor(0,0,0,1)));
 
-        color.r = 0.5;
-        color.g = 0.5;
-        color.b = 0.5;
-        grid_pub.publish(visualizeProbGrid(s.active_robot.occupied_space, global_frame,
-                                           "active_robot", color));
+        std_msgs::ColorRGBA robot_color = makeColor(0.7, 0.5, 0.4, 1.0);
+        grid_pub.publish(visualizeProbGrid(s.robot_self_collide_obstacles, global_frame,
+                                           "passive_robot", robot_color));
+        grid_pub.publish(visualizeProbGrid(s.robot.occupied_space, global_frame,
+                                           "active_robot", robot_color));
 
+    }
+
+    void vizScenario(const GVP::Scenario &s)
+    {
+        grid_pub.publish(visualizeProbGrid(s.getTrueObstacles(), global_frame,
+                                           "true_obstacles", makeColor(0.5, 0.5, 0.5, 0.5)));
+        vizState(s.getState());   
     }
 };
 

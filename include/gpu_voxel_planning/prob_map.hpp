@@ -3,6 +3,7 @@
 
 #include <gpu_voxels/GpuVoxels.h>
 #include <visualization_msgs/Marker.h>
+#include <gpu_voxels/helpers/GeometryGeneration.h>
 
 #define GRID_X_DIM 200
 #define GRID_Y_DIM 200
@@ -27,6 +28,15 @@ public:
         copy(&other);
         return *this;
     }
+
+
+    void insertBox(const Vector3f &corner_min, const Vector3f &corner_max)
+    {
+        float delta = VOXEL_SIDE_LENGTH / 2.0;
+        insertPointCloud(geometry_generation::createBoxOfPoints(corner_min, corner_max, delta),
+                         eBVM_OCCUPIED);
+    }
+
 };
 
 

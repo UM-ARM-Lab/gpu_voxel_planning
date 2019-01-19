@@ -7,6 +7,7 @@
 #include "gpu_voxel_rviz_visualization.hpp"
 #include "robot_model.hpp"
 #include "state.hpp"
+#include "scenarios.hpp"
 
 using namespace GVP;
 
@@ -69,19 +70,18 @@ int main(int argc, char* argv[])
     // checkBasicViz(viz);
 
     ros::Duration(1.0).sleep();
-    GVP::Victor victor_left("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf");
-    GVP::Victor victor_right("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf");
-
-    GVP::State s(victor_right, victor_left);
+    // GVP::VictorRightArm victor_right;
+    // GVP::VictorLeftArmAndBase victor_left;
+    TableWithBox scenario;
 
     double i = 0;
     
     while(ros::ok())
     {
-        victor_left.set(VictorLeftArmConfig(std::vector<double>{i, i, i, i, i, i, i}).asMap());
+        // victor_left.set(VictorLeftArmConfig(std::vector<double>{i, i, i, i, i, i, i}).asMap());
         i+= 0.1;
         
-        viz.vizState(s);
+        viz.vizScenario(scenario);
         ros::Duration(0.1).sleep();
     }
     
