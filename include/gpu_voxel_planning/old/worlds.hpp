@@ -17,11 +17,11 @@ public:
     virtual void initializeObstacles();
 
     void makeSlottedWall();
-    bool executePath(const Path &path, size_t &last_index, bool add_col_set);
+    bool executePath(const PathUtils::Path &path, size_t &last_index, bool add_col_set);
 
-    bool attemptPath(const Path &path);
+    bool attemptPath(const PathUtils::Path &path);
 
-    void executeAndReturn(const Path &path);
+    void executeAndReturn(const PathUtils::Path &path);
 
     Maybe::Maybe<std::string> getCollisionLink(const VictorConfig &c);
     Maybe::Maybe<std::vector<std::string>> getCollisionLinks(const VictorConfig &c);
@@ -73,7 +73,7 @@ class RealWorld
 public:
     RealWorld();
     ~RealWorld();
-    bool attemptPath(const Path &path);
+    bool attemptPath(const PathUtils::Path &path);
     void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg);
     void spinUntilUpdate();
     void loadPointCloudFromFile();

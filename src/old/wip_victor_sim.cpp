@@ -21,6 +21,7 @@ SimWorld* g_sim_world;
 
 
 using namespace gpu_voxels_planner;
+using namespace PathUtils;
 namespace M = Maybe;
 
 

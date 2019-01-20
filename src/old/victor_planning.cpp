@@ -28,6 +28,7 @@ namespace ob = ompl::base;
 namespace og = ompl::geometric;
 using namespace gpu_voxels_planner;
 using namespace ompl_utils;
+using namespace PathUtils;
 
 
 

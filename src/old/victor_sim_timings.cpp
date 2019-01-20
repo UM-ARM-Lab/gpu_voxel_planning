@@ -26,6 +26,7 @@ std::shared_ptr<SimWorld> sim_world;
 
 
 using namespace gpu_voxels_planner;
+using namespace PathUtils;
 typedef Maybe::Maybe<Path> Optpath;
 
 

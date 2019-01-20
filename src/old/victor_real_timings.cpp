@@ -24,6 +24,7 @@ std::shared_ptr<RealWorld> real_world;
 
 
 using namespace gpu_voxels_planner;
+using namespace PathUtils;
 namespace M = Maybe;
 typedef Maybe::Maybe<Path> Optpath;
 

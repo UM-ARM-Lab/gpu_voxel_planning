@@ -8,6 +8,7 @@
 #include <arm_pointcloud_utilities/load_save_to_file.h>
 
 using namespace arm_pointcloud_utilities;
+using namespace PathUtils;
 
 
 /*************************************

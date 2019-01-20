@@ -75,10 +75,10 @@ public:
                   const std::vector<std::string> &link_names,
                   const std::string &map_name);
 
-    void addCHS(const Path &path,
+    void addCHS(const PathUtils::Path &path,
                 const std::vector<std::string> &collision_links);
 
-    void addCHSToMap(const Path &path,
+    void addCHSToMap(const PathUtils::Path &path,
                      const std::vector<std::string> &collision_links,
                      const std::string &map);
 
@@ -130,7 +130,7 @@ public:
 
     void doVis();
     
-    void visPath(const Path &path);
+    void visPath(const PathUtils::Path &path);
     void hidePath();
 
     // double calc_prob_chss(double p_occ, std::vector<std::string> chs_maps);

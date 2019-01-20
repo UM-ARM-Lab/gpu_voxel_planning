@@ -23,7 +23,7 @@ namespace gpu_voxels_planner
     public:
         VictorLocalController(GpuVoxelsVictor* victor_model);
 
-        Path maxExpectedChsIG(std::vector<double> start_values,
+        PathUtils::Path maxExpectedChsIG(std::vector<double> start_values,
                               double max_motion,
                               int num_samples);
 

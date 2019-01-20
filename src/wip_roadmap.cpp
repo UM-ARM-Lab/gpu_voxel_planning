@@ -24,6 +24,7 @@ SimWorld* g_sim_world;
 
 using namespace gpu_voxels_planner;
 using namespace arc_dijkstras;
+using namespace PathUtils;
 namespace M = Maybe;
 
 

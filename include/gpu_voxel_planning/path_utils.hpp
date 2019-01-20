@@ -7,10 +7,11 @@
 #include <vector>
 #include <cstddef>
 
-typedef std::vector<std::vector<double>> Path;
+
 
 namespace PathUtils
 {
+    typedef std::vector<std::vector<double>> Path;
     Path densify(const Path &orig, double max_dist);
 
     double dist(const std::vector<double> &p1, const std::vector<double> &p2);

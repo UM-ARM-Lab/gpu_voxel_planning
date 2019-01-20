@@ -14,8 +14,9 @@
 std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
 std::vector<std::string> HCHS;
 
-
 #define NUM_SETS 100
+
+using namespace PathUtils;
 
 
 std::vector<std::string> i_right_arm_joint_names{"victor_right_arm_joint_1", "victor_right_arm_joint_2",

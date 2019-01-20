@@ -38,9 +38,9 @@ namespace gpu_voxels_planner
 
         // ompl::base::ScopedState<> samplePointInRandomDirection(ompl::base::ScopedState<> start);
         
-        Maybe::Maybe<Path> localControlConfig(VictorConfig start, VictorConfig goal);
+        Maybe::Maybe<PathUtils::Path> localControlConfig(VictorConfig start, VictorConfig goal);
 
-        Maybe::Maybe<Path> localControlDouble(std::vector<double> start, std::vector<double> goal);
+        Maybe::Maybe<PathUtils::Path> localControlDouble(std::vector<double> start, std::vector<double> goal);
 
         virtual Maybe::Maybe<ompl::base::PathPtr> localControl(ompl::base::ScopedState<> start, Goals goal);
 
@@ -49,21 +49,21 @@ namespace gpu_voxels_planner
 
         ompl::base::PathPtr randomWiggle(ompl::base::ScopedState<> start);
 
-        Path randomWiggleConfig(VictorConfig start);
+        PathUtils::Path randomWiggleConfig(VictorConfig start);
 
         ompl::base::PathPtr iouWiggle(ompl::base::ScopedState<> start);
 
-        Path iouWiggleConfig(VictorConfig start);
+        PathUtils::Path iouWiggleConfig(VictorConfig start);
 
-        double evaluateIouExploration(Path path);
+        double evaluateIouExploration(PathUtils::Path path);
         
 
 
     public:
 
-        Maybe::Maybe<Path> planPathConfig(VictorConfig start, VictorConfig goal);
+        Maybe::Maybe<PathUtils::Path> planPathConfig(VictorConfig start, VictorConfig goal);
         
-        Maybe::Maybe<Path> planPathDouble(std::vector<double> start, std::vector<double> goal);
+        Maybe::Maybe<PathUtils::Path> planPathDouble(std::vector<double> start, std::vector<double> goal);
 
 
         std::shared_ptr<VictorValidator> vv_ptr;

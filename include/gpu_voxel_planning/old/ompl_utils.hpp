@@ -19,10 +19,10 @@ namespace ompl_utils
         return s;
     };
 
-    Path omplPathToDoublePath(ompl::geometric::PathGeometric* ompl_path,
+    PathUtils::Path omplPathToDoublePath(ompl::geometric::PathGeometric* ompl_path,
                               std::shared_ptr<ompl::base::SpaceInformation> si_)
     {
-        Path d_path;
+        PathUtils::Path d_path;
 
         ompl::base::StateSpace *stateSpace = si_->getStateSpace().get();
         ompl::base::State *state = si_->allocState();
