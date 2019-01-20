@@ -41,15 +41,27 @@ namespace GVP
             return true;
         }
 
+        void updateFreeSpace(const ProbGrid &new_free)
+        {
+            known_free.add(&new_free);
+            for(auto &c: chs)
+            {
+                c.subtract(&new_free);
+            }
+        }
+
         bool move(const VictorRightArmConfig &c, const ProbGrid &true_world)
         {
             robot.set(c.asMap());
             if(!robot.occupied_space.overlapsWith(&true_world))
             {
                 updateConfig(c.asMap());
-                known_free.add(&robot.occupied_space);
+                updateFreeSpace(robot.occupied_space);
                 return true;
             }
+
+            chs.emplace_back(robot.occupied_space);
+            chs.back().subtract(&known_free);
 
             robot.set(current_config);
             return false;

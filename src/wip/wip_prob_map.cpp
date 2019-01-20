@@ -58,7 +58,7 @@ void checkBasicViz(GpuVoxelRvizVisualizer &viz)
 
     while(ros::ok())
     {
-        viz.vizChs(g1);
+        viz.vizGrid(g1, "box", makeColor(1.0, 0, 0, 1.0));
         ros::Duration(1.0).sleep();
     }
 }
