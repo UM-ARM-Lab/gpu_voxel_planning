@@ -24,6 +24,7 @@ namespace GVP
         State s;
         ProbGrid true_world;
         VictorRightArm victor;
+        robot::JointValueMap goal_config;
 
 
 
@@ -43,8 +44,8 @@ namespace GVP
                 addCave(s.known_obstacles);
             }
 
-            s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0});
-            s.goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0});
+            s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
+            goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
 
         }
 

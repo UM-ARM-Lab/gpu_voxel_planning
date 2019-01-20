@@ -111,7 +111,8 @@ int main(int argc, char* argv[])
     // testAngles(scenario, viz);
 
     
-    Path p = interpolate(scenario.getState().current_config, scenario.getState().goal_config, 0.02);
+    Path p = interpolate(VictorRightArmConfig(scenario.getState().current_config),
+                         VictorRightArmConfig(scenario.goal_config), 0.02);
     std::cout << "path has " << p.size() << " points\n";
     tester.attemptPath(p);
     

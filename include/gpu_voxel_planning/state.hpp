@@ -14,8 +14,7 @@ namespace GVP
         ProbGrid known_obstacles;
         ProbGrid known_free;
         std::vector<ProbGrid> chs;
-        VictorRightArmConfig current_config;
-        VictorRightArmConfig goal_config;
+        robot::JointValueMap current_config;
 
         State(Robot &robot) : robot(robot)
         {
@@ -42,13 +41,22 @@ namespace GVP
             robot.set(c.asMap());
             if(!robot.occupied_space.overlapsWith(&true_world))
             {
-                current_config = c;
+                updateConfig(c.asMap());
                 known_free.add(&robot.occupied_space);
                 return true;
             }
 
-            robot.set(current_config.asMap());
+            robot.set(current_config);
             return false;
+        }
+
+
+        void updateConfig(const robot::JointValueMap &jvm)
+        {
+            for(const auto& kv: jvm)
+            {
+                current_config[kv.first] = kv.second;
+            }
         }
     };
 }
