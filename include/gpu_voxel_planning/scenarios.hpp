@@ -42,6 +42,10 @@ namespace GVP
             {
                 addCave(s.known_obstacles);
             }
+
+            s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0});
+            s.goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0});
+
         }
 
         virtual ProbGrid& getTrueObstacles() override

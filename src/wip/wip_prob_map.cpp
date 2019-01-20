@@ -8,7 +8,8 @@
 #include "gpu_voxel_rviz_visualization.hpp"
 #include "robot_model.hpp"
 #include "state.hpp"
-#include "scenarios.hpp"
+#include "scenario_tester.hpp"
+#include "path_utils_addons.hpp"
 
 using namespace GVP;
 
@@ -103,19 +104,25 @@ int main(int argc, char* argv[])
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
     TableWithBox scenario;
+    ScenarioTester tester(scenario, n);
 
     double i = 0;
 
-    testAngles(scenario, viz);
+    // testAngles(scenario, viz);
+
     
-    while(ros::ok())
-    {
-        // victor_left.set(VictorLeftArmConfig(std::vector<double>{i, i, i, i, i, i, i}).asMap());
-        i+= 0.1;
+    Path p = interpolate(scenario.getState().current_config, scenario.getState().goal_config, 0.02);
+    std::cout << "path has " << p.size() << " points\n";
+    tester.attemptPath(p);
+    
+    // while(ros::ok())
+    // {
+    //     // victor_left.set(VictorLeftArmConfig(std::vector<double>{i, i, i, i, i, i, i}).asMap());
+    //     i+= 0.1;
         
-        viz.vizScenario(scenario);
-        ros::Duration(0.1).sleep();
-    }
+    //     viz.vizScenario(scenario);
+    //     ros::Duration(0.1).sleep();
+    // }
     
     
 }
