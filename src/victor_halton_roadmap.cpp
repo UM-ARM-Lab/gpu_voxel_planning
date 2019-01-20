@@ -5,8 +5,8 @@
 
 
 
-Roadmap::Roadmap(GpuVoxelsVictor* victor):
-    victor_(victor), HaltonGraph(0,0,0)
+Roadmap::Roadmap():
+    HaltonGraph(0,0,0)
 {
     // int num_vert = 1000;
     // edge_dist = 4.0;
@@ -38,8 +38,8 @@ Roadmap::Roadmap(GpuVoxelsVictor* victor):
 }
 
 
-Roadmap::Roadmap(GpuVoxelsVictor* victor, std::string filename):
-    victor_(victor), HaltonGraph(0,0,0)
+Roadmap::Roadmap(std::string filename):
+    HaltonGraph(0,0,0)
 {
     loadFromFile(filename);
 

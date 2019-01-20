@@ -15,11 +15,9 @@
 class Roadmap : public HaltonGraph
 {
 public:
-    GpuVoxelsVictor* victor_;
-
     
-    Roadmap(GpuVoxelsVictor* victor);
-    Roadmap(GpuVoxelsVictor* victor, std::string filename);
+    Roadmap();
+    Roadmap(std::string filename);
     std::vector<std::vector<double>> scaleToVictorDims(std::vector<std::vector<double>> points);
 };
 

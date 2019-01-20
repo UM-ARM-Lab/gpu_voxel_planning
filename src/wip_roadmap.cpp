@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
     // Roadmap rm_orig = Roadmap(&vm);
     // rm_orig.saveToFile(graph_filename);
 
-    Roadmap rm = Roadmap(&vm, graph_filename);
+    Roadmap rm = Roadmap(graph_filename);
     
     int start_ind = rm.addVertexAndEdges(vm.toValues(g_sim_world->init_config));
     int goal_ind = rm.addVertexAndEdges(vm.toValues(g_sim_world->goal_config));
