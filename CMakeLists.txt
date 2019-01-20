@@ -238,6 +238,7 @@ add_executable(wip_prob_map
   src/path_utils.cpp)
 target_link_libraries(wip_prob_map
   ${EXTERN_LIBS}
+  victor_halton_roadmap
   )
 
 add_executable(wip_roadmap

@@ -9,6 +9,7 @@
 #include "robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
+#include "strategies.hpp"
 #include "path_utils_addons.hpp"
 
 using namespace GVP;
@@ -105,17 +106,19 @@ int main(int argc, char* argv[])
     // GVP::VictorLeftArmAndBase victor_left;
     TableWithBox scenario;
     ScenarioTester tester(scenario, n);
+    GraphSearchStrategy strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
 
     double i = 0;
 
     // testAngles(scenario, viz);
 
-    
-    Path p = interpolate(VictorRightArmConfig(scenario.getState().current_config),
-                         VictorRightArmConfig(scenario.goal_config), 0.02);
-    std::cout << "path has " << p.size() << " points\n";
-    tester.attemptPath(p);
-    
+
+    tester.attemptStrategy(strat);
+    // Path p = interpolate(VictorRightArmConfig(scenario.getState().current_config),
+    //                      VictorRightArmConfig(scenario.goal_config), 0.02);
+    // Path p = strat.applyTo(scenario);
+    // std::cout << "path has " << p.size() << " points\n";
+    // tester.attemptPath(p);
     // while(ros::ok())
     // {
     //     // victor_left.set(VictorLeftArmConfig(std::vector<double>{i, i, i, i, i, i, i}).asMap());

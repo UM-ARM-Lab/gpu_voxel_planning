@@ -9,26 +9,30 @@ namespace GVP
     class Scenario
     {
     public:
+        State s;
+        ProbGrid true_world;
+        VictorRightArm victor;
+        robot::JointValueMap goal_config;
+        
         virtual ProbGrid& getTrueObstacles() = 0;
         virtual State& getState() = 0;
         virtual const ProbGrid& getTrueObstacles() const = 0;
         virtual const State& getState() const = 0;
+        
+        virtual bool completed() const
+        {
+            return VictorRightArmConfig(s.current_config) == VictorRightArmConfig(goal_config);
+        }
+
+        Scenario(): s(victor){}
     };
-
-
 
 
     class TableWithBox : public Scenario
     {
     public:
-        State s;
-        ProbGrid true_world;
-        VictorRightArm victor;
-        robot::JointValueMap goal_config;
 
-
-
-        TableWithBox(bool table_known=true, bool cave_known=false): s(victor)
+        TableWithBox(bool table_known=true, bool cave_known=false)
         {
             addLeftArm();
             addTable(true_world);
@@ -46,7 +50,6 @@ namespace GVP
 
             s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
             goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
-
         }
 
         virtual ProbGrid& getTrueObstacles() override

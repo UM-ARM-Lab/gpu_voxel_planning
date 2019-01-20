@@ -2,6 +2,7 @@
 #define SCENARIO_TESTER_HPP
 
 #include "scenarios.hpp"
+#include "strategies.hpp"
 #include "gpu_voxel_rviz_visualization.hpp"
 #include <ros/ros.h>
 
@@ -33,6 +34,18 @@ namespace GVP
                 viz.vizScenario(scenario);
                 ros::Duration(0.01).sleep();
             }
+            return true;
+        }
+
+
+
+        bool attemptStrategy(Strategy &strategy)
+        {
+            while(!scenario.completed())
+            {
+                attemptPath(strategy.applyTo(scenario));
+            }
+            std::cout << "Reached Goal\n";
             return true;
         }
     };

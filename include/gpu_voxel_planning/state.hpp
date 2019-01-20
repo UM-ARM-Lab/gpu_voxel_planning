@@ -20,6 +20,11 @@ namespace GVP
         {
         };
 
+        VictorRightArmConfig getCurConfig() const
+        {
+            return VictorRightArmConfig(current_config);
+        }
+
 
         bool isPossiblyValid(const VictorRightArmConfig &c)
         {

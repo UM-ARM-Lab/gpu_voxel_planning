@@ -77,10 +77,33 @@ namespace GVP
         {
             return joint_values;
         }
+
+        bool operator==(const VictorArmConfig<joint_names> &other) const
+        {
+            if(joint_values.size() != other.joint_values.size())
+            {
+                return false;
+            }
+            
+            for(size_t i=0; i<joint_values.size(); i++)
+            {
+                if(fabs(joint_values[i] - other.joint_values[i]) > 0.0001)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        bool operator!=(const VictorArmConfig<joint_names> &other) const
+        {
+            return !(operator==(other));
+        }
     };
 
     typedef VictorArmConfig<&right_arm_joint_names> VictorRightArmConfig;
     typedef VictorArmConfig<&left_arm_joint_names> VictorLeftArmConfig;
+    
 
 
 
