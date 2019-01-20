@@ -2,6 +2,7 @@
 #include <gpu_voxels/helpers/GeometryGeneration.h>
 #include "common_names.hpp"
 #include <arc_utilities/timing.hpp>
+#include <arc_utilities/arc_helpers.hpp>
 
 #include <ros/ros.h>
 #include "gpu_voxel_rviz_visualization.hpp"
@@ -60,6 +61,35 @@ void checkBasicViz(GpuVoxelRvizVisualizer &viz)
     }
 }
 
+
+void testAngles(Scenario& scenario, GpuVoxelRvizVisualizer &viz)
+{
+    
+    while(true)
+    {
+        arc_helpers::WaitForInput("Waiting for user input to set position...\n");
+
+        std::ifstream myfile;
+        myfile.open("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/config/test_angles.txt");
+        std::cout << "file is open: " << myfile.is_open() << "\n";
+        std::vector<double> goal_tmp;
+        goal_tmp.resize(7);
+        for(int i=0; i<7; i++)
+        {
+            myfile >> goal_tmp[i];
+            std::cout << goal_tmp[i] << ", ";
+        }
+        std::cout << "\n";
+        myfile.close();
+        VictorRightArmConfig c(goal_tmp);
+        scenario.getState().robot.set(c.asMap());
+        viz.vizScenario(scenario);
+        bool valid = scenario.getState().isPossiblyValid(c);
+        std::cout << "config is " << (valid ? "" : "NOT ") << "possibly valid\n";
+    }
+}
+
+
 int main(int argc, char* argv[])
 {
     icl_core::logging::initialize(argc, argv);
@@ -75,6 +105,8 @@ int main(int argc, char* argv[])
     TableWithBox scenario;
 
     double i = 0;
+
+    testAngles(scenario, viz);
     
     while(ros::ok())
     {
