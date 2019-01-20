@@ -111,7 +111,7 @@ namespace GVP
             Vector3f caveholecorner = cavecorner + cavesideoffset + Vector3f(0, 0.15, 0.15);
             Vector3f caveholesize(.04, .15, .15);
 
-            g.insertBox(cavecorner+caveheight, cavecorner+caveheight+cavetopd);
+            g.insertBox(cavecorner+caveheight, cavecorner+caveheight+cavetopd+Vector3f(0.033, 0, 0)); //top
 
             g.insertBox(cavecorner, cavecorner+cavesidedim);
 
