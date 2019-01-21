@@ -120,10 +120,10 @@ int main(int argc, char* argv[])
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    TableWithBox scenario;
+    TableWithBox scenario(true, true, false);
     SimulationScenarioTester tester(scenario, n);
-    // OptimisticGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
-    ParetoCostGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
+    OptimisticGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
+    // ParetoCostGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
 
     double i = 0;
 

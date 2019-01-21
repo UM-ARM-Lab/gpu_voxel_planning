@@ -40,11 +40,20 @@ namespace GVP
 
 
 
+    /****************************************
+     **         Table With Box
+     ****************************************/
     class TableWithBox : public SimulationScenario
     {
     public:
+        Vector3f cavecorner;
+        Vector3f caveheight;
+        Vector3f cavetopd;
+        Vector3f cavesidedim;
+        Vector3f cavesideoffset;
 
-        TableWithBox(bool table_known=true, bool cave_known=false)
+
+        TableWithBox(bool table_known=true, bool visible_cave_known=false, bool full_cave_known=false)
         {
             addLeftArm();
             addTable(true_world);
@@ -55,7 +64,12 @@ namespace GVP
                 addTable(s.known_obstacles);
             }
 
-            if(cave_known)
+            if(visible_cave_known)
+            {
+                addVisibleCave(s.known_obstacles);
+            }
+
+            if(full_cave_known)
             {
                 addCave(s.known_obstacles);
             }
@@ -127,22 +141,33 @@ namespace GVP
 
         }
 
+        void setCaveDims()
+        {
+            cavecorner = Vector3f(1.7, 2.0, 0.9);
+            caveheight = Vector3f(0.0, 0.0, 0.4);
+            cavetopd = Vector3f(0.4, 0.5, 0.033);
+            cavesidedim = Vector3f(0.033, cavetopd.y, caveheight.z);
+            cavesideoffset = Vector3f(cavetopd.x, 0.0, 0.0);
+
+        }
+
+        void addVisibleCave(ProbGrid &g)
+        {
+            setCaveDims();
+            g.insertBox(cavecorner+caveheight, cavecorner+caveheight+cavetopd+Vector3f(0.033, 0, 0)); //top
+            g.insertBox(cavecorner, cavecorner+cavesidedim);
+            
+        }
+
         void addCave(ProbGrid &g)
         {
-            Vector3f cavecorner = Vector3f(1.7, 2.0, 0.9);
-            Vector3f caveheight(0.0, 0.0, 0.4);
-            Vector3f cavetopd(0.4, 0.5, 0.033);
-            Vector3f cavesidedim(0.033, cavetopd.y, caveheight.z);
-            Vector3f cavesideoffset(cavetopd.x, 0.0, 0.0);
-            Vector3f caveholecorner = cavecorner + cavesideoffset + Vector3f(0, 0.15, 0.15);
-            Vector3f caveholesize(.04, .15, .15);
-
-            g.insertBox(cavecorner+caveheight, cavecorner+caveheight+cavetopd+Vector3f(0.033, 0, 0)); //top
-
-            g.insertBox(cavecorner, cavecorner+cavesidedim);
+            setCaveDims();
+            addVisibleCave(g);
 
             g.insertBox(cavecorner+cavesideoffset,
                         cavecorner+cavesideoffset+cavesidedim);
+
+
 
         }
     };
