@@ -41,6 +41,27 @@ namespace GVP
             return true;
         }
 
+        double calcProbFree(const VictorRightArmConfig &c)
+        {
+            robot.set(c.asMap());
+            if(robot.occupied_space.overlapsWith(&robot_self_collide_obstacles))
+            {
+                return 0.0;
+            }
+
+            if(robot.occupied_space.overlapsWith(&known_obstacles))
+            {
+                return 0.0;
+            }
+
+            double p_free = 1.0;
+            for(const auto &c: chs)
+            {
+                p_free *= 1 - ((double)robot.occupied_space.collideWith(&c)/c.countOccupied());
+            }
+            return p_free;
+        }
+
         void updateFreeSpace(const ProbGrid &new_free)
         {
             known_free.add(&new_free);

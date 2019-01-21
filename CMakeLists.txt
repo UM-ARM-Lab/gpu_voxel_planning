@@ -333,12 +333,12 @@ target_link_libraries(victor_real_timings
 # https://github.com/google/googletest/
 
 
-catkin_add_gtest(test_gpu_voxels_victor tests/gpu_voxels_victor_test.cpp)
-target_link_libraries(test_gpu_voxels_victor
-  victor_model
-  ${EXTERN_LIBS}
-  ${GTEST_LIBRARIES}
-  )
+# catkin_add_gtest(test_gpu_voxels_victor tests/gpu_voxels_victor_test.cpp)
+# target_link_libraries(test_gpu_voxels_victor
+#   victor_model
+#   ${EXTERN_LIBS}
+#   ${GTEST_LIBRARIES}
+#   )
 
 # catkin_add_gtest(test_validators tests/validators_test.cpp)
 # target_link_libraries(test_validators
@@ -367,4 +367,9 @@ target_link_libraries(test_path_utils
   )
 
 
-
+catkin_add_gtest(test_GVP
+  tests/GVP_test.cpp
+  src/path_utils.cpp)
+target_link_libraries(test_GVP
+  ${EXTERN_LIBS}
+)

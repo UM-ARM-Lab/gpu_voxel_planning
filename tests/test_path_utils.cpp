@@ -2,6 +2,9 @@
 #include <gtest/gtest.h>
 #include "arc_utilities/eigen_helpers.hpp"
 
+
+
+
 bool approxEq(double a, double b)
 {
     return std::abs(a-b) < 0.000001;
@@ -39,7 +42,7 @@ TEST(PathUtils, densify)
 {
     std::vector<double> a{0.0, 0.0};
     std::vector<double> b{1.0, 0.0};
-    Path path{a, b};
+    PathUtils::Path path{a, b};
     EXPECT_EQ(5, PathUtils::densify(path, 0.3).size());
 }
 
@@ -47,9 +50,9 @@ TEST(PathUtils, followPartial_2_points)
 {
     std::vector<double> a{0.0, 0.0};
     std::vector<double> b{1.0, 0.0};
-    Path path{a, b};
+    PathUtils::Path path{a, b};
 
-    Path ppath = PathUtils::followPartial(path, 0.5);
+    PathUtils::Path ppath = PathUtils::followPartial(path, 0.5);
     EXPECT_EQ(2, ppath.size());
     EXPECT_EQ(0.0, ppath[0][0]);
     EXPECT_EQ(0.0, ppath[0][1]);
@@ -63,13 +66,13 @@ TEST(PathUtils, followPartial_3_points)
     std::vector<double> a{0.0, 0.0};
     std::vector<double> b{1.0, 0.0};
     std::vector<double> c{1.0, 1.0};
-    Path path{a, b, c};
+    PathUtils::Path path{a, b, c};
 
-    Path shortpath = PathUtils::followPartial(path, 0.5);
+    PathUtils::Path shortpath = PathUtils::followPartial(path, 0.5);
     EXPECT_EQ(2, shortpath.size());
 
 
-    Path ppath = PathUtils::followPartial(path, 1.5);
+    PathUtils::Path ppath = PathUtils::followPartial(path, 1.5);
     EXPECT_EQ(3, ppath.size());
     EXPECT_EQ(0.0, ppath[0][0]);
     EXPECT_EQ(0.0, ppath[0][1]);
@@ -85,9 +88,9 @@ TEST(PathUtils, followPartial_3_points_all_the_way)
     std::vector<double> a{0.0, 0.0};
     std::vector<double> b{1.0, 0.0};
     std::vector<double> c{1.0, 1.0};
-    Path path{a, b, c};
+    PathUtils::Path path{a, b, c};
 
-    Path ppath = PathUtils::followPartial(path, 10.5);
+    PathUtils::Path ppath = PathUtils::followPartial(path, 10.5);
     EXPECT_EQ(3, ppath.size());
     EXPECT_EQ(0.0, ppath[0][0]);
     EXPECT_EQ(0.0, ppath[0][1]);
@@ -102,7 +105,7 @@ TEST(PathUtils, closestIndex)
     std::vector<double> a{0.0, 0.0};
     std::vector<double> b{1.0, 0.0};
     std::vector<double> c{1.0, 1.0};
-    Path path{a, b, c};
+    PathUtils::Path path{a, b, c};
 
     EXPECT_EQ(0, PathUtils::closestIndex(path, a));
     EXPECT_EQ(1, PathUtils::closestIndex(path, b));

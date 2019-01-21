@@ -3,7 +3,6 @@
 #include <arc_utilities/timing.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
-#include "prob_map.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
 
 
@@ -20,8 +19,7 @@ bool isSubset(GpuVoxelsVictor &vm, const std::string &map1, const std::string &m
     size_t tot2 = vm.countVoxels(map2);
     return (tot1 == intersect) || (tot2 == intersect);
 }
-
-TEST(GpuVoxelVictor, prob_grid_basics)
+TEST(GVP, prob_grid_basics)
 {
     using namespace gpu_voxels;
     ProbGrid g1;
@@ -35,66 +33,6 @@ TEST(GpuVoxelVictor, prob_grid_basics)
     g2.insertPointCloud(box, PROB_OCCUPIED);
     EXPECT_TRUE(g1.collideWith(&g2) > 0) << "Collided voxels maps but found no collision";
     EXPECT_EQ(g1.collideWith(&g2), g1.countOccupied()) << "Occupied count not the same as colliding with itself count";
-}
-
-TEST(GpuVoxelVictor, prob_grid_copy_constructor)
-{
-    ProbGrid g1;
-    ProbGrid g2(g1);
-
-    PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
-                                                          Vector3f(2.0,1.0,1.2),
-                                                          VOXEL_SIDE_LENGTH/2));
-    g1.insertPointCloud(box, PROB_OCCUPIED);
-    EXPECT_TRUE(g1.countOccupied() > 0) << "Added box, but no occupied voxels in grid";
-    EXPECT_TRUE(g2.countOccupied() == 0) << "Added box to base grid, but it effected copied grid";
-    EXPECT_TRUE(g1.collideWith(&g2) == 0) << "Collided an empty voxel map but found collisions. Copy did not work properly";
-}
-
-
-TEST(GpuVoxelVictor, prob_grid_assignment)
-{
-    ProbGrid g1;
-    ProbGrid g2;
-
-    PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
-                                                          Vector3f(2.0,1.0,1.2),
-                                                          VOXEL_SIDE_LENGTH/2));
-    g1.insertPointCloud(box, PROB_OCCUPIED);
-
-    g2 = g1;
-    size_t occ = g1.countOccupied(); 
-    EXPECT_TRUE(occ > 0) << "Added box, but no occupied voxels in grid";
-    EXPECT_EQ(occ, g1.collideWith(&g2)) << "ProbGrid made with assignment operator has different number of occupied voxels";
-    EXPECT_EQ(occ, g2.countOccupied()) << "assigned map has wrong number of voxels";
-
-    g1.clearMap();
-    EXPECT_EQ(0, g1.countOccupied()) << "Clearing the map did not clear the voxel grid";
-    EXPECT_EQ(occ, g2.countOccupied()) << "Clearing map 1 affected map 2";
-}
-
-TEST(GpuVoxelVictor, prob_grid_get_occupied_indices)
-{
-    ProbGrid g;
-    Vector3f lower_left(Vector3f(1.0,0.8,1.0));
-    Vector3f upper_right(Vector3f(2.0,1.0,1.2));
-    PointCloud box(geometry_generation::createBoxOfPoints(lower_left,
-                                                          upper_right,
-                                                          VOXEL_SIDE_LENGTH/2));
-    g.insertPointCloud(box, PROB_OCCUPIED);
-
-    EXPECT_TRUE(g.countOccupied() > 0);
-    EXPECT_TRUE(g.countOccupied() == g.getOccupiedCenters().size());
-
-    for(auto oc: g.getOccupiedCenters())
-    {
-        EXPECT_TRUE(oc.x > lower_left.x);
-        EXPECT_TRUE(oc.y > lower_left.y);
-        EXPECT_TRUE(oc.z > lower_left.z);
-        EXPECT_TRUE(oc.x < upper_right.x);
-        EXPECT_TRUE(oc.y < upper_right.y);
-        EXPECT_TRUE(oc.z < upper_right.z);
-    }
 }
 
 
@@ -181,8 +119,8 @@ TEST(GpuVoxelVictor, addCHS_MultipleSets)
     std::vector<double> mid2 = {.1, .5, .8, .0, .11, .9, 1.0};
     std::vector<double> end2 = {.4, .8, 1.9, -1.0, .1, 1.5, 1.9};
 
-    Path col0{mid1, end1};
-    Path col1{mid2, end2};
+    PathUtils::Path col0{mid1, end1};
+    PathUtils::Path col1{mid2, end2};
 
     vm.updateActual(vm.toVictorConfig(start.data()));
 
@@ -224,7 +162,7 @@ TEST(GpuVoxelVictor, sampleValidWorld)
     {
         for(auto qb: all_configs)
         {
-            Path chs_path{qa, qb};
+            PathUtils::Path chs_path{qa, qb};
             vm.addCHS(chs_path, vm.right_arm_collision_link_names);
         }
     }
@@ -254,7 +192,7 @@ TEST(GpuVoxelVictor, addCHS_PartialDistance)
     GpuVoxelsVictor vm;
     std::vector<double> start = {0,0,0,0,0,0,0};
     std::vector<double> end = {.9, .9, .9, .9, .9, .9, .9};
-    Path path{start, end};
+    PathUtils::Path path{start, end};
 
     vm.addCHS(path, vm.right_gripper_collision_link_names);
     EXPECT_TRUE(vm.countVoxels(COLLISION_HYPOTHESIS_SETS[0]) > 0) << "empty chs after adding";
@@ -280,7 +218,7 @@ TEST(GpuVoxelVictor, hypothetical_reset)
 
     vm.updateActual(vm.toVictorConfig(start.data()));
 
-    Path col_path{mid, end};
+    PathUtils::Path col_path{mid, end};
 
     vm.addCHS(col_path, vm.right_arm_collision_link_names);
 
