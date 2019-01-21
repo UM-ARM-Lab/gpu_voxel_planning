@@ -9,26 +9,38 @@ namespace GVP
     class Scenario
     {
     public:
-        State s;
-        ProbGrid true_world;
         VictorRightArm victor;
         robot::JointValueMap goal_config;
         
-        virtual ProbGrid& getTrueObstacles() = 0;
         virtual State& getState() = 0;
-        virtual const ProbGrid& getTrueObstacles() const = 0;
         virtual const State& getState() const = 0;
         
         virtual bool completed() const
         {
-            return VictorRightArmConfig(s.current_config) == VictorRightArmConfig(goal_config);
+            return VictorRightArmConfig(getState().current_config) == VictorRightArmConfig(goal_config);
         }
 
-        Scenario(): s(victor){}
+        Scenario(){}
     };
 
 
-    class TableWithBox : public Scenario
+    
+    class SimulationScenario : public Scenario
+    {
+    public:
+        SimulationState s;
+        ProbGrid true_world;
+        SimulationScenario() : s(victor){}
+        virtual ProbGrid& getTrueObstacles() = 0;
+        virtual const ProbGrid& getTrueObstacles() const = 0;
+        virtual SimulationState& getSimulationState() = 0;
+        virtual const SimulationState& getSimulationState() const = 0;
+        
+    };
+
+
+
+    class TableWithBox : public SimulationScenario
     {
     public:
 
@@ -60,6 +72,16 @@ namespace GVP
         virtual const ProbGrid& getTrueObstacles() const override
         {
             return true_world;
+        }
+
+        virtual SimulationState& getSimulationState() override
+        {
+            return s;
+        }
+
+        virtual const SimulationState& getSimulationState() const override
+        {
+            return s;
         }
 
         virtual State& getState() override

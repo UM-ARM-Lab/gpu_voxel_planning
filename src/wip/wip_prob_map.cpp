@@ -64,6 +64,21 @@ void checkBasicViz(GpuVoxelRvizVisualizer &viz)
 }
 
 
+void viewLinks(GpuVoxelRvizVisualizer &viz)
+{
+    VictorRightArm v;
+    auto link_occupancies = v.getLinkOccupancies();
+    while(ros::ok())
+    {
+        for(ProbGrid &g: link_occupancies)
+        {
+            viz.vizGrid(g, "link", makeColor(0.0, 1.0, 1.0, 1.0));
+            ros::Duration(1.0).sleep();
+        }
+    }
+}
+
+
 void testAngles(Scenario& scenario, GpuVoxelRvizVisualizer &viz)
 {
     
@@ -100,12 +115,13 @@ int main(int argc, char* argv[])
     GpuVoxelRvizVisualizer viz(n);
 
     // checkBasicViz(viz);
+    // viewLinks(viz);
 
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
     TableWithBox scenario;
-    ScenarioTester tester(scenario, n);
+    SimulationScenarioTester tester(scenario, n);
     GraphSearchStrategy strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
 
     double i = 0;

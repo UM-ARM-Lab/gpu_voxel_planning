@@ -90,6 +90,11 @@ public:
 
     void vizScenario(const GVP::Scenario &s)
     {
+        vizState(s.getState());   
+    }
+
+    void vizScenario(const GVP::SimulationScenario &s)
+    {
         grid_pub.publish(visualizeProbGrid(s.getTrueObstacles(), global_frame,
                                            "true_obstacles", makeColor(0.5, 0.5, 0.5, 0.5)));
         vizState(s.getState());   

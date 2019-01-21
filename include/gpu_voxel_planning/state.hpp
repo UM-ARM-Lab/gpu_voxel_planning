@@ -2,6 +2,7 @@
 #define GPU_PLANNING_STATE_HPP
 
 #include "robot_model.hpp"
+#include <stdexcept>
 
 
 namespace GVP
@@ -71,22 +72,7 @@ namespace GVP
             }
         }
 
-        bool move(const VictorRightArmConfig &c, const ProbGrid &true_world)
-        {
-            robot.set(c.asMap());
-            if(!robot.occupied_space.overlapsWith(&true_world))
-            {
-                updateConfig(c.asMap());
-                updateFreeSpace(robot.occupied_space);
-                return true;
-            }
 
-            chs.emplace_back(robot.occupied_space);
-            chs.back().subtract(&known_free);
-
-            robot.set(current_config);
-            return false;
-        }
 
 
         void updateConfig(const robot::JointValueMap &jvm)
@@ -96,6 +82,71 @@ namespace GVP
                 current_config[kv.first] = kv.second;
             }
         }
+    };
+
+
+
+
+
+    
+    /*****************************************
+     *      State for Simulation Trials
+     ***************************************/
+    class SimulationState : public State
+    {
+    public:
+        SimulationState(Robot &robot) : State(robot)
+        {
+        };
+
+        
+        bool move(const VictorRightArmConfig &c, const ProbGrid &true_world)
+        {
+            robot.set(c.asMap());
+            if(robot.occupied_space.overlapsWith(&true_world))
+            {
+                addChs(true_world);
+                robot.set(current_config);
+                return false;
+
+            }
+
+            updateConfig(c.asMap());
+            updateFreeSpace(robot.occupied_space);
+            return true;
+
+            
+        }
+
+
+        void addChs(const ProbGrid &true_world)
+        {
+            auto link_occupancies = robot.getLinkOccupancies();
+            size_t first_link_in_collision = 0;
+            for(auto &link:link_occupancies)
+            {
+                if(link.overlapsWith(&true_world))
+                {
+                    break;
+                }
+                first_link_in_collision++;
+            }
+
+            if(first_link_in_collision >= link_occupancies.size())
+            {
+                throw std::logic_error("Trying to add CHS, but no link collided");
+            }
+
+            ProbGrid new_chs;
+
+            for(size_t i=first_link_in_collision; i<link_occupancies.size(); i++)
+            {
+                new_chs.add(&link_occupancies[i]);
+            }
+            new_chs.subtract(&known_free);
+            chs.push_back(new_chs);
+        }
+
     };
 }
 

@@ -9,15 +9,16 @@
 
 namespace GVP
 {
-    class ScenarioTester
+    class SimulationScenarioTester
     {
     public:
-        Scenario &scenario;
+        SimulationScenario &scenario;
         GpuVoxelRvizVisualizer viz;
         ros::NodeHandle &n;
         
 
-        ScenarioTester(Scenario &scenario, ros::NodeHandle &n) : scenario(scenario), n(n), viz(n)
+        SimulationScenarioTester(SimulationScenario &scenario, ros::NodeHandle &n) :
+            scenario(scenario), n(n), viz(n)
         {
         }
 
@@ -26,7 +27,7 @@ namespace GVP
         {
             for(const auto &c:path)
             {
-                if(!scenario.getState().move(c, scenario.getTrueObstacles()))
+                if(!scenario.getSimulationState().move(c, scenario.getTrueObstacles()))
                 {
                     viz.vizScenario(scenario);
                     return false;
