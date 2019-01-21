@@ -75,7 +75,7 @@ TEST(GVP, prob_grid_get_occupied_indices)
 TEST(GVP, cur_config)
 {
     GVP::VictorRightArm v;
-    GVP::State s(v);
+    GVP::SimulationState s(v);
     GVP::VictorRightArmConfig q(std::vector<double>{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7});
     ProbGrid true_world;
     s.move(q, true_world);
@@ -87,7 +87,7 @@ TEST(GVP, cur_config)
 TEST(GVP, CHS)
 {
     GVP::VictorRightArm v;
-    GVP::State s(v);
+    GVP::SimulationState s(v);
     GVP::VictorRightArmConfig q(std::vector<double>{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7});
     ProbGrid true_world;
 

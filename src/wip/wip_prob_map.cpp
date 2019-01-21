@@ -9,7 +9,7 @@
 #include "robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
-#include "strategies.hpp"
+#include "graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
 
 using namespace GVP;
@@ -122,7 +122,8 @@ int main(int argc, char* argv[])
     // GVP::VictorLeftArmAndBase victor_left;
     TableWithBox scenario;
     SimulationScenarioTester tester(scenario, n);
-    GraphSearchStrategy strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
+    // OptimisticGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
+    ParetoCostGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
 
     double i = 0;
 

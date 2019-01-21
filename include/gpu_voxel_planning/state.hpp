@@ -42,25 +42,31 @@ namespace GVP
             return true;
         }
 
-        double calcProbFree(const VictorRightArmConfig &c)
+        double calcProbFree(const ProbGrid &volume)
         {
-            robot.set(c.asMap());
-            if(robot.occupied_space.overlapsWith(&robot_self_collide_obstacles))
+            if(robot_self_collide_obstacles.overlapsWith(&volume))
             {
                 return 0.0;
             }
 
-            if(robot.occupied_space.overlapsWith(&known_obstacles))
+            if(known_obstacles.overlapsWith(&volume))
             {
                 return 0.0;
             }
 
             double p_free = 1.0;
-            for(const auto &c: chs)
+            for(auto &c: chs)
             {
-                p_free *= 1 - ((double)robot.occupied_space.collideWith(&c)/c.countOccupied());
+                p_free *= 1 - ((double)c.collideWith(&volume)/c.countOccupied());
             }
             return p_free;
+
+        }
+
+        double calcProbFree(const VictorRightArmConfig &c)
+        {
+            robot.set(c.asMap());
+            return calcProbFree(robot.occupied_space);
         }
 
         void updateFreeSpace(const ProbGrid &new_free)
