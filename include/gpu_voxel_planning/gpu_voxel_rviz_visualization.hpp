@@ -8,7 +8,7 @@
 #include <ros/ros.h>
 
 
-visualization_msgs::Marker visualizeProbGrid(const ProbGrid &grid,
+visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,
                                              const std::string& global_frame,
                                              const std::string& ns,
                                              const std_msgs::ColorRGBA& color)
@@ -57,12 +57,12 @@ public:
         chs_pub = n.advertise<visualization_msgs::Marker>("chs", 10);
     }
 
-    void vizGrid(const ProbGrid &grid, const std::string &ns, const std_msgs::ColorRGBA &color)
+    void vizGrid(const DenseGrid &grid, const std::string &ns, const std_msgs::ColorRGBA &color)
     {
-        grid_pub.publish(visualizeProbGrid(grid, global_frame, ns, color));
+        grid_pub.publish(visualizeDenseGrid(grid, global_frame, ns, color));
     }
 
-    void vizChs(const std::vector<ProbGrid> &chss, const std::string &ns = "chs")
+    void vizChs(const std::vector<DenseGrid> &chss, const std::string &ns = "chs")
     {
         std_msgs::ColorRGBA color;
         color.a = 0.5;
@@ -71,19 +71,19 @@ public:
         {
             std::ostringstream ss;
             ss << ns << "_" << i;
-            chs_pub.publish(visualizeProbGrid(chss[i], global_frame, ss.str(), color));
+            chs_pub.publish(visualizeDenseGrid(chss[i], global_frame, ss.str(), color));
         }
     }
 
     void vizState(const GVP::State &s)
     {
-        grid_pub.publish(visualizeProbGrid(s.known_obstacles, global_frame,
+        grid_pub.publish(visualizeDenseGrid(s.known_obstacles, global_frame,
                                            "known_obstacles", makeColor(0,0,0,1)));
 
         std_msgs::ColorRGBA robot_color = makeColor(0.7, 0.5, 0.4, 1.0);
-        grid_pub.publish(visualizeProbGrid(s.robot_self_collide_obstacles, global_frame,
+        grid_pub.publish(visualizeDenseGrid(s.robot_self_collide_obstacles, global_frame,
                                            "passive_robot", robot_color));
-        grid_pub.publish(visualizeProbGrid(s.robot.occupied_space, global_frame,
+        grid_pub.publish(visualizeDenseGrid(s.robot.occupied_space, global_frame,
                                            "active_robot", robot_color));
         vizChs(s.chs);
     }
@@ -95,7 +95,7 @@ public:
 
     void vizScenario(const GVP::SimulationScenario &s)
     {
-        grid_pub.publish(visualizeProbGrid(s.getTrueObstacles(), global_frame,
+        grid_pub.publish(visualizeDenseGrid(s.getTrueObstacles(), global_frame,
                                            "true_obstacles", makeColor(0.5, 0.5, 0.5, 0.5)));
         vizState(s.getState());   
     }

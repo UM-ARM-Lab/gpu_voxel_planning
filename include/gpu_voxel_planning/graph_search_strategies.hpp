@@ -26,7 +26,7 @@ namespace GVP
         bool initialized;
         double discretization = 0.02;
 
-        std::map<arc_dijkstras::HashableEdge, ProbGrid> precomputed_swept_volumes;
+        std::map<arc_dijkstras::HashableEdge, DenseGrid> precomputed_swept_volumes;
 
         GraphSearchStrategy(const std::string &filename) : graph(filename), initialized(false) {}
 
@@ -77,7 +77,7 @@ namespace GVP
             VictorRightArmConfig q_end(graph.GetNodeImmutable(e.GetToIndex()).GetValueImmutable());
             GVP::Path path = interpolate(q_start, q_end, discretization);
 
-            ProbGrid swept_volume;
+            DenseGrid swept_volume;
             for(const auto &config: path)
             {
                 s.robot.set(config.asMap());
@@ -87,7 +87,7 @@ namespace GVP
             precomputed_swept_volumes[arc_dijkstras::getHashable(e)] = swept_volume;
         }
 
-        ProbGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
+        DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
         {
             PROFILE_START("GetSweptVolume");
             if(!precomputed_swept_volumes.count(arc_dijkstras::getHashable(e)))

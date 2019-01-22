@@ -29,10 +29,10 @@ namespace GVP
     {
     public:
         SimulationState s;
-        ProbGrid true_world;
+        DenseGrid true_world;
         SimulationScenario() : s(victor){}
-        virtual ProbGrid& getTrueObstacles() = 0;
-        virtual const ProbGrid& getTrueObstacles() const = 0;
+        virtual DenseGrid& getTrueObstacles() = 0;
+        virtual const DenseGrid& getTrueObstacles() const = 0;
         virtual SimulationState& getSimulationState() = 0;
         virtual const SimulationState& getSimulationState() const = 0;
         
@@ -78,12 +78,12 @@ namespace GVP
             goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
         }
 
-        virtual ProbGrid& getTrueObstacles() override
+        virtual DenseGrid& getTrueObstacles() override
         {
             return true_world;
         }
 
-        virtual const ProbGrid& getTrueObstacles() const override
+        virtual const DenseGrid& getTrueObstacles() const override
         {
             return true_world;
         }
@@ -122,7 +122,7 @@ namespace GVP
             victor.set(jvm);
         }
 
-        void addTable(ProbGrid &g)
+        void addTable(DenseGrid &g)
         {
             Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
             Vector3f tc(1.7, 1.4, 0.9); //table corner
@@ -151,7 +151,7 @@ namespace GVP
 
         }
 
-        void addVisibleCave(ProbGrid &g)
+        void addVisibleCave(DenseGrid &g)
         {
             setCaveDims();
             g.insertBox(cavecorner+caveheight, cavecorner+caveheight+cavetopd+Vector3f(0.033, 0, 0)); //top
@@ -159,7 +159,7 @@ namespace GVP
             
         }
 
-        void addCave(ProbGrid &g)
+        void addCave(DenseGrid &g)
         {
             setCaveDims();
             addVisibleCave(g);

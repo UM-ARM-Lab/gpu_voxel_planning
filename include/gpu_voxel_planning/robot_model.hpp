@@ -10,7 +10,7 @@ namespace GVP
     class Robot
     {
     public:
-        ProbGrid occupied_space;
+        DenseGrid occupied_space;
         robot::UrdfRobot robot_chain;
 
         Robot(const std::string &path_to_urdf_file) :
@@ -35,11 +35,11 @@ namespace GVP
 
         virtual std::vector<std::string> getLinkNames() const = 0;
         
-        virtual std::vector<ProbGrid> getLinkOccupancies() = 0;
+        virtual std::vector<DenseGrid> getLinkOccupancies() = 0;
 
-        ProbGrid getLinkOccupancy(const std::string &link_name)
+        DenseGrid getLinkOccupancy(const std::string &link_name)
         {
-            ProbGrid g;
+            DenseGrid g;
             const MetaPointCloud* clouds = robot_chain.getTransformedClouds();
             robot_chain.syncToHost();
 
@@ -166,16 +166,16 @@ namespace GVP
         }
 
 
-        virtual std::vector<ProbGrid> getLinkOccupancies() override
+        virtual std::vector<DenseGrid> getLinkOccupancies() override
         {
-            std::vector<ProbGrid> link_occupancies;
+            std::vector<DenseGrid> link_occupancies;
             for(const std::string &link: collision_link_names)
             {
                 link_occupancies.push_back(getLinkOccupancy(link));
             }
             for(const std::string &gripper_link: gripper_link_names)
             {
-                ProbGrid tmp = getLinkOccupancy(gripper_link);
+                DenseGrid tmp = getLinkOccupancy(gripper_link);
                 link_occupancies.back().add(&tmp);
             }
             return link_occupancies;
@@ -212,7 +212,7 @@ namespace GVP
             throw std::logic_error("Not implemented for left arm");
         }
 
-        virtual std::vector<ProbGrid> getLinkOccupancies() override
+        virtual std::vector<DenseGrid> getLinkOccupancies() override
         {
             throw std::logic_error("Not implemented for left arm");
         }

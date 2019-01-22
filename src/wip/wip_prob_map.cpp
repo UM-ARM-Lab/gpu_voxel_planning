@@ -25,13 +25,13 @@ void checkNoGpuMemoryLeaks()
     for(int i=0; i<100000; i++)
     {
         PROFILE_START("Copy and Collide");
-        ProbGrid g1;
+        DenseGrid g1;
         PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
                                                               Vector3f(2.0,1.0,1.2),
                                                               VOXEL_SIDE_LENGTH/2));
         g1.insertPointCloud(box, PROB_OCCUPIED);
 
-        ProbGrid g2(g1);
+        DenseGrid g2(g1);
 
         if(g1.collideWith(&g2))
         {
@@ -48,7 +48,7 @@ void checkNoGpuMemoryLeaks()
 
 void checkBasicViz(GpuVoxelRvizVisualizer &viz)
 {
-    ProbGrid g1;
+    DenseGrid g1;
     PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(0.1, 0.5, 1.0),
                                                           Vector3f(1.1, 1.0, 1.2),
                                                           VOXEL_SIDE_LENGTH/2));
@@ -70,7 +70,7 @@ void viewLinks(GpuVoxelRvizVisualizer &viz)
     auto link_occupancies = v.getLinkOccupancies();
     while(ros::ok())
     {
-        for(ProbGrid &g: link_occupancies)
+        for(DenseGrid &g: link_occupancies)
         {
             viz.vizGrid(g, "link", makeColor(0.0, 1.0, 1.0, 1.0));
             ros::Duration(1.0).sleep();

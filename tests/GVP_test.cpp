@@ -12,35 +12,30 @@
 #define PROB_OCCUPIED eBVM_OCCUPIED
 
 
-TEST(GVP, prob_grid_copy_constructor)
+TEST(GVP, dense_grid_copy_constructor)
 {
-    ProbGrid g1;
-    ProbGrid g2(g1);
+    DenseGrid g1;
+    DenseGrid g2(g1);
 
-    PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
-                                                          Vector3f(2.0,1.0,1.2),
-                                                          VOXEL_SIDE_LENGTH/2));
-    g1.insertPointCloud(box, PROB_OCCUPIED);
+    g1.insertBox(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2));
     EXPECT_TRUE(g1.countOccupied() > 0) << "Added box, but no occupied voxels in grid";
     EXPECT_TRUE(g2.countOccupied() == 0) << "Added box to base grid, but it effected copied grid";
     EXPECT_TRUE(g1.collideWith(&g2) == 0) << "Collided an empty voxel map but found collisions. Copy did not work properly";
 }
 
 
-TEST(GVP, prob_grid_assignment)
+TEST(GVP, dense_grid_assignment)
 {
-    ProbGrid g1;
-    ProbGrid g2;
+    DenseGrid g1;
+    DenseGrid g2;
 
-    PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
-                                                          Vector3f(2.0,1.0,1.2),
-                                                          VOXEL_SIDE_LENGTH/2));
-    g1.insertPointCloud(box, PROB_OCCUPIED);
+    g1.insertBox(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2));
+
 
     g2 = g1;
     size_t occ = g1.countOccupied(); 
     EXPECT_TRUE(occ > 0) << "Added box, but no occupied voxels in grid";
-    EXPECT_EQ(occ, g1.collideWith(&g2)) << "ProbGrid made with assignment operator has different number of occupied voxels";
+    EXPECT_EQ(occ, g1.collideWith(&g2)) << "DenseGrid made with assignment operator has different number of occupied voxels";
     EXPECT_EQ(occ, g2.countOccupied()) << "assigned map has wrong number of voxels";
 
     g1.clearMap();
@@ -48,15 +43,13 @@ TEST(GVP, prob_grid_assignment)
     EXPECT_EQ(occ, g2.countOccupied()) << "Clearing map 1 affected map 2";
 }
 
-TEST(GVP, prob_grid_get_occupied_indices)
+TEST(GVP, dense_grid_get_occupied_indices)
 {
-    ProbGrid g;
-    Vector3f lower_left(Vector3f(1.0,0.8,1.0));
-    Vector3f upper_right(Vector3f(2.0,1.0,1.2));
-    PointCloud box(geometry_generation::createBoxOfPoints(lower_left,
-                                                          upper_right,
-                                                          VOXEL_SIDE_LENGTH/2));
-    g.insertPointCloud(box, PROB_OCCUPIED);
+    DenseGrid g;
+    Vector3f upper_right(2.0,1.0,1.2);
+    Vector3f lower_left(1.0,0.8,1.0);
+    g.insertBox(lower_left, upper_right);
+
 
     EXPECT_TRUE(g.countOccupied() > 0);
     EXPECT_TRUE(g.countOccupied() == g.getOccupiedCenters().size());
@@ -77,7 +70,7 @@ TEST(GVP, cur_config)
     GVP::VictorRightArm v;
     GVP::SimulationState s(v);
     GVP::VictorRightArmConfig q(std::vector<double>{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7});
-    ProbGrid true_world;
+    DenseGrid true_world;
     s.move(q, true_world);
     EXPECT_EQ(q, s.getCurConfig()) << "Current config not equal to config of last most";
     
@@ -89,15 +82,13 @@ TEST(GVP, CHS)
     GVP::VictorRightArm v;
     GVP::SimulationState s(v);
     GVP::VictorRightArmConfig q(std::vector<double>{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7});
-    ProbGrid true_world;
+    DenseGrid true_world;
 
     EXPECT_EQ(1.0, s.calcProbFree(q)) << "No obstacles, but config is not free";
-    
-    PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(0.0,0.0,0.0),
-                                                          Vector3f(4.0,4.0,4.0),
-                                                          VOXEL_SIDE_LENGTH/2));
-    ProbGrid full_world;
-    full_world.insertPointCloud(box, PROB_OCCUPIED);
+ 
+    DenseGrid full_world;
+    full_world.insertBox(Vector3f(0.0,0.0,1.0), Vector3f(4.0,4.0,4.0));
+
     s.chs.push_back(full_world);
 
     EXPECT_GT(s.calcProbFree(q), 0.0) << "Large CHS, but no chance of free space";
@@ -110,6 +101,33 @@ TEST(GVP, CHS)
     EXPECT_EQ(s.calcProbFree(q), 0.0) << "Robot entirely overlaps CHS, so probfree should be 0";
 }
 
+
+TEST(GVP, sparse_grid_copy)
+{
+    DenseGrid dg0, dg1;
+    dg0.insertBox(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2));
+    SparseGrid sg1;
+    sg1.merge(&dg0);
+    dg1.merge(&sg1);
+
+    EXPECT_EQ(dg0.countOccupied(), dg1.countOccupied()) << "Converting to sparse and back changed number of occupied voxels";
+    EXPECT_EQ(dg0.countOccupied(), dg0.collideWith(&dg1)) << "Converting to sparse and back changed number of occupied voxels";
+
+    SparseGrid sg2(dg0);
+    DenseGrid dg2(sg2);
+    // SparseGrid sg2;
+    // DenseGrid dg2;
+
+    // sg2.merge(&dg0);
+    // dg2.merge(&sg2);
+
+    
+    EXPECT_EQ(dg0.countOccupied(), dg2.countOccupied()) << "Converting to sparse and back changed number of occupied voxels";
+    EXPECT_EQ(dg0.countOccupied(), dg0.collideWith(&dg2)) << "Converting to sparse and back changed number of occupied voxels";
+
+
+    
+}
 
 
 

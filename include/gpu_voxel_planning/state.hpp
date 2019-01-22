@@ -11,10 +11,10 @@ namespace GVP
     {
     public:
         Robot &robot;
-        ProbGrid robot_self_collide_obstacles;
-        ProbGrid known_obstacles;
-        ProbGrid known_free;
-        std::vector<ProbGrid> chs;
+        DenseGrid robot_self_collide_obstacles;
+        DenseGrid known_obstacles;
+        DenseGrid known_free;
+        std::vector<DenseGrid> chs;
         robot::JointValueMap current_config;
 
         State(Robot &robot) : robot(robot)
@@ -42,7 +42,7 @@ namespace GVP
             return true;
         }
 
-        double calcProbFree(const ProbGrid &volume)
+        double calcProbFree(const DenseGrid &volume)
         {
             PROFILE_START("CalcProbFree");
             if(robot_self_collide_obstacles.overlapsWith(&volume))
@@ -73,7 +73,7 @@ namespace GVP
             return calcProbFree(robot.occupied_space);
         }
 
-        void updateFreeSpace(const ProbGrid &new_free)
+        void updateFreeSpace(const DenseGrid &new_free)
         {
             known_free.add(&new_free);
             for(auto &c: chs)
@@ -110,7 +110,7 @@ namespace GVP
         };
 
         
-        bool move(const VictorRightArmConfig &c, const ProbGrid &true_world)
+        bool move(const VictorRightArmConfig &c, const DenseGrid &true_world)
         {
             robot.set(c.asMap());
             if(robot.occupied_space.overlapsWith(&true_world))
@@ -129,7 +129,7 @@ namespace GVP
         }
 
 
-        void addChs(const ProbGrid &true_world)
+        void addChs(const DenseGrid &true_world)
         {
             auto link_occupancies = robot.getLinkOccupancies();
             size_t first_link_in_collision = 0;
@@ -147,7 +147,7 @@ namespace GVP
                 throw std::logic_error("Trying to add CHS, but no link collided");
             }
 
-            ProbGrid new_chs;
+            DenseGrid new_chs;
 
             for(size_t i=first_link_in_collision; i<link_occupancies.size(); i++)
             {

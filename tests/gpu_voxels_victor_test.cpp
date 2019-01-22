@@ -22,8 +22,8 @@ bool isSubset(GpuVoxelsVictor &vm, const std::string &map1, const std::string &m
 TEST(GVP, prob_grid_basics)
 {
     using namespace gpu_voxels;
-    ProbGrid g1;
-    ProbGrid g2;
+    DenseGrid g1;
+    DenseGrid g2;
     PointCloud box(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
                                                           Vector3f(2.0,1.0,1.2),
                                                           VOXEL_SIDE_LENGTH/2));
