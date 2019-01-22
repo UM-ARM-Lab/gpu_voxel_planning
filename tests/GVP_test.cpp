@@ -125,9 +125,27 @@ TEST(GVP, sparse_grid_copy)
     
     EXPECT_EQ(dg0.countOccupied(), dg3.countOccupied()) << "Converting to sparse and back changed number of occupied voxels";
     EXPECT_EQ(dg0.countOccupied(), dg0.collideWith(&dg3)) << "Converting to sparse and back changed number of occupied voxels";
-
-
     
+}
+
+
+TEST(GVP, file_read_write)
+{
+    DenseGrid dg0, dg1;
+    dg0.insertBox(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2));
+    SparseGrid sg0(dg0), sg1;
+
+
+    sg0.writeToDisk("/tmp/sparse_grid.gvg");
+    dg0.writeToDisk("/tmp/dense_grid.gvg");
+
+    sg1.readFromDisk("/tmp/sparse_grid.gvg");
+    dg1.readFromDisk("/tmp/dense_grid.gvg");
+
+    DenseGrid dg2(sg1);
+
+    EXPECT_EQ(dg1.countOccupied(), dg0.countOccupied()) << "Writing and Reading Dense Grid resulted in change";
+    EXPECT_EQ(dg2.countOccupied(), dg0.countOccupied()) << "Writing and Reading Sparse Grid resulted in change";
 }
 
 
