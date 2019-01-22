@@ -6,6 +6,7 @@
 #include "strategies.hpp"
 #include <graph_planner/dijkstras_addons.hpp>
 #include <cmath>
+#include <arc_utilities/timing.hpp>
 
 namespace GVP
 {
@@ -24,6 +25,8 @@ namespace GVP
         NodeIndex goal_node;
         bool initialized;
         double discretization = 0.02;
+
+        std::map<arc_dijkstras::HashableEdge, ProbGrid> precomputed_swept_volumes;
 
         GraphSearchStrategy(const std::string &filename) : graph(filename), initialized(false) {}
 
@@ -67,8 +70,9 @@ namespace GVP
         }
 
 
-        ProbGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
+        void computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
         {
+            PROFILE_START("ComputeSweptVolume");
             VictorRightArmConfig q_start(graph.GetNodeImmutable(e.GetFromIndex()).GetValueImmutable());
             VictorRightArmConfig q_end(graph.GetNodeImmutable(e.GetToIndex()).GetValueImmutable());
             GVP::Path path = interpolate(q_start, q_end, discretization);
@@ -79,7 +83,20 @@ namespace GVP
                 s.robot.set(config.asMap());
                 swept_volume.add(&s.robot.occupied_space);
             }
-            return swept_volume;
+            PROFILE_RECORD("ComputeSweptVolume");
+            precomputed_swept_volumes[arc_dijkstras::getHashable(e)] = swept_volume;
+        }
+
+        ProbGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
+        {
+            PROFILE_START("GetSweptVolume");
+            if(!precomputed_swept_volumes.count(arc_dijkstras::getHashable(e)))
+            {
+                computeSweptVolume(s, e);
+            }
+            
+            PROFILE_RECORD("GetSweptVolume");
+            return precomputed_swept_volumes[arc_dijkstras::getHashable(e)];
         }
 
 

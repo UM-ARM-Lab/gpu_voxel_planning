@@ -120,10 +120,10 @@ int main(int argc, char* argv[])
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    TableWithBox scenario(true, true, false);
+    TableWithBox scenario(true, false, false);
     SimulationScenarioTester tester(scenario, n);
-    OptimisticGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
-    // ParetoCostGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
+    // OptimisticGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
+    ParetoCostGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
 
     double i = 0;
 
@@ -131,6 +131,8 @@ int main(int argc, char* argv[])
 
 
     tester.attemptStrategy(strat);
+    auto names = std::vector<std::string>{"GetSweptVolume", "CalcProbFree", "ComputeSweptVolume"};
+    PROFILE_PRINT_SUMMARY_FOR_GROUP(names);
     // Path p = interpolate(VictorRightArmConfig(scenario.getState().current_config),
     //                      VictorRightArmConfig(scenario.goal_config), 0.02);
     // Path p = strat.applyTo(scenario);

@@ -44,13 +44,16 @@ namespace GVP
 
         double calcProbFree(const ProbGrid &volume)
         {
+            PROFILE_START("CalcProbFree");
             if(robot_self_collide_obstacles.overlapsWith(&volume))
             {
+                PROFILE_RECORD("CalcProbFree");
                 return 0.0;
             }
 
             if(known_obstacles.overlapsWith(&volume))
             {
+                PROFILE_RECORD("CalcProbFree");
                 return 0.0;
             }
 
@@ -59,6 +62,7 @@ namespace GVP
             {
                 p_free *= 1 - ((double)c.collideWith(&volume)/c.countOccupied());
             }
+            PROFILE_RECORD("CalcProbFree");
             return p_free;
 
         }
