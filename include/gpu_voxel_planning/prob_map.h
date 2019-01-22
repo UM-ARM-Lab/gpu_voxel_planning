@@ -18,6 +18,7 @@ class SparseGrid: public gpu_voxels::voxellist::ProbVoxelList
 public:
     SparseGrid();
     SparseGrid(const DenseGrid &other);
+    SparseGrid& operator=(const DenseGrid &other);
 };
 
 

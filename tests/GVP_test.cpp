@@ -115,15 +115,16 @@ TEST(GVP, sparse_grid_copy)
 
     SparseGrid sg2(dg0);
     DenseGrid dg2(sg2);
-    // SparseGrid sg2;
-    // DenseGrid dg2;
-
-    // sg2.merge(&dg0);
-    // dg2.merge(&sg2);
-
     
     EXPECT_EQ(dg0.countOccupied(), dg2.countOccupied()) << "Converting to sparse and back changed number of occupied voxels";
     EXPECT_EQ(dg0.countOccupied(), dg0.collideWith(&dg2)) << "Converting to sparse and back changed number of occupied voxels";
+
+    SparseGrid sg3;
+    sg3 = dg0;
+    DenseGrid dg3(sg3);
+    
+    EXPECT_EQ(dg0.countOccupied(), dg3.countOccupied()) << "Converting to sparse and back changed number of occupied voxels";
+    EXPECT_EQ(dg0.countOccupied(), dg0.collideWith(&dg3)) << "Converting to sparse and back changed number of occupied voxels";
 
 
     

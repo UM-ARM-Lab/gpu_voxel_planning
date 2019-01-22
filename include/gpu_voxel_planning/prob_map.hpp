@@ -28,6 +28,11 @@ SparseGrid::SparseGrid(const DenseGrid &other) :
     merge(&other);
 }
 
+SparseGrid& SparseGrid::operator=(const DenseGrid &other)
+{
+    merge(&other);
+    return *this;
+}
 
 
 

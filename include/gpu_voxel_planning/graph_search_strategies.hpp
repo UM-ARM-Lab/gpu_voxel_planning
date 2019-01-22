@@ -26,7 +26,7 @@ namespace GVP
         bool initialized;
         double discretization = 0.02;
 
-        std::map<arc_dijkstras::HashableEdge, DenseGrid> precomputed_swept_volumes;
+        std::map<arc_dijkstras::HashableEdge, SparseGrid> precomputed_swept_volumes;
 
         GraphSearchStrategy(const std::string &filename) : graph(filename), initialized(false) {}
 
@@ -96,7 +96,7 @@ namespace GVP
             }
             
             PROFILE_RECORD("GetSweptVolume");
-            return precomputed_swept_volumes[arc_dijkstras::getHashable(e)];
+            return DenseGrid(precomputed_swept_volumes[arc_dijkstras::getHashable(e)]);
         }
 
 
