@@ -228,16 +228,38 @@ target_link_libraries(wip_victor_sim
 
 add_library(victor_halton_roadmap
   src/victor_halton_roadmap.cpp)
-target_link_libraries(victor_halton_roadmap
-  # graph
+
+
+
+set(Planning_SOURCES
+  src/scenario_tester.cpp
+  src/graph_search_strategies.cpp
+  src/path_utils.cpp
+  )
+
+add_library(planning_library
+  ${Planning_SOURCES}
+  )
+# add_dependencies(planning_library
+#   ${EXTERN_LIBS}
+#   ${catkin_EXPORTED_TARGETS}
+#   )
+target_link_libraries(planning_library
+  ${EXTERN_LIBS}
   )
 
 
 add_executable(wip_prob_map
   src/wip/wip_prob_map.cpp
-  src/path_utils.cpp)
+  )
+# add_dependencies(wip_prob_map
+#   planning_library
+#   ${EXTERN_LIBS}
+#   ${catkin_EXPORTED_TARGETS}
+#   )
 target_link_libraries(wip_prob_map
   ${EXTERN_LIBS}
+  planning_library
   victor_halton_roadmap
   )
 

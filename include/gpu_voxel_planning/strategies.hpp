@@ -10,7 +10,7 @@ namespace GVP
     class Strategy
     {
     public:
-        virtual GVP::Path applyTo(Scenario &scenario) = 0;
+        virtual Path applyTo(Scenario &scenario) = 0;
     };
 
 

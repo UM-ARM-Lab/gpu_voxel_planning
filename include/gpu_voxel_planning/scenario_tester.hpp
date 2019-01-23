@@ -22,33 +22,9 @@ namespace GVP
         {
         }
 
+        bool attemptPath(const std::vector<VictorRightArmConfig> &path);
 
-        bool attemptPath(const std::vector<VictorRightArmConfig> &path)
-        {
-            for(const auto &c:path)
-            {
-                if(!scenario.getSimulationState().move(c, scenario.getTrueObstacles()))
-                {
-                    viz.vizScenario(scenario);
-                    return false;
-                }
-                viz.vizScenario(scenario);
-                ros::Duration(0.01).sleep();
-            }
-            return true;
-        }
-
-
-
-        bool attemptStrategy(Strategy &strategy)
-        {
-            while(!scenario.completed())
-            {
-                attemptPath(strategy.applyTo(scenario));
-            }
-            std::cout << "Reached Goal\n";
-            return true;
-        }
+        bool attemptStrategy(Strategy &strategy);
     };
 }
 

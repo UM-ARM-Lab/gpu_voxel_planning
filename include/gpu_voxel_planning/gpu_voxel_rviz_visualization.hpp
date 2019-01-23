@@ -8,10 +8,10 @@
 #include <ros/ros.h>
 
 
-visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,
-                                             const std::string& global_frame,
-                                             const std::string& ns,
-                                             const std_msgs::ColorRGBA& color)
+inline visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,
+                                                     const std::string& global_frame,
+                                                     const std::string& ns,
+                                                     const std_msgs::ColorRGBA& color)
 {
     visualization_msgs::Marker occupied_marker;
     auto centers = grid.getOccupiedCenters();

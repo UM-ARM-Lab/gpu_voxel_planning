@@ -3,6 +3,7 @@
 
 #include "robot_model.hpp"
 #include <stdexcept>
+#include <arc_utilities/timing.hpp>
 
 
 namespace GVP
