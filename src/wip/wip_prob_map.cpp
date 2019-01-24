@@ -123,10 +123,11 @@ int main(int argc, char* argv[])
     TableWithBox scenario(true, false, false);
     SimulationScenarioTester tester(scenario, n);
     // OptimisticGraphSearch strat;
-    ParetoCostGraphSearch strat;
+    ParetoCostGraphSearch strat(1.0);
 
 
     tester.attemptStrategy(strat);
+    strat.saveToFile();
     auto names = std::vector<std::string>{"GetSweptVolume", "CalcProbFree", "ComputeSweptVolume"};
     PROFILE_PRINT_SUMMARY_FOR_GROUP(names);
     

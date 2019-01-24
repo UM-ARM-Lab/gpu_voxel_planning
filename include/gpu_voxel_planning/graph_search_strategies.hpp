@@ -56,6 +56,10 @@ namespace GVP
         double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
 
         std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s);
+
+        void saveToFile(std::string filename);
+        void saveToFile() {saveToFile(swept_volumes_filepath);}
+
     };
 
 
@@ -77,7 +81,7 @@ namespace GVP
     public:        
         double alpha = 10.0;
         ParetoCostGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
-        ParetoCostGraphSearch() {}
+        ParetoCostGraphSearch(double alpha) : alpha(alpha){}
         
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
     };        

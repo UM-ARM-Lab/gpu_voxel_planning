@@ -52,7 +52,6 @@ namespace GVP
         }
         else
         {
-            std::cout << "Off path, returning to graph\n";
             next = graph.GetNodeImmutable(prev_node).GetValueImmutable();
             graph.GetEdgeMutable(prev_node, cur_node).SetValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
                 
@@ -85,13 +84,14 @@ namespace GVP
     DenseGrid GraphSearchStrategy::getSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
     {
         PROFILE_START("GetSweptVolume");
-        if(!precomputed_swept_volumes.count(arc_dijkstras::getSortedHashable(e)))
+        arc_dijkstras::HashableEdge e_hashed = arc_dijkstras::getSortedHashable(e);
+        if(!precomputed_swept_volumes.count(e_hashed))
         {
             computeSweptVolume(s, e);
         }
             
         PROFILE_RECORD("GetSweptVolume");
-        return DenseGrid(precomputed_swept_volumes[arc_dijkstras::getSortedHashable(e)]);
+        return DenseGrid(precomputed_swept_volumes[e_hashed]);
     }
 
 
@@ -130,6 +130,11 @@ namespace GVP
         return result.first;
     }
 
+
+    void GraphSearchStrategy::saveToFile(std::string filename)
+    {
+        precomputed_swept_volumes.saveToFile(filename);
+    }
 
 
 
