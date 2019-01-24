@@ -44,7 +44,8 @@ namespace GVP{
             return buffer.size() - start_buffer_size;
         }
 
-        uint64_t deserializeSelf(std::vector<uint8_t>& buffer, uint64_t& buffer_position)
+        uint64_t deserializeSelf(std::vector<uint8_t>& buffer, uint64_t& buffer_position,
+                                 uint64_t max_node_index =std::numeric_limits<uint64_t>::max())
         {
             using namespace arc_utilities;
             using namespace arc_dijkstras;
@@ -64,6 +65,12 @@ namespace GVP{
                 uint64_t n2 = res2.first;
                 buffer_position += res2.second;
 
+                if(n1 >= max_node_index || n2 >= max_node_index)
+                {
+                    SparseGrid s;
+                    s.deserializeSelf(buffer, buffer_position);
+                    continue;
+                }
 
                 HashableEdge e = std::make_pair(n1, n2);
                 (*this)[e].deserializeSelf(buffer, buffer_position);
@@ -78,11 +85,12 @@ namespace GVP{
             ZlibHelpers::CompressAndWriteToFile(buffer, filepath);
         }
 
-        void loadFromFile(const std::string& filepath)
+        void loadFromFile(const std::string& filepath,
+                          uint64_t max_node_index =std::numeric_limits<uint64_t>::max())
         {
             std::vector<uint8_t> buffer = ZlibHelpers::LoadFromFileAndDecompress(filepath);
             uint64_t start = 0;
-            deserializeSelf(buffer, start);
+            deserializeSelf(buffer, start, max_node_index);
         }
     };
 }

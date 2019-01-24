@@ -122,37 +122,13 @@ int main(int argc, char* argv[])
     // GVP::VictorLeftArmAndBase victor_left;
     TableWithBox scenario(true, false, false);
     SimulationScenarioTester tester(scenario, n);
-    // OptimisticGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
-    ParetoCostGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
-    std::string sv_path = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map";
-    
-    strat.precomputed_swept_volumes.loadFromFile(sv_path);
-    
-    double i = 0;
-
-    // testAngles(scenario, viz);
-
+    // OptimisticGraphSearch strat;
+    ParetoCostGraphSearch strat;
 
 
     tester.attemptStrategy(strat);
     auto names = std::vector<std::string>{"GetSweptVolume", "CalcProbFree", "ComputeSweptVolume"};
     PROFILE_PRINT_SUMMARY_FOR_GROUP(names);
-    
-    strat.precomputed_swept_volumes.saveToFile(sv_path);
-        
-    // Path p = interpolate(VictorRightArmConfig(scenario.getState().current_config),
-    //                      VictorRightArmConfig(scenario.goal_config), 0.02);
-    // Path p = strat.applyTo(scenario);
-    // std::cout << "path has " << p.size() << " points\n";
-    // tester.attemptPath(p);
-    // while(ros::ok())
-    // {
-    //     // victor_left.set(VictorLeftArmConfig(std::vector<double>{i, i, i, i, i, i, i}).asMap());
-    //     i+= 0.1;
-        
-    //     viz.vizScenario(scenario);
-    //     ros::Duration(0.1).sleep();
-    // }
     
     
 }

@@ -23,12 +23,17 @@ namespace GVP
         NodeIndex goal_node;
         bool initialized;
         double discretization = 0.02;
+        const std::string graph_filepath;
+        const std::string swept_volumes_filepath;
+        
 
         // std::map<arc_dijkstras::HashableEdge, SparseGrid> precomputed_swept_volumes;
         MemorizedSweptVolume precomputed_swept_volumes;
 
         // GraphSearchStrategy(const std::string &filename) : graph(filename), initialized(false) {}
-        GraphSearchStrategy(const std::string &filename);
+        GraphSearchStrategy(const std::string &graph_filepath, const std::string& swept_volumes_filepath);
+        GraphSearchStrategy(const std::string &graph_filepath);
+        GraphSearchStrategy();
 
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) = 0;
 
@@ -60,6 +65,7 @@ namespace GVP
     public:        
 
         OptimisticGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
+        OptimisticGraphSearch() {}
 
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
     };        
@@ -71,6 +77,7 @@ namespace GVP
     public:        
         double alpha = 10.0;
         ParetoCostGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
+        ParetoCostGraphSearch() {}
         
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
     };        
