@@ -63,20 +63,20 @@ namespace GVP
             swept_volume.add(&s.robot.occupied_space);
         }
         PROFILE_RECORD("ComputeSweptVolume");
-        precomputed_swept_volumes[arc_dijkstras::getHashable(e)] = swept_volume;
+        precomputed_swept_volumes[arc_dijkstras::getSortedHashable(e)] = swept_volume;
     }
 
 
     DenseGrid GraphSearchStrategy::getSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
     {
         PROFILE_START("GetSweptVolume");
-        if(!precomputed_swept_volumes.count(arc_dijkstras::getHashable(e)))
+        if(!precomputed_swept_volumes.count(arc_dijkstras::getSortedHashable(e)))
         {
             computeSweptVolume(s, e);
         }
             
         PROFILE_RECORD("GetSweptVolume");
-        return DenseGrid(precomputed_swept_volumes[arc_dijkstras::getHashable(e)]);
+        return DenseGrid(precomputed_swept_volumes[arc_dijkstras::getSortedHashable(e)]);
     }
 
 

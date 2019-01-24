@@ -6,6 +6,7 @@
 #include <iostream>
 #include "prob_map.hpp"
 #include "state.hpp"
+#include "memorized_swept_volumes.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
 
 
@@ -149,7 +150,35 @@ TEST(GVP, file_read_write)
 }
 
 
+TEST(GVP, memorize_swept_volumes_loading)
+{
+    DenseGrid dg1, dg2;
+    dg1.insertBox(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2));
+    dg2.insertBox(Vector3f(0.1,0.2,0.3), Vector3f(0.4,0.5,0.6));
+    arc_dijkstras::HashableEdge e1(3, 4);
+    arc_dijkstras::HashableEdge e2(7, 8);
 
+    GVP::MemorizedSweptVolume sv;
+    sv[e1] = dg1;
+    sv[e2] = dg2;
+
+    std::vector<uint8_t> buffer;
+    sv.serializeSelf(buffer);
+
+    uint64_t buffer_position = 0;
+    GVP::MemorizedSweptVolume sv_loaded;
+    sv_loaded.deserializeSelf(buffer, buffer_position);
+        
+    DenseGrid dg1p = sv_loaded[e1];
+    DenseGrid dg2p = sv_loaded[e2];
+
+    EXPECT_EQ(dg1.countOccupied(), dg1p.countOccupied());
+    EXPECT_EQ(dg1.collideWith(&dg1p), dg1p.countOccupied());
+    
+    EXPECT_EQ(dg2.countOccupied(), dg2p.countOccupied());
+    EXPECT_EQ(dg2.collideWith(&dg2p), dg2p.countOccupied());
+        
+}
 
 
 GTEST_API_ int main(int argc, char **argv) {

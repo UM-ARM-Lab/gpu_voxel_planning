@@ -7,6 +7,7 @@
 #include <graph_planner/dijkstras_addons.hpp>
 #include <cmath>
 #include <arc_utilities/timing.hpp>
+#include "memorized_swept_volumes.hpp"
 
 namespace GVP
 {
@@ -23,7 +24,8 @@ namespace GVP
         bool initialized;
         double discretization = 0.02;
 
-        std::map<arc_dijkstras::HashableEdge, SparseGrid> precomputed_swept_volumes;
+        // std::map<arc_dijkstras::HashableEdge, SparseGrid> precomputed_swept_volumes;
+        MemorizedSweptVolume precomputed_swept_volumes;
 
         // GraphSearchStrategy(const std::string &filename) : graph(filename), initialized(false) {}
         GraphSearchStrategy(const std::string &filename);
