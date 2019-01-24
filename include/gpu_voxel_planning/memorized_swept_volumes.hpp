@@ -5,6 +5,7 @@
 #include "prob_map.hpp"
 #include <graph_planner/dijkstras_addons.hpp>
 #include <arc_utilities/serialization.hpp>
+#include <arc_utilities/zlib_helpers.hpp>
 #include <utility>
 
 namespace GVP{
@@ -68,6 +69,20 @@ namespace GVP{
                 (*this)[e].deserializeSelf(buffer, buffer_position);
             }
             return buffer_start_position - buffer_position;
+        }
+
+        void saveToFile(const std::string& filepath)
+        {
+            std::vector<uint8_t> buffer;
+            serializeSelf(buffer);
+            ZlibHelpers::CompressAndWriteToFile(buffer, filepath);
+        }
+
+        void loadFromFile(const std::string& filepath)
+        {
+            std::vector<uint8_t> buffer = ZlibHelpers::LoadFromFileAndDecompress(filepath);
+            uint64_t start = 0;
+            deserializeSelf(buffer, start);
         }
     };
 }
