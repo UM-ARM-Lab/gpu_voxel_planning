@@ -25,6 +25,8 @@ namespace GVP
         bool attemptPath(const std::vector<VictorRightArmConfig> &path);
 
         bool attemptStrategy(Strategy &strategy);
+
+        std::string getName(const Strategy &strategy) const;
     };
 }
 

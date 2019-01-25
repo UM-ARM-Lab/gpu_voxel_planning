@@ -121,15 +121,20 @@ int main(int argc, char* argv[])
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
     TableWithBox scenario(true, false, false);
-    SimulationScenarioTester tester(scenario, n);
+    // SlottedWall scenario;
+
     // OptimisticGraphSearch strat;
-    ParetoCostGraphSearch strat(1.0);
+    // ParetoCostGraphSearch strat(10.0);
+    UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
 
 
+    
+    SimulationScenarioTester tester(scenario, n);
     tester.attemptStrategy(strat);
     strat.saveToFile();
     auto names = std::vector<std::string>{"GetSweptVolume", "CalcProbFree", "ComputeSweptVolume"};
     PROFILE_PRINT_SUMMARY_FOR_GROUP(names);
-    
+    std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
+    PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     
 }

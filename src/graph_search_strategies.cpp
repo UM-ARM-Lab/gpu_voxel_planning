@@ -95,10 +95,8 @@ namespace GVP
     }
 
 
-    double GraphSearchStrategy::calcEdgeProbability(State &s, arc_dijkstras::GraphEdge &e)
-    {
-        return s.calcProbFree(getSweptVolume(s, e));
-    }
+
+
 
     bool GraphSearchStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s)
     {
@@ -127,6 +125,10 @@ namespace GVP
 
         auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformLazySP(
             graph, start, goal, &distanceHeuristic, eval_fn, true);
+        if(result.second == std::numeric_limits<double>::infinity())
+        {
+            std::cout << "No path found on graph\n";
+        }
         return result.first;
     }
 
@@ -149,6 +151,10 @@ namespace GVP
     }
 
 
+    std::string OptimisticGraphSearch::getName() const
+    {
+        return "Optimistic Graph Search";
+    }
 
 
      /**********************************
@@ -156,10 +162,43 @@ namespace GVP
      ********************************/
     double ParetoCostGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
     {
-        double p_cost = -std::log(calcEdgeProbability(s, e));
+        double edge_probability = s.calcProbFree(getSweptVolume(s, e));
+        double p_cost = -std::log(edge_probability);
         double l_cost = e.GetWeight();
         return l_cost + alpha * p_cost;
+    }
 
+    std::string ParetoCostGraphSearch::getName() const
+    {
+        std::stringstream ss;
+        ss << "ParetoCost Graph Search: alpha = " << alpha;
+        return ss.str();
+    }
+
+
+
+    
+    /************************************
+     **  UnknownSpaceCost Graph Search
+     ***********************************/
+    double UnknownSpaceCostGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    {
+        DenseGrid sv = getSweptVolume(s, e);
+        double edge_probability = s.calcProbFree(sv);
+
+        double unknown_vox = sv.countOccupied() - sv.collideWith(&s.known_free);
+        double p_cost = -alpha*std::log(edge_probability);
+        double l_cost = e.GetWeight();
+        double unknown_cost = free_cost * unknown_vox;
+        std::cout << "Edge traverses " << unknown_cost << " unknown voxels\n";
+        return l_cost + p_cost + unknown_cost;
+    }
+
+    std::string UnknownSpaceCostGraphSearch::getName() const
+    {
+        std::stringstream ss;
+        ss << "UnknownSpaceCost Graph Search: cost = " << free_cost;
+        return ss.str();
     }
 
 }

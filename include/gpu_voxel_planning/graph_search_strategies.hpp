@@ -45,8 +45,6 @@ namespace GVP
 
         DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
 
-        double calcEdgeProbability(State &s, arc_dijkstras::GraphEdge &e);
-
         
         /* Checks an edge against known obstacles to see if there is a collision.
          * Changes the graph edge validity accordingly
@@ -72,6 +70,8 @@ namespace GVP
         OptimisticGraphSearch() {}
 
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+
+        virtual std::string getName() const override;
     };        
 
 
@@ -84,7 +84,22 @@ namespace GVP
         ParetoCostGraphSearch(double alpha) : alpha(alpha){}
         
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
-    };        
+
+        virtual std::string getName() const override;
+    };
+
+    class UnknownSpaceCostGraphSearch : public GraphSearchStrategy
+    {
+    public:
+        double alpha;
+        double free_cost;
+        UnknownSpaceCostGraphSearch(double alpha, double free_cost) :
+            alpha(alpha), free_cost(free_cost){}
+
+        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+
+        virtual std::string getName() const override;
+    };
 }
 
 #endif

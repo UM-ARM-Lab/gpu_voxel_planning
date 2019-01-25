@@ -23,11 +23,22 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
 
 bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
 {
+    viz.vizScenario(scenario);
+    std::string name = getName(strategy);
     while(!scenario.completed())
     {
-        attemptPath(strategy.applyTo(scenario));
+        PROFILE_START(name + " Planning Time");
+        const std::vector<VictorRightArmConfig> path = strategy.applyTo(scenario);
+        PROFILE_RECORD(name + " Planning Time");
+        PROFILE_START(name + " Motion Time");
+        attemptPath(path);
+        PROFILE_RECORD(name + " Motion Time");
     }
     std::cout << "Reached Goal\n";
     return true;
 }
 
+std::string SimulationScenarioTester::getName(const Strategy &strategy) const
+{
+    return scenario.getName() + ", " +  strategy.getName();
+}

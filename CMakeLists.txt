@@ -263,26 +263,36 @@ target_link_libraries(wip_prob_map
   victor_halton_roadmap
   )
 
-add_executable(wip_roadmap
-  src/wip_roadmap.cpp)
-
-target_link_libraries(wip_roadmap
+add_executable(simulation_timings
+  src/simulation_timings.cpp
+  )
+target_link_libraries(simulation_timings
   ${EXTERN_LIBS}
-  victor_model
-  victor_planning
-  victor_local_controller
-  victor_validator
+  planning_library
   victor_halton_roadmap
   )
 
-add_executable(victor_sim_timings src/old/victor_sim_timings.cpp)
-target_link_libraries(victor_sim_timings
-  ${EXTERN_LIBS}
-  lazyrrtf
-  victor_model
-  victor_planning
-  victor_validator
-  )
+
+# add_executable(wip_roadmap
+#   src/wip_roadmap.cpp)
+
+# target_link_libraries(wip_roadmap
+#   ${EXTERN_LIBS}
+#   victor_model
+#   victor_planning
+#   victor_local_controller
+#   victor_validator
+#   victor_halton_roadmap
+#   )
+
+# add_executable(victor_sim_timings src/old/victor_sim_timings.cpp)
+# target_link_libraries(victor_sim_timings
+#   ${EXTERN_LIBS}
+#   lazyrrtf
+#   victor_model
+#   victor_planning
+#   victor_validator
+#   )
 
 
 
@@ -322,28 +332,28 @@ target_link_libraries(victor_sim_timings
 #   )
 
 
-add_executable(collision_link_node src/wip/collision_link_node.cpp)
-target_link_libraries(collision_link_node
-  ${catkin_LIBRARIES}
-  )
+# add_executable(collision_link_node src/wip/collision_link_node.cpp)
+# target_link_libraries(collision_link_node
+#   ${catkin_LIBRARIES}
+#   )
 
-add_executable(wip_victor_real src/old/wip_victor_real.cpp)
-target_link_libraries(wip_victor_real
-  ${EXTERN_LIBS}
-  lazyrrtf
-  victor_model
-  victor_planning
-  victor_validator
-  )
+# add_executable(wip_victor_real src/old/wip_victor_real.cpp)
+# target_link_libraries(wip_victor_real
+#   ${EXTERN_LIBS}
+#   lazyrrtf
+#   victor_model
+#   victor_planning
+#   victor_validator
+#   )
 
-add_executable(victor_real_timings src/old/victor_real_timings.cpp)
-target_link_libraries(victor_real_timings
-  ${EXTERN_LIBS}
-  lazyrrtf
-  victor_model
-  victor_planning
-  victor_validator
-  )
+# add_executable(victor_real_timings src/old/victor_real_timings.cpp)
+# target_link_libraries(victor_real_timings
+#   ${EXTERN_LIBS}
+#   lazyrrtf
+#   victor_model
+#   victor_planning
+#   victor_validator
+#   )
 
 
 

@@ -11,6 +11,7 @@ namespace GVP
     {
     public:
         virtual Path applyTo(Scenario &scenario) = 0;
+        virtual std::string getName() const = 0;
     };
 
 

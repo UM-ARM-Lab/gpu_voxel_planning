@@ -11,9 +11,9 @@ namespace GVP
     public:
         VictorRightArm victor;
         robot::JointValueMap goal_config;
-        
         virtual State& getState() = 0;
         virtual const State& getState() const = 0;
+        virtual std::string getName() const = 0;
         
         virtual bool completed() const
         {
@@ -30,12 +30,57 @@ namespace GVP
     public:
         SimulationState s;
         DenseGrid true_world;
+
         SimulationScenario() : s(victor){}
-        virtual DenseGrid& getTrueObstacles() = 0;
-        virtual const DenseGrid& getTrueObstacles() const = 0;
-        virtual SimulationState& getSimulationState() = 0;
-        virtual const SimulationState& getSimulationState() const = 0;
-        
+        // virtual DenseGrid& getTrueObstacles() = 0;
+        // virtual const DenseGrid& getTrueObstacles() const = 0;
+        // virtual SimulationState& getSimulationState() = 0;
+        // virtual const SimulationState& getSimulationState() const = 0;
+
+        virtual DenseGrid& getTrueObstacles()
+        {
+            return true_world;
+        }
+
+        virtual const DenseGrid& getTrueObstacles() const
+        {
+            return true_world;
+        }
+
+        virtual SimulationState& getSimulationState()
+        {
+            return s;
+        }
+
+        virtual const SimulationState& getSimulationState() const
+        {
+            return s;
+        }
+
+        virtual State& getState() override
+        {
+            return s;
+        }
+
+        virtual const State& getState() const override
+        {
+            return s;
+        }
+
+        void addLeftArm()
+        {
+            VictorLeftArmAndBase left;
+            left.set(VictorLeftArmConfig(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0}).asMap());
+            s.robot_self_collide_obstacles.add(&left.occupied_space);
+
+            robot::JointValueMap jvm;
+            jvm["victor_right_gripper_fingerA_joint_2"] = 1.5;
+            jvm["victor_right_gripper_fingerB_joint_2"] = 1.5;
+            jvm["victor_right_gripper_fingerC_joint_2"] = 1.5;
+            victor.set(jvm);
+        }
+
+
     };
 
 
@@ -51,9 +96,15 @@ namespace GVP
         Vector3f cavetopd;
         Vector3f cavesidedim;
         Vector3f cavesideoffset;
+        const std::string name;
 
 
-        TableWithBox(bool table_known=true, bool visible_cave_known=false, bool full_cave_known=false)
+        TableWithBox(bool table_known=true, bool visible_cave_known=false, bool full_cave_known=false) :
+            name(std::string("Table with Box ") +
+                 "table_" + (table_known ? "" : "un") + "known " + 
+                 "visible_cave_" + (visible_cave_known ? "" : "un" ) + "known " + 
+                 "full_cave_" + (full_cave_known ? "" : "un" ) + "known"
+                )
         {
             addLeftArm();
             addTable(true_world);
@@ -78,49 +129,13 @@ namespace GVP
             goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
         }
 
-        virtual DenseGrid& getTrueObstacles() override
+
+        virtual std::string getName() const override
         {
-            return true_world;
+            return name;
         }
 
-        virtual const DenseGrid& getTrueObstacles() const override
-        {
-            return true_world;
-        }
 
-        virtual SimulationState& getSimulationState() override
-        {
-            return s;
-        }
-
-        virtual const SimulationState& getSimulationState() const override
-        {
-            return s;
-        }
-
-        virtual State& getState() override
-        {
-            return s;
-        }
-
-        virtual const State& getState() const override
-        {
-            return s;
-        }
-        
-
-        void addLeftArm()
-        {
-            VictorLeftArmAndBase left;
-            left.set(VictorLeftArmConfig(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0}).asMap());
-            s.robot_self_collide_obstacles.add(&left.occupied_space);
-
-            robot::JointValueMap jvm;
-            jvm["victor_right_gripper_fingerA_joint_2"] = 1.5;
-            jvm["victor_right_gripper_fingerB_joint_2"] = 1.5;
-            jvm["victor_right_gripper_fingerC_joint_2"] = 1.5;
-            victor.set(jvm);
-        }
 
         void addTable(DenseGrid &g)
         {
@@ -166,11 +181,64 @@ namespace GVP
 
             g.insertBox(cavecorner+cavesideoffset,
                         cavecorner+cavesideoffset+cavesidedim);
-
-
-
         }
     };
+
+
+
+    /****************************************
+     **         SlottedWall
+     ****************************************/
+    class SlottedWall : public SimulationScenario
+    {
+    public:
+        SlottedWall()
+        {
+            addLeftArm();
+            addSlottedWall(true_world);
+            addSlottedWall(s.known_obstacles);
+            s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
+            goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.2, 0, -0.5, 0, 1.0, 0}).asMap();
+        }
+
+        std::string getName() const
+        {
+            return "SlottedWall";
+        }
+
+        void addSlottedWall(DenseGrid &g)
+        {
+            double lower_wall_height = 1.1;
+            double gap_height = .4;
+
+            Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
+            Vector3f lfwd(0.04, 1.5, lower_wall_height);
+    
+            Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front call
+            Vector3f ufwd(0.04, 1.5, 0.3);
+    
+            Vector3f mfwc(1.5, 1.8, 0);  //middle front wall
+            Vector3f mfwd(0.04, 1.4, 1.5);
+   
+            Vector3f lswc = lfwc;  // lower side wall corner
+            Vector3f lswd(1.5, 0.04, lower_wall_height); //lower side wall dims
+            Vector3f cswc = ufwc; //close side wall corner
+            Vector3f cswd(0.2, 0.04, 0.3);
+            Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
+            Vector3f fswd(0.3, 0.04, 0.6);
+            Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
+            Vector3f mswd(0.3, 0.04, 0.2);
+
+            g.insertBox(lfwc, lfwc+lfwd);
+            g.insertBox(ufwc, ufwc+ufwd);
+            g.insertBox(mfwc, mfwc+mfwd);
+            g.insertBox(lswc, lswc+lswd);
+            g.insertBox(cswc, cswc+cswd);
+            g.insertBox(fswc, fswc+fswd);
+            g.insertBox(mswc, mswc+mswd);
+        }
+    };
+
 }
 
 
