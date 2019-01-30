@@ -13,7 +13,7 @@ namespace GVP
         graph(graph_filepath),
         initialized(false)
     {
-        precomputed_swept_volumes.loadFromFile(swept_volumes_filepath, graph.GetNodesImmutable().size());
+        precomputed_swept_volumes.loadFromFile(swept_volumes_filepath, graph.getNodes().size());
     }
     
     GraphSearchStrategy::GraphSearchStrategy(const std::string &graph_filepath) :
@@ -40,20 +40,20 @@ namespace GVP
             initialize(scenario);
         }
         const VictorRightArmConfig &current(scenario.getState().getCurConfig());
-        VictorRightArmConfig expected(graph.GetNodeImmutable(cur_node).GetValueImmutable());
+        VictorRightArmConfig expected(graph.getNode(cur_node).getValue());
         VictorRightArmConfig next;
             
         if(current == expected)
         {
             std::vector<NodeIndex> node_path = lazySp(cur_node, goal_node, scenario.getState());
-            next = graph.GetNodeImmutable(node_path[1]).GetValueImmutable();
+            next = graph.getNode(node_path[1]).getValue();
             prev_node = cur_node;
             cur_node = node_path[1];
         }
         else
         {
-            next = graph.GetNodeImmutable(prev_node).GetValueImmutable();
-            graph.GetEdgeMutable(prev_node, cur_node).SetValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+            next = graph.getNode(prev_node).getValue();
+            graph.getEdge(prev_node, cur_node).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
                 
             cur_node = prev_node;
         }
@@ -66,8 +66,8 @@ namespace GVP
     void GraphSearchStrategy::computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
     {
         PROFILE_START("ComputeSweptVolume");
-        VictorRightArmConfig q_start(graph.GetNodeImmutable(e.GetFromIndex()).GetValueImmutable());
-        VictorRightArmConfig q_end(graph.GetNodeImmutable(e.GetToIndex()).GetValueImmutable());
+        VictorRightArmConfig q_start(graph.getNode(e.getFromIndex()).getValue());
+        VictorRightArmConfig q_end(graph.getNode(e.getToIndex()).getValue());
         GVP::Path path = interpolate(q_start, q_end, discretization);
 
         DenseGrid swept_volume;
@@ -101,14 +101,14 @@ namespace GVP
     bool GraphSearchStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s)
     {
         bool valid = !getSweptVolume(s, e).overlapsWith(&s.known_obstacles);
-        e.SetValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
+        e.setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
                       arc_dijkstras::EDGE_VALIDITY::INVALID);
         return valid;
     }
 
     double GraphSearchStrategy::evaluateEdge(arc_dijkstras::GraphEdge &e, State &s)
     {
-        if(e.GetValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
+        if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
         {
             checkEdge(e, s);
         }
@@ -147,7 +147,7 @@ namespace GVP
      ********************************/
     double OptimisticGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
     {
-        return e.GetWeight();
+        return e.getWeight();
     }
 
 
@@ -164,7 +164,7 @@ namespace GVP
     {
         double edge_probability = s.calcProbFree(getSweptVolume(s, e));
         double p_cost = -std::log(edge_probability);
-        double l_cost = e.GetWeight();
+        double l_cost = e.getWeight();
         return l_cost + alpha * p_cost;
     }
 
@@ -188,7 +188,7 @@ namespace GVP
 
         double unknown_vox = sv.countOccupied() - sv.collideWith(&s.known_free);
         double p_cost = -alpha*std::log(edge_probability);
-        double l_cost = e.GetWeight();
+        double l_cost = e.getWeight();
         double unknown_cost = free_cost * unknown_vox;
         std::cout << "Edge traverses " << unknown_cost << " unknown voxels\n";
         return l_cost + p_cost + unknown_cost;
