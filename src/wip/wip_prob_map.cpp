@@ -120,21 +120,22 @@ int main(int argc, char* argv[])
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    TableWithBox scenario(true, false, false);
-    // SlottedWall scenario;
+    // TableWithBox scenario(true, true, true);
+    SlottedWall scenario(true);
 
-    // OptimisticGraphSearch strat;
+    OptimisticGraphSearch strat;
     // ParetoCostGraphSearch strat(10.0);
-    UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
-
+    // UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
 
     
+    
     SimulationScenarioTester tester(scenario, n);
+    std::cout << "Attempting strategy\n";
     tester.attemptStrategy(strat);
     strat.saveToFile();
-    auto names = std::vector<std::string>{"GetSweptVolume", "CalcProbFree", "ComputeSweptVolume"};
-    PROFILE_PRINT_SUMMARY_FOR_GROUP(names);
+    PROFILE_PRINT_SUMMARY_FOR_ALL();
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
+    PROFILE_WRITE_ALL(filename);
     
 }

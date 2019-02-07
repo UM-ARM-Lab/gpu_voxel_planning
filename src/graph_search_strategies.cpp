@@ -13,7 +13,14 @@ namespace GVP
         graph(graph_filepath),
         initialized(false)
     {
-        precomputed_swept_volumes.loadFromFile(swept_volumes_filepath, graph.getNodes().size());
+        try
+        {
+            precomputed_swept_volumes.loadFromFile(swept_volumes_filepath, graph.getNodes().size());
+        }
+        catch(const std::runtime_error& e)
+        {
+            std::cout << "Could not load precomputed swept volumes from file\n";
+        }
     }
     
     GraphSearchStrategy::GraphSearchStrategy(const std::string &graph_filepath) :
@@ -21,6 +28,8 @@ namespace GVP
         graph(graph_filepath), initialized(false) {}
 
     GraphSearchStrategy::GraphSearchStrategy() :
+        // GraphSearchStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph",
+        //                     "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map"){}
         GraphSearchStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph",
                             "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map"){}
         
@@ -29,8 +38,9 @@ namespace GVP
     {
         cur_node = graph.addVertexAndEdges(scenario.getState().getCurConfig().asVector());
         goal_node = graph.addVertexAndEdges(VictorRightArmConfig(scenario.goal_config).asVector());
+        std::cout << "Initial (node " << cur_node << ") and Goal (node " << goal_node << ") vertices added\n";
         initialized = true;
-    }
+    }            
 
 
     Path GraphSearchStrategy::applyTo(Scenario &scenario)
@@ -39,6 +49,7 @@ namespace GVP
         {
             initialize(scenario);
         }
+
         const VictorRightArmConfig &current(scenario.getState().getCurConfig());
         VictorRightArmConfig expected(graph.getNode(cur_node).getValue());
         VictorRightArmConfig next;
@@ -100,9 +111,11 @@ namespace GVP
 
     bool GraphSearchStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s)
     {
+        PROFILE_START("EdgeCheck");
         bool valid = !getSweptVolume(s, e).overlapsWith(&s.known_obstacles);
         e.setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
                       arc_dijkstras::EDGE_VALIDITY::INVALID);
+        PROFILE_RECORD("EdgeCheck");
         return valid;
     }
 
@@ -122,7 +135,6 @@ namespace GVP
             {
                 return evaluateEdge(e, s);
             };
-
         auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformLazySP(
             graph, start, goal, &distanceHeuristic, eval_fn, true);
         if(result.second == std::numeric_limits<double>::infinity())

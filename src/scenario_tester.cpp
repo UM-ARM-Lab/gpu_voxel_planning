@@ -20,10 +20,18 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
     return true;
 }
 
-
 bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
 {
     viz.vizScenario(scenario);
+    try{
+        scenario.validate();
+    }
+    catch(std::invalid_argument &e)
+    {
+        viz.vizScenario(scenario);
+        throw e;
+    }
+    
     std::string name = getName(strategy);
     while(!scenario.completed())
     {

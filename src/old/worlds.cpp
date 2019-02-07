@@ -271,7 +271,8 @@ SimTable::SimTable()
 {
     // double init_angles[] = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
     double init_angles[] = {0,0,0,0,0,0,0};
-    double goal_angles[] = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
+    // double goal_angles[] = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
+    double goal_angles[] = {0, 0.32, 0, -1.32, -0.2, 0.9, 0.3};
     init_config = victor_model.toVictorConfig(init_angles);
     goal_config = victor_model.toVictorConfig(goal_angles);
 

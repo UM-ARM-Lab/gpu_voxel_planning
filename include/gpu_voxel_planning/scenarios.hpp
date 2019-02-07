@@ -37,6 +37,22 @@ namespace GVP
         // virtual SimulationState& getSimulationState() = 0;
         // virtual const SimulationState& getSimulationState() const = 0;
 
+        virtual void validate()
+        {
+            s.robot.set(s.getCurConfig().asMap());
+            if(s.robot.occupied_space.overlapsWith(&true_world))
+            {
+                std::cerr << "Start configuration overlaps with obstacle\n";
+                throw(std::invalid_argument("Start configuration is invalid\n"));
+            }
+            s.robot.set(goal_config);
+            if(s.robot.occupied_space.overlapsWith(&true_world))
+            {
+                std::cerr << "Goal configuration overlaps with obstacle\n";
+                throw(std::invalid_argument("Goal configuration is invalid\n"));
+            }
+        }
+
         virtual DenseGrid& getTrueObstacles()
         {
             return true_world;
@@ -191,14 +207,21 @@ namespace GVP
      ****************************************/
     class SlottedWall : public SimulationScenario
     {
+        const std::string name;
     public:
-        SlottedWall()
+        SlottedWall(bool all_known):
+            name(std::string("Sloted Wall") +
+                 "obstacles" + (all_known ? "" : "un") + "known")
         {
             addLeftArm();
             addSlottedWall(true_world);
-            addSlottedWall(s.known_obstacles);
+            if(all_known)
+            {
+                addSlottedWall(s.known_obstacles);
+            }
             s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
-            goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.2, 0, -0.5, 0, 1.0, 0}).asMap();
+            goal_config = VictorRightArmConfig(std::vector<double>{0, 0.32, 0, -1.32, -0.2, 0.9, 0.3}).asMap();
+            // goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.2, 0, -0.5, 0, 1.0, 0}).asMap();
         }
 
         std::string getName() const

@@ -146,11 +146,11 @@ int main(int argc, char* argv[])
     signal(SIGINT, ctrlchandler);
     signal(SIGTERM, killhandler);
 
-    std::string graph_filename = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph";
+    std::string graph_filename = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_500k.graph";
     // std::string graph_filename = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/tmp.graph";
     
-    // Roadmap rm_orig = Roadmap(&vm);
-    // rm_orig.saveToFile(graph_filename);
+    Roadmap rm_orig = Roadmap(&vm);
+    rm_orig.saveToFile(graph_filename);
 
     Roadmap rm = Roadmap(graph_filename);
     
