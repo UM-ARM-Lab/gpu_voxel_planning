@@ -11,6 +11,7 @@
 #include "scenario_tester.hpp"
 #include "graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
+#include "urdf_model.hpp"
 
 using namespace GVP;
 
@@ -81,27 +82,29 @@ void viewLinks(GpuVoxelRvizVisualizer &viz)
 
 void testAngles(Scenario& scenario, GpuVoxelRvizVisualizer &viz)
 {
-    
+    VictorKinematics urdf;
     while(true)
     {
         arc_helpers::WaitForInput("Waiting for user input to set position...\n");
 
         std::ifstream myfile;
         myfile.open("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/config/test_angles.txt");
-        std::cout << "file is open: " << myfile.is_open() << "\n";
-        std::vector<double> goal_tmp;
-        goal_tmp.resize(7);
+        std::cout << "file " << (myfile.is_open() ? "is open":"failed to open") << "\n";
+        std::vector<double> joint_angles;
+        joint_angles.resize(7);
         for(int i=0; i<7; i++)
         {
-            myfile >> goal_tmp[i];
-            std::cout << goal_tmp[i] << ", ";
+            myfile >> joint_angles[i];
+            std::cout << joint_angles[i] << ", ";
         }
         std::cout << "\n";
         myfile.close();
-        VictorRightArmConfig c(goal_tmp);
+        VictorRightArmConfig c(joint_angles);
         scenario.getState().robot.set(c.asMap());
         viz.vizScenario(scenario);
+        viz.vizEEPosition(c.asVector());
         bool valid = scenario.getState().isPossiblyValid(c);
+        std::cout << "EE position: " << urdf.getEEPosition(c.asVector()) << "\n";
         std::cout << "config is " << (valid ? "" : "NOT ") << "possibly valid\n";
     }
 }
@@ -136,6 +139,6 @@ int main(int argc, char* argv[])
     PROFILE_PRINT_SUMMARY_FOR_ALL();
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
-    PROFILE_WRITE_ALL(filename);
+    PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
     
 }

@@ -12,6 +12,8 @@ set(CATKIN_PACKAGES
   arc_utilities
   arm_pointcloud_utilities
   graph_planner
+  moveit_core
+  moveit_visual_tools
   )
 
 ## Find catkin macros and libraries

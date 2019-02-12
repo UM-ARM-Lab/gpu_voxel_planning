@@ -1,0 +1,22 @@
+<launch>
+
+    <!-- The name of the parameter under which the URDF is loaded -->
+    <arg name="robot_description" default="robot_description"/>
+  
+    <!-- <arg name="model"  default="$(find gpu_voxel_planning)/urdf/victor_right_arm_only.urdf.xacro"/> -->
+    <arg name="model"  default="$(find gpu_voxel_planning)/urdf/victor.urdf.xacro"/>
+
+    <param name="$(arg robot_description)" command="$(find xacro)/xacro --xacro-ns --inorder $(arg model)"/>
+    <!-- <node pkg="victor_hardware_interface" type="joint_state_publisher.py" name="joint_state_publisher"/> -->
+
+    <param name="$(arg robot_description)_semantic" textfile="$(find victor_moveit_config)/config/victor.srdf" />
+    <node pkg="robot_state_publisher"     type="robot_state_publisher"    name="robot_state_publisher"/>
+
+
+    <group ns="$(arg robot_description)_kinematics">
+      <rosparam command="load" file="$(find victor_moveit_config)/config/kinematics.yaml"/>
+    </group>
+
+
+
+</launch>
