@@ -6,10 +6,6 @@
 // #include <graph_planner/a_star.hpp>
 #include <graph_planner/halton_graph.hpp>
 
-#include <ompl/base/spaces/RealVectorStateSpace.h>
-#include "gpu_voxels_victor.hpp"
-
-
 
 
 class Roadmap : public HaltonGraph

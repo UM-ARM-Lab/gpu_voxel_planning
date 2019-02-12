@@ -8,6 +8,7 @@
 #include <ros/ros.h>
 #include "urdf_model.hpp"
 #include "graph_search_strategies.hpp"
+#include "victor_selective_densification.hpp"
 
 inline visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,
                                                      const std::string& global_frame,
@@ -149,6 +150,47 @@ public:
         int id = 0;
         for(const auto n:g.getNodes())
         {
+            for(const auto e:n.getOutEdges())
+            {
+                if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
+                {
+                    continue;
+                }
+                std_msgs::ColorRGBA color = makeColor(0.0, 0.0, 0.0);
+                std::string ns = "valid";
+                if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
+                {
+                    color = makeColor(1.0, 0, 0);
+                    ns = "invalid";
+                }
+
+                
+                GVP::VictorRightArmConfig q_start(g.getNode(e.getFromIndex()).getValue());
+                GVP::VictorRightArmConfig q_goal(g.getNode(e.getToIndex()).getValue());
+
+                GVP::Path edge_config = interpolate(q_start, q_goal, 0.01);
+                
+                std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(edge_config);
+
+                auto arr = visualize3DPath(path_3d, "victor_root", ns, color);
+                arr.markers[0].id = id++;
+                marker_array.markers.push_back(arr.markers[0]);
+            }
+        }
+        ee_path_pub.publish(marker_array);
+    }
+
+    
+    void vizEESDGraph(const SDRoadmap &g, int depth)
+    {
+        visualization_msgs::MarkerArray marker_array;
+        int id = 0;
+        for(const auto n:g.getNodes())
+        {
+            if(DepthNode(n.getValue()).depth != depth)
+            {
+                continue;
+            }
             for(const auto e:n.getOutEdges())
             {
                 if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)

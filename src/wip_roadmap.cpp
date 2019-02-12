@@ -12,6 +12,7 @@
 #include "graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
 #include "urdf_model.hpp"
+#include "victor_selective_densification.hpp"
 
 using namespace GVP;
 
@@ -23,10 +24,14 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
     GpuVoxelRvizVisualizer viz(n);
 
-    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k_tmp.graph";
+    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
 
-    // Roadmap rm;
-    // rm.saveToFile(graph_filepath);
+    std::cout << "About to make SD roadmap\n";
+    std::cout << "Unforunately, this causes a std::length_error. Debug later\n";
+
+    
+    SDRoadmap rm;
+    rm.saveToFile(graph_filepath);
 
 
     ros::Duration(1.0).sleep();

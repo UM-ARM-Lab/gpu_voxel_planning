@@ -14,8 +14,8 @@ Roadmap::Roadmap():
     // r_disc = 2.0;
     // int num_vert = 100000;
     // r_disc = 1.5;
-    int num_vert = 500000;
-    r_disc = 1.0;
+    int num_vert = 100000;
+    r_disc = 1.3;
 
     auto configs = scaleToVictorDims(halton::haltonPoints(num_vert, 7));
 
@@ -42,9 +42,7 @@ Roadmap::Roadmap(std::string filename):
     HaltonGraph(0,0,0)
 {
     loadFromFile(filename);
-
     std::cout << "Loaded graph with " << nodes_.size() << " vertices and " << countEdges() << " edges\n";
-    
 }
 
 

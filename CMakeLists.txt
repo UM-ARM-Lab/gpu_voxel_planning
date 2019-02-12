@@ -236,6 +236,7 @@ add_library(victor_halton_roadmap
 set(Planning_SOURCES
   src/scenario_tester.cpp
   src/graph_search_strategies.cpp
+  src/victor_selective_densification.cpp
   src/path_utils.cpp
   )
 
