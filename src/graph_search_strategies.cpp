@@ -165,6 +165,51 @@ namespace GVP
 
 
     /**********************************
+     **  Omniscient Graph Search
+     ********************************/
+    double OmniscientGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    {
+        return e.getWeight();
+    }
+
+    std::string OmniscientGraphSearch::getName() const
+    {
+        return "Omniscient Graph Search";
+    }
+    
+    Path OmniscientGraphSearch::applyTo(Scenario &scenario)
+    {
+        if(!initialized)
+        {
+            initialize(scenario);
+        }
+
+        const VictorRightArmConfig &current(scenario.getState().getCurConfig());
+        VictorRightArmConfig expected(graph.getNode(cur_node).getValue());
+        VictorRightArmConfig next;
+
+        Path path;
+        std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState());
+
+        if(node_path.size() <= 1)
+        {
+            std::cerr << "Path of less than 2 nodes found\n";
+            assert(false);
+        }
+        
+        for(size_t i=0; i<node_path.size()-1; i++)
+        {
+            Path segment = interpolate(graph.getNode(node_path[i]).getValue(),
+                                       graph.getNode(node_path[i+1]).getValue(),
+                                       discretization);
+                                       
+            path.insert(path.end(), segment.begin(), segment.end());
+        }
+        return path;
+    }
+
+    
+    /**********************************
      **  Optimistic Graph Search
      ********************************/
     double OptimisticGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
@@ -177,7 +222,7 @@ namespace GVP
         return "Optimistic Graph Search";
     }
 
-
+    
      /**********************************
      **  ParetoCost Graph Search
      ********************************/

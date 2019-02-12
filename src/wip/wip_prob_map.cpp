@@ -127,7 +127,8 @@ int main(int argc, char* argv[])
     SlottedWall scenario(true);
 
     // AStarGraphSearch strat;
-    OptimisticGraphSearch strat;
+    OmniscientGraphSearch strat;
+    // OptimisticGraphSearch strat;
     // ParetoCostGraphSearch strat(10.0);
     // UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
 

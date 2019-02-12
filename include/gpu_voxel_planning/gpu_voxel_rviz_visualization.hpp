@@ -70,7 +70,7 @@ inline visualization_msgs::Marker visualize3DPath(const std::vector<Eigen::Vecto
     point_marker.type = visualization_msgs::Marker::LINE_STRIP;
     point_marker.color = color;
     point_marker.scale.x = 0.01;
-    point_marker.orientation.w = 1.0;
+    point_marker.pose.orientation.w = 1.0;
 
     for(const Eigen::Vector3d& point:path)
     {
