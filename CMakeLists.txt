@@ -275,17 +275,14 @@ target_link_libraries(simulation_timings
   )
 
 
-# add_executable(wip_roadmap
-#   src/wip_roadmap.cpp)
+add_executable(wip_roadmap
+  src/wip_roadmap.cpp)
 
-# target_link_libraries(wip_roadmap
-#   ${EXTERN_LIBS}
-#   victor_model
-#   victor_planning
-#   victor_local_controller
-#   victor_validator
-#   victor_halton_roadmap
-#   )
+target_link_libraries(wip_roadmap
+  ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
 
 # add_executable(victor_sim_timings src/old/victor_sim_timings.cpp)
 # target_link_libraries(victor_sim_timings
