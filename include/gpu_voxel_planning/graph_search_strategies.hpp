@@ -37,13 +37,13 @@ namespace GVP
 
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) = 0;
 
+        virtual Path applyTo(Scenario &scenario) override;
+
+        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s);
+
         void initialize(const Scenario &scenario);
 
-        virtual Path applyTo(Scenario &scenario) override final;
-
-        void computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
-
-        DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
+        virtual DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
 
         
         /* Checks an edge against known obstacles to see if there is a collision.
@@ -53,11 +53,15 @@ namespace GVP
 
         double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
 
-        std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s);
-
         void saveToFile(std::string filename);
         void saveToFile() {saveToFile(swept_volumes_filepath);}
 
+    protected:
+        DenseGrid computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
+        
+        void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
+        
+        std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s);
     };
 
 
@@ -99,6 +103,21 @@ namespace GVP
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
 
         virtual std::string getName() const override;
+    };
+
+
+    class AStarGraphSearch : public GraphSearchStrategy
+    {
+    public:
+        AStarGraphSearch(){}
+
+        virtual std::string getName() const override;
+
+        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s) override;
+
+        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+
+        virtual DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e) override;
     };
 }
 

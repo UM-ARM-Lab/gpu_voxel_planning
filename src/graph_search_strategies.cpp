@@ -56,7 +56,7 @@ namespace GVP
             
         if(current == expected)
         {
-            std::vector<NodeIndex> node_path = lazySp(cur_node, goal_node, scenario.getState());
+            std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState());
             next = graph.getNode(node_path[1]).getValue();
             prev_node = cur_node;
             cur_node = node_path[1];
@@ -72,9 +72,13 @@ namespace GVP
         return interpolate(current, next, discretization);
     }
 
+    std::vector<NodeIndex> GraphSearchStrategy::plan(NodeIndex start, NodeIndex goal, State &s)
+    {
+        return lazySp(start, goal, s);
+    }
 
 
-    void GraphSearchStrategy::computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
+    DenseGrid GraphSearchStrategy::computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
     {
         PROFILE_START("ComputeSweptVolume");
         VictorRightArmConfig q_start(graph.getNode(e.getFromIndex()).getValue());
@@ -88,6 +92,12 @@ namespace GVP
             swept_volume.add(&s.robot.occupied_space);
         }
         PROFILE_RECORD("ComputeSweptVolume");
+        return swept_volume;
+    }
+
+    void GraphSearchStrategy::storeSweptVolume(const arc_dijkstras::GraphEdge &e,
+                                               const DenseGrid &swept_volume)
+    {
         precomputed_swept_volumes[arc_dijkstras::getSortedHashable(e)] = swept_volume;
     }
 
@@ -98,7 +108,7 @@ namespace GVP
         arc_dijkstras::HashableEdge e_hashed = arc_dijkstras::getSortedHashable(e);
         if(!precomputed_swept_volumes.count(e_hashed))
         {
-            computeSweptVolume(s, e);
+            storeSweptVolume(e, computeSweptVolume(s, e));
         }
             
         PROFILE_RECORD("GetSweptVolume");
@@ -162,7 +172,6 @@ namespace GVP
         return e.getWeight();
     }
 
-
     std::string OptimisticGraphSearch::getName() const
     {
         return "Optimistic Graph Search";
@@ -213,4 +222,50 @@ namespace GVP
         return ss.str();
     }
 
+
+
+    
+    /********************************
+     **   AStar Graph Search
+     *******************************/
+    double AStarGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    {
+        return e.getWeight();
+    }
+
+    std::string AStarGraphSearch::getName() const
+    {
+        return "AStar Optimistic Graph Search";
+    }
+    
+    std::vector<NodeIndex> AStarGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s)
+    {
+        using namespace arc_dijkstras;
+        const auto edge_validity_check_fn =
+            [&] (Graph<std::vector<double>> &g, GraphEdge &e)
+            {
+                return checkEdge(e, s);
+            };
+        const auto distance_fn = [&] (const Graph<std::vector<double>>& search_graph, 
+                                      const GraphEdge& edge)
+            {
+                UNUSED(search_graph);
+                return edge.getWeight();
+            };
+
+        auto result = AstarLogging<std::vector<double>>::PerformLazyAstar(
+            graph, start, goal, edge_validity_check_fn, distance_fn, &distanceHeuristic, true);
+        if(result.second == std::numeric_limits<double>::infinity())
+        {
+            std::cout << "No path found on graph\n";
+        }
+        return result.first;
+    }
+
+    DenseGrid AStarGraphSearch::getSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
+    {
+        return computeSweptVolume(s, e);
+    }
+
+    
 }

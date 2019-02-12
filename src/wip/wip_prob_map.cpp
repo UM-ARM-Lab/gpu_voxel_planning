@@ -126,10 +126,14 @@ int main(int argc, char* argv[])
     // TableWithBox scenario(true, true, true);
     SlottedWall scenario(true);
 
+    // AStarGraphSearch strat;
     OptimisticGraphSearch strat;
     // ParetoCostGraphSearch strat(10.0);
     // UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
 
+
+    // testAngles(scenario, viz);
+    // return 1;
     
     
     SimulationScenarioTester tester(scenario, n);
