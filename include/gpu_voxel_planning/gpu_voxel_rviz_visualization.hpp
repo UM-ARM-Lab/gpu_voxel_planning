@@ -7,7 +7,7 @@
 #include "scenarios.hpp"
 #include <ros/ros.h>
 #include "urdf_model.hpp"
-
+#include "graph_search_strategies.hpp"
 
 inline visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,
                                                      const std::string& global_frame,
@@ -36,7 +36,7 @@ inline visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,
     return occupied_marker;
 }
 
-inline visualization_msgs::Marker visualizePoint(const Eigen::Vector3d pos,
+inline visualization_msgs::MarkerArray visualizePoint(const Eigen::Vector3d pos,
                                                  const std::string& frame,
                                                  const std::string& ns,
                                                  const std_msgs::ColorRGBA& color)
@@ -56,21 +56,23 @@ inline visualization_msgs::Marker visualizePoint(const Eigen::Vector3d pos,
     point_marker.pose.position.z = pos.z();
     point_marker.pose.orientation.w = 1.0;
 
-    return point_marker;
+    visualization_msgs::MarkerArray arr;
+    arr.markers.push_back(point_marker);
+    return arr;
 }
 
-inline visualization_msgs::Marker visualize3DPath(const std::vector<Eigen::Vector3d> path,
+inline visualization_msgs::MarkerArray visualize3DPath(const std::vector<Eigen::Vector3d> path,
                                                   const std::string& frame,
                                                   const std::string& ns,
                                                   const std_msgs::ColorRGBA& color)
 {
-    visualization_msgs::Marker point_marker;
-    point_marker.ns = ns;
-    point_marker.header.frame_id = frame;
-    point_marker.type = visualization_msgs::Marker::LINE_STRIP;
-    point_marker.color = color;
-    point_marker.scale.x = 0.01;
-    point_marker.pose.orientation.w = 1.0;
+    visualization_msgs::Marker path_marker;
+    path_marker.ns = ns;
+    path_marker.header.frame_id = frame;
+    path_marker.type = visualization_msgs::Marker::LINE_STRIP;
+    path_marker.color = color;
+    path_marker.scale.x = 0.01;
+    path_marker.pose.orientation.w = 1.0;
 
     for(const Eigen::Vector3d& point:path)
     {
@@ -78,10 +80,14 @@ inline visualization_msgs::Marker visualize3DPath(const std::vector<Eigen::Vecto
         p.x = point.x();
         p.y = point.y();
         p.z = point.z();
-        point_marker.points.push_back(p);
+        path_marker.points.push_back(p);
     }
-    return point_marker;
+    visualization_msgs::MarkerArray arr;
+    arr.markers.push_back(path_marker);
+    return arr;
 }
+
+
 
 
 
@@ -92,8 +98,23 @@ static inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double
     return color;
 }
 
+
+
+
+
 class GpuVoxelRvizVisualizer
 {
+private:
+    std::vector<Eigen::Vector3d> configPathTo3DPath(std::vector<GVP::VictorRightArmConfig> path_config)
+    {
+        std::vector<Eigen::Vector3d> path_3d;
+        for(auto config: path_config)
+        {
+            path_3d.push_back(urdf.getEEPosition(config.asVector()));
+        }
+        return path_3d;
+    }
+    
 public:
     ros::Publisher grid_pub;
     ros::Publisher chs_pub;
@@ -105,7 +126,7 @@ public:
     {
         grid_pub = n.advertise<visualization_msgs::Marker>("grid", 10);
         chs_pub = n.advertise<visualization_msgs::Marker>("chs", 10);
-        ee_path_pub = n.advertise<visualization_msgs::Marker>("ee_path", 10);
+        ee_path_pub = n.advertise<visualization_msgs::MarkerArray>("ee_path", 10);
     }
 
     void vizEEPosition(const std::vector<double> config)
@@ -114,18 +135,51 @@ public:
                                            makeColor(0.0, 0.0, 1.0)));
     }
 
-    void vizEEPath(const std::vector<GVP::VictorRightArmConfig> path_config)
+    void vizEEPath(const std::vector<GVP::VictorRightArmConfig> path_config,
+                   std::string path_name)
     {
-        std::vector<Eigen::Vector3d> path_3d;
-
-        for(auto config: path_config)
-        {
-            path_3d.push_back(urdf.getEEPosition(config.asVector()));
-        }
-        
-        ee_path_pub.publish(visualize3DPath(path_3d, "victor_root", "EE_path",
+        std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(path_config);
+        ee_path_pub.publish(visualize3DPath(path_3d, "victor_root", path_name,
                                            makeColor(0.0, 0.0, 1.0)));
     }
+
+    void vizEEGraph(const HaltonGraph &g)
+    {
+        visualization_msgs::MarkerArray marker_array;
+        int id = 0;
+        for(const auto n:g.getNodes())
+        {
+            for(const auto e:n.getOutEdges())
+            {
+                if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
+                {
+                    continue;
+                }
+                std_msgs::ColorRGBA color = makeColor(0.0, 0.0, 0.0);
+                std::string ns = "valid";
+                if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
+                {
+                    color = makeColor(1.0, 0, 0);
+                    ns = "invalid";
+                }
+
+                
+                GVP::VictorRightArmConfig q_start(g.getNode(e.getFromIndex()).getValue());
+                GVP::VictorRightArmConfig q_goal(g.getNode(e.getToIndex()).getValue());
+
+                GVP::Path edge_config = interpolate(q_start, q_goal, 0.01);
+                
+                std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(edge_config);
+
+                auto arr = visualize3DPath(path_3d, "victor_root", ns, color);
+                arr.markers[0].id = id++;
+                marker_array.markers.push_back(arr.markers[0]);
+            }
+        }
+        ee_path_pub.publish(marker_array);
+    }
+
+    
 
     void vizGrid(const DenseGrid &grid, const std::string &ns, const std_msgs::ColorRGBA &color)
     {

@@ -117,6 +117,8 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
     GpuVoxelRvizVisualizer viz(n);
 
+    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph";
+
     // checkBasicViz(viz);
     // viewLinks(viz);
 
@@ -128,6 +130,7 @@ int main(int argc, char* argv[])
 
     // AStarGraphSearch strat;
     OmniscientGraphSearch strat;
+    // OmniscientGraphSearch strat(graph_filepath);
     // OptimisticGraphSearch strat;
     // ParetoCostGraphSearch strat(10.0);
     // UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
@@ -141,6 +144,9 @@ int main(int argc, char* argv[])
     std::cout << "Attempting strategy\n";
     tester.attemptStrategy(strat);
     strat.saveToFile();
+
+    viz.vizEEGraph(strat.graph);
+    
     PROFILE_PRINT_SUMMARY_FOR_ALL();
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);

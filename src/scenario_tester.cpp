@@ -39,7 +39,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         const std::vector<VictorRightArmConfig> path = strategy.applyTo(scenario);
         PROFILE_RECORD(name + " Planning Time");
 
-        viz.vizEEPath(path);
+        viz.vizEEPath(path, "Path Found");
         
         PROFILE_START(name + " Motion Time");
         attemptPath(path);

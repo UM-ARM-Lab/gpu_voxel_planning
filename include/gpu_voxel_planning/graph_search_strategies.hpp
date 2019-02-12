@@ -68,6 +68,7 @@ namespace GVP
     class OmniscientGraphSearch : public GraphSearchStrategy
     {
     public:
+        OmniscientGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
         OmniscientGraphSearch() {}
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
         virtual std::string getName() const override;
