@@ -2,22 +2,29 @@
 #include "hacky_functions.hpp"
 
 
-int numNodesAtDepth(int depth, int dim)
+static int numNodesAtDepth(int depth, int dim)
 {
-    int vert_per_edge = std::pow(2, depth) + 1;
-    int num_vert = std::pow(vert_per_edge, dim);
+    int num_vert = std::pow(10, depth);
     return num_vert;
 }
 
-
-
-SDRoadmap::SDRoadmap()
+static double radiusAtDepth(int depth, int dim)
 {
-    int max_depth = 6;
-    generateGraph(max_depth);
+    int num_vert = numNodesAtDepth(depth, dim);
+    double pow = -1.0 / (double)dim;
+    double multiplier = 7;
+    return multiplier * std::pow((double)num_vert, pow);
 }
 
-SDRoadmap::SDRoadmap(std::string filename)
+
+
+SDRoadmap::SDRoadmap() : depth(5), dim(7)
+{
+    std::cout << "Generating SD roadmap\n";
+    generateGraph(depth);
+}
+
+SDRoadmap::SDRoadmap(std::string filename) : depth(5), dim(7)
 {
     loadFromFile(filename);
     std::cout << "Loaded graph with " << nodes_.size() << " vertices and " << countEdges() << " edges\n";
@@ -27,12 +34,18 @@ SDRoadmap::SDRoadmap(std::string filename)
 void SDRoadmap::generateGraph(int max_depth)
 {
     int dim=7;
+    std::cout << "generating...";
+    std::cout << max_depth << ", " << dim << "\n";
     int num_vert = numNodesAtDepth(max_depth, dim);
-    
+    // int num_vert = 10;
+
+
     auto qs = scaleToVictorDims(halton::haltonPoints(num_vert, dim));
 
     for(int depth=0; depth <= max_depth; depth++)
     {
+        double radius = radiusAtDepth(depth, dim);
+        std::cout << "Adding nodes at depth " << depth << " with depth " << radius << "\n";
         for(int i=0; i<numNodesAtDepth(depth, dim); i++)
         {
             addVertexAndEdges(depth, qs[i]);
@@ -44,6 +57,7 @@ void SDRoadmap::generateGraph(int max_depth)
 
 std::vector<std::vector<double>> SDRoadmap::scaleToVictorDims(std::vector<std::vector<double>> points)
 {
+    std::cout << "Scaling to victor dims\n";
     for(auto &point: points)
     {
         for(int i=0; i<point.size(); i++)
@@ -52,6 +66,7 @@ std::vector<std::vector<double>> SDRoadmap::scaleToVictorDims(std::vector<std::v
             point[i] = (point[i] * range + right_joint_lower_deg[i]) * torad;
         }
     }
+    std::cout << "Scaled\n";
     return points;
 }
 
@@ -71,5 +86,42 @@ double SDRoadmap::distanceHeuristic(const std::vector<double> &raw1,
     // std::cout << "Calling dist heuristic with depth " << d1.depth << "\n";
      // std::pow(2, d1.depth);
     return EigenHelpers::Distance(d1.q, d2.q)*std::pow(1.5, d1.depth);
+}
+
+
+
+
+int64_t SDRoadmap::addVertexAndEdges(int depth, std::vector<double> q)
+{
+    DepthNode new_node = DepthNode(depth, q);
+    int64_t new_node_ind = addNode(new_node.toRaw());
+    int64_t above_ind = getNodeAt(depth - 1, q);
+    if(above_ind >= 0)
+    {
+        addEdgesBetweenNodes(new_node_ind, above_ind,
+                             verticalEdgeCost(new_node, DepthNode(getNode(above_ind).getValue())));
+    }
+
+    double edge_radius = radiusAtDepth(depth, dim);
+    auto inds_within_radius = getVerticesWithinRadius(new_node.toRaw(), edge_radius);
+
+    for(const auto &near_ind:inds_within_radius)
+    {
+        if(new_node_ind == near_ind)
+        {
+            continue;
+        }
+        if(new_node.depth != DepthNode(getNode(near_ind).getValue()).depth)
+        {
+            continue;
+        }
+        addEdgesBetweenNodes(new_node_ind, (int64_t)near_ind, edgeCost(new_node, getNodeValue(near_ind)));
+    }
+    return new_node_ind;
+}
+
+int64_t SDRoadmap::addVertexAndEdges(DepthNode dn)
+{
+    return addVertexAndEdges(dn.depth, dn.q);
 }
 

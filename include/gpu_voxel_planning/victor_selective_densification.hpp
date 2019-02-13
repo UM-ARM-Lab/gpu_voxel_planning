@@ -9,6 +9,8 @@
 class SDRoadmap : public SelectiveDensificationGraph
 {
 public:
+    int depth;
+    int dim;
     
     SDRoadmap();
     SDRoadmap(std::string filename);
@@ -20,6 +22,10 @@ public:
     //                          const std::vector<double> &raw2) const override;
     double distanceHeuristic(const std::vector<double> &raw1,
                              const std::vector<double> &raw2) const override;
+
+    virtual int64_t addVertexAndEdges(int depth, std::vector<double> q) override;
+    
+    virtual int64_t addVertexAndEdges(DepthNode dn) override;
 
 };
 

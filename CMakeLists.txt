@@ -237,6 +237,7 @@ set(Planning_SOURCES
   src/scenario_tester.cpp
   src/graph_search_strategies.cpp
   src/victor_selective_densification.cpp
+  src/selective_densification_strategies.cpp
   src/path_utils.cpp
   )
 

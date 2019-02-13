@@ -13,6 +13,7 @@
 #include "path_utils_addons.hpp"
 #include "urdf_model.hpp"
 #include "victor_selective_densification.hpp"
+#include "selective_densification_strategies.hpp"
 
 using namespace GVP;
 
@@ -26,12 +27,8 @@ int main(int argc, char* argv[])
 
     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
 
-    std::cout << "About to make SD roadmap\n";
-    std::cout << "Unforunately, this causes a std::length_error. Debug later\n";
-
-    
-    SDRoadmap rm;
-    rm.saveToFile(graph_filepath);
+    // SDRoadmap rm;
+    // rm.saveToFile(graph_filepath);
 
 
     ros::Duration(1.0).sleep();
@@ -41,11 +38,8 @@ int main(int argc, char* argv[])
     SlottedWall scenario(true);
 
     // AStarGraphSearch strat;
-    // OmniscientGraphSearch strat;
-    OmniscientGraphSearch strat(graph_filepath);
-    // OptimisticGraphSearch strat;
-    // ParetoCostGraphSearch strat(10.0);
-    // UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
+    // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
+    OmniscientSDGraphSearch strat(graph_filepath);
 
 
     // testAngles(scenario, viz);
@@ -57,7 +51,7 @@ int main(int argc, char* argv[])
     tester.attemptStrategy(strat);
     strat.saveToFile();
 
-    viz.vizEEGraph(strat.graph);
+    // viz.vizEEGraph(strat.graph);
     
     PROFILE_PRINT_SUMMARY_FOR_ALL();
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
