@@ -16,9 +16,13 @@ namespace GVP
         
     protected:
         std::shared_ptr<ompl::base::RealVectorStateSpace> makeSpace();
+
+        virtual ompl::base::PlannerPtr makePlanner(ompl::base::SpaceInformationPtr si) = 0;
             
         bool isOmplStateValid(const ompl::base::State *ompl_state,
                               const GVP::State &gvp_state);
+
+
     };
 
 
@@ -26,6 +30,7 @@ namespace GVP
     {
     public:
         virtual std::string getName() const override;
+        virtual ompl::base::PlannerPtr makePlanner(ompl::base::SpaceInformationPtr si) override;
     };
 }
 

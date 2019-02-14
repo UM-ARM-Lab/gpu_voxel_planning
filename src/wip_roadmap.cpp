@@ -28,8 +28,8 @@ int main(int argc, char* argv[])
 
     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
 
-    // SDRoadmap rm;
-    // rm.saveToFile(graph_filepath);
+    SDRoadmap rm;
+    rm.saveToFile(graph_filepath);
 
 
     ros::Duration(1.0).sleep();
@@ -39,8 +39,9 @@ int main(int argc, char* argv[])
     SlottedWall scenario(true);
 
     // AStarGraphSearch strat;
-    OmniscientGraphSearch strat;
+    // OmniscientGraphSearch strat;
     // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
+    OmniscientSDGraphSearch strat;
     // OmniscientSDGraphSearch strat(graph_filepath);
     // RRT_Strategy strat;
 
@@ -51,9 +52,9 @@ int main(int argc, char* argv[])
     SimulationScenarioTester tester(scenario, n);
     std::cout << "Attempting strategy\n";
     tester.attemptStrategy(strat);
-    // strat.saveToFile();
+    strat.saveToFile();
 
-    viz.vizEEGraph(strat.graph);
+    // viz.vizEEGraph(strat.graph);
     
     PROFILE_PRINT_SUMMARY_FOR_ALL();
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();

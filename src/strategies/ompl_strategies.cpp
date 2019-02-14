@@ -1,6 +1,7 @@
 #include "strategies/ompl_strategies.hpp"
+#include "ompl_utils.hpp"
 #include "hacky_functions.hpp"
-
+#include "path_utils_addons.hpp"
 
 using namespace GVP;
 namespace ob = ompl::base;
@@ -15,7 +16,7 @@ std::shared_ptr<ob::RealVectorStateSpace> OMPL_Strategy::makeSpace()
     {
         space->addDimension(right_joint_lower_deg[i]*torad, right_joint_upper_deg[i]*torad);
     }
-
+    return space;
 }
 
 Path OMPL_Strategy::applyTo(Scenario &scenario)
@@ -27,12 +28,19 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
 
 
     auto space = makeSpace();
+
+    space->setLongestValidSegmentFraction(0.02/space->getMaximumExtent());
+    
     og::SimpleSetup ss(space);
     ss.setStateValidityChecker(state_validity_fn);
 
-
-    ob::ScopedState<> start(space);
-    ob::ScopedState<> goal(space);
+    ss.setPlanner(makePlanner(ss.getSpaceInformation()));
+    ob::ScopedState<> start =
+        ompl_utils::toScopedState(scenario.getState().getCurConfig().asVector(),
+                                  space);
+    ob::ScopedState<> goal =
+        ompl_utils::toScopedState(VictorRightArmConfig(scenario.goal_config).asVector(),
+                                  space);
     
     ss.setStartAndGoalStates(start, goal);
 
@@ -44,21 +52,34 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
         // print the path to screen
         ss.simplifySolution();
         ss.getSolutionPath().print(std::cout);
+        PathUtils::Path pu_path = ompl_utils::omplPathToDoublePath(&ss.getSolutionPath(),
+                                                                   ss.getSpaceInformation());
 
+        return GVP::toPath(pu_path);
     }
 }
 
 bool OMPL_Strategy::isOmplStateValid(const ompl::base::State *ompl_state,
                                      const GVP::State &gvp_state)
 {
+    PROFILE_START("OMPL Configuration Check");
     VictorRightArmConfig config(ompl_state->as<ob::RealVectorStateSpace::StateType>()->values);
     gvp_state.robot.set(config.asMap());
-    return !gvp_state.robot.occupied_space.overlapsWith(&gvp_state.known_obstacles);
+    bool valid = !gvp_state.robot.occupied_space.overlapsWith(&gvp_state.known_obstacles);
+    PROFILE_RECORD("OMPL Configuration Check");
+    return valid;
 }
 
 
+
+ompl::base::PlannerPtr RRT_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
+{
+    return std::make_shared<og::RRTConnect>(si);
+}
 
 std::string RRT_Strategy::getName() const
 {
     return "RRT Strategy";
 }
+
+
