@@ -13,6 +13,7 @@ SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string
     try
     {
         precomputed_swept_volumes.loadFromFile(swept_volumes_filepath, sd_graph.getNodes().size());
+        std::cout << "Loaded " << precomputed_swept_volumes.size() << " swept volumes\n";
     }
     catch(const std::runtime_error& e)
     {
@@ -34,15 +35,16 @@ SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
 
 void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
 {
-    for(int depth = 0; depth < sd_graph.depth; depth++)
+    // for(int depth = 0; depth < sd_graph.depth; depth++)
     {
+        int depth = sd_graph.depth - 1;
         DepthNode start(depth, scenario.getState().getCurConfig().asVector());
         DepthNode goal(depth, VictorRightArmConfig(scenario.goal_config).asVector());
         NodeIndex start_id = sd_graph.addVertexAndEdges(start);
         NodeIndex goal_id = sd_graph.addVertexAndEdges(goal);
 
         std::cout << "Initial (node " << start_id << ") and Goal (node " << goal_id << ") vertices added\n";
-        if(depth == 0)
+        // if(depth == 0)
         {
             cur_node = start_id;
             goal_node = goal_id;
@@ -97,8 +99,10 @@ DenseGrid SelectiveDensificationStrategy::computeSweptVolume(State &s, arc_dijks
     DenseGrid swept_volume;
     for(const auto &config: path)
     {
+        PROFILE_START("Config Added to Swept Volume");
         s.robot.set(config.asMap());
         swept_volume.add(&s.robot.occupied_space);
+        PROFILE_RECORD("Config Added to Swept Volume");
     }
     PROFILE_RECORD("ComputeSweptVolume");
     return swept_volume;
