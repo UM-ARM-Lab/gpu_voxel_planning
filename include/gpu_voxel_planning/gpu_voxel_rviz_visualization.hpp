@@ -132,7 +132,7 @@ public:
 
     void vizEEPosition(const std::vector<double> config)
     {
-        ee_path_pub.publish(visualizePoint(urdf.getEEPosition(config), "victor_root", "position",
+        ee_path_pub.publish(visualizePoint(urdf.getEEPosition(config), global_frame, "position",
                                            makeColor(0.0, 0.0, 1.0)));
     }
 
@@ -140,7 +140,7 @@ public:
                    std::string path_name)
     {
         std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(path_config);
-        ee_path_pub.publish(visualize3DPath(path_3d, "victor_root", path_name,
+        ee_path_pub.publish(visualize3DPath(path_3d, global_frame, path_name,
                                            makeColor(0.0, 0.0, 1.0)));
     }
 
@@ -172,7 +172,7 @@ public:
                 
                 std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(edge_config);
 
-                auto arr = visualize3DPath(path_3d, "victor_root", ns, color);
+                auto arr = visualize3DPath(path_3d, global_frame, ns, color);
                 arr.markers[0].id = id++;
                 marker_array.markers.push_back(arr.markers[0]);
             }
