@@ -7,8 +7,8 @@
 #include "scenarios.hpp"
 #include <ros/ros.h>
 #include "urdf_model.hpp"
-#include "graph_search_strategies.hpp"
-#include "victor_selective_densification.hpp"
+#include "strategies/graph_search_strategies.hpp"
+#include "strategies/victor_selective_densification.hpp"
 
 inline visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,
                                                      const std::string& global_frame,

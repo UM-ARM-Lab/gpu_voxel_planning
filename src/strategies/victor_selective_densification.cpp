@@ -1,4 +1,4 @@
-#include "victor_selective_densification.hpp"
+#include "strategies/victor_selective_densification.hpp"
 #include "hacky_functions.hpp"
 
 

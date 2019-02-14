@@ -229,15 +229,16 @@ target_link_libraries(wip_victor_sim
 
 
 add_library(victor_halton_roadmap
-  src/victor_halton_roadmap.cpp)
+  src/strategies/victor_halton_roadmap.cpp)
 
 
 
 set(Planning_SOURCES
   src/scenario_tester.cpp
-  src/graph_search_strategies.cpp
-  src/victor_selective_densification.cpp
-  src/selective_densification_strategies.cpp
+  src/strategies/graph_search_strategies.cpp
+  src/strategies/victor_selective_densification.cpp
+  src/strategies/selective_densification_strategies.cpp
+  src/strategies/ompl_strategies.cpp
   src/path_utils.cpp
   )
 

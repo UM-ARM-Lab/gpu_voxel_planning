@@ -9,7 +9,7 @@
 #include "robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
-#include "graph_search_strategies.hpp"
+#include "strategies/graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
 #include "urdf_model.hpp"
 

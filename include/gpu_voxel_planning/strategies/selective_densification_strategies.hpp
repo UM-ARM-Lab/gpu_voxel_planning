@@ -1,9 +1,9 @@
 #ifndef SELECTIVE_DENSIFICATION_STRATEGIES_HPP
 #define SELECTIVE_DENSIFICATION_STRATEGIES_HPP
 
-#include "victor_selective_densification.hpp"
-#include "strategies.hpp"
-#include "memorized_swept_volumes.hpp"
+#include "strategies/victor_selective_densification.hpp"
+#include "strategies/strategies.hpp"
+#include "strategies/memorized_swept_volumes.hpp"
 #include <arc_utilities/timing.hpp>
 
 

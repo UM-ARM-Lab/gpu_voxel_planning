@@ -2,7 +2,7 @@
 #define SCENARIO_TESTER_HPP
 
 #include "scenarios.hpp"
-#include "strategies.hpp"
+#include "strategies/strategies.hpp"
 #include "gpu_voxel_rviz_visualization.hpp"
 #include <ros/ros.h>
 

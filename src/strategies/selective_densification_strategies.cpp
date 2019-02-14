@@ -1,4 +1,4 @@
-#include "selective_densification_strategies.hpp"
+#include "strategies/selective_densification_strategies.hpp"
 
 
 using namespace GVP;

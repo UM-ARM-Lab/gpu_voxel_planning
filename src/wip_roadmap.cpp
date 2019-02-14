@@ -9,11 +9,12 @@
 #include "robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
-#include "graph_search_strategies.hpp"
+#include "strategies/graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
 #include "urdf_model.hpp"
-#include "victor_selective_densification.hpp"
-#include "selective_densification_strategies.hpp"
+#include "strategies/victor_selective_densification.hpp"
+#include "strategies/selective_densification_strategies.hpp"
+#include "strategies/ompl_strategies.hpp"
 
 using namespace GVP;
 
@@ -38,9 +39,10 @@ int main(int argc, char* argv[])
     SlottedWall scenario(true);
 
     // AStarGraphSearch strat;
+    OmniscientGraphSearch strat;
     // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
-    OmniscientSDGraphSearch strat(graph_filepath);
-
+    // OmniscientSDGraphSearch strat(graph_filepath);
+    // RRT_Strategy strat;
 
     // testAngles(scenario, viz);
     // return 1;
@@ -49,9 +51,9 @@ int main(int argc, char* argv[])
     SimulationScenarioTester tester(scenario, n);
     std::cout << "Attempting strategy\n";
     tester.attemptStrategy(strat);
-    strat.saveToFile();
+    // strat.saveToFile();
 
-    // viz.vizEEGraph(strat.graph);
+    viz.vizEEGraph(strat.graph);
     
     PROFILE_PRINT_SUMMARY_FOR_ALL();
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();

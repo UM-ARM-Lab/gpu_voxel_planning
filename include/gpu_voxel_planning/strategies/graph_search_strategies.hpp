@@ -1,13 +1,13 @@
 #ifndef GRAPH_SEARCH_STRATEGIES_HPP
 #define GRAPH_SEARCH_STRATEGIES_HPP
 
-#include "victor_halton_roadmap.hpp"
+#include "strategies/victor_halton_roadmap.hpp"
 #include "state.hpp"
-#include "strategies.hpp"
+#include "strategies/strategies.hpp"
 #include <graph_planner/dijkstras_addons.hpp>
 #include <cmath>
 #include <arc_utilities/timing.hpp>
-#include "memorized_swept_volumes.hpp"
+#include "strategies/memorized_swept_volumes.hpp"
 
 namespace GVP
 {
