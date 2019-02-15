@@ -1,4 +1,6 @@
 #include "strategies/selective_densification_strategies.hpp"
+#include <algorithm>
+#include <random>
 
 
 using namespace GVP;
@@ -25,7 +27,10 @@ SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string
 
 SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string &graph_filepath) :
     swept_volumes_filepath(""), graph_filepath(graph_filepath), 
-    sd_graph(graph_filepath), initialized(false) {}
+    sd_graph(graph_filepath), initialized(false)
+{
+    std::cout << "Loading graph without precomputed swept volumes\n";
+}
 
 
 SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
@@ -51,6 +56,9 @@ void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
             std::cout << "This is the start and goal\n";
         }
     }
+
+    mode = EdgeCheckMode::FAST;
+    
     initialized = true;
 }            
 
@@ -130,15 +138,73 @@ DenseGrid SelectiveDensificationStrategy::getSweptVolume(State &s, arc_dijkstras
 
 
 
-
-
-bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s)
+bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, State &s)
 {
-    PROFILE_START("EdgeCheck");
+    PROFILE_START("CheckEdgeFast Valid");
+    PROFILE_START("CheckEdgeFast Invalid");
+    VictorRightArmConfig q_start(sd_graph.getNodeValue(e.getFromIndex()).q);
+    VictorRightArmConfig q_end(sd_graph.getNodeValue(e.getToIndex()).q);
+    GVP::Path path = interpolate(q_start, q_end, discretization);
+
+    auto rng = std::default_random_engine{};
+    std::shuffle(std::begin(path), std::end(path), rng);
+
+    for(const auto &config: path)
+    {
+        PROFILE_START("Config checked");
+        s.robot.set(config.asMap());
+        PROFILE_RECORD("Config checked");
+        if(s.robot.occupied_space.overlapsWith(&s.known_obstacles))
+        {
+            e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+            PROFILE_RECORD("CheckEdgeFast Invalid");
+            return false;
+        }
+    }
+    e.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
+    PROFILE_RECORD("CheckEdgeFast Valid");
+    return true;
+
+}
+
+
+bool SelectiveDensificationStrategy::checkEdgeAndStore(arc_dijkstras::GraphEdge &e, State &s)
+{
+    PROFILE_START("CheckEdgeAndStore");
     bool valid = !getSweptVolume(s, e).overlapsWith(&s.known_obstacles);
     e.setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
                   arc_dijkstras::EDGE_VALIDITY::INVALID);
-    PROFILE_RECORD("EdgeCheck");
+    PROFILE_RECORD("CheckEdgeAndStore");
+    return valid;
+}
+
+bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s)
+{
+    PROFILE_START("CheckEdge");
+    arc_dijkstras::HashableEdge e_hashed = arc_dijkstras::getSortedHashable(e);
+    if(precomputed_swept_volumes.count(e_hashed))
+    {
+        bool valid = checkEdgeAndStore(e, s); //This will run fast, since there is already a swept volume
+        PROFILE_RECORD("CheckEdge");
+        return valid;
+    }
+
+    bool valid = false;
+    
+    if(mode == EdgeCheckMode::STORE)
+    {
+        valid = checkEdgeAndStore(e, s);
+    }
+    else if(mode == EdgeCheckMode::FAST)
+    {
+        valid = checkEdgeFast(e, s);
+    }
+    else
+    {
+        assert(false && "invalid mode");
+    }
+
+    PROFILE_RECORD("CheckEdge");
     return valid;
 }
 

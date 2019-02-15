@@ -22,14 +22,14 @@ using namespace GVP;
 int main(int argc, char* argv[])
 {
     icl_core::logging::initialize(argc, argv);
-    ros::init(argc, argv, "graph_publisher");
+    ros::init(argc, argv, "wip_roadmap");
     ros::NodeHandle n;
     GpuVoxelRvizVisualizer viz(n);
 
     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
 
-    SDRoadmap rm;
-    rm.saveToFile(graph_filepath);
+    // SDRoadmap rm;
+    // rm.saveToFile(graph_filepath);
 
 
     ros::Duration(1.0).sleep();
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     SimulationScenarioTester tester(scenario, n);
     std::cout << "Attempting strategy\n";
     tester.attemptStrategy(strat);
-    strat.saveToFile();
+    // strat.saveToFile();
 
     // viz.vizEEGraph(strat.graph);
     

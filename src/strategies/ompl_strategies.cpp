@@ -32,6 +32,7 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
     space->setLongestValidSegmentFraction(0.02/space->getMaximumExtent());
     
     og::SimpleSetup ss(space);
+
     ss.setStateValidityChecker(state_validity_fn);
 
     ss.setPlanner(makePlanner(ss.getSpaceInformation()));
@@ -45,7 +46,7 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
     ss.setStartAndGoalStates(start, goal);
 
     ob::PlannerStatus solved = ss.solve(60);
-
+    std::cout << "Longest valid segment: " << space->getLongestValidSegmentLength() << "\n";
     if (solved)
     {
         std::cout << "Found solution:" << std::endl;
@@ -55,7 +56,8 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
         PathUtils::Path pu_path = ompl_utils::omplPathToDoublePath(&ss.getSolutionPath(),
                                                                    ss.getSpaceInformation());
 
-        return GVP::toPath(pu_path);
+        GVP::Path gvp_path= GVP::toPath(pu_path);
+        return gvp_path;
     }
 }
 

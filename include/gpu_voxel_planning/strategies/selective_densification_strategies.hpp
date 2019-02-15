@@ -30,6 +30,10 @@ namespace GVP
         NodeIndex goal_node;
         MemorizedSweptVolume precomputed_swept_volumes;
 
+        enum EdgeCheckMode {FAST, STORE};
+
+        EdgeCheckMode mode;
+
     public:
 
 
@@ -46,11 +50,24 @@ namespace GVP
 
         virtual DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
 
-        
-        /* Checks an edge against known obstacles to see if there is a collision.
-         * Changes the graph edge validity accordingly
+        /* Checks the swept volume an edge against known obstacles to see if there is a collision.
+         *  Depending on the mode, this may check the full edge and memorize the swept volume, 
+         *  or may terminate early if a collision is found
          */
         bool checkEdge(arc_dijkstras::GraphEdge &e, State &s);
+        
+        /* Checks the swept volume an edge against known obstacles to see if there is a collision.
+         * Changes the graph edge validity accordingly
+         * Note: This gets the entire swept volume of the edge first first
+         */
+        bool checkEdgeAndStore(arc_dijkstras::GraphEdge &e, State &s);
+
+        /* Checks the swept volume an edge one configuration at at time against 
+         *  known obstacles to see if there is a collision.
+         * Changes the graph edge validity accordingly
+         * Note: This returns early if there is a collision and does not store the swept volume
+         */
+        bool checkEdgeFast(arc_dijkstras::GraphEdge &e, State &s);
 
         double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
 
