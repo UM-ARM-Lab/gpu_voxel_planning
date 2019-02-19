@@ -26,10 +26,13 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
     GpuVoxelRvizVisualizer viz(n);
 
-    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
+    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_1M.graph";
 
     // SDRoadmap rm;
     // rm.saveToFile(graph_filepath);
+
+    // Roadmap rm;
+    // rm.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
 
 
     ros::Duration(1.0).sleep();
@@ -40,8 +43,8 @@ int main(int argc, char* argv[])
 
     // AStarGraphSearch strat;
     // OmniscientGraphSearch strat;
-    // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph");
-    OmniscientSDGraphSearch strat;
+    OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
+    // OmniscientSDGraphSearch strat;
     // OmniscientSDGraphSearch strat(graph_filepath);
     // RRT_Strategy strat;
 

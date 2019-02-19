@@ -43,7 +43,8 @@ void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
 {
     // for(int depth = 0; depth < sd_graph.depth; depth++)
     {
-        int depth = sd_graph.depth - 1;
+        int depth = sd_graph.depth;
+        // int depth = 5;
         DepthNode start(depth, scenario.getState().getCurConfig().asVector());
         DepthNode goal(depth, VictorRightArmConfig(scenario.goal_config).asVector());
         NodeIndex start_id = sd_graph.addVertexAndEdges(start);

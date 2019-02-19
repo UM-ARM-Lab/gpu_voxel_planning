@@ -14,8 +14,10 @@ Roadmap::Roadmap():
     // r_disc = 2.0;
     // int num_vert = 100000;
     // r_disc = 1.5;
-    int num_vert = 100000;
-    r_disc = 1.3;
+    // int num_vert = 100000;
+    // r_disc = 1.3;
+    int num_vert = 1000000;
+    r_disc = 1.0;
 
     auto configs = scaleToVictorDims(halton::haltonPoints(num_vert, 7));
 
