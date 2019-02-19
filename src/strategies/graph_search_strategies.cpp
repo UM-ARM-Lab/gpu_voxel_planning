@@ -145,7 +145,7 @@ namespace GVP
             {
                 return evaluateEdge(e, s);
             };
-        auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformLazySP(
+        auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
             graph, start, goal, &distanceHeuristic, eval_fn, true);
         if(result.second == std::numeric_limits<double>::infinity())
         {

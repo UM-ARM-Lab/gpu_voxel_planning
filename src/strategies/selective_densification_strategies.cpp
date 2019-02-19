@@ -7,8 +7,8 @@ using namespace GVP;
 
 SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string &graph_filepath,
                                                                const std::string& swept_volumes_filepath) :
-    swept_volumes_filepath(swept_volumes_filepath),
     graph_filepath(graph_filepath),
+    swept_volumes_filepath(swept_volumes_filepath),
     sd_graph(graph_filepath),
     initialized(false)
 {
@@ -26,7 +26,8 @@ SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string
 
 
 SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string &graph_filepath) :
-    swept_volumes_filepath(""), graph_filepath(graph_filepath), 
+    graph_filepath(graph_filepath),
+    swept_volumes_filepath(""), 
     sd_graph(graph_filepath), initialized(false)
 {
     std::cout << "Loading graph without precomputed swept volumes\n";
@@ -58,6 +59,7 @@ void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
     }
 
     mode = EdgeCheckMode::FAST;
+    // mode = EdgeCheckMode::STORE;
     
     initialized = true;
 }            
@@ -231,7 +233,7 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
             return sd_graph.distanceHeuristic(n1, n2);
         };
     std::cout << "Performing lazysp\n";
-    auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformLazySP(
+    auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
         sd_graph, start, goal, heuristic_fn, eval_fn, true);
 
     std::cout << "LazySP finished\n";

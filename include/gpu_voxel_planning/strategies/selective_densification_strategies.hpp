@@ -22,13 +22,14 @@ namespace GVP
 
     public:
         SDRoadmap sd_graph;
+        MemorizedSweptVolume precomputed_swept_volumes;
         bool initialized;
         double discretization = 0.02;
         const std::string graph_filepath;
         const std::string swept_volumes_filepath;
         NodeIndex cur_node;
         NodeIndex goal_node;
-        MemorizedSweptVolume precomputed_swept_volumes;
+
 
         enum EdgeCheckMode {FAST, STORE};
 
