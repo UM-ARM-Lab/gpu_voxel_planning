@@ -24,6 +24,8 @@ namespace PathUtils
     Path followPartial(const Path& path, double dist);
 
     void printPath(const Path& path);
+
+    double length(const Path& path);
 };
 
 

@@ -48,8 +48,13 @@ void SDRoadmap::generateGraph(int max_depth)
         std::cout << "Adding nodes at depth " << depth << " with connection radius " << radius << "\n";
         for(int i=0; i<numNodesAtDepth(depth, dim); i++)
         {
+            if(i%100000 == 0 && i != 0)
+            {
+                std::cout << "Added node " << i << "\n";
+            }
             addVertexAndEdges(depth, qs[i]);
         }
+        std::cout << "Graph has " << getNodes().size() << " nodes and " << countEdges() << " edges\n";
     }
 }
 

@@ -38,6 +38,22 @@ double PathUtils::dist(const std::vector<double> &p1, const std::vector<double> 
     return sqrt(d);
 }
 
+double PathUtils::length(const Path& path)
+{
+    if(path.size() <= 1)
+    {
+        return 0;
+    }
+
+    double path_length = 0;
+    for(int i=0; i+1 < path.size(); i++)
+    {
+        path_length += dist(path[i], path[i+1]);
+    }
+    return path_length;
+}
+
+
 size_t PathUtils::closestIndex(const Path &path, const std::vector<double> &point)
 {
     assert(path.size() > 0);

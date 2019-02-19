@@ -55,6 +55,8 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
         ss.getSolutionPath().print(std::cout);
         PathUtils::Path pu_path = ompl_utils::omplPathToDoublePath(&ss.getSolutionPath(),
                                                                    ss.getSpaceInformation());
+        PROFILE_RECORD_DOUBLE("OMPL path length", PathUtils::length(pu_path));
+        std::cout << "Path length: " << PathUtils::length(pu_path) << "\n";
 
         GVP::Path gvp_path= GVP::toPath(pu_path);
         return gvp_path;

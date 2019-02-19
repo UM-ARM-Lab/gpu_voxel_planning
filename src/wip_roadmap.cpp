@@ -55,6 +55,7 @@ int main(int argc, char* argv[])
     // strat.saveToFile();
 
     // viz.vizEEGraph(strat.graph);
+    viz.vizEESDGraph(strat.sd_graph);
     
     PROFILE_PRINT_SUMMARY_FOR_ALL();
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();

@@ -151,6 +151,8 @@ namespace GVP
         {
             std::cout << "No path found on graph\n";
         }
+        PROFILE_RECORD_DOUBLE("lazySP path cost ", result.second);
+        std::cout << "LazySP path cost " << result.second << "\n";
         return result.first;
     }
 
