@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
     GpuVoxelRvizVisualizer viz(n);
 
-    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_1M.graph";
+    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
 
     // SDRoadmap rm;
     // rm.saveToFile(graph_filepath);
@@ -43,8 +43,8 @@ int main(int argc, char* argv[])
 
     // AStarGraphSearch strat;
     // OmniscientGraphSearch strat;
-    OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
-    // OmniscientSDGraphSearch strat;
+    // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
+    OmniscientSDGraphSearch strat;
     // OmniscientSDGraphSearch strat(graph_filepath);
     // RRT_Strategy strat;
 
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     // strat.saveToFile();
 
     // viz.vizEEGraph(strat.graph);
-    viz.vizEESDGraph(strat.sd_graph);
+    // viz.vizEESDGraph(strat.sd_graph);
     
     PROFILE_PRINT_SUMMARY_FOR_ALL();
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();

@@ -219,9 +219,12 @@ namespace GVP
             {
                 addSlottedWall(s.known_obstacles);
             }
-            s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
+            // s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
+            s.current_config = VictorRightArmConfig(std::vector<double>{-1.5, 1.0, -0.5, -0.5,0,0,0}).asMap();
             goal_config = VictorRightArmConfig(std::vector<double>{0, 0.32, 0, -1.32, -0.2, 0.9, 0.3}).asMap();
             // goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.2, 0, -0.5, 0, 1.0, 0}).asMap();
+
+            victor.set(s.current_config);
         }
 
         std::string getName() const
@@ -235,16 +238,16 @@ namespace GVP
             double gap_height = .4;
 
             Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
-            Vector3f lfwd(0.04, 1.5, lower_wall_height);
+            Vector3f lfwd(0.04, 0.4, lower_wall_height);
     
-            Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front call
-            Vector3f ufwd(0.04, 1.5, 0.3);
+            Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front wall
+            Vector3f ufwd(0.04, 0.4, 0.3);
     
             Vector3f mfwc(1.5, 1.8, 0);  //middle front wall
-            Vector3f mfwd(0.04, 1.4, 1.5);
+            Vector3f mfwd(0.04, 0.2, 1.5);
    
             Vector3f lswc = lfwc;  // lower side wall corner
-            Vector3f lswd(1.5, 0.04, lower_wall_height); //lower side wall dims
+            Vector3f lswd(.75, 0.04, lower_wall_height); //lower side wall dims
             Vector3f cswc = ufwc; //close side wall corner
             Vector3f cswd(0.2, 0.04, 0.3);
             Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
@@ -255,6 +258,7 @@ namespace GVP
             g.insertBox(lfwc, lfwc+lfwd);
             g.insertBox(ufwc, ufwc+ufwd);
             g.insertBox(mfwc, mfwc+mfwd);
+            
             g.insertBox(lswc, lswc+lswd);
             g.insertBox(cswc, cswc+cswd);
             g.insertBox(fswc, fswc+fswd);

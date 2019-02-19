@@ -161,10 +161,12 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
         {
             e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
             PROFILE_RECORD("CheckEdgeFast Invalid");
+            PROFILE_RECORD(depth_logging_name);
             return false;
         }
     }
     e.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
+    PROFILE_RECORD(depth_logging_name);
     PROFILE_RECORD("CheckEdgeFast Valid");
     return true;
 

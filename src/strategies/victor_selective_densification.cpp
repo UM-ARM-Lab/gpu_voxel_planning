@@ -90,7 +90,12 @@ double SDRoadmap::distanceHeuristic(const std::vector<double> &raw1,
     DepthNode d2(raw2);
     // std::cout << "Calling dist heuristic with depth " << d1.depth << "\n";
      // std::pow(2, d1.depth);
-    return EigenHelpers::Distance(d1.q, d2.q)*std::pow(1.5, d1.depth);
+    std::string depth_logging_name = "EdgeHeuristic depth=" +
+        std::to_string(d1.depth);
+    PROFILE_START(depth_logging_name);
+    PROFILE_RECORD(depth_logging_name);
+
+    return EigenHelpers::Distance(d1.q, d2.q)*(1+0.0001*std::pow(10, d1.depth));
 }
 
 
