@@ -145,8 +145,15 @@ namespace GVP
             {
                 return evaluateEdge(e, s);
             };
+
+        const auto heuristic_fn =
+            [] (std::vector<double> q1, std::vector<double> q2)
+            {
+                return 7*EigenHelpers::Distance(q1, q2);
+            };
+        
         auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
-            graph, start, goal, &distanceHeuristic, eval_fn, true);
+            graph, start, goal, heuristic_fn, eval_fn, true);
         if(result.second == std::numeric_limits<double>::infinity())
         {
             std::cout << "No path found on graph\n";

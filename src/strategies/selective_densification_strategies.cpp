@@ -145,8 +145,14 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
 {
     PROFILE_START("CheckEdgeFast Valid");
     PROFILE_START("CheckEdgeFast Invalid");
+    std::string depth_logging_name = "CheckEdgeFast depth=" +
+        std::to_string(sd_graph.getNodeValue(e.getFromIndex()).depth);
+    PROFILE_START(depth_logging_name);
+
     VictorRightArmConfig q_start(sd_graph.getNodeValue(e.getFromIndex()).q);
     VictorRightArmConfig q_end(sd_graph.getNodeValue(e.getToIndex()).q);
+
+    
     GVP::Path path = interpolate(q_start, q_end, discretization);
 
     auto rng = std::default_random_engine{};
