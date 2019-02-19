@@ -181,16 +181,16 @@ public:
     }
 
     
-    void vizEESDGraph(const SDRoadmap &g, int depth)
+    void vizEESDGraph(const SDRoadmap &g)
     {
         visualization_msgs::MarkerArray marker_array;
         int id = 0;
         for(const auto n:g.getNodes())
         {
-            if(DepthNode(n.getValue()).depth != depth)
-            {
-                continue;
-            }
+            // if(DepthNode(n.getValue()).depth != depth)
+            // {
+            //     continue;
+            // }
             for(const auto e:n.getOutEdges())
             {
                 if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
@@ -206,14 +206,14 @@ public:
                 }
 
                 
-                GVP::VictorRightArmConfig q_start(g.getNode(e.getFromIndex()).getValue());
-                GVP::VictorRightArmConfig q_goal(g.getNode(e.getToIndex()).getValue());
+                GVP::VictorRightArmConfig q_start(g.getNodeValue(e.getFromIndex()).q);
+                GVP::VictorRightArmConfig q_goal(g.getNodeValue(e.getToIndex()).q);
 
                 GVP::Path edge_config = interpolate(q_start, q_goal, 0.01);
                 
                 std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(edge_config);
 
-                auto arr = visualize3DPath(path_3d, "victor_root", ns, color);
+                auto arr = visualize3DPath(path_3d, global_frame, ns, color);
                 arr.markers[0].id = id++;
                 marker_array.markers.push_back(arr.markers[0]);
             }
