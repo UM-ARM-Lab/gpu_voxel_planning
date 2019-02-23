@@ -220,9 +220,11 @@ namespace GVP
                 addSlottedWall(s.known_obstacles);
             }
             // s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
+            // goal_config = VictorRightArmConfig(std::vector<double>{0, 0.32, 0, -1.32, -0.2, 0.9, 0.3}).asMap();
+
+
             s.current_config = VictorRightArmConfig(std::vector<double>{-1.5, 1.0, -0.5, -0.5,0,0,0}).asMap();
-            goal_config = VictorRightArmConfig(std::vector<double>{0, 0.32, 0, -1.32, -0.2, 0.9, 0.3}).asMap();
-            // goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.2, 0, -0.5, 0, 1.0, 0}).asMap();
+            goal_config = VictorRightArmConfig(std::vector<double>{0, 0.72, -0.3, -1.32, -1.2, 0.9, 0.3}).asMap();
 
             victor.set(s.current_config);
         }
@@ -264,6 +266,135 @@ namespace GVP
             g.insertBox(fswc, fswc+fswd);
             g.insertBox(mswc, mswc+mswd);
         }
+    };
+
+
+
+
+
+
+
+
+
+
+
+    /****************************************
+     **         Bookshelf
+     ****************************************/
+    class Bookshelf : public SimulationScenario
+    {
+        const std::string name;
+    public:
+        Bookshelf(bool all_known):
+            name(std::string("Bookshelf") +
+                 "obstacles" + (all_known ? "" : "un") + "known")
+        {
+            addLeftArm();
+            addBookshelf(true_world);
+            addTable(true_world);
+
+            robot::JointValueMap jvm;
+            jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
+            jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
+            jvm["victor_right_gripper_fingerC_joint_2"] = 0.0;
+            victor.set(jvm);
+
+            if(all_known)
+            {
+                addBookshelf(s.known_obstacles);
+                addTable(s.known_obstacles);
+            }
+            // s.current_config = VictorRightArmConfig(std::vector<double>
+            //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
+            s.current_config = VictorRightArmConfig(std::vector<double>
+                                                    {-1.2, 1.3, -0.8, 0.4, 0.4, 0.3, 0.3}).asMap();
+            goal_config = VictorRightArmConfig(std::vector<double>
+                                               {0.3, 1.2, -0.3, 1.5, 0, -0.7, -0.9}).asMap();
+
+            victor.set(s.current_config);
+        }
+
+        std::string getName() const
+        {
+            return "Bookshelf";
+        }
+
+        void addBookshelf(DenseGrid &g)
+        {
+            double lower_wall_height = 1.1;
+            double gap_height = .4;
+
+            Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
+            Vector3f lfwd(0.04, 0.4, lower_wall_height);
+    
+            Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front wall
+            Vector3f ufwd(0.04, 0.4, 0.3);
+    
+            Vector3f mfwc(1.5, 1.8, 0);  //middle front wall
+            Vector3f mfwd(0.04, 0.2, 1.5);
+   
+            Vector3f lswc = lfwc;  // lower side wall corner
+            Vector3f lswd(.75, 0.04, lower_wall_height); //lower side wall dims
+            Vector3f cswc = ufwc; //close side wall corner
+            Vector3f cswd(0.2, 0.04, 0.3);
+            Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
+            Vector3f fswd(0.3, 0.04, 0.6);
+            Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
+            Vector3f mswd(0.3, 0.04, 0.2);
+
+
+            double bookshelf_width = 0.8;
+            double bookshelf_height = 1.6;
+            double bookshelf_depth = 0.4;
+            Vector3f backwallc(1.2, 0.8, 0.0); //backwall cornder
+            Vector3f backwall_thickness(bookshelf_width, 0.04, bookshelf_height);
+            Vector3f sidewall(0.04, bookshelf_depth,  bookshelf_height);
+            Vector3f swoff(bookshelf_width, 0, 0);
+            Vector3f shelf(bookshelf_width + 0.04, bookshelf_depth, 0.02);
+            Vector3f shelf_spacing(0, 0, 0.4);
+
+            Vector3f bookc(1.6, 0.82, 1.2);
+            Vector3f bookd(0.05, 0.3, 0.3);
+
+            g.insertBox(backwallc, backwallc + backwall_thickness);
+            g.insertBox(backwallc, backwallc + sidewall);
+            g.insertBox(backwallc + swoff, backwallc + sidewall + swoff);
+            for(int i=0; i<5; i++)
+            {
+                g.insertBox(backwallc + shelf_spacing*(float)i, backwallc + shelf + shelf_spacing*(float)i);
+            }
+            g.insertBox(bookc, bookc+bookd);
+
+
+            // g.insertBox(lfwc, lfwc+lfwd);
+            // g.insertBox(ufwc, ufwc+ufwd);
+            // g.insertBox(mfwc, mfwc+mfwd);
+            
+            // g.insertBox(lswc, lswc+lswd);
+            // g.insertBox(cswc, cswc+cswd);
+            // g.insertBox(fswc, fswc+fswd);
+            // g.insertBox(mswc, mswc+mswd);
+        }
+
+        void addTable(DenseGrid &g)
+        {
+            Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
+            Vector3f tc(1.7, 1.4, 0.9); //table corner
+            Vector3f tcf(1.7, 1.4, 0.0); //table corner at floor
+            Vector3f tld(.033, 0.033, tc.z); //table leg dims
+
+
+            g.insertBox(tc, tc+td);
+            g.insertBox(tcf, tcf+tld);
+            g.insertBox(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+                        Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld);
+            g.insertBox(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+                        Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld);
+            g.insertBox(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+                        Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld);
+
+        }
+
     };
 
 }
