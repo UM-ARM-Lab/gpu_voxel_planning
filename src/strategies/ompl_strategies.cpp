@@ -45,13 +45,17 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
     
     ss.setStartAndGoalStates(start, goal);
 
+    PROFILE_START("OMPL Planning");
     ob::PlannerStatus solved = ss.solve(60);
+    PROFILE_RECORD("OMPL Planning");
     std::cout << "Longest valid segment: " << space->getLongestValidSegmentLength() << "\n";
     if (solved)
     {
         std::cout << "Found solution:" << std::endl;
         // print the path to screen
+        PROFILE_START("OMPL Smoothing");
         ss.simplifySolution();
+        PROFILE_RECORD("OMPL Smoothing");
         ss.getSolutionPath().print(std::cout);
         PathUtils::Path pu_path = ompl_utils::omplPathToDoublePath(&ss.getSolutionPath(),
                                                                    ss.getSpaceInformation());

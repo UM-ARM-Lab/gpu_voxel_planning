@@ -41,10 +41,9 @@ SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
 
 void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
 {
-    // for(int depth = 0; depth < sd_graph.depth; depth++)
+    for(int depth = 3; depth <= sd_graph.depth; depth++)
     {
-        int depth = sd_graph.depth;
-        // int depth = 5;
+        // int depth = sd_graph.depth;
         DepthNode start(depth, scenario.getState().getCurConfig().asVector());
         DepthNode goal(depth, VictorRightArmConfig(scenario.goal_config).asVector());
         NodeIndex start_id = sd_graph.addVertexAndEdges(start);
@@ -97,6 +96,10 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario)
 std::vector<NodeIndex> SelectiveDensificationStrategy::plan(NodeIndex start, NodeIndex goal, State &s)
 {
     return lazySp(start, goal, s);
+    // return astar(start, goal, s);
+    // auto a = lazySp(goal, start, s);
+    // std::reverse(a.begin(), a.end());
+    // return a;
 }
 
 
@@ -221,6 +224,7 @@ bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, Stat
 
 double SelectiveDensificationStrategy::evaluateEdge(arc_dijkstras::GraphEdge &e, State &s)
 {
+    // std::cout << "evaluating edge " << e.getFromIndex() << "->" << e.getToIndex() << "\n";
     if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
     {
         checkEdge(e, s);
@@ -254,6 +258,48 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
     
     PROFILE_RECORD_DOUBLE("lazySP path cost ", result.second);
     std::cout << "LazySP path cost " << result.second << "\n";
+
+    return result.first;
+}
+
+
+std::vector<NodeIndex> SelectiveDensificationStrategy::astar(NodeIndex start, NodeIndex goal, State &s)
+{
+    const auto edge_check_fn =
+        [&] (arc_dijkstras::Graph<std::vector<double>> &g, arc_dijkstras::GraphEdge &e)
+        {
+            if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN);
+            {
+                evaluateEdge(e, s);
+            }
+            return e.getValidity() == arc_dijkstras::EDGE_VALIDITY::VALID;
+        };
+
+    const auto heuristic_fn = [&] (const std::vector<double> &n1,
+                                   const std::vector<double> &n2)
+        {
+            return sd_graph.distanceHeuristic(n1, n2);
+        };
+
+    const auto dist_fn = [&] (const arc_dijkstras::Graph<std::vector<double>> &g,
+                              const arc_dijkstras::GraphEdge &e)
+        {
+            return e.getWeight();
+        };
+    
+    std::cout << "Performing astar search\n";
+    auto result = arc_dijkstras::AstarLogging<std::vector<double>>::PerformLazyAstar(
+        sd_graph, start, goal, edge_check_fn, dist_fn, heuristic_fn, true);
+
+    std::cout << "astar finished\n";
+    
+    if(result.second == std::numeric_limits<double>::infinity())
+    {
+        std::cout << "No path found on graph\n";
+    }
+    
+    PROFILE_RECORD_DOUBLE("lazySP path cost ", result.second);
+    std::cout << "astar path cost " << result.second << "\n";
 
     return result.first;
 }

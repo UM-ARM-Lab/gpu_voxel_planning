@@ -149,7 +149,7 @@ namespace GVP
         const auto heuristic_fn =
             [] (std::vector<double> q1, std::vector<double> q2)
             {
-                return 7*EigenHelpers::Distance(q1, q2);
+                return EigenHelpers::Distance(q1, q2);
             };
         
         auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(

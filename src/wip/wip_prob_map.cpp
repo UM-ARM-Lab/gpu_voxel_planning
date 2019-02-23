@@ -126,7 +126,8 @@ int main(int argc, char* argv[])
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
     // TableWithBox scenario(true, true, true);
-    SlottedWall scenario(true);
+    // SlottedWall scenario(true);
+    Bookshelf scenario(true);
 
     // AStarGraphSearch strat;
     OmniscientGraphSearch strat;
@@ -136,8 +137,8 @@ int main(int argc, char* argv[])
     // UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
 
 
-    // testAngles(scenario, viz);
-    // return 1;
+    testAngles(scenario, viz);
+    return 1;
     
     
     SimulationScenarioTester tester(scenario, n);

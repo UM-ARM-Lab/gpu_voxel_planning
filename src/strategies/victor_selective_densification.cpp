@@ -18,13 +18,13 @@ static double radiusAtDepth(int depth, int dim)
 
 
 
-SDRoadmap::SDRoadmap() : depth(6), dim(7)
+SDRoadmap::SDRoadmap() : depth(5), dim(7)
 {
     std::cout << "Generating SD roadmap\n";
     generateGraph(depth);
 }
 
-SDRoadmap::SDRoadmap(std::string filename) : depth(6), dim(7)
+SDRoadmap::SDRoadmap(std::string filename) : depth(5), dim(7)
 {
     loadFromFile(filename);
     std::cout << "Loaded graph with " << nodes_.size() << " vertices and " << countEdges() << " edges\n";
@@ -96,6 +96,7 @@ double SDRoadmap::distanceHeuristic(const std::vector<double> &raw1,
     PROFILE_RECORD(depth_logging_name);
 
     return EigenHelpers::Distance(d1.q, d2.q)*(1+0.0001*std::pow(10, d1.depth));
+    // return EigenHelpers::Distance(d1.q, d2.q);
 }
 
 

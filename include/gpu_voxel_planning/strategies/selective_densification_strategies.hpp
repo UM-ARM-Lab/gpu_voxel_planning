@@ -82,6 +82,8 @@ namespace GVP
         void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
         
         std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s);
+        
+        std::vector<NodeIndex> astar(NodeIndex start, NodeIndex goal, State &s);
     };
 
     class OmniscientSDGraphSearch : public SelectiveDensificationStrategy
