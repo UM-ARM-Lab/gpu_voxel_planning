@@ -40,10 +40,12 @@ namespace GVP
 
         SelectiveDensificationStrategy(const std::string &graph_filepath,
                                        const std::string& swept_volumes_filepath);
-        SelectiveDensificationStrategy(const std::string &graph_filepath);
+        // SelectiveDensificationStrategy(const std::string &graph_filepath);
         SelectiveDensificationStrategy();
 
         void initialize(const Scenario &scenario);
+
+        void setMode(EdgeCheckMode mode_);
 
         virtual Path applyTo(Scenario &scenario) override;
 
@@ -89,7 +91,7 @@ namespace GVP
     class OmniscientSDGraphSearch : public SelectiveDensificationStrategy
     {
     public:
-        OmniscientSDGraphSearch(const std::string &filename) : SelectiveDensificationStrategy(filename) {}
+        // OmniscientSDGraphSearch(const std::string &filename) : SelectiveDensificationStrategy(filename) {}
         OmniscientSDGraphSearch() {}
         OmniscientSDGraphSearch(bool use_precomputed);
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;

@@ -21,24 +21,30 @@ SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string
     {
         std::cout << "Could not load precomputed swept volumes from file\n";
     }
+
+    setMode(EdgeCheckMode::FAST);
 }
 
 
 
-SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string &graph_filepath) :
-    graph_filepath(graph_filepath),
-    swept_volumes_filepath(""), 
-    sd_graph(graph_filepath), initialized(false)
-{
-    std::cout << "Loading graph without precomputed swept volumes\n";
-}
+// SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string &graph_filepath) :
+//     graph_filepath(graph_filepath),
+//     swept_volumes_filepath(""), 
+//     sd_graph(graph_filepath), initialized(false)
+// {
+//     std::cout << "Loading graph without precomputed swept volumes\n";
+// }
 
 
 SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
                                    "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map"){}
 
-    
+
+void SelectiveDensificationStrategy::setMode(EdgeCheckMode mode_)
+{
+    mode = mode_;
+}
         
 
 void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
@@ -60,9 +66,6 @@ void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
         }
     }
 
-    mode = EdgeCheckMode::FAST;
-    // mode = EdgeCheckMode::STORE;
-    
     initialized = true;
 }
 

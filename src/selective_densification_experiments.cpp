@@ -19,6 +19,7 @@ using namespace GVP;
 
 
 
+
 void test(ros::NodeHandle &n, SimulationScenario &scenario, Strategy &strategy)
 {
     SimulationScenarioTester tester(scenario, n);
@@ -54,6 +55,7 @@ void testAll(ros::NodeHandle &n)
     {
         for(auto strategy_factory: getStrategyFactories())
         {
+            PROFILE_REINITIALIZE(0,0);
             auto scenario_ptr = scenario_factory();
             auto strategy_ptr = strategy_factory();
             test(n, *scenario_ptr, *strategy_ptr);
@@ -67,6 +69,19 @@ void testAll(ros::NodeHandle &n)
 }
 
 
+void preparePrecomputed(ros::NodeHandle &n)
+{
+    for(auto scenario_factory:getScenarioFactories())
+    {
+        OmniscientSDGraphSearch strat(true);
+        strat.setMode(SelectiveDensificationStrategy::EdgeCheckMode::STORE);
+        test(n, *scenario_factory(), strat);
+        strat.saveToFile();
+    }
+
+}
+
+
 
 int main(int argc, char* argv[])
 {
@@ -76,8 +91,7 @@ int main(int argc, char* argv[])
 
     ros::Duration(1.0).sleep();
 
-    // test1(n);
-    // test2(n);
+    preparePrecomputed(n);
     testAll(n);
 
     
