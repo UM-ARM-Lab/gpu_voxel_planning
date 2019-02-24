@@ -8,11 +8,21 @@ logged_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/selective_de
 save_path = logged_filepath
 
 
+
+strategy_mappings = {"RRT_Strategy":"RRT",
+                     "Omniscient_SD_Graph_Search": "SD",
+                     "Omniscient_SD_Graph_Search_precomputed": "SD_pre"}
+
+scenario_mappings = {"Bookshelf":"Bookshelf",
+                     "Table_with_Box_table_known_visible_cave_known_full_cave_known":"Table",
+                     "SlottedWall": "Wall"}
+
+
 def extract_experiment_info(dirname, filename):
     # print filename.split()
     parts = filename.split()
-    return {"scenario": parts[0],
-            "strategy": parts[1],
+    return {"scenario": scenario_mappings[parts[0]],
+            "strategy": strategy_mappings[parts[1]],
             "data": extract_timing_data(dirname, filename)}
 
 def extract_timing_data(dirname, filename):
@@ -57,14 +67,23 @@ def plot_group(exps):
 
     # strategies = [x["strategy"] for x in exps]
     exps.sort(key=lambda exp: exp["strategy"])
+
+    fig = plt.figure()
+    ax = plt.subplot(111)
     
     for exp in exps:
         data = exp["data"]
-        plt.plot(data[0], data[1], label=exp["strategy"])
+        ax.plot(data[0], data[1], label=exp["strategy"])
     plt.title(scenario)
-    plt.legend()
-    plt.xlabel("Time (s)")
-    plt.ylabel("Path Length (rad)")
+
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Path Length (rad)")
+
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.7, box.height])
+    
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    
     plt.savefig(save_path + scenario)
     plt.show()
     # print exps
