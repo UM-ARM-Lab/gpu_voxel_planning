@@ -116,7 +116,7 @@ namespace GVP
 
 
         TableWithBox(bool table_known=true, bool visible_cave_known=false, bool full_cave_known=false) :
-            name(std::string("Table_with_Box ") +
+            name(std::string("Table_with_Box_") +
                  "table_" + (table_known ? "" : "un") + "known_" + 
                  "visible_cave_" + (visible_cave_known ? "" : "un" ) + "known_" + 
                  "full_cave_" + (full_cave_known ? "" : "un" ) + "known"

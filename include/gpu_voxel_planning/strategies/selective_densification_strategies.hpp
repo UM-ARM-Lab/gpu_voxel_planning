@@ -90,6 +90,9 @@ namespace GVP
 
     class OmniscientSDGraphSearch : public SelectiveDensificationStrategy
     {
+    private:
+        bool use_precomputed;
+        
     public:
         // OmniscientSDGraphSearch(const std::string &filename) : SelectiveDensificationStrategy(filename) {}
         OmniscientSDGraphSearch() {}

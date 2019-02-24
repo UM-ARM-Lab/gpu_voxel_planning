@@ -60,8 +60,8 @@ void testAll(ros::NodeHandle &n)
             auto strategy_ptr = strategy_factory();
             test(n, *scenario_ptr, *strategy_ptr);
             
-            std::string filename = scenario_ptr->getName() + "_" +
-                strategy_ptr->getName() + "_"+ arc_helpers::GetCurrentTimeAsString();
+            std::string filename = scenario_ptr->getName() + " " +
+                strategy_ptr->getName() + " "+ arc_helpers::GetCurrentTimeAsString();
             PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
             PROFILE_WRITE_ALL_FEWER_THAN(filename, 150);
         }
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 
     ros::Duration(1.0).sleep();
 
-    preparePrecomputed(n);
+    // preparePrecomputed(n);
     testAll(n);
 
     

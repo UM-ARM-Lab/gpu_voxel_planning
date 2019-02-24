@@ -335,7 +335,10 @@ void SelectiveDensificationStrategy::saveToFile(std::string filename)
  ********************************/
 OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed) :
     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
-                                   use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map" : ""){}
+                                   use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map" : ""),
+    use_precomputed(use_precomputed)
+{
+}
 
 double OmniscientSDGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
 {
@@ -344,6 +347,7 @@ double OmniscientSDGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::Gra
 
 std::string OmniscientSDGraphSearch::getName() const
 {
-    return "Omniscient_SD_Graph_Search";
-}
+    std::string type = (use_precomputed ? "_precomputed" : "");
+    return "Omniscient_SD_Graph_Search" + type;
+} 
     
