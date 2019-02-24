@@ -29,7 +29,7 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
 
     auto space = makeSpace();
 
-    space->setLongestValidSegmentFraction(0.02/space->getMaximumExtent());
+    space->setLongestValidSegmentFraction(discretization/space->getMaximumExtent());
     
     og::SimpleSetup ss(space);
 
@@ -45,41 +45,38 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
     
     ss.setStartAndGoalStates(start, goal);
 
+    PROFILE_START("PathLength");
     PROFILE_START("OMPL Planning");
     ob::PlannerStatus solved = ss.solve(60);
     PROFILE_RECORD("OMPL Planning");
     std::cout << "Longest valid segment: " << space->getLongestValidSegmentLength() << "\n";
     if (solved)
     {
-        std::cout << "Found solution:" << std::endl;
-        // print the path to screen
-        PROFILE_START("OMPL Smoothing");
-        ss.simplifySolution();
-        PROFILE_RECORD("OMPL Smoothing");
-        ss.getSolutionPath().print(std::cout);
         PathUtils::Path pu_path = ompl_utils::omplPathToDoublePath(&ss.getSolutionPath(),
                                                                    ss.getSpaceInformation());
-        PROFILE_RECORD_DOUBLE("OMPL path length", PathUtils::length(pu_path));
-        std::cout << "Path length: " << PathUtils::length(pu_path) << "\n";
-
-        GVP::Path gvp_path= GVP::toPath(pu_path);
-        return gvp_path;
+        return smooth(GVP::toPath(pu_path), scenario.getState());
     }
+
+    throw std::runtime_error("Path not found");
 }
 
 bool OMPL_Strategy::isOmplStateValid(const ompl::base::State *ompl_state,
-                                     const GVP::State &gvp_state)
+                                     GVP::State &gvp_state)
 {
     PROFILE_START("OMPL Configuration Check");
     VictorRightArmConfig config(ompl_state->as<ob::RealVectorStateSpace::StateType>()->values);
-    gvp_state.robot.set(config.asMap());
-    bool valid = !gvp_state.robot.occupied_space.overlapsWith(&gvp_state.known_obstacles);
+    // gvp_state.robot.set(config.asMap());
+    // bool valid = !gvp_state.robot.occupied_space.overlapsWith(&gvp_state.known_obstacles);
+    bool valid = gvp_state.isPossiblyValid(config);
     PROFILE_RECORD("OMPL Configuration Check");
     return valid;
 }
 
 
 
+/************************
+ *  RRT
+ ***********************/
 ompl::base::PlannerPtr RRT_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
 {
     return std::make_shared<og::RRTConnect>(si);
@@ -87,7 +84,50 @@ ompl::base::PlannerPtr RRT_Strategy::makePlanner(ompl::base::SpaceInformationPtr
 
 std::string RRT_Strategy::getName() const
 {
-    return "RRT Strategy";
+    return "RRT_Strategy";
 }
+
+Path RRT_Strategy::smooth(Path gvp_path, State &state)
+{
+    // print the path to screen
+    // PROFILE_START("OMPL Smoothing");
+    // ss.simplifySolution();
+    // PROFILE_RECORD("OMPL Smoothing");
+    // ss.getSolutionPath().print(std::cout);
+    // PROFILE_RECORD_DOUBLE("OMPL path length", PathUtils::length(pu_path));
+    // std::cout << "Path length: " << PathUtils::length(pu_path) << "\n";
+
+    PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+    for(int i=0; i<30; i++)
+    {
+        gvp_path = GVP::smooth(gvp_path, state, discretization);
+        PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+    }
+
+    return GVP::densify(gvp_path, discretization);
+}
+
+
+
+
+
+/************************
+ *  BITStar
+ ***********************/
+ompl::base::PlannerPtr BIT_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
+{
+    return std::make_shared<og::BITstar>(si);
+}
+
+std::string BIT_Strategy::getName() const
+{
+    return "BIT_Strategy";
+}
+
+Path BIT_Strategy::smooth(Path gvp_path, State &state)
+{
+    return GVP::densify(gvp_path, discretization);
+}
+
 
 

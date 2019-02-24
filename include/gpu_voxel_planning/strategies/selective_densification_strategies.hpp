@@ -91,6 +91,7 @@ namespace GVP
     public:
         OmniscientSDGraphSearch(const std::string &filename) : SelectiveDensificationStrategy(filename) {}
         OmniscientSDGraphSearch() {}
+        OmniscientSDGraphSearch(bool use_precomputed);
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
         virtual std::string getName() const override;
         // virtual Path applyTo(Scenario &scenario) override;

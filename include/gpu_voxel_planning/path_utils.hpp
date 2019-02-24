@@ -1,7 +1,5 @@
-#pragma once
-
-// #ifndef PATH_UTILS_HPP
-// #define PATH_UTILS_HPP
+#ifndef GPU_VOXELS_PATH_UTILS_HPP
+#define GPU_VOXELS_PATH_UTILS_HPP
 
 
 #include <vector>
@@ -30,4 +28,4 @@ namespace PathUtils
 
 
 
-// #endif
+#endif

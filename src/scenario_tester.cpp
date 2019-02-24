@@ -15,7 +15,8 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
             return false;
         }
         viz.vizScenario(scenario);
-        ros::Duration(0.01).sleep();
+        // ros::Duration(0.01).sleep();
+        ros::Duration(0.001).sleep();
     }
     return true;
 }

@@ -37,6 +37,8 @@ SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string
 SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
                                    "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map"){}
+
+    
         
 
 void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
@@ -62,11 +64,13 @@ void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
     // mode = EdgeCheckMode::STORE;
     
     initialized = true;
-}            
+}
+
 
 
 Path SelectiveDensificationStrategy::applyTo(Scenario &scenario)
 {
+    PROFILE_START("PathLength");
     if(!initialized)
     {
         initialize(scenario);
@@ -89,7 +93,16 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario)
                                        
         path.insert(path.end(), segment.begin(), segment.end());
     }
-    return path;
+
+    PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
+
+    for(int i=0; i<30; i++)
+    {
+        path = smooth(path, scenario.getState(), discretization);
+        PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
+    }
+
+    return GVP::densify(path, discretization);
 }
 
 
@@ -317,6 +330,10 @@ void SelectiveDensificationStrategy::saveToFile(std::string filename)
 /**********************************
  **  Omniscient Graph Search
  ********************************/
+OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed) :
+    SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
+                                   use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map" : ""){}
+
 double OmniscientSDGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
 {
     return e.getWeight();
@@ -324,6 +341,6 @@ double OmniscientSDGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::Gra
 
 std::string OmniscientSDGraphSearch::getName() const
 {
-    return "Omniscient SD Graph Search";
+    return "Omniscient_SD_Graph_Search";
 }
     

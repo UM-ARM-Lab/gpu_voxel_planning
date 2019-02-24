@@ -19,11 +19,48 @@
 using namespace GVP;
 
 
+void precomputeEdges()
+{
+    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
+    OmniscientSDGraphSearch strat;
+    Bookshelf scenario(true);
+
+    int i=0;
+    for(auto &node: strat.sd_graph.getNodes())
+    {
+        if(DepthNode(node.getValue()).depth >= 4)
+        {
+            continue;
+        }
+        for(auto &edge: node.getOutEdges())
+        {
+            if(edge.getValidity() != arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
+            {
+                continue;
+            }
+            strat.getSweptVolume(scenario.getState(), edge);
+            i++;
+
+            if(i%1000 == 0)
+            {
+                std::cout << "Computed SV for " << i << " edges\n";
+            }
+        }
+    }
+    strat.saveToFile();
+}
+
+
 int main(int argc, char* argv[])
 {
     icl_core::logging::initialize(argc, argv);
     ros::init(argc, argv, "wip_roadmap");
     ros::NodeHandle n;
+
+
+    // precomputeEdges();
+    // return 1;
+    
     GpuVoxelRvizVisualizer viz(n);
 
     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
@@ -45,9 +82,10 @@ int main(int argc, char* argv[])
     // AStarGraphSearch strat;
     // OmniscientGraphSearch strat;
     // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
-    OmniscientSDGraphSearch strat;
+    // OmniscientSDGraphSearch strat(true);
     // OmniscientSDGraphSearch strat(graph_filepath);
     // RRT_Strategy strat;
+    BIT_Strategy strat;
 
     // testAngles(scenario, viz);
     // return 1;

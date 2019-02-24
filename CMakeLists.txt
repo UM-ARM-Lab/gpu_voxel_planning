@@ -287,6 +287,21 @@ target_link_libraries(wip_roadmap
   victor_halton_roadmap
   )
 
+add_executable(selective_densification_experiments
+  src/selective_densification_experiments.cpp
+  )
+# add_dependencies(wip_prob_map
+#   planning_library
+#   ${EXTERN_LIBS}
+#   ${catkin_EXPORTED_TARGETS}
+#   )
+target_link_libraries(selective_densification_experiments
+  ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
+
+
 # add_executable(victor_sim_timings src/old/victor_sim_timings.cpp)
 # target_link_libraries(victor_sim_timings
 #   ${EXTERN_LIBS}
