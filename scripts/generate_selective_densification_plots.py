@@ -10,12 +10,16 @@ save_path = logged_filepath
 
 
 strategy_mappings = {"RRT_Strategy":"RRT",
-                     "Omniscient_SD_Graph_Search": "SD",
-                     "Omniscient_SD_Graph_Search_precomputed": "SD_pre"}
+                     "Omniscient_SD_Graph_Search": "Selective Densification",
+                     "Omniscient_SD_Graph_Search_precomputed": "SD with precomputed edges"}
 
 scenario_mappings = {"Bookshelf":"Bookshelf",
                      "Table_with_Box_table_known_visible_cave_known_full_cave_known":"Table",
                      "SlottedWall": "Wall"}
+
+ordering = {"RRT": 1,
+            "Selective Densification":2,
+            "SD with precomputed edges":3}
 
 
 def extract_experiment_info(dirname, filename):
@@ -66,7 +70,7 @@ def plot_group(exps):
     print "Scenario:", scenario
 
     # strategies = [x["strategy"] for x in exps]
-    exps.sort(key=lambda exp: exp["strategy"])
+    exps.sort(key=lambda exp: ordering[exp["strategy"]])
 
     fig = plt.figure()
     ax = plt.subplot(111)
@@ -76,11 +80,11 @@ def plot_group(exps):
         ax.plot(data[0], data[1], label=exp["strategy"])
     plt.title(scenario)
 
-    ax.set_xlabel("Time (s)")
+    ax.set_xlabel("Planning Time (s)")
     ax.set_ylabel("Path Length (rad)")
 
     box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.7, box.height])
+    ax.set_position([box.x0, box.y0, box.width * 0.5, box.height])
     
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     

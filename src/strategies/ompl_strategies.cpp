@@ -50,14 +50,15 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
     ob::PlannerStatus solved = ss.solve(60);
     PROFILE_RECORD("OMPL Planning");
     std::cout << "Longest valid segment: " << space->getLongestValidSegmentLength() << "\n";
-    if (solved)
+    if (!solved)
     {
-        PathUtils::Path pu_path = ompl_utils::omplPathToDoublePath(&ss.getSolutionPath(),
-                                                                   ss.getSpaceInformation());
-        return smooth(GVP::toPath(pu_path), scenario.getState());
+        PROFILE_RECORD_DOUBLE("PathLength", std::numeric_limits<double>::max());
+        throw std::runtime_error("Path not found");
     }
 
-    throw std::runtime_error("Path not found");
+    PathUtils::Path pu_path = ompl_utils::omplPathToDoublePath(&ss.getSolutionPath(),
+                                                                   ss.getSpaceInformation());
+    return smooth(GVP::toPath(pu_path), scenario.getState());
 }
 
 bool OMPL_Strategy::isOmplStateValid(const ompl::base::State *ompl_state,

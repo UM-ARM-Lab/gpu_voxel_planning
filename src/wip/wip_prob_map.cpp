@@ -125,9 +125,9 @@ int main(int argc, char* argv[])
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    // TableWithBox scenario(true, true, true);
+    TableWithBox scenario(true, true, true);
     // SlottedWall scenario(true);
-    Bookshelf scenario(true);
+    // Bookshelf scenario(true);
 
     // AStarGraphSearch strat;
     OmniscientGraphSearch strat;

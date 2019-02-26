@@ -82,10 +82,10 @@ int main(int argc, char* argv[])
     // AStarGraphSearch strat;
     // OmniscientGraphSearch strat;
     // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
-    // OmniscientSDGraphSearch strat(true);
+    OmniscientSDGraphSearch strat(true);
     // OmniscientSDGraphSearch strat(graph_filepath);
     // RRT_Strategy strat;
-    BIT_Strategy strat;
+    // BIT_Strategy strat;
 
     // testAngles(scenario, viz);
     // return 1;

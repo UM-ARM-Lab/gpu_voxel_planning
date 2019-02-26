@@ -37,7 +37,16 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
     while(!scenario.completed())
     {
         PROFILE_START(name + " Planning Time");
-        const std::vector<VictorRightArmConfig> path = strategy.applyTo(scenario);
+        std::vector<VictorRightArmConfig> path;
+        try
+        {
+            path = strategy.applyTo(scenario);
+        }
+        catch(std::runtime_error &e)
+        {
+            std::cout << "No path found\n";
+            return false;
+        }
         PROFILE_RECORD(name + " Planning Time");
 
         viz.vizEEPath(path, "Path Found");
@@ -46,6 +55,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         PROFILE_START(name + " Motion Time");
         attemptPath(path);
         PROFILE_RECORD(name + " Motion Time");
+
     }
     std::cout << "Reached Goal\n";
     return true;

@@ -176,7 +176,7 @@ namespace GVP
         {
             cavecorner = Vector3f(1.7, 2.0, 0.9);
             caveheight = Vector3f(0.0, 0.0, 0.4);
-            cavetopd = Vector3f(0.4, 0.5, 0.033);
+            cavetopd = Vector3f(0.3, 0.5, 0.033);
             cavesidedim = Vector3f(0.033, cavetopd.y, caveheight.z);
             cavesideoffset = Vector3f(cavetopd.x, 0.0, 0.0);
 
