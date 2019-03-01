@@ -103,6 +103,24 @@ namespace GVP
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
         virtual std::string getName() const override;
         // virtual Path applyTo(Scenario &scenario) override;
+        virtual double distanceHeuristic(const std::vector<double> &raw1,
+                                         const std::vector<double> &raw2) const override;
+
+    };
+
+    
+    class DenseGraphSearch : public OmniscientSDGraphSearch
+    {
+    private:
+        
+    public:
+        // OmniscientSDGraphSearch(const std::string &filename) : SelectiveDensificationStrategy(filename) {}
+        DenseGraphSearch() {}
+        DenseGraphSearch(bool use_precomputed);
+        virtual std::string getName() const override;
+        // virtual Path applyTo(Scenario &scenario) override;
+        virtual double distanceHeuristic(const std::vector<double> &raw1,
+                                         const std::vector<double> &raw2) const override;
 
     };
 }

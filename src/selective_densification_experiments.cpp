@@ -44,7 +44,15 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
             return std::make_shared<OmniscientSDGraphSearch>(false);}); //not using precomputed
     factories.push_back([](){
             return std::make_shared<OmniscientSDGraphSearch>(true);}); //using precomputed
-    factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
+    factories.push_back([](){
+            return std::make_shared<DenseGraphSearch>(false);}); //using precomputed
+    factories.push_back([](){
+            return std::make_shared<DenseGraphSearch>(true);}); //not precomputed
+    for(int i=0; i<5; i++)
+    {
+        factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
+        factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
+    }
     return factories;
 }
 
@@ -73,10 +81,19 @@ void preparePrecomputed(ros::NodeHandle &n)
 {
     for(auto scenario_factory:getScenarioFactories())
     {
-        OmniscientSDGraphSearch strat(true);
-        strat.setMode(SelectiveDensificationStrategy::EdgeCheckMode::STORE);
-        test(n, *scenario_factory(), strat);
-        strat.saveToFile();
+        {
+            OmniscientSDGraphSearch strat(true);
+            strat.setMode(SelectiveDensificationStrategy::EdgeCheckMode::STORE);
+            test(n, *scenario_factory(), strat);
+            strat.saveToFile();
+        }
+
+        {
+            DenseGraphSearch strat(true);
+            strat.setMode(SelectiveDensificationStrategy::EdgeCheckMode::STORE);
+            test(n, *scenario_factory(), strat);
+            strat.saveToFile();
+        }
     }
 
 }

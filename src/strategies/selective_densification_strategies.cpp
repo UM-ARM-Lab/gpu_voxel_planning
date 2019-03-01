@@ -260,15 +260,15 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
         };
 
     const auto heuristic_fn = [&] (const std::vector<double> &n1,
-                                         const std::vector<double> &n2)
+                                   const std::vector<double> &n2)
         {
-            return sd_graph.distanceHeuristic(n1, n2);
+            return distanceHeuristic(n1, n2);
         };
     std::cout << "Performing lazysp\n";
     auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
         sd_graph, start, goal, heuristic_fn, eval_fn, true);
 
-    std::cout << "LazySP finished\n";
+    std::cout << "LazySP\n";
     
     if(result.second == std::numeric_limits<double>::infinity())
     {
@@ -352,5 +352,54 @@ std::string OmniscientSDGraphSearch::getName() const
 {
     std::string type = (use_precomputed ? "_precomputed" : "");
     return "Omniscient_SD_Graph_Search" + type;
-} 
+}
+
+double OmniscientSDGraphSearch::distanceHeuristic(const std::vector<double> &raw1,
+                                                  const std::vector<double> &raw2) const
+{
+
+    DepthNode d1(raw1);
+    DepthNode d2(raw2);
+    // std::cout << "Calling dist heuristic with depth " << d1.depth << "\n";
+     // std::pow(2, d1.depth);
+    std::string depth_logging_name = "EdgeHeuristic depth=" +
+        std::to_string(d1.depth);
+    PROFILE_START(depth_logging_name);
+    PROFILE_RECORD(depth_logging_name);
+
+    return EigenHelpers::Distance(d1.q, d2.q)*(1+0.0001*std::pow(10, d1.depth));
+    // return EigenHelpers::Distance(d1.q, d2.q);
+}
+
     
+
+
+/****************************
+ **  Dense Graph Search   ***
+ ***************************/
+DenseGraphSearch::DenseGraphSearch(bool use_precomputed) :
+    OmniscientSDGraphSearch(use_precomputed)
+{
+}
+
+std::string DenseGraphSearch::getName() const
+{
+    std::string type = (use_precomputed ? "_precomputed" : "");
+    return "Dense_Graph_Search" + type;
+}
+
+double DenseGraphSearch::distanceHeuristic(const std::vector<double> &raw1,
+                                           const std::vector<double> &raw2) const
+{
+
+    DepthNode d1(raw1);
+    DepthNode d2(raw2);
+    // std::cout << "Calling dist heuristic with depth " << d1.depth << "\n";
+     // std::pow(2, d1.depth);
+    std::string depth_logging_name = "EdgeHeuristic depth=" +
+        std::to_string(d1.depth);
+    PROFILE_START(depth_logging_name);
+    PROFILE_RECORD(depth_logging_name);
+
+    return EigenHelpers::Distance(d1.q, d2.q);
+}
