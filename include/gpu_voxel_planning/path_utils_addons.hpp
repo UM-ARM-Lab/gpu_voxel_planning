@@ -44,7 +44,7 @@ namespace GVP
     }
 
     
-    Path smooth(Path path, State &s, double discretization)
+    Path smooth(Path path, State &s, double discretization, std::mt19937 &rng)
     {
         const auto edge_check_fn = [&](const VictorRightArmConfig &q1, const VictorRightArmConfig &q2)
             {
@@ -63,8 +63,6 @@ namespace GVP
                 }
                 return true;
             };
-        auto rng = std::default_random_engine{};
-        rng.seed(std::random_device()());
         return densify(path_utils::ShortcutSmoothPath(path, 30, 30, 1.0, edge_check_fn, rng), discretization);
     }
 

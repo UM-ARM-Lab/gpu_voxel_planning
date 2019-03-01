@@ -76,6 +76,9 @@ namespace GVP
 
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) = 0;
 
+        virtual double distanceHeuristic(const std::vector<double> &raw1,
+                                         const std::vector<double> &raw2) const = 0;
+
         void saveToFile(std::string filename);
         void saveToFile() {saveToFile(swept_volumes_filepath);}
 
@@ -90,7 +93,7 @@ namespace GVP
 
     class OmniscientSDGraphSearch : public SelectiveDensificationStrategy
     {
-    private:
+    protected:
         bool use_precomputed;
         
     public:

@@ -99,9 +99,12 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario)
 
     PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
 
+    std::mt19937 rng;
+    rng.seed(42);
+
     for(int i=0; i<30; i++)
     {
-        path = smooth(path, scenario.getState(), discretization);
+        path = smooth(path, scenario.getState(), discretization, rng);
         PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
     }
 

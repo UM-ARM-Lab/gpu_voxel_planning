@@ -99,10 +99,13 @@ Path RRT_Strategy::smooth(Path gvp_path, State &state)
     // PROFILE_RECORD_DOUBLE("OMPL path length", PathUtils::length(pu_path));
     // std::cout << "Path length: " << PathUtils::length(pu_path) << "\n";
 
+    std::mt19937 rng;
+    rng.seed(42);
+
     PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
     for(int i=0; i<30; i++)
     {
-        gvp_path = GVP::smooth(gvp_path, state, discretization);
+        gvp_path = GVP::smooth(gvp_path, state, discretization, rng);
         PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
     }
 
