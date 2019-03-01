@@ -239,6 +239,7 @@ set(Planning_SOURCES
   src/strategies/victor_selective_densification.cpp
   src/strategies/selective_densification_strategies.cpp
   src/strategies/ompl_strategies.cpp
+  src/ompl_modifications/custom_bitstar.cpp
   src/path_utils.cpp
   )
 

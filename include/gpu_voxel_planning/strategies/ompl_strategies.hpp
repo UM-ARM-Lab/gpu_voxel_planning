@@ -5,7 +5,7 @@
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-#include <ompl/geometric/planners/bitstar/BITstar.h>
+
 
 namespace GVP
 {

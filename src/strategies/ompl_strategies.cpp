@@ -2,6 +2,7 @@
 #include "ompl_utils.hpp"
 #include "hacky_functions.hpp"
 #include "path_utils_addons.hpp"
+#include "ompl_modifications/custom_bitstar.h"
 
 using namespace GVP;
 namespace ob = ompl::base;
@@ -117,6 +118,7 @@ Path RRT_Strategy::smooth(Path gvp_path, State &state)
  ***********************/
 ompl::base::PlannerPtr BIT_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
 {
+    // return std::make_shared<og::custom_BITstar>(si);
     return std::make_shared<og::BITstar>(si);
 }
 
