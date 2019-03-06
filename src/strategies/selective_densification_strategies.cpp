@@ -185,11 +185,11 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
     for(const auto &config: path)
     {
 
-        s.robot.set(config.asMap());
+        // s.robot.set(config.asMap());
         // if(s.robot.occupied_space.overlapsWith(&s.known_obstacles) ||
         //    s.robot.occupied_space.overlapsWith(&s.robot_self_collide_obstacles))
-        if(s.robot.occupied_space.overlapsWith(&s.known_obstacles))
-        // if(s.isPossiblyValid(config.asMap()))
+        // if(s.robot.occupied_space.overlapsWith(&s.known_obstacles))
+        if(!s.isPossiblyValid(config))
         {
             e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
             sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
@@ -227,12 +227,19 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
 bool SelectiveDensificationStrategy::checkEdgeAndStore(arc_dijkstras::GraphEdge &e, State &s)
 {
     PROFILE_START("CheckEdgeAndStore");
+    PROFILE_START("CheckEdgeAndStore get sv");
     DenseGrid sv = getSweptVolume(s, e);
-    // bool valid = !sv.overlapsWith(&s.robot_self_collide_obstacles) &&
-    //     !sv.overlapsWith(&s.known_obstacles);
-    bool valid = !sv.overlapsWith(&s.known_obstacles);
+    PROFILE_RECORD("CheckEdgeAndStore get sv");
+
+    PROFILE_START("CheckEdgeAndStore grid overlap");
+    bool valid = !sv.overlapsWith(&s.robot_self_collide_obstacles) &&
+        !sv.overlapsWith(&s.known_obstacles);
+    // bool valid = !sv.overlapsWith(&s.known_obstacles);
+
     e.setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
                   arc_dijkstras::EDGE_VALIDITY::INVALID);
+    
+    // PROFILE_RECORD("CheckEdgeAndStore grid overlap");
     PROFILE_RECORD("CheckEdgeAndStore");
     return valid;
 }
