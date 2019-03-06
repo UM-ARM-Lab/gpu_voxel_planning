@@ -17,7 +17,7 @@
 
 using namespace GVP;
 
-
+std::vector<double> c_ps{100.0, 10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.0};
 
 
 void test(ros::NodeHandle &n, SimulationScenario &scenario, Strategy &strategy)
@@ -39,11 +39,14 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories()
 {
     std::vector<std::function<std::shared_ptr<Strategy>(void)>> factories;
-    //todo, load different versions based on precomputedness
-    factories.push_back([](){
-            return std::make_shared<OmniscientSDGraphSearch>(false);}); //not using precomputed
-    factories.push_back([](){
-            return std::make_shared<OmniscientSDGraphSearch>(true);}); //using precomputed
+
+    for(double c_p: c_ps)
+    {
+        factories.push_back([c_p](){
+                return std::make_shared<OmniscientSDGraphSearch>(false, c_p);}); //not using precomputed
+        factories.push_back([c_p](){
+                return std::make_shared<OmniscientSDGraphSearch>(true, c_p);}); //using precomputed
+    }
     factories.push_back([](){
             return std::make_shared<DenseGraphSearch>(false);}); //using precomputed
     factories.push_back([](){
@@ -81,8 +84,8 @@ void preparePrecomputed(ros::NodeHandle &n)
 {
     for(auto scenario_factory:getScenarioFactories())
     {
-        {
-            OmniscientSDGraphSearch strat(true);
+        for(double c_p: c_ps){
+            OmniscientSDGraphSearch strat(true, c_p);
             strat.setMode(SelectiveDensificationStrategy::EdgeCheckMode::STORE);
             test(n, *scenario_factory(), strat);
             strat.saveToFile();
@@ -108,7 +111,7 @@ int main(int argc, char* argv[])
 
     ros::Duration(1.0).sleep();
 
-    preparePrecomputed(n);
+    // preparePrecomputed(n);
     testAll(n);
 
     

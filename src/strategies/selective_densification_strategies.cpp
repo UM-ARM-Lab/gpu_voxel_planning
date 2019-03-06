@@ -371,10 +371,11 @@ void SelectiveDensificationStrategy::saveToFile(std::string filename)
 /**********************************
  **  Omniscient Graph Search
  ********************************/
-OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed) :
+OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed, double c_p) :
     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
                                    use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map" : ""),
-    use_precomputed(use_precomputed)
+    use_precomputed(use_precomputed),
+    c_p(c_p)
 {
 }
 
@@ -386,6 +387,7 @@ double OmniscientSDGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::Gra
 std::string OmniscientSDGraphSearch::getName() const
 {
     std::string type = (use_precomputed ? "_precomputed" : "");
+    PROFILE_RECORD_DOUBLE("c_p", c_p);
     return "Omniscient_SD_Graph_Search" + type;
 }
 
@@ -402,7 +404,7 @@ double OmniscientSDGraphSearch::distanceHeuristic(const std::vector<double> &raw
     PROFILE_START(depth_logging_name);
     PROFILE_RECORD(depth_logging_name);
 
-    return EigenHelpers::Distance(d1.q, d2.q)*(1+0.0001*std::pow(10, d1.depth));
+    return EigenHelpers::Distance(d1.q, d2.q)*(1+c_p*std::pow(10, d1.depth));
     // return EigenHelpers::Distance(d1.q, d2.q);
 }
 
@@ -413,7 +415,7 @@ double OmniscientSDGraphSearch::distanceHeuristic(const std::vector<double> &raw
  **  Dense Graph Search   ***
  ***************************/
 DenseGraphSearch::DenseGraphSearch(bool use_precomputed) :
-    OmniscientSDGraphSearch(use_precomputed)
+    OmniscientSDGraphSearch(use_precomputed, 0.0)
 {
 }
 

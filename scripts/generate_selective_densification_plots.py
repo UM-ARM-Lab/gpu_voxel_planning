@@ -11,7 +11,9 @@ save_path = logged_filepath
 
 strategy_mappings = {"RRT_Strategy":"RRT",
                      "Omniscient_SD_Graph_Search": "Selective Densification",
+                     "Omniscient_SD_Graph_Search_": "Selective Densification",
                      "Omniscient_SD_Graph_Search_precomputed": "SD with precomputed edges",
+                     "Omniscient_SD_Graph_Search_precomputed_": "SD with precomputed edges",
                      "BIT_Strategy":"BIT*",
                      "Dense_Graph_Search":"Dense Graph",
                      "Dense_Graph_Search_precomputed":"DG with precomputed edges"
