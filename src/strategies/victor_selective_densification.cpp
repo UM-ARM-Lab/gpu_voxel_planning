@@ -85,7 +85,7 @@ double SDRoadmap::edgeCost(const DepthNode &n1, const DepthNode &n2) const
 double SDRoadmap::distanceHeuristic(const std::vector<double> &raw1,
                                    const std::vector<double> &raw2) const
 {
-
+    throw std::logic_error("This version of distance Heuristic should not be used");
     DepthNode d1(raw1);
     DepthNode d2(raw2);
     // std::cout << "Calling dist heuristic with depth " << d1.depth << "\n";
@@ -109,8 +109,18 @@ int64_t SDRoadmap::addVertexAndEdges(int depth, std::vector<double> q)
     int64_t above_ind = getNodeAt(depth - 1, q);
     if(above_ind >= 0)
     {
-        addEdgesBetweenNodes(new_node_ind, above_ind,
-                             verticalEdgeCost(new_node, DepthNode(getNode(above_ind).getValue())));
+        auto &new_to_edge = addEdgeBetweenNodes(new_node_ind, above_ind,
+                                                verticalEdgeCost(new_node,
+                                                                 DepthNode(getNode(above_ind).getValue())));
+        auto &new_from_edge = addEdgeBetweenNodes(above_ind, new_node_ind,
+                                                  verticalEdgeCost(DepthNode(getNode(above_ind).getValue()),
+                                                                   new_node));
+
+        // addEdgesBetweenNodes(new_node_ind, above_ind,
+        //                      verticalEdgeCost(new_node, DepthNode(getNode(above_ind).getValue())));
+        new_to_edge.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
+        new_from_edge.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
+
     }
 
     double edge_radius = radiusAtDepth(depth, dim);

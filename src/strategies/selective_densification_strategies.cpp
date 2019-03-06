@@ -180,22 +180,45 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
     auto rng = std::default_random_engine{};
     std::shuffle(std::begin(path), std::end(path), rng);
 
+
+
     for(const auto &config: path)
     {
-        PROFILE_START("Config checked");
+
         s.robot.set(config.asMap());
-        PROFILE_RECORD("Config checked");
+        // if(s.robot.occupied_space.overlapsWith(&s.known_obstacles) ||
+        //    s.robot.occupied_space.overlapsWith(&s.robot_self_collide_obstacles))
         if(s.robot.occupied_space.overlapsWith(&s.known_obstacles))
+        // if(s.isPossiblyValid(config.asMap()))
         {
             e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+            sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
             PROFILE_RECORD("CheckEdgeFast Invalid");
             PROFILE_RECORD(depth_logging_name);
             return false;
         }
     }
+    std::cout << "CheckEdgeFast Valid (" << e.getFromIndex() << ", " << e.getToIndex() << ")";
+    std::string validity = "unknown";
+    if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::VALID)
+    {
+        validity = "valid";
+    }
+    else if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
+    {
+        validity = "invalid";
+    }
+    std::cout << " was " << validity << ": ";
+
+    std::cout << "(" << q_start.asVector()[0] << ", " << q_end.asVector()[0] << ")";
+
+    std::cout << "\n";
+    
     e.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
+    sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
     PROFILE_RECORD(depth_logging_name);
     PROFILE_RECORD("CheckEdgeFast Valid");
+
     return true;
 
 }
@@ -204,7 +227,10 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
 bool SelectiveDensificationStrategy::checkEdgeAndStore(arc_dijkstras::GraphEdge &e, State &s)
 {
     PROFILE_START("CheckEdgeAndStore");
-    bool valid = !getSweptVolume(s, e).overlapsWith(&s.known_obstacles);
+    DenseGrid sv = getSweptVolume(s, e);
+    // bool valid = !sv.overlapsWith(&s.robot_self_collide_obstacles) &&
+    //     !sv.overlapsWith(&s.known_obstacles);
+    bool valid = !sv.overlapsWith(&s.known_obstacles);
     e.setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
                   arc_dijkstras::EDGE_VALIDITY::INVALID);
     PROFILE_RECORD("CheckEdgeAndStore");
@@ -264,9 +290,18 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
         {
             return distanceHeuristic(n1, n2);
         };
+    // const auto heuristic_cons_fn = [&] (const std::vector<double> &n1,
+    //                                     const std::vector<double> &n2)
+    //     {
+    //         return EigenHelpers::Distance(n1, n2);
+    //     };
+
+    
     std::cout << "Performing lazysp\n";
+    // auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
+    //     sd_graph, start, goal, heuristic_fn, heuristic_cons_fn, eval_fn);
     auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
-        sd_graph, start, goal, heuristic_fn, eval_fn, true);
+        sd_graph, start, goal, heuristic_fn, eval_fn);
 
     std::cout << "LazySP\n";
     

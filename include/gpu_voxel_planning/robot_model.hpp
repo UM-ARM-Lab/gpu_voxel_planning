@@ -4,6 +4,7 @@
 #include "prob_map.hpp"
 #include "common_names.hpp"
 #include "hacky_functions.hpp"
+#include <arc_utilities/timing.hpp>
 
 namespace GVP
 {
@@ -23,9 +24,11 @@ namespace GVP
 
         void set(const robot::JointValueMap &map)
         {
+            PROFILE_START("Set robot config");
             robot_chain.setConfiguration(map);
             occupied_space.clearMap();
             occupied_space.insertMetaPointCloud(*robot_chain.getTransformedClouds(), PROB_OCCUPIED);
+            PROFILE_RECORD("Set robot config");
         }
 
         virtual bool isValid()

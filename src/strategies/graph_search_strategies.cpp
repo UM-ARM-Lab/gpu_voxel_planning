@@ -153,7 +153,7 @@ namespace GVP
             };
         
         auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
-            graph, start, goal, heuristic_fn, eval_fn, true);
+            graph, start, goal, heuristic_fn, eval_fn);
         if(result.second == std::numeric_limits<double>::infinity())
         {
             std::cout << "No path found on graph\n";
