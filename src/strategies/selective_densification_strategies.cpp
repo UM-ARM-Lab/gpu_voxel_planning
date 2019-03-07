@@ -192,7 +192,7 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
         if(!s.isPossiblyValid(config))
         {
             e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
-            sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+            // sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
             PROFILE_RECORD("CheckEdgeFast Invalid");
             PROFILE_RECORD(depth_logging_name);
             return false;
