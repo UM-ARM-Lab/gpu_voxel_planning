@@ -10,6 +10,9 @@ save_path = logged_filepath
 
 plotted_cp = 1.0
 
+ordered_scenarios = ["Table", "Bookshelf", "Wall"]
+
+
 
 color_cycle = ['#332288', '#88CCEE', '#44AA99', '#117733', '#999933', '#DDCC77', '#CC6677', '#882255', '#AA4499']
 color_cycle = ['#e41a1c',
@@ -65,6 +68,9 @@ def extract_timing_data(dirname, filename):
     u = []
     c_p = -1
     eps = 0.0001
+    col_checks = float('inf')
+    a_star = -1
+
     with open(filepath, "r") as f:
         # line = f.readline()
         lines = f.readlines()
@@ -73,6 +79,13 @@ def extract_timing_data(dirname, filename):
             if line.startswith("c_p") and len(data) < 5:
                 c_p = float(data[2])
                 continue
+
+            if line.startswith("SetRobotConfig before smoothing"):
+                col_checks = float(data[4])
+                continue
+
+            if line.startswith("lazy_sp a_star") and len(data) > 2:
+                a_star = float(data[2])
             
             if not line.startswith("PathLength"):
                 continue
@@ -98,7 +111,9 @@ def extract_timing_data(dirname, filename):
     return {"time": t,
             "length": l,
             "utility": u,
-            "c_p": c_p}
+            "c_p": c_p,
+            "col_checks" : col_checks,
+            "a_star": a_star}
 
 def load_experiment_files():
 
@@ -263,6 +278,8 @@ def get_min_times(exps):
     min_times = []
     min_lengths = []
     min_utils = []
+    col_checks = []
+    a_star = []
     for exp in exps:
         min_time = float("inf")
         min_length = float("inf")
@@ -273,13 +290,29 @@ def get_min_times(exps):
             min_length = min(exp["data"]["length"])
         if len(exp["data"]["utility"]) > 0:
             min_util = min(exp["data"]["utility"])
+
+        if min_time == float("inf"):
+            continue
+        
+        col_checks.append(exp["data"]["col_checks"])
         min_times.append(min_time)
         min_lengths.append(min_length)
         min_utils.append(min_util)
+        a_star.append(exp["data"]["a_star"])
+    # if exps[0]["strategy"] == "RRT":
+    #     IPython.embed()
     return {"min_times" : min_times,
             "min_lengths" : min_lengths,
-            "min_utils" : min_utils}
+            "min_utils" : min_utils,
+            "col_checks" : col_checks,
+            "a_star": a_star}
     
+
+def format_double(num):
+    number_format = '{0:.2g}'
+    if num>100:
+        return '{0:g}'.format(float('{:.2g}'.format(num)))
+    return number_format.format(num)
 
 def print_best_scene_strat_stats(exps, f):
     """
@@ -287,10 +320,16 @@ def print_best_scene_strat_stats(exps, f):
     Prints the min to line
     """
     r = get_min_times(exps)
+
+    a_star = "-"
+    if min(r["a_star"]) > 0:
+        a_star = format_double(min(r["a_star"]))
     
-    f.write("    & " + str(min(r["min_times"]))
-            + " & "  + str(min(r["min_lengths"]))
-            + " & "  + str(min(r["min_utils"])))
+    f.write("    & " + format_double(min(r["min_times"]))
+            + " & "  + format_double(min(r["min_lengths"]))
+            + " & "  + format_double(min(r["min_utils"]))
+            + " & "  + str(int(min(r["col_checks"])))
+            + " & "  + a_star)
     f.write("\n")
 
 def print_avg_scene_strat_stats(exps, f):
@@ -299,44 +338,76 @@ def print_avg_scene_strat_stats(exps, f):
     Prints the min to line
     """
     r = get_min_times(exps)
+
+    a_star = "-"
+    if min(r["a_star"]) > 0:
+        a_star = format_double(min(r["a_star"]))
+
+    print np.mean(r["min_utils"])
     
-    f.write("    & " + str(mean(r["min_times"]))
-            + " & "  + str(mean(r["min_lengths"]))
-            + " & "  + str(mean(r["min_utils"])))
+    f.write("    & "  + format_double(np.mean(r["min_times"]))
+            + " & "  + format_double(np.mean(r["min_lengths"]))
+            + " & "  + format_double(np.mean(r["min_utils"]))
+            + " & "  + str(int(np.mean(r["col_checks"])))
+            + " & "  + a_star)
     f.write("\n")
 
 
 
 
+def is_valid(exp, scenario, strat):
+    if not exp["scenario"] == scenario:
+        return False
+    if not exp["strategy"] == strat:
+        return False
+    if(exp["data"]["c_p"] != -1 and
+       exp["data"]["c_p"] != plotted_cp):
+        return False
+    return True
     
 def print_stats(exps):
     # scenarios = {x["scenario"] for x in exps}
     strategies = {x["strategy"] for x in exps}
     filepath = logged_filepath + "stats.txt"
-
-    ordered_scenarios = ["Table", "Bookshelf", "Wall"]
-
-    def is_valid(exp, scenario, strat):
-        if not exp["scenario"] == scenario:
-            return False
-        if not exp["strategy"] == strat:
-            return False
-        if(exp["data"]["c_p"] != -1 and
-           exp["data"]["c_p"] != plotted_cp):
-            return False
-        return True
-        
-    
     
     with open(filepath, "w") as f:
         for strat in strategies:
-            f.write(strat + " \n")
+            f.write("best-" + strat + " \n")
             for scenario in ordered_scenarios:
-                matching_exps = [exp for exp in exps if is_valid(exp, scenario, strat)]
                 f.write("  % " + scenario  +"\n")
+                matching_exps = [exp for exp in exps if is_valid(exp, scenario, strat)]
                 print_best_scene_strat_stats(matching_exps, f)
             f.write("  \\\\ \n")
 
+            f.write("avg-" + strat + " \n")
+            for scenario in ordered_scenarios:
+                f.write("  % " + scenario  +"\n")
+                matching_exps = [exp for exp in exps if is_valid(exp, scenario, strat)]
+                print_avg_scene_strat_stats(matching_exps, f)
+            f.write("  \\\\ \n")
+
+
+def print_better_fraction(exps):
+    for scenario in ordered_scenarios:
+        SD = [exp for exp in exps if is_valid(exp, scenario, "SD-pre")]
+        RRTs = [exp for exp in exps if is_valid(exp, scenario, "RRT")]
+        BITs = [exp for exp in exps if is_valid(exp, scenario, "BIT*")]
+
+        r_SD = get_min_times(SD)
+        r_RRT = get_min_times(RRTs)
+        r_BIT = get_min_times(BITs)
+
+        SD_util = min(r_SD["min_utils"])
+
+        better_rrt = sum(util < SD_util for util in r_RRT["min_utils"])
+        better_bit = sum(util < SD_util for util in r_BIT["min_utils"])
+
+        print(scenario)
+        print("Better RRT: " + str(better_rrt) + "/" + str(len(r_RRT["min_utils"])))
+        print("Better BIT: " + str(better_bit) + "/" + str(len(r_BIT["min_utils"])))
+        
+        
+        # IPython.embed()
     
 
 if __name__ == "__main__":
@@ -345,7 +416,7 @@ if __name__ == "__main__":
     exps = load_experiment_files()
     # plot_all(exps)
     print_stats(exps)
-    
+    # print_better_fraction(exps)
 
 
 
