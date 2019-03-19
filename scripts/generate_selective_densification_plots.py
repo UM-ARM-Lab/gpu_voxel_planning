@@ -343,8 +343,8 @@ def print_avg_scene_strat_stats(exps, f):
     if min(r["a_star"]) > 0:
         a_star = format_double(min(r["a_star"]))
 
-    print np.mean(r["min_utils"])
     
+        
     f.write("    & "  + format_double(np.mean(r["min_times"]))
             + " & "  + format_double(np.mean(r["min_lengths"]))
             + " & "  + format_double(np.mean(r["min_utils"]))
@@ -414,9 +414,9 @@ if __name__ == "__main__":
     
     print("hi")
     exps = load_experiment_files()
-    # plot_all(exps)
+    plot_all(exps)
     print_stats(exps)
-    # print_better_fraction(exps)
+    print_better_fraction(exps)
 
 
 

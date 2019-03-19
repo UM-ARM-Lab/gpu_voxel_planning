@@ -76,13 +76,13 @@ int main(int argc, char* argv[])
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
     // TableWithBox scenario(true, true, true);
-    SlottedWall scenario(true);
-    // Bookshelf scenario(true);
+    // SlottedWall scenario(true);
+    Bookshelf scenario(true);
 
     // AStarGraphSearch strat;
     // OmniscientGraphSearch strat;
     // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
-    OmniscientSDGraphSearch strat(true, 0.0001);
+    OmniscientSDGraphSearch strat(true, 1);
     // OmniscientSDGraphSearch strat(graph_filepath);
     // RRT_Strategy strat;
     // BIT_Strategy strat;
@@ -103,5 +103,5 @@ int main(int argc, char* argv[])
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
-    
+
 }

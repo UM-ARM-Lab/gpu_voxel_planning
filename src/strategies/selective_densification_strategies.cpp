@@ -99,6 +99,9 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario)
 
     PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
 
+    PROFILE_RECORD_DOUBLE("SetRobotConfig before smoothing",
+                           arc_utilities::Profiler::getData("Set robot config").size());
+
     std::mt19937 rng;
     rng.seed(42);
 
@@ -107,6 +110,8 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario)
         path = smooth(path, scenario.getState(), discretization, rng);
         PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
     }
+
+    std::cout << "Smoothed path cost " << PathUtils::length(toPathUtilsPath(path)) << "\n\n";
 
     return GVP::densify(path, discretization);
 }
@@ -185,34 +190,35 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
     for(const auto &config: path)
     {
 
-        // s.robot.set(config.asMap());
-        // if(s.robot.occupied_space.overlapsWith(&s.known_obstacles) ||
-        //    s.robot.occupied_space.overlapsWith(&s.robot_self_collide_obstacles))
+        s.robot.set(config.asMap());
+        if(s.robot.occupied_space.overlapsWith(&s.known_obstacles) ||
+           s.robot.occupied_space.overlapsWith(&s.robot_self_collide_obstacles))
         // if(s.robot.occupied_space.overlapsWith(&s.known_obstacles))
-        if(!s.isPossiblyValid(config))
+        // if(!s.isPossiblyValid(config))
         {
             e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
             // sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
             PROFILE_RECORD("CheckEdgeFast Invalid");
             PROFILE_RECORD(depth_logging_name);
+            // std::cout << "CheckEdgeFast Invalid (" << e.getFromIndex() << ", " << e.getToIndex() << ")\n";
             return false;
         }
     }
-    std::cout << "CheckEdgeFast Valid (" << e.getFromIndex() << ", " << e.getToIndex() << ")";
-    std::string validity = "unknown";
-    if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::VALID)
-    {
-        validity = "valid";
-    }
-    else if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
-    {
-        validity = "invalid";
-    }
-    std::cout << " was " << validity << ": ";
+    // std::cout << "CheckEdgeFast Valid (" << e.getFromIndex() << ", " << e.getToIndex() << ")";
+    // std::string validity = "unknown";
+    // if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::VALID)
+    // {
+    //     validity = "valid";
+    // }
+    // else if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
+    // {
+    //     validity = "invalid";
+    // }
+    // std::cout << " was " << validity << ": ";
 
-    std::cout << "(" << q_start.asVector()[0] << ", " << q_end.asVector()[0] << ")";
+    // std::cout << "(" << q_start.asVector()[0] << ", " << q_end.asVector()[0] << ")";
 
-    std::cout << "\n";
+    // std::cout << "\n";
     
     e.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
     sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
@@ -310,12 +316,16 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
     auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
         sd_graph, start, goal, heuristic_fn, eval_fn);
 
-    std::cout << "LazySP\n";
+    std::cout << "LazySP finished\n";
     
     if(result.second == std::numeric_limits<double>::infinity())
     {
         std::cout << "No path found on graph\n";
+    } else
+    {
+        std::cout << "Path: " << PrettyPrint::PrettyPrint(result.first) << "\n";
     }
+    
     
     PROFILE_RECORD_DOUBLE("lazySP path cost ", result.second);
     std::cout << "LazySP path cost " << result.second << "\n";

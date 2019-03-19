@@ -48,7 +48,7 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
 
     PROFILE_START("PathLength");
     PROFILE_START("OMPL Planning");
-    ob::PlannerStatus solved = ss.solve(60);
+    ob::PlannerStatus solved = ss.solve(120);
     PROFILE_RECORD("OMPL Planning");
     std::cout << "Longest valid segment: " << space->getLongestValidSegmentLength() << "\n";
     if (!solved)
@@ -56,6 +56,9 @@ Path OMPL_Strategy::applyTo(Scenario &scenario)
         PROFILE_RECORD_DOUBLE("PathLength", std::numeric_limits<double>::max());
         throw std::runtime_error("Path not found");
     }
+    
+    PROFILE_RECORD_DOUBLE("SetRobotConfig before smoothing",
+                           arc_utilities::Profiler::getData("Set robot config").size());
 
     PathUtils::Path pu_path = ompl_utils::omplPathToDoublePath(&ss.getSolutionPath(),
                                                                    ss.getSpaceInformation());
