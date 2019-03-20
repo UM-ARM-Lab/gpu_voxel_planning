@@ -244,6 +244,15 @@ bool SelectiveDensificationStrategy::checkEdgeAndStore(arc_dijkstras::GraphEdge 
 
     e.setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
                   arc_dijkstras::EDGE_VALIDITY::INVALID);
+
+    sd_graph.getReverseEdge(e).setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
+                                           arc_dijkstras::EDGE_VALIDITY::INVALID);
+    // arc_dijkstras::GraphEdge& r = sd_graph.getReverseEdge(e);
+
+    // std::cout << "CheckEdgeStore : " << (valid ? "valid":"invalid")  << "(" << e.getFromIndex() << ", " << e.getToIndex() << ")\n";
+
+    // std::cout << "        Edge : (" << e.getFromIndex() << ", " << e.getToIndex() << ")\n";
+    // std::cout << "Reverse Edge : (" << r.getFromIndex() << ", " << r.getToIndex() << ")\n";
     
     // PROFILE_RECORD("CheckEdgeAndStore grid overlap");
     PROFILE_RECORD("CheckEdgeAndStore");

@@ -76,13 +76,13 @@ int main(int argc, char* argv[])
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
     // TableWithBox scenario(true, true, true);
-    // SlottedWall scenario(true);
-    Bookshelf scenario(true);
+    SlottedWall scenario(true);
+    // Bookshelf scenario(true);
 
     // AStarGraphSearch strat;
     // OmniscientGraphSearch strat;
     // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
-    OmniscientSDGraphSearch strat(true, 1);
+    OmniscientSDGraphSearch strat(true, 0.1);
     // OmniscientSDGraphSearch strat(graph_filepath);
     // RRT_Strategy strat;
     // BIT_Strategy strat;
