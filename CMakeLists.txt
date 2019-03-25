@@ -288,6 +288,15 @@ target_link_libraries(wip_roadmap
   victor_halton_roadmap
   )
 
+add_executable(wip_BTP
+  src/wip_BTP.cpp)
+
+target_link_libraries(wip_BTP
+  ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
+
 add_executable(selective_densification_experiments
   src/selective_densification_experiments.cpp
   )
