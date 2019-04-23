@@ -6,7 +6,7 @@
 #include <iostream>
 #include "prob_map.hpp"
 #include "state.hpp"
-#include "memorized_swept_volumes.hpp"
+#include "strategies/memorized_swept_volumes.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
 
 
