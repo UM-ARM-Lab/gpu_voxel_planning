@@ -6,6 +6,7 @@
 #include <iostream>
 #include "maps/prob_map.hpp"
 #include "maps/distance_map.hpp"
+#include "obstacles/obstacles.hpp"
 #include "state.hpp"
 #include "strategies/memorized_swept_volumes.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
@@ -200,6 +201,41 @@ TEST(GVP, distance_grid_gives_correct_distances)
 
     double d = dg.getClosestObstacleDistance(&g2)*VOXEL_SIDE_LENGTH;
     EXPECT_NEAR(d, 0.3, VOXEL_SIDE_LENGTH + eps) << "Distance not correct\n";
+}
+
+TEST(GVP, test_AABB_obstacle_collision_with_shifts)
+{
+    Vector3f v1(1.0, 0.8, 1.0);
+    Vector3f v2(2.0, 1.0, 1.2);
+    GVP::AABB ob(v1, v2);
+    DenseGrid g1;
+    g1.insertBox(v1, v2);
+
+    EXPECT_EQ(ob.toGrid().collideWith(&g1), g1.countOccupied());
+    ob.shift(Vector3f(0.1, 0.1, 0.1));
+    EXPECT_LT(ob.toGrid().collideWith(&g1), g1.countOccupied());
+    EXPECT_GT(ob.toGrid().collideWith(&g1), 0);
+}
+
+TEST(GVP, test_AABB_projection)
+{
+    double eps = 0.0000001;
+    GVP::AABB ob(Vector3f(1.0, 0.8, 1.0), Vector3f(2.0, 1.0, 1.2));
+    DenseGrid g, ob_grid;
+    g.insertBox(Vector3f(1.0, 0.8, 0.5), Vector3f(2.0, 1.0, 0.7));
+    DistanceGrid dg;
+    dg.mergeOccupied(&g);
+    dg.computeDistances();
+
+    ob_grid = ob.toGrid();
+    ASSERT_NEAR(dg.getClosestObstacleDistance(&ob_grid) * VOXEL_SIDE_LENGTH, 0.3, VOXEL_SIDE_LENGTH + eps) <<
+        "Distance not correct before projection";
+
+    
+    ob.project(dg);
+    ob_grid = ob.toGrid();
+    EXPECT_NEAR(dg.getClosestObstacleDistance(&ob_grid)*VOXEL_SIDE_LENGTH, 0, VOXEL_SIDE_LENGTH + eps) <<
+        "Distance not correct after projection";
 }
 
 
