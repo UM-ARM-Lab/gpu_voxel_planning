@@ -3,6 +3,7 @@ project(gpu_voxel_planning)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 set(CATKIN_PACKAGES
   roscpp
