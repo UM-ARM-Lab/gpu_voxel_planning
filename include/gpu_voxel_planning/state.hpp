@@ -83,9 +83,6 @@ namespace GVP
             }
         }
 
-
-
-
         void updateConfig(const robot::JointValueMap &jvm)
         {
             for(const auto& kv: jvm)
@@ -109,7 +106,6 @@ namespace GVP
         SimulationState(Robot &robot) : State(robot)
         {
         };
-
         
         bool move(const VictorRightArmConfig &c, const DenseGrid &true_world)
         {
@@ -119,16 +115,12 @@ namespace GVP
                 addChs(true_world);
                 robot.set(current_config);
                 return false;
-
             }
 
             updateConfig(c.asMap());
             updateFreeSpace(robot.occupied_space);
             return true;
-
-            
         }
-
 
         void addChs(const DenseGrid &true_world)
         {

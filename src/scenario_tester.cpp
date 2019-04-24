@@ -11,10 +11,10 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
     {
         if(!scenario.getSimulationState().move(c, scenario.getTrueObstacles()))
         {
-            viz.vizScenario(scenario);
+            scenario.viz(viz);
             return false;
         }
-        viz.vizScenario(scenario);
+        scenario.viz(viz);
         // ros::Duration(0.01).sleep();
         ros::Duration(0.001).sleep();
     }
@@ -23,13 +23,13 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
 
 bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
 {
-    viz.vizScenario(scenario);
+    scenario.viz(viz);
     try{
         scenario.validate();
     }
     catch(std::invalid_argument &e)
     {
-        viz.vizScenario(scenario);
+        scenario.viz(viz);
         throw e;
     }
     

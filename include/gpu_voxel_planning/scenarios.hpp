@@ -3,6 +3,7 @@
 
 
 #include "state.hpp"
+#include "gpu_voxel_rviz_visualization.hpp"
 
 namespace GVP
 {
@@ -18,6 +19,10 @@ namespace GVP
         virtual bool completed() const
         {
             return VictorRightArmConfig(getState().current_config) == VictorRightArmConfig(goal_config);
+        }
+
+        virtual void viz(const GpuVoxelRvizVisualizer& viz)
+        {
         }
 
         Scenario(){}
@@ -52,6 +57,23 @@ namespace GVP
                 throw(std::invalid_argument("Goal configuration is invalid\n"));
             }
         }
+
+        virtual void viz(const GpuVoxelRvizVisualizer& viz) override
+        {
+            viz.grid_pub.publish(visualizeDenseGrid(getTrueObstacles(), viz.global_frame,
+                                                    "true_obstacles", makeColor(0.5, 0.5, 0.5, 0.5)));
+
+            viz.grid_pub.publish(visualizeDenseGrid(s.known_obstacles, viz.global_frame,
+                                                    "known_obstacles", makeColor(0,0,0,1)));
+
+            std_msgs::ColorRGBA robot_color = makeColor(0.7, 0.5, 0.4, 1.0);
+            viz.grid_pub.publish(visualizeDenseGrid(s.robot_self_collide_obstacles, viz.global_frame,
+                                                    "passive_robot", robot_color));
+            viz.grid_pub.publish(visualizeDenseGrid(s.robot.occupied_space, viz.global_frame,
+                                                    "active_robot", robot_color));
+            viz.vizChs(s.chs);
+        }
+
 
         virtual DenseGrid& getTrueObstacles()
         {

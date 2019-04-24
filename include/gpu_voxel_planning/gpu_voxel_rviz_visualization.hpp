@@ -3,11 +3,13 @@
 
 #include <visualization_msgs/Marker.h>
 #include "maps/prob_map.hpp"
-#include "state.hpp"
-#include "scenarios.hpp"
+// #include "state.hpp"
+// #include "scenarios.hpp"
 #include <ros/ros.h>
 #include "urdf_model.hpp"
-#include "strategies/graph_search_strategies.hpp"
+#include "path_utils_addons.hpp"
+// #include <graph_planner/increasing_density_halton.hpp>
+// #include "strategies/graph_search_strategies.hpp"
 #include "strategies/victor_selective_densification.hpp"
 
 inline visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,
@@ -223,12 +225,12 @@ public:
 
     
 
-    void vizGrid(const DenseGrid &grid, const std::string &ns, const std_msgs::ColorRGBA &color)
+    void vizGrid(const DenseGrid &grid, const std::string &ns, const std_msgs::ColorRGBA &color) const
     {
         grid_pub.publish(visualizeDenseGrid(grid, global_frame, ns, color));
     }
 
-    void vizChs(const std::vector<DenseGrid> &chss, const std::string &ns = "chs")
+    void vizChs(const std::vector<DenseGrid> &chss, const std::string &ns = "chs") const
     {
         std_msgs::ColorRGBA color;
         color.a = 0.5;
@@ -239,31 +241,6 @@ public:
             ss << ns << "_" << i;
             chs_pub.publish(visualizeDenseGrid(chss[i], global_frame, ss.str(), color));
         }
-    }
-
-    void vizState(const GVP::State &s)
-    {
-        grid_pub.publish(visualizeDenseGrid(s.known_obstacles, global_frame,
-                                           "known_obstacles", makeColor(0,0,0,1)));
-
-        std_msgs::ColorRGBA robot_color = makeColor(0.7, 0.5, 0.4, 1.0);
-        grid_pub.publish(visualizeDenseGrid(s.robot_self_collide_obstacles, global_frame,
-                                           "passive_robot", robot_color));
-        grid_pub.publish(visualizeDenseGrid(s.robot.occupied_space, global_frame,
-                                           "active_robot", robot_color));
-        vizChs(s.chs);
-    }
-
-    void vizScenario(const GVP::Scenario &s)
-    {
-        vizState(s.getState());   
-    }
-
-    void vizScenario(const GVP::SimulationScenario &s)
-    {
-        grid_pub.publish(visualizeDenseGrid(s.getTrueObstacles(), global_frame,
-                                           "true_obstacles", makeColor(0.5, 0.5, 0.5, 0.5)));
-        vizState(s.getState());   
     }
 };
 
