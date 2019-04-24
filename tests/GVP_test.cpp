@@ -4,8 +4,8 @@
 #include <arc_utilities/timing.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
-#include "prob_map.hpp"
-#include "distance_map.hpp"
+#include "maps/prob_map.hpp"
+#include "maps/distance_map.hpp"
 #include "state.hpp"
 #include "strategies/memorized_swept_volumes.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>

@@ -1,4 +1,4 @@
-#include "prob_map.hpp"
+#include "maps/prob_map.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
 #include "common_names.hpp"
 #include <arc_utilities/timing.hpp>

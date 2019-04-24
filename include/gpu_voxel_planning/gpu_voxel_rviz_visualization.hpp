@@ -2,7 +2,7 @@
 #define GPU_VOXEL_RVIZ_VISUALIZATION_HPP
 
 #include <visualization_msgs/Marker.h>
-#include "prob_map.hpp"
+#include "maps/prob_map.hpp"
 #include "state.hpp"
 #include "scenarios.hpp"
 #include <ros/ros.h>

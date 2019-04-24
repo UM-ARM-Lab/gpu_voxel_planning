@@ -1,7 +1,7 @@
 #ifndef GPU_PLANNING_ROBOT_MODEL_HPP
 #define GPU_PLANNING_ROBOT_MODEL_HPP
 
-#include "prob_map.hpp"
+#include "maps/prob_map.hpp"
 #include "common_names.hpp"
 #include "hacky_functions.hpp"
 #include <arc_utilities/timing.hpp>
