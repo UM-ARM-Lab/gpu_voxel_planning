@@ -36,7 +36,9 @@ namespace GVP
         SimulationState s;
         DenseGrid true_world;
 
-        SimulationScenario() : s(victor){}
+        SimulationScenario() : s(victor)
+        {
+        }
         // virtual DenseGrid& getTrueObstacles() = 0;
         // virtual const DenseGrid& getTrueObstacles() const = 0;
         // virtual SimulationState& getSimulationState() = 0;
@@ -71,7 +73,7 @@ namespace GVP
                                                     "passive_robot", robot_color));
             viz.grid_pub.publish(visualizeDenseGrid(s.robot.occupied_space, viz.global_frame,
                                                     "active_robot", robot_color));
-            viz.vizChs(s.chs);
+            s.bel->viz(viz);
         }
 
 

@@ -2,6 +2,7 @@
 #include "ompl_utils.hpp"
 #include "hacky_functions.hpp"
 #include "path_utils_addons.hpp"
+#include "path_smoothing.hpp"
 #include "ompl_modifications/custom_bitstar.h"
 
 using namespace GVP;
