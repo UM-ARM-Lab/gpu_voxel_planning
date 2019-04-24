@@ -11,28 +11,30 @@ namespace GVP
     public:
         Vector3f ll;
         Vector3f ur;
+        DenseGrid grid;
         
         AABB(Vector3f ll, Vector3f ur):
             ll(ll), ur(ur)
-        {}
-
-        DenseGrid toGrid()
         {
-            DenseGrid g;
-            g.insertBox(ll, ur);
-            return g;
+            remakeGrid();
+        }
+
+        void remakeGrid()
+        {
+            grid = DenseGrid();
+            grid.insertBox(ll, ur);
         }
 
         void shift(Vector3f dx)
         {
             ll += dx;
             ur += dx;
+            remakeGrid();
         }
 
         void project(DistanceGrid& dg)
         {
-            DenseGrid g = toGrid();
-            auto result = dg.getClosestObstacle(&g);
+            auto result = dg.getClosestObstacle(&grid);
             Vector3i on_self = result.first;
             Vector3i on_distance_grid = Vector3i(result.second.getObstacle());
             Vector3i diff_i = on_distance_grid - on_self;
