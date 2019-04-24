@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include "prob_map.hpp"
+#include "distance_map.hpp"
 #include "state.hpp"
 #include "strategies/memorized_swept_volumes.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
@@ -178,6 +179,27 @@ TEST(GVP, memorize_swept_volumes_loading)
     EXPECT_EQ(dg2.countOccupied(), dg2p.countOccupied());
     EXPECT_EQ(dg2.collideWith(&dg2p), dg2p.countOccupied());
         
+}
+
+TEST(GVP, distance_grid_gives_correct_distances)
+{
+    DistanceGrid dg;
+    DenseGrid g1, g2;
+    double eps = 0.000001;
+    PointCloud box1(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
+                                                           Vector3f(2.0,1.0,1.2),
+                                                           VOXEL_SIDE_LENGTH/2));
+    g1.insertPointCloud(box1, PROB_OCCUPIED);
+    dg.mergeOccupied(&g1);
+    dg.computeDistances();
+
+    PointCloud box2(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,0.5),
+                                                           Vector3f(2.0,1.0,0.7),
+                                                           VOXEL_SIDE_LENGTH/2));
+    g2.insertPointCloud(box2, PROB_OCCUPIED);
+
+    double d = dg.getClosestObstacleDistance(&g2)*VOXEL_SIDE_LENGTH;
+    EXPECT_NEAR(d, 0.3, VOXEL_SIDE_LENGTH + eps) << "Distance not correct\n";
 }
 
 

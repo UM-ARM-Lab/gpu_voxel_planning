@@ -1,4 +1,5 @@
 #include "prob_map.hpp"
+#include "distance_map.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
 #include "common_names.hpp"
 #include <arc_utilities/timing.hpp>
@@ -12,6 +13,7 @@
 #include "strategies/graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
 #include "urdf_model.hpp"
+
 
 using namespace GVP;
 
@@ -109,6 +111,33 @@ void testAngles(Scenario& scenario, GpuVoxelRvizVisualizer &viz)
     }
 }
 
+void testDistanceGrid()
+{
+    std::cout << "Testing Distance Grid\n";
+    DistanceGrid dg;
+    DenseGrid g1, g2;
+    PointCloud box1(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,1.0),
+                                                          Vector3f(2.0,1.0,1.2),
+                                                          VOXEL_SIDE_LENGTH/2));
+    g1.insertPointCloud(box1, PROB_OCCUPIED);
+    dg.mergeOccupied(&g1);
+    dg.parallelBanding3D(1, 1, 1, PBA_DEFAULT_M1_BLOCK_SIZE,
+                         PBA_DEFAULT_M2_BLOCK_SIZE,
+                         PBA_DEFAULT_M3_BLOCK_SIZE, 1);
+    
+
+    PointCloud box2(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,0.5),
+                                                           Vector3f(2.0,1.0,0.7),
+                                                           VOXEL_SIDE_LENGTH/2));
+    g2.insertPointCloud(box2, PROB_OCCUPIED);
+
+    std::cout << "obstacle dist: " << dg.getClosestObstacleDistance(&g2)*VOXEL_SIDE_LENGTH << "\n";
+    // std::cout << "dist: " << dg.getObstacleDistance(100, 100, 100) << "\n";
+
+    auto result = dg.getClosestObstacle(&g2);
+    std::cout << "pos: " << result.first << ", closest: " << result.second.getObstacle() << "\n";
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -121,6 +150,10 @@ int main(int argc, char* argv[])
 
     // checkBasicViz(viz);
     // viewLinks(viz);
+
+    testDistanceGrid();
+    return 1;
+
 
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
@@ -137,8 +170,9 @@ int main(int argc, char* argv[])
     // UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
 
 
-    testAngles(scenario, viz);
-    return 1;
+    // testAngles(scenario, viz);
+    // return 1;
+
     
     
     SimulationScenarioTester tester(scenario, n);

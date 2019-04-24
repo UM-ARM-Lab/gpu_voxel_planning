@@ -75,8 +75,8 @@ int main(int argc, char* argv[])
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    // TableWithBox scenario(true, true, false);
-    SlottedWall scenario(true);
+    TableWithBox scenario(true, true, false);
+    // SlottedWall scenario(true);
     // Bookshelf scenario(true);
 
     OptimisticGraphSearch strat;

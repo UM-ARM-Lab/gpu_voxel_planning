@@ -126,7 +126,7 @@ public:
 
     std::vector<double> toValues(VictorConfig config);
 
-    int determineVictorDist();
+    // int determineVictorDist();
 
     void doVis();
     

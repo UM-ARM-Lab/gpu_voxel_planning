@@ -385,15 +385,15 @@ void GpuVoxelsVictor::sampleValidWorld()
 /**
  *  Return the number of cells victor is from the nearest obstacle
  */
-int GpuVoxelsVictor::determineVictorDist()
-{
-    boost::shared_ptr<voxelmap::ProbVoxelMap> victor = boost::dynamic_pointer_cast<voxelmap::ProbVoxelMap>(gvl->getMap(VICTOR_ACTUAL_MAP));
+// int GpuVoxelsVictor::determineVictorDist()
+// {
+//     boost::shared_ptr<voxelmap::ProbVoxelMap> victor = boost::dynamic_pointer_cast<voxelmap::ProbVoxelMap>(gvl->getMap(VICTOR_ACTUAL_MAP));
 
-    boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap(OBSTACLE_DISTANCE_MAP));
+//     boost::shared_ptr<voxelmap::DistanceVoxelMap> dist_map = boost::dynamic_pointer_cast<voxelmap::DistanceVoxelMap>(gvl->getMap(OBSTACLE_DISTANCE_MAP));
     
-    // std::cout << "closest victor dist: " << dist_map->getClosestObstacleDistance(victor) << "\n";
-    return int(dist_map->getClosestObstacleDistance(victor));
-}
+//     // std::cout << "closest victor dist: " << dist_map->getClosestObstacleDistance(victor) << "\n";
+//     return int(dist_map->getClosestObstacleDistance(victor));
+// }
 
 
 void GpuVoxelsVictor::doVis()
