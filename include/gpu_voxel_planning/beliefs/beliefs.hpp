@@ -14,6 +14,8 @@ namespace GVP
         virtual double updateFreeSpace(const DenseGrid &new_free) = 0;
 
         virtual void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) = 0;
+
+        virtual DenseGrid sampleState() const = 0;
     };
 
 
@@ -84,6 +86,16 @@ namespace GVP
             }
             new_chs.subtract(&known_free);
             chs.push_back(new_chs);
+        }
+
+        virtual DenseGrid sampleState() const override
+        {
+            DenseGrid sampled_obstacles;
+            for(const auto& c: chs)
+            {
+                c.copyRandomOccupiedElement(sampled_obstacles);
+            }
+            return sampled_obstacles;
         }
     };
 }

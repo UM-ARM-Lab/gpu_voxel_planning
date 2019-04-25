@@ -83,6 +83,15 @@ public:
                          eBVM_OCCUPIED);
     }
 
+    void copyRandomOccupiedElement(DenseGrid& to) const
+    {
+        size_t num_occupied = countOccupied();
+        std::mt19937 generator;
+        generator.seed(std::random_device()());
+        std::uniform_int_distribution<unsigned long> dist(0, num_occupied);
+        unsigned long rand_index = dist(generator);
+        copyIthOccupied(&to, rand_index);
+    }
 };
 
 

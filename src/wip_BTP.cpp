@@ -79,7 +79,8 @@ int main(int argc, char* argv[])
     // SlottedWall scenario(true);
     // Bookshelf scenario(true);
 
-    OptimisticGraphSearch strat;
+    // OptimisticGraphSearch strat;
+    ParetoCostGraphSearch strat(1.0);
     
     
     

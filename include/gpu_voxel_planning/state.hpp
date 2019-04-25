@@ -14,7 +14,6 @@ namespace GVP
         Robot &robot;
         DenseGrid robot_self_collide_obstacles;
         DenseGrid known_obstacles;
-
         std::unique_ptr<Belief> bel;
 
         robot::JointValueMap current_config;
