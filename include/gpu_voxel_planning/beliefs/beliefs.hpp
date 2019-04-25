@@ -16,6 +16,8 @@ namespace GVP
         virtual void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) = 0;
 
         virtual DenseGrid sampleState() const = 0;
+
+        virtual ~Belief() = default;
     };
 
 
