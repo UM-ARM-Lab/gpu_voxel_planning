@@ -41,6 +41,8 @@ void checkNoGpuMemoryLeaks()
             counter++;
         }
         PROFILE_RECORD("Copy and Collide");
+
+        std::unique_ptr<Belief> bel = std::make_unique<ChsBelief>();
     }
 
     PROFILE_PRINT_SUMMARY_FOR_SINGLE("Copy and Collide");
@@ -151,8 +153,11 @@ int main(int argc, char* argv[])
     // checkBasicViz(viz);
     // viewLinks(viz);
 
-    testDistanceGrid();
+    checkNoGpuMemoryLeaks();
     return 1;
+
+    // testDistanceGrid();
+    // return 1;
 
 
     ros::Duration(1.0).sleep();

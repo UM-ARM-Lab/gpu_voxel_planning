@@ -334,15 +334,85 @@ namespace GVP
      **********************************/
     double HOPGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
     {
+        if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
+        {
+            return std::numeric_limits<double>::infinity();
+        }
         return e.getWeight();
     }
 
     std::vector<NodeIndex> HOPGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
                                                 GpuVoxelRvizVisualizer& viz)
     {
-        viz.grid_pub.publish(visualizeDenseGrid(s.bel->sampleState(), viz.global_frame,
-                                                "sampled_world", makeColor(0, 0, 1.0, 0.7)));
-        return lazySp(start, goal, s);
+        
+        std::map<NodeIndex, double> actions;
+        using pair_type = decltype(actions)::value_type;
+        Roadmap orig_graph = graph;
+
+        for(int i=0; i<num_samples; i++)
+        {
+            std::cout << "Checking sample " << i << "\n\n";
+            graph = orig_graph;
+            // DenseGrid g1 = s.bel->sampleState();
+            // g1.merge(&s.known_obstacles);
+            
+            // viz.grid_pub.publish(visualizeDenseGrid(g1, viz.global_frame,
+            //                                         "sampled_world", makeColor(0, 0, 1.0, 1.0)));
+            
+            
+            State sampled_state(s.robot);
+            sampled_state.robot_self_collide_obstacles = s.robot_self_collide_obstacles;
+            sampled_state.known_obstacles = s.bel->sampleState();
+            sampled_state.known_obstacles.add(&s.known_obstacles);
+            viz.grid_pub.publish(visualizeDenseGrid(sampled_state.known_obstacles, viz.global_frame,
+                                                    "sampled_world", makeColor(0, 0, 1.0, 1.0)));
+
+            VictorRightArmConfig goal_config(graph.getNode(goal).getValue());
+            sampled_state.robot.set(goal_config.asMap());
+            if(sampled_state.robot.occupied_space.overlapsWith(&s.known_obstacles))
+            {
+                continue;
+            }
+
+            auto result = lazySp(start, goal, sampled_state);
+
+            if(result.size() < 2)
+            {
+                continue;
+            }
+
+            viz.vizEEPath(interpolate(s.getCurConfig(), graph.getNode(result[1]).getValue(), 0.1),
+                          "sampledPath");
+
+            NodeIndex a = result[1];
+            std::cout << "Best action: " << a << "\n";
+            if(actions.count(a) == 0)
+            {
+                actions[a] = 0;
+            }
+            actions[a] += 1.0;
+
+            DenseGrid sv = getSweptVolume(s, graph.getEdge(start, a));
+            viz.grid_pub.publish(visualizeDenseGrid(sv, viz.global_frame,
+                                                    "swept volume", makeColor(1, 1, 0, 0.7)));
+            std::cout << "Edge eval: " << evaluateEdge(graph.getEdge(start, a), sampled_state) << "\n";
+            std::cout << "Edge Check: " << checkEdge(graph.getEdge(start, a), sampled_state) << "\n";
+            // arc_helpers::WaitForInput();
+
+        }
+        graph = orig_graph;
+
+        for(auto it: actions)
+        {
+            std::cout << it.first << ": " << it.second << "\n";
+        }
+
+
+        auto pr = std::max_element(actions.begin(), actions.end(),
+                                   [](const pair_type &p1, const pair_type &p2)
+                                   {return p1.second < p2.second;});
+        return std::vector<NodeIndex>{start, pr->first};
+
     }
 
     std::string HOPGraphSearch::getName() const

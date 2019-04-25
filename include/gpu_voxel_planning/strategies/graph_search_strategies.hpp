@@ -127,7 +127,10 @@ namespace GVP
     class HOPGraphSearch : public GraphSearchStrategy
     {
     public:
-        HOPGraphSearch(){}
+        int num_samples;
+        
+    public:
+        HOPGraphSearch() : num_samples(100){}
         virtual std::string getName() const override;
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
                                             GpuVoxelRvizVisualizer& viz) override;
