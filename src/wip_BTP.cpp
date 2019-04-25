@@ -80,7 +80,8 @@ int main(int argc, char* argv[])
     // Bookshelf scenario(true);
 
     // OptimisticGraphSearch strat;
-    ParetoCostGraphSearch strat(1.0);
+    HOPGraphSearch strat;
+    // ParetoCostGraphSearch strat(1.0);
     
     
     

@@ -43,7 +43,7 @@ namespace GVP
     }            
 
 
-    Path GraphSearchStrategy::applyTo(Scenario &scenario)
+    Path GraphSearchStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
     {
         if(!initialized)
         {
@@ -56,7 +56,7 @@ namespace GVP
             
         if(current == expected)
         {
-            std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState());
+            std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState(), viz);
             next = graph.getNode(node_path[1]).getValue();
             prev_node = cur_node;
             cur_node = node_path[1];
@@ -72,7 +72,8 @@ namespace GVP
         return interpolate(current, next, discretization);
     }
 
-    std::vector<NodeIndex> GraphSearchStrategy::plan(NodeIndex start, NodeIndex goal, State &s)
+    std::vector<NodeIndex> GraphSearchStrategy::plan(NodeIndex start, NodeIndex goal, State &s,
+                                                     GpuVoxelRvizVisualizer& viz)
     {
         return lazySp(start, goal, s);
     }
@@ -186,7 +187,7 @@ namespace GVP
         return "Omniscient Graph Search";
     }
     
-    Path OmniscientGraphSearch::applyTo(Scenario &scenario)
+    Path OmniscientGraphSearch::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
     {
         if(!initialized)
         {
@@ -198,7 +199,7 @@ namespace GVP
         VictorRightArmConfig next;
 
         Path path;
-        std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState());
+        std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState(), viz);
 
         if(node_path.size() <= 1)
         {
@@ -295,7 +296,8 @@ namespace GVP
         return "AStar Optimistic Graph Search";
     }
     
-    std::vector<NodeIndex> AStarGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s)
+    std::vector<NodeIndex> AStarGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
+                                                  GpuVoxelRvizVisualizer& viz)
     {
         using namespace arc_dijkstras;
         const auto edge_validity_check_fn =
@@ -324,5 +326,30 @@ namespace GVP
         return computeSweptVolume(s, e);
     }
 
+
+
+    /***********************************
+     **             HOP               **
+     **  Averaging over Clairvoyance  **
+     **********************************/
+    double HOPGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    {
+        return e.getWeight();
+    }
+
+    std::vector<NodeIndex> HOPGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
+                                                GpuVoxelRvizVisualizer& viz)
+    {
+        viz.grid_pub.publish(visualizeDenseGrid(s.bel->sampleState(), viz.global_frame,
+                                                "sampled_world", makeColor(0, 0, 1.0, 0.7)));
+        return lazySp(start, goal, s);
+    }
+
+    std::string HOPGraphSearch::getName() const
+    {
+        return "HOP Graph Search";
+    }
     
+    
+
 }

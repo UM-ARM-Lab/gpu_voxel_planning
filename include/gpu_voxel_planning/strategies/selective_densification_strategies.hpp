@@ -47,7 +47,7 @@ namespace GVP
 
         void setMode(EdgeCheckMode mode_);
 
-        virtual Path applyTo(Scenario &scenario) override;
+        virtual Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
 
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s);
 

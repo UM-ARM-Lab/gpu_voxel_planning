@@ -72,7 +72,7 @@ void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
 
 
 
-Path SelectiveDensificationStrategy::applyTo(Scenario &scenario)
+Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
 {
     PROFILE_START("PathLength");
     if(!initialized)

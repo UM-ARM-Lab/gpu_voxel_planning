@@ -40,7 +40,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         std::vector<VictorRightArmConfig> path;
         try
         {
-            path = strategy.applyTo(scenario);
+            path = strategy.applyTo(scenario, viz);
         }
         catch(std::runtime_error &e)
         {

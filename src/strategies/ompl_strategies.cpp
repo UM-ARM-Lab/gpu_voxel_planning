@@ -21,7 +21,7 @@ std::shared_ptr<ob::RealVectorStateSpace> OMPL_Strategy::makeSpace()
     return space;
 }
 
-Path OMPL_Strategy::applyTo(Scenario &scenario)
+Path OMPL_Strategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
 {
     auto state_validity_fn = [&](const ob::State *ompl_state)
         {

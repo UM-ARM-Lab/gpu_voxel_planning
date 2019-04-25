@@ -17,7 +17,7 @@ namespace GVP
     public:
         OMPL_Strategy() : discretization(0.02) {}
         
-        Path applyTo(Scenario &scenario) override;
+        Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
         
     protected:
         std::shared_ptr<ompl::base::RealVectorStateSpace> makeSpace();
