@@ -146,6 +146,11 @@ public:
                                            makeColor(0.0, 0.0, 1.0)));
     }
 
+    void vizGrid(const DenseGrid& grid, const std::string& name, const std_msgs::ColorRGBA& color)
+    {
+        grid_pub.publish(visualizeDenseGrid(grid, global_frame, name, color));
+    }
+
     void vizEEGraph(const HaltonGraph &g)
     {
         visualization_msgs::MarkerArray marker_array;

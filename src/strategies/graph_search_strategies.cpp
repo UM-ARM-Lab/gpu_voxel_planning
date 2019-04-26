@@ -364,8 +364,7 @@ namespace GVP
             sampled_state.robot_self_collide_obstacles = s.robot_self_collide_obstacles;
             sampled_state.known_obstacles = s.bel->sampleState();
             sampled_state.known_obstacles.add(&s.known_obstacles);
-            viz.grid_pub.publish(visualizeDenseGrid(sampled_state.known_obstacles, viz.global_frame,
-                                                    "sampled_world", makeColor(0, 0, 1.0, 1.0)));
+            viz.vizGrid(sampled_state.known_obstacles, "sampled_world", makeColor(0, 0, 1.0, 1.0));
 
             VictorRightArmConfig goal_config(graph.getNode(goal).getValue());
             sampled_state.robot.set(goal_config.asMap());
