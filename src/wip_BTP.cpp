@@ -12,43 +12,43 @@
 #include "strategies/graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
 #include "urdf_model.hpp"
-#include "strategies/victor_selective_densification.hpp"
-#include "strategies/selective_densification_strategies.hpp"
-#include "strategies/ompl_strategies.hpp"
+// #include "strategies/victor_selective_densification.hpp"
+// #include "strategies/selective_densification_strategies.hpp"
+// #include "strategies/ompl_strategies.hpp"
 
 using namespace GVP;
 
 
-void precomputeEdges()
-{
-    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
-    OmniscientSDGraphSearch strat;
-    Bookshelf scenario(true);
+// void precomputeEdges()
+// {
+//     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
+//     OmniscientSDGraphSearch strat;
+//     Bookshelf scenario(true);
 
-    int i=0;
-    for(auto &node: strat.sd_graph.getNodes())
-    {
-        if(DepthNode(node.getValue()).depth >= 4)
-        {
-            continue;
-        }
-        for(auto &edge: node.getOutEdges())
-        {
-            if(edge.getValidity() != arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
-            {
-                continue;
-            }
-            strat.getSweptVolume(scenario.getState(), edge);
-            i++;
+//     int i=0;
+//     for(auto &node: strat.sd_graph.getNodes())
+//     {
+//         if(DepthNode(node.getValue()).depth >= 4)
+//         {
+//             continue;
+//         }
+//         for(auto &edge: node.getOutEdges())
+//         {
+//             if(edge.getValidity() != arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
+//             {
+//                 continue;
+//             }
+//             strat.getSweptVolume(scenario.getState(), edge);
+//             i++;
 
-            if(i%1000 == 0)
-            {
-                std::cout << "Computed SV for " << i << " edges\n";
-            }
-        }
-    }
-    strat.saveToFile();
-}
+//             if(i%1000 == 0)
+//             {
+//                 std::cout << "Computed SV for " << i << " edges\n";
+//             }
+//         }
+//     }
+//     strat.saveToFile();
+// }
 
 
 int main(int argc, char* argv[])

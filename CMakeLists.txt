@@ -114,35 +114,35 @@ include_directories(
   )
 
 
-add_library(path_smoothing src/ompl_modifications/path_smoothing.cpp
-  ${OMPL_LIBRARIES}
-  )
+# add_library(path_smoothing src/ompl_modifications/path_smoothing.cpp
+#   ${OMPL_LIBRARIES}
+#   )
 
-add_library(lazyrrtf src/ompl_modifications/lazyrrt_fullpath.cpp)
-target_link_libraries(lazyrrtf
-  ${OMPL_LIBRARIES}
-  )
+# add_library(lazyrrtf src/ompl_modifications/lazyrrt_fullpath.cpp)
+# target_link_libraries(lazyrrtf
+#   ${OMPL_LIBRARIES}
+#   )
 
-add_library(custom_rrtstar src/ompl_modifications/custom_rrtstar.cpp)
-target_link_libraries(custom_rrtstar
-  ${OMPL_LIBRARIES}
-  )
+# add_library(custom_rrtstar src/ompl_modifications/custom_rrtstar.cpp)
+# target_link_libraries(custom_rrtstar
+#   ${OMPL_LIBRARIES}
+#   )
 
-add_library(flrrtc src/ompl_modifications/fullpath_lrrtconnect.cpp)
-target_link_libraries(flrrtc
-  ${OMPL_LIBRARIES}
-  )
+# add_library(flrrtc src/ompl_modifications/fullpath_lrrtconnect.cpp)
+# target_link_libraries(flrrtc
+#   ${OMPL_LIBRARIES}
+#   )
 
-add_library(crrtc src/ompl_modifications/custom_rrtconnect.cpp)
-target_link_libraries(crrtc
-  ${OMPL_LIBRARIES}
-  )
+# add_library(crrtc src/ompl_modifications/custom_rrtconnect.cpp)
+# target_link_libraries(crrtc
+#   ${OMPL_LIBRARIES}
+#   )
 
-add_library(costrrtc src/ompl_modifications/cost_rrtconnect.cpp)
-target_link_libraries(costrrtc
-  ${OMPL_LIBRARIES}
-  path_smoothing
-  )
+# add_library(costrrtc src/ompl_modifications/cost_rrtconnect.cpp)
+# target_link_libraries(costrrtc
+#   ${OMPL_LIBRARIES}
+#   path_smoothing
+#   )
 
 
 
@@ -171,15 +171,15 @@ target_link_libraries(costrrtc
 #   )
 
 
-add_library(victor_model
-  src/old/gpu_voxels_victor.cpp
-  src/old/worlds.cpp
-  src/path_utils.cpp)
-add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
-target_link_libraries(victor_model
-  ${catkin_LIBRARIES}
-  ${gpu_voxels_LIBRARIES}
-  )
+# add_library(victor_model
+#   src/old/gpu_voxels_victor.cpp
+#   src/old/worlds.cpp
+#   src/path_utils.cpp)
+# add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
+# target_link_libraries(victor_model
+#   ${catkin_LIBRARIES}
+#   ${gpu_voxels_LIBRARIES}
+#   )
 
 
 
@@ -195,38 +195,38 @@ target_link_libraries(victor_model
 #   )
 
 
-add_library(victor_validator src/old/victor_validator.cpp)
-target_link_libraries(victor_validator
-  victor_model)
+# add_library(victor_validator src/old/victor_validator.cpp)
+# target_link_libraries(victor_validator
+#   victor_model)
 
-add_library(victor_planning src/old/victor_planning.cpp)
-target_link_libraries(victor_planning
-  victor_validator
-  victor_model
-  ${EXTERN_LIBS}
-  lazyrrtf
-  crrtc
-  costrrtc
-  custom_rrtstar
-  )
+# add_library(victor_planning src/old/victor_planning.cpp)
+# target_link_libraries(victor_planning
+#   victor_validator
+#   victor_model
+#   ${EXTERN_LIBS}
+#   lazyrrtf
+#   crrtc
+#   costrrtc
+#   custom_rrtstar
+#   )
 
 
-add_library(victor_local_controller src/old/victor_local_controller.cpp)
-target_link_libraries(victor_local_controller
-  # victor_validator
-  victor_model                 
-  ${EXTERN_LIBS}
-  )
+# add_library(victor_local_controller src/old/victor_local_controller.cpp)
+# target_link_libraries(victor_local_controller
+#   # victor_validator
+#   victor_model                 
+#   ${EXTERN_LIBS}
+#   )
 
-add_executable(wip_victor_sim src/old/wip_victor_sim.cpp)
-target_link_libraries(wip_victor_sim
-  ${EXTERN_LIBS}
-  lazyrrtf
-  victor_model
-  victor_planning
-  victor_local_controller
-  victor_validator
-  )
+# add_executable(wip_victor_sim src/old/wip_victor_sim.cpp)
+# target_link_libraries(wip_victor_sim
+#   ${EXTERN_LIBS}
+#   lazyrrtf
+#   victor_model
+#   victor_planning
+#   victor_local_controller
+#   victor_validator
+#   )
 
 
 add_library(victor_halton_roadmap
@@ -235,13 +235,15 @@ add_library(victor_halton_roadmap
 
 
 set(Planning_SOURCES
+  src/scenarios/scenarios.cpp
   src/scenario_tester.cpp
   src/strategies/graph_search_strategies.cpp
-  src/strategies/victor_selective_densification.cpp
-  src/strategies/selective_densification_strategies.cpp
-  src/strategies/ompl_strategies.cpp
-  src/ompl_modifications/custom_bitstar.cpp
+  # src/strategies/victor_selective_densification.cpp      #Removed due to long compilation time
+  # src/strategies/selective_densification_strategies.cpp  #Removed due to long compilation time
+  # src/strategies/ompl_strategies.cpp                     #Removed due to long compilation time
+  # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
   src/path_utils.cpp
+  src/maps/prob_map.cpp
   )
 
 add_library(planning_library
@@ -265,52 +267,56 @@ add_executable(wip_prob_map
 #   ${catkin_EXPORTED_TARGETS}
 #   )
 target_link_libraries(wip_prob_map
-  ${EXTERN_LIBS}
+  # ${EXTERN_LIBS}
   planning_library
   victor_halton_roadmap
   )
 
-add_executable(simulation_timings
-  src/simulation_timings.cpp
-  )
-target_link_libraries(simulation_timings
-  ${EXTERN_LIBS}
-  planning_library
-  victor_halton_roadmap
-  )
+#Commented out for speed
+# add_executable(simulation_timings
+#   src/simulation_timings.cpp
+#   )
+# target_link_libraries(simulation_timings
+#   ${EXTERN_LIBS}
+#   planning_library
+#   victor_halton_roadmap
+#   )
 
 
-add_executable(wip_roadmap
-  src/wip_roadmap.cpp)
-
-target_link_libraries(wip_roadmap
-  ${EXTERN_LIBS}
-  planning_library
-  victor_halton_roadmap
-  )
+#Commented out for speed
+# add_executable(wip_roadmap
+#   src/wip_roadmap.cpp)
+# target_link_libraries(wip_roadmap
+#   ${EXTERN_LIBS}
+#   planning_library
+#   victor_halton_roadmap
+#   )
 
 add_executable(wip_BTP
   src/wip_BTP.cpp)
 
 target_link_libraries(wip_BTP
-  ${EXTERN_LIBS}
+  # ${EXTERN_LIBS}
   planning_library
   victor_halton_roadmap
   )
 
-add_executable(selective_densification_experiments
-  src/selective_densification_experiments.cpp
-  )
+# Commented out due to long compilation time
+# add_executable(selective_densification_experiments
+#   src/selective_densification_experiments.cpp
+#   )
+# target_link_libraries(selective_densification_experiments
+#   ${EXTERN_LIBS}
+#   planning_library
+#   victor_halton_roadmap
+#   )
+
+
 # add_dependencies(wip_prob_map
 #   planning_library
 #   ${EXTERN_LIBS}
 #   ${catkin_EXPORTED_TARGETS}
 #   )
-target_link_libraries(selective_densification_experiments
-  ${EXTERN_LIBS}
-  planning_library
-  victor_halton_roadmap
-  )
 
 
 # add_executable(victor_sim_timings src/old/victor_sim_timings.cpp)
