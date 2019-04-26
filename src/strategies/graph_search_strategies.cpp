@@ -353,12 +353,6 @@ namespace GVP
         {
             std::cout << "Checking sample " << i << "\n\n";
             graph = orig_graph;
-            // DenseGrid g1 = s.bel->sampleState();
-            // g1.merge(&s.known_obstacles);
-            
-            // viz.grid_pub.publish(visualizeDenseGrid(g1, viz.global_frame,
-            //                                         "sampled_world", makeColor(0, 0, 1.0, 1.0)));
-            
             
             State sampled_state(s.robot);
             sampled_state.robot_self_collide_obstacles = s.robot_self_collide_obstacles;
@@ -392,8 +386,7 @@ namespace GVP
             actions[a] += 1.0;
 
             DenseGrid sv = getSweptVolume(s, graph.getEdge(start, a));
-            viz.grid_pub.publish(visualizeDenseGrid(sv, viz.global_frame,
-                                                    "swept volume", makeColor(1, 1, 0, 0.7)));
+            viz.vizGrid(sv, "swept volume", makeColor(1, 1, 0, 0.7));
             std::cout << "Edge eval: " << evaluateEdge(graph.getEdge(start, a), sampled_state) << "\n";
             std::cout << "Edge Check: " << checkEdge(graph.getEdge(start, a), sampled_state) << "\n";
             // arc_helpers::WaitForInput();

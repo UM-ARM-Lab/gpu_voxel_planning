@@ -42,6 +42,54 @@ namespace GVP
             shift(diff*VOXEL_SIDE_LENGTH);
         }
     };
+
+    class Object
+    {
+    public:
+        std::vector<AABB> aabbs;
+        DenseGrid occupied;
+
+    public:
+        void remakeGrid()
+        {
+            occupied = DenseGrid();
+            for(const auto& aabb: aabbs)
+            {
+                occupied.add(&aabb.grid);
+            }
+        }
+
+        void shift(Vector3f dx)
+        {
+            for(auto& aabb: aabbs)
+            {
+                aabb.shift(dx);
+            }
+        }
+
+        void project(DistanceGrid& dg)
+        {
+            throw std::logic_error("Not implemented");
+        }
+    };
+
+    class ObstacleConfiguration
+    {
+    public:
+        std::vector<AABB> obstacles;
+        DenseGrid occupied;
+
+    public:
+        void remakeGrid()
+        {
+            occupied = DenseGrid();
+            for(const auto& ob: obstacles)
+            {
+                occupied.add(&ob.grid);
+            }
+        }
+        
+    };
 }
 
 #endif

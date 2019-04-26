@@ -1,6 +1,7 @@
 #ifndef GVP_BELIEFS_HPP
 #define GVP_BELIEFS_HPP
 #include "gpu_voxel_rviz_visualization.hpp"
+#include "obstacles/obstacles.hpp"
 
 namespace GVP
 {
@@ -11,7 +12,7 @@ namespace GVP
 
         virtual double calcProbFree(const DenseGrid &volume) = 0;
 
-        virtual double updateFreeSpace(const DenseGrid &new_free) = 0;
+        virtual void updateFreeSpace(const DenseGrid &new_free) = 0;
 
         virtual void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) = 0;
 
@@ -22,6 +23,84 @@ namespace GVP
 
 
 
+    class ObstacleBelief : public Belief
+    {
+    public:
+        std::vector<ObstacleConfiguration> particles;
+        std::vector<double> weights;
+        std::vector<double> cum_sum;
+        double sum = 0;
+
+    public:
+        void addElem(ObstacleConfiguration obs, double weight)
+        {
+            particles.push_back(obs);
+            weights.push_back(weight);
+            sum += weight;
+            cum_sum.push_back(sum);
+        }
+
+
+        double calcProbFree(const DenseGrid &volume) override
+        {
+            double agreement = 0;
+            for(int i=0; i<particles.size(); i++)
+            {
+                if(!particles[i].occupied.overlapsWith(&volume))
+                {
+                    agreement += weights[i];
+                }
+            }
+            return agreement / sum;
+        }
+
+        void updateFreeSpace(const DenseGrid &new_free) override
+        {
+            for(int i=0; i<particles.size(); i++)
+            {
+                if(weights[i] == 0)
+                {
+                    continue;
+                }
+                if(particles[i].occupied.overlapsWith(&new_free))
+                {
+                    weights[i] = 0;
+                }
+            }
+            recomputeWeights();
+        }
+
+        void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
+        {
+            //Not implemented yet
+        }
+
+        DenseGrid sampleState() const override
+        {
+            //Not implemented yet
+        }
+
+        void viz(const GpuVoxelRvizVisualizer& viz) override
+        {
+            for(int i=0; i<particles.size(); i++)
+            {
+                double alpha = std::max(weights[i]/sum, 1.0/255);
+                std::string name = "particle_belief_" + std::to_string(i);
+                viz.vizGrid(particles[i].occupied, name, makeColor(1.0, 0, 0, alpha));
+            }
+        }
+
+    protected:
+        void recomputeWeights()
+        {
+            sum = 0;
+            for(int i=0; i<weights.size(); i++)
+            {
+                sum += weights[i];
+                cum_sum[i] = sum;
+            }
+        }
+    };
 
     
     class ChsBelief : public Belief
@@ -48,7 +127,7 @@ namespace GVP
             return p_free;
         }
 
-        double updateFreeSpace(const DenseGrid &new_free) override
+        void updateFreeSpace(const DenseGrid &new_free) override
         {
             known_free.add(&new_free);
             for(auto &c: chs)

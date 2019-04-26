@@ -141,26 +141,56 @@ void testDistanceGrid()
 }
 
 
+void obstacleBelief(GpuVoxelRvizVisualizer& viz)
+{
+    ObstacleBelief bel;
+    {
+        ObstacleConfiguration oc;
+        oc.obstacles.push_back(AABB(Vector3f(1.7, 1.4, 0.9), Vector3f(2.4, 2.4, .925)));
+        oc.remakeGrid();
+        bel.addElem(oc, 1.0);
+    }
+    {
+        ObstacleConfiguration oc;
+        oc.obstacles.push_back(AABB(Vector3f(1.7, 1.4, 1.0), Vector3f(2.4, 2.4, 1.025)));
+        oc.remakeGrid();
+        bel.addElem(oc, 1.0);
+    }
+    {
+        ObstacleConfiguration oc;
+        oc.obstacles.push_back(AABB(Vector3f(1.8, 1.4, 1.0), Vector3f(2.5, 2.4, 1.025)));
+        oc.remakeGrid();
+        bel.addElem(oc, 1.0);
+    }
+
+    bel.viz(viz);
+}
+
+
 int main(int argc, char* argv[])
 {
     icl_core::logging::initialize(argc, argv);
     ros::init(argc, argv, "graph_publisher");
     ros::NodeHandle n;
     GpuVoxelRvizVisualizer viz(n);
+    ros::Duration(1.0).sleep();
 
     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph";
 
     // checkBasicViz(viz);
     // viewLinks(viz);
 
-    checkNoGpuMemoryLeaks();
-    return 1;
+    // checkNoGpuMemoryLeaks();
+    // return 1;
 
     // testDistanceGrid();
     // return 1;
 
+    obstacleBelief(viz);
+    return 1;
 
-    ros::Duration(1.0).sleep();
+
+
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
     TableWithBox scenario(true, true, true);
