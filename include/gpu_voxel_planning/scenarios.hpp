@@ -34,6 +34,8 @@ namespace GVP
     public:
         SimulationState s;
         ObstacleConfiguration true_obstacles;
+        ObstacleConfiguration known_obstacles;
+        ObstacleConfiguration unknown_obstacles;
         
         SimulationScenario();
 
@@ -73,6 +75,8 @@ namespace GVP
 
         void addLeftArm();
 
+    protected:
+        void combineObstacles();
     };
 
 
@@ -124,9 +128,6 @@ namespace GVP
 
         Object getSlottedWall();
     };
-
-
-
 
 
 
