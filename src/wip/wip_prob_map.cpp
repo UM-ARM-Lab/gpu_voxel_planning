@@ -146,20 +146,24 @@ void obstacleBelief(GpuVoxelRvizVisualizer& viz)
     ObstacleBelief bel;
     {
         ObstacleConfiguration oc;
-        oc.obstacles.push_back(AABB(Vector3f(1.7, 1.4, 0.9), Vector3f(2.4, 2.4, .925)));
+        Object object;
+        object.add(AABB(Vector3f(1.7, 1.4, 0.9), Vector3f(2.4, 2.4, .925)));
+        oc.add(object);
         oc.remakeGrid();
         bel.addElem(oc, 1.0);
     }
     {
         ObstacleConfiguration oc;
-        oc.obstacles.push_back(AABB(Vector3f(1.7, 1.4, 1.0), Vector3f(2.4, 2.4, 1.025)));
-        oc.remakeGrid();
+        Object object;
+        object.add(AABB(Vector3f(1.7, 1.4, 1.0), Vector3f(2.4, 2.4, 1.025)));
+        oc.add(object);
         bel.addElem(oc, 1.0);
     }
     {
         ObstacleConfiguration oc;
-        oc.obstacles.push_back(AABB(Vector3f(1.8, 1.4, 1.0), Vector3f(2.5, 2.4, 1.025)));
-        oc.remakeGrid();
+        Object object;
+        object.add(AABB(Vector3f(1.8, 1.4, 1.0), Vector3f(2.5, 2.4, 1.025)));
+        oc.add(object);
         bel.addElem(oc, 1.0);
     }
 

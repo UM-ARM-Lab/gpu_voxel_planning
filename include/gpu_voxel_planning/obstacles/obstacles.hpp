@@ -59,6 +59,12 @@ namespace GVP
             }
         }
 
+        void add(const AABB& aabb)
+        {
+            aabbs.push_back(aabb);
+            remakeGrid();
+        }
+
         void shift(Vector3f dx)
         {
             for(auto& aabb: aabbs)
@@ -76,7 +82,7 @@ namespace GVP
     class ObstacleConfiguration
     {
     public:
-        std::vector<AABB> obstacles;
+        std::vector<Object> obstacles;
         DenseGrid occupied;
 
     public:
@@ -85,10 +91,15 @@ namespace GVP
             occupied = DenseGrid();
             for(const auto& ob: obstacles)
             {
-                occupied.add(&ob.grid);
+                occupied.add(&ob.occupied);
             }
         }
-        
+
+        void add(const Object& object)
+        {
+            obstacles.push_back(object);
+            remakeGrid();
+        }
     };
 }
 

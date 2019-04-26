@@ -34,7 +34,7 @@ namespace GVP
     {
     public:
         SimulationState s;
-        DenseGrid true_world;
+        ObstacleConfiguration true_obstacles;
 
         SimulationScenario() : s(victor)
         {
@@ -47,13 +47,13 @@ namespace GVP
         virtual void validate()
         {
             s.robot.set(s.getCurConfig().asMap());
-            if(s.robot.occupied_space.overlapsWith(&true_world))
+            if(s.robot.occupied_space.overlapsWith(&true_obstacles.occupied))
             {
                 std::cerr << "Start configuration overlaps with obstacle\n";
                 throw(std::invalid_argument("Start configuration is invalid\n"));
             }
             s.robot.set(goal_config);
-            if(s.robot.occupied_space.overlapsWith(&true_world))
+            if(s.robot.occupied_space.overlapsWith(&true_obstacles.occupied))
             {
                 std::cerr << "Goal configuration overlaps with obstacle\n";
                 throw(std::invalid_argument("Goal configuration is invalid\n"));
@@ -79,12 +79,12 @@ namespace GVP
 
         virtual DenseGrid& getTrueObstacles()
         {
-            return true_world;
+            return true_obstacles.occupied;
         }
 
         virtual const DenseGrid& getTrueObstacles() const
         {
-            return true_world;
+            return true_obstacles.occupied;
         }
 
         virtual SimulationState& getSimulationState()
@@ -138,7 +138,6 @@ namespace GVP
         Vector3f cavesideoffset;
         const std::string name;
 
-
         TableWithBox(bool table_known=true, bool visible_cave_known=false, bool full_cave_known=false) :
             name(std::string("Table_with_Box_") +
                  "table_" + (table_known ? "" : "un") + "known_" + 
@@ -147,22 +146,26 @@ namespace GVP
                 )
         {
             addLeftArm();
-            addTable(true_world);
-            addCave(true_world);
+            true_obstacles.add(getTable());
+            true_obstacles.add(getVisibleCave());
+            true_obstacles.add(getCaveBack());
 
             if(table_known)
             {
-                addTable(s.known_obstacles);
+                Object table = getTable();
+                s.known_obstacles.add(&table.occupied);
             }
 
             if(visible_cave_known)
             {
-                addVisibleCave(s.known_obstacles);
+                Object known_cave = getVisibleCave();
+                s.known_obstacles.add(&known_cave.occupied);
             }
 
             if(full_cave_known)
             {
-                addCave(s.known_obstacles);
+                Object cave_back = getCaveBack();
+                s.known_obstacles.add(&cave_back.occupied);
             }
 
             s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
@@ -177,23 +180,24 @@ namespace GVP
 
 
 
-        void addTable(DenseGrid &g)
+        Object getTable()
         {
+            Object table;
             Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
             Vector3f tc(1.7, 1.4, 0.9); //table corner
             Vector3f tcf(1.7, 1.4, 0.0); //table corner at floor
             Vector3f tld(.033, 0.033, tc.z); //table leg dims
 
 
-            g.insertBox(tc, tc+td);
-            g.insertBox(tcf, tcf+tld);
-            g.insertBox(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
-                        Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld);
-            g.insertBox(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
-                        Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld);
-            g.insertBox(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
-                        Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld);
-
+            table.add(AABB(tc, tc+td));
+            table.add(AABB(tcf, tcf+tld));
+            table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+                           Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld));
+            table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+                           Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld));
+            table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+                           Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld));
+            return table;
         }
 
         void setCaveDims()
@@ -206,21 +210,22 @@ namespace GVP
 
         }
 
-        void addVisibleCave(DenseGrid &g)
+        Object getVisibleCave()
         {
             setCaveDims();
-            g.insertBox(cavecorner+caveheight, cavecorner+caveheight+cavetopd+Vector3f(0.033, 0, 0)); //top
-            g.insertBox(cavecorner, cavecorner+cavesidedim);
-            
+            Object cave;
+            cave.add(AABB(cavecorner+caveheight, cavecorner+caveheight+cavetopd+Vector3f(0.033, 0, 0))); //top
+            cave.add(AABB(cavecorner, cavecorner+cavesidedim));
+            return cave;
         }
 
-        void addCave(DenseGrid &g)
+        Object getCaveBack()
         {
             setCaveDims();
-            addVisibleCave(g);
-
-            g.insertBox(cavecorner+cavesideoffset,
-                        cavecorner+cavesideoffset+cavesidedim);
+            Object cave_back;
+            cave_back.add(AABB(cavecorner+cavesideoffset,
+                               cavecorner+cavesideoffset+cavesidedim));
+            return cave_back;
         }
     };
 
@@ -238,10 +243,11 @@ namespace GVP
                  "obstacles" + (all_known ? "" : "un") + "known")
         {
             addLeftArm();
-            addSlottedWall(true_world);
+            true_obstacles.add(getSlottedWall());
             if(all_known)
             {
-                addSlottedWall(s.known_obstacles);
+                Object slotted_wall = getSlottedWall();
+                s.known_obstacles.add(&slotted_wall.occupied);
             }
             // s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
             // goal_config = VictorRightArmConfig(std::vector<double>{0, 0.32, 0, -1.32, -0.2, 0.9, 0.3}).asMap();
@@ -258,8 +264,9 @@ namespace GVP
             return "SlottedWall";
         }
 
-        void addSlottedWall(DenseGrid &g)
+        Object getSlottedWall()
         {
+            Object slotted_wall;
             double lower_wall_height = 1.1;
             double gap_height = .4;
 
@@ -281,14 +288,15 @@ namespace GVP
             Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
             Vector3f mswd(0.3, 0.04, 0.2);
 
-            g.insertBox(lfwc, lfwc+lfwd);
-            g.insertBox(ufwc, ufwc+ufwd);
-            g.insertBox(mfwc, mfwc+mfwd);
+            slotted_wall.add(AABB(lfwc, lfwc+lfwd));
+            slotted_wall.add(AABB(ufwc, ufwc+ufwd));
+            slotted_wall.add(AABB(mfwc, mfwc+mfwd));
             
-            g.insertBox(lswc, lswc+lswd);
-            g.insertBox(cswc, cswc+cswd);
-            g.insertBox(fswc, fswc+fswd);
-            g.insertBox(mswc, mswc+mswd);
+            slotted_wall.add(AABB(lswc, lswc+lswd));
+            slotted_wall.add(AABB(cswc, cswc+cswd));
+            slotted_wall.add(AABB(fswc, fswc+fswd));
+            slotted_wall.add(AABB(mswc, mswc+mswd));
+            return slotted_wall;
         }
     };
 
@@ -314,8 +322,8 @@ namespace GVP
                  "obstacles" + (all_known ? "" : "un") + "known")
         {
             addLeftArm();
-            addBookshelf(true_world);
-            addTable(true_world);
+            true_obstacles.add(getBookshelf());
+            true_obstacles.add(getTable());
 
             robot::JointValueMap jvm;
             jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
@@ -325,8 +333,10 @@ namespace GVP
 
             if(all_known)
             {
-                addBookshelf(s.known_obstacles);
-                addTable(s.known_obstacles);
+                Object bookshelf = getBookshelf();
+                s.known_obstacles.add(&bookshelf.occupied);
+                Object table = getTable();
+                s.known_obstacles.add(&table.occupied);
             }
             // s.current_config = VictorRightArmConfig(std::vector<double>
             //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
@@ -343,7 +353,7 @@ namespace GVP
             return "Bookshelf";
         }
 
-        void addBookshelf(DenseGrid &g)
+        Object getBookshelf()
         {
             double lower_wall_height = 1.1;
             double gap_height = .4;
@@ -380,16 +390,18 @@ namespace GVP
             Vector3f bookc(1.6, 0.82, 1.2);
             Vector3f bookd(0.05, 0.3, 0.3);
 
-            g.insertBox(backwallc, backwallc + backwall_thickness);
-            g.insertBox(backwallc, backwallc + sidewall);
-            g.insertBox(backwallc + swoff, backwallc + sidewall + swoff);
+            Object bookshelf;
+
+            bookshelf.add(AABB(backwallc, backwallc + backwall_thickness));
+            bookshelf.add(AABB(backwallc, backwallc + sidewall));
+            bookshelf.add(AABB(backwallc + swoff, backwallc + sidewall + swoff));
             for(int i=0; i<5; i++)
             {
-                g.insertBox(backwallc + shelf_spacing*(float)i, backwallc + shelf + shelf_spacing*(float)i);
+                bookshelf.add(AABB(backwallc + shelf_spacing*(float)i, backwallc + shelf + shelf_spacing*(float)i));
             }
-            g.insertBox(bookc, bookc+bookd);
+            bookshelf.add(AABB(bookc, bookc+bookd));
 
-
+            return bookshelf;
             // g.insertBox(lfwc, lfwc+lfwd);
             // g.insertBox(ufwc, ufwc+ufwd);
             // g.insertBox(mfwc, mfwc+mfwd);
@@ -400,22 +412,23 @@ namespace GVP
             // g.insertBox(mswc, mswc+mswd);
         }
 
-        void addTable(DenseGrid &g)
+        Object getTable()
         {
             Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
             Vector3f tc(1.7, 1.4, 0.9); //table corner
             Vector3f tcf(1.7, 1.4, 0.0); //table corner at floor
             Vector3f tld(.033, 0.033, tc.z); //table leg dims
-
-
-            g.insertBox(tc, tc+td);
-            g.insertBox(tcf, tcf+tld);
-            g.insertBox(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
-                        Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld);
-            g.insertBox(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
-                        Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld);
-            g.insertBox(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
-                        Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld);
+            
+            Object table;
+            table.add(AABB(tc, tc+td));
+            table.add(AABB(tcf, tcf+tld));
+            table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+                           Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld));
+            table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+                           Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld));
+            table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+                           Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld));
+            return table;
 
         }
 
