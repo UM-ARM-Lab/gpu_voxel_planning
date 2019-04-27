@@ -3,8 +3,6 @@
 
 #include "path_utils.hpp"
 #include "robot_model.hpp"
-#include <arc_utilities/path_utils.hpp>
-
 
 
 namespace GVP

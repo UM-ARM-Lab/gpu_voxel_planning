@@ -233,6 +233,14 @@ add_library(victor_halton_roadmap
   src/strategies/victor_halton_roadmap.cpp)
 
 
+add_library(voxelgrid_library
+  src/maps/prob_map.cpp
+  src/maps/distance_map.cpp
+  )
+target_link_libraries(voxelgrid_library
+  ${EXTERN_LIBS}
+  )
+
 
 set(Planning_SOURCES
   src/scenarios/scenarios.cpp
@@ -243,7 +251,6 @@ set(Planning_SOURCES
   # src/strategies/ompl_strategies.cpp                     #Removed due to long compilation time
   # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
   src/path_utils.cpp
-  src/maps/prob_map.cpp
   )
 
 add_library(planning_library
@@ -255,6 +262,7 @@ add_library(planning_library
 #   )
 target_link_libraries(planning_library
   ${EXTERN_LIBS}
+  voxelgrid_library
   )
 
 
@@ -425,11 +433,13 @@ target_link_libraries(wip_BTP
 
 catkin_add_gtest(test_path_utils tests/test_path_utils.cpp)
 target_link_libraries(test_path_utils
-  victor_model
-  victor_validator
-  victor_planning
+  # victor_model
+  # victor_validator
+  # victor_planning
   ${EXTERN_LIBS}
   ${GTEST_LIBRARIES}
+  planning_library
+  victor_halton_roadmap
   )
 
 
@@ -438,4 +448,5 @@ catkin_add_gtest(test_GVP
   src/path_utils.cpp)
 target_link_libraries(test_GVP
   ${EXTERN_LIBS}
+  voxelgrid_library
 )

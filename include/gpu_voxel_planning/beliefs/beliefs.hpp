@@ -2,6 +2,7 @@
 #define GVP_BELIEFS_HPP
 #include "gpu_voxel_rviz_visualization.hpp"
 #include "obstacles/obstacles.hpp"
+#include <random>
 
 namespace GVP
 {

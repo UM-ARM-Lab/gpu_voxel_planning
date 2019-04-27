@@ -1,15 +1,14 @@
 #ifndef GPU_VOXEL_RVIZ_VISUALIZATION_HPP
 #define GPU_VOXEL_RVIZ_VISUALIZATION_HPP
 
+#include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
+
 #include "maps/prob_map.hpp"
 // #include "state.hpp"
 // #include "scenarios.hpp"
-#include <ros/ros.h>
 #include "urdf_model.hpp"
 #include "path_utils_addons.hpp"
-// #include <graph_planner/increasing_density_halton.hpp>
-// #include "strategies/graph_search_strategies.hpp"
 #include "strategies/victor_selective_densification.hpp"
 
 inline visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,

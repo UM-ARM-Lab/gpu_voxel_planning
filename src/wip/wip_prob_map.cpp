@@ -123,10 +123,7 @@ void testDistanceGrid()
                                                           VOXEL_SIDE_LENGTH/2));
     g1.insertPointCloud(box1, PROB_OCCUPIED);
     dg.mergeOccupied(&g1);
-    dg.parallelBanding3D(1, 1, 1, PBA_DEFAULT_M1_BLOCK_SIZE,
-                         PBA_DEFAULT_M2_BLOCK_SIZE,
-                         PBA_DEFAULT_M3_BLOCK_SIZE, 1);
-    
+    dg.computeDistances();
 
     PointCloud box2(geometry_generation::createBoxOfPoints(Vector3f(1.0,0.8,0.5),
                                                            Vector3f(2.0,1.0,0.7),

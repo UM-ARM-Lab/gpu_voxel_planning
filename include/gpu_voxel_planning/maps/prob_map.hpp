@@ -10,24 +10,31 @@
 #define VOXEL_SIDE_LENGTH 0.02
 
 
-class VoxelGrid
-{
-public:
-    
-};
+
+class DenseGrid;
 
 
 /***************************
  *   Sparse Grid
  ****************************/
-class SparseGrid: public gpu_voxels::voxellist::ProbVoxelList
+class SparseGrid: private gpu_voxels::voxellist::ProbVoxelList
 {
 public:
     SparseGrid();
 
-    SparseGrid(const gpu_voxels::voxelmap::ProbVoxelMap &other);
+    SparseGrid(const DenseGrid &other);
 
-    SparseGrid& operator=(const gpu_voxels::voxelmap::ProbVoxelMap &other);
+    const gpu_voxels::voxellist::ProbVoxelList* getProbVoxelList() const;
+
+    SparseGrid& operator=(const DenseGrid &other);
+
+    void merge(const DenseGrid* other);
+
+    float getVoxelSideLength() const;
+
+    uint64_t serializeSelf(std::vector<uint8_t>& buffer) const;
+    
+    bool deserializeSelf(std::vector<uint8_t>& buffer, uint64_t &buffer_index);
 };
 
 
@@ -37,7 +44,7 @@ public:
  *   Dense Grid
  ****************************/
 
-class DenseGrid : public gpu_voxels::voxelmap::ProbVoxelMap
+class DenseGrid : private gpu_voxels::voxelmap::ProbVoxelMap
 {
 public:
     DenseGrid();
@@ -46,11 +53,47 @@ public:
 
     DenseGrid(const SparseGrid &other);
 
+    const gpu_voxels::voxelmap::ProbVoxelMap* getProbVoxelMap() const;
+
     DenseGrid& operator=(const DenseGrid &other);
 
     void insertBox(const Vector3f &corner_min, const Vector3f &corner_max);
 
     void copyRandomOccupiedElement(DenseGrid& to) const;
+
+    bool overlapsWith(const DenseGrid* other, float coll_threshold = 1.0) const;
+
+    size_t collideWith(const DenseGrid* map);
+
+    void subtract(const DenseGrid *other);
+
+    void add(const DenseGrid *other);
+
+    void copy(const DenseGrid *other);
+
+    void merge(const SparseGrid *other);
+
+    size_t countOccupied() const;
+    
+    void copyIthOccupied(const DenseGrid* other, unsigned long copy_index) const;
+
+    void insertMetaPointCloud(const MetaPointCloud &meta_point_cloud, BitVoxelMeaning voxel_meaning);
+
+    void clearMap();
+
+    void insertPointCloud(const std::vector<Vector3f> &point_cloud, const BitVoxelMeaning voxelmeaning);
+
+    void insertPointCloud(const PointCloud &pointcloud, const BitVoxelMeaning voxel_meaning);
+
+    std::vector<Vector3f> getOccupiedCenters() const;
+
+    float getVoxelSideLength() const;
+
+    Vector3ui getDimensions() const;
+
+    bool writeToDisk(const std::string path);
+
+    bool readFromDisk(const std::string path);
 };
 
 
