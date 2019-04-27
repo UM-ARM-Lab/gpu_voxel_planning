@@ -71,6 +71,7 @@ namespace GVP
             {
                 aabb.shift(dx);
             }
+            remakeGrid();
         }
 
         void project(DistanceGrid& dg)

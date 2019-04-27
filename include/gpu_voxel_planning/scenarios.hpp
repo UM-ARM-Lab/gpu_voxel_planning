@@ -27,8 +27,8 @@ namespace GVP
 
         Scenario(){}
     };
-    
 
+    
     class SimulationScenario : public Scenario
     {
     public:
@@ -128,11 +128,6 @@ namespace GVP
 
         Object getSlottedWall();
     };
-
-
-
-
-
 
 
 

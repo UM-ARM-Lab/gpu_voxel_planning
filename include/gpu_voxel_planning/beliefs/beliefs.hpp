@@ -33,6 +33,36 @@ namespace GVP
         double sum = 0;
 
     public:
+        ObstacleBelief()
+        {}
+        
+        ObstacleBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
+        {
+            // int num_samples = 100;
+            // std::mt19937 rng;
+            // std::normal_distribution<double> offset(0, noise);
+            // for(int i=0; i<num_samples; i++)
+            // {
+            //     ObstacleConfiguration sample = oc;
+            //     for(auto& object: sample.obstacles)
+            //     {
+            //         std::cout << "shifting\n";
+            //         object.shift(Vector3f(offset(rng) + bias[0],
+            //                               offset(rng) + bias[1],
+            //                               offset(rng) + bias[2]));
+            //     }
+            //     addElem(sample, 1.0);
+            // }
+            ObstacleConfiguration sample = oc;
+            for(auto& object: sample.obstacles)
+            {
+                std::cout << "shifting\n";
+                object.shift(Vector3f(0.1,0.1,0.1));
+            }
+
+            addElem(sample, 1.0);
+        }
+        
         void addElem(ObstacleConfiguration obs, double weight)
         {
             particles.push_back(obs);

@@ -140,31 +140,38 @@ void testDistanceGrid()
 
 void obstacleBelief(GpuVoxelRvizVisualizer& viz)
 {
-    ObstacleBelief bel;
-    {
-        ObstacleConfiguration oc;
-        Object object;
-        object.add(AABB(Vector3f(1.7, 1.4, 0.9), Vector3f(2.4, 2.4, .925)));
-        oc.add(object);
-        oc.remakeGrid();
-        bel.addElem(oc, 1.0);
-    }
-    {
-        ObstacleConfiguration oc;
-        Object object;
-        object.add(AABB(Vector3f(1.7, 1.4, 1.0), Vector3f(2.4, 2.4, 1.025)));
-        oc.add(object);
-        bel.addElem(oc, 1.0);
-    }
-    {
-        ObstacleConfiguration oc;
-        Object object;
-        object.add(AABB(Vector3f(1.8, 1.4, 1.0), Vector3f(2.5, 2.4, 1.025)));
-        oc.add(object);
-        bel.addElem(oc, 1.0);
-    }
+    TableWithBox scenario(true, true, false);
+    std::cout << "num obstacles: " << scenario.unknown_obstacles.obstacles.size() << "\n";
+    ObstacleBelief bel(scenario.unknown_obstacles, 0.1, std::vector<double>{0,0,0});
 
     bel.viz(viz);
+
+    // return;
+    // ObstacleBelief bel;
+    // {
+    //     ObstacleConfiguration oc;
+    //     Object object;
+    //     object.add(AABB(Vector3f(1.7, 1.4, 0.9), Vector3f(2.4, 2.4, .925)));
+    //     oc.add(object);
+    //     oc.remakeGrid();
+    //     bel.addElem(oc, 1.0);
+    // }
+    // {
+    //     ObstacleConfiguration oc;
+    //     Object object;
+    //     object.add(AABB(Vector3f(1.7, 1.4, 1.0), Vector3f(2.4, 2.4, 1.025)));
+    //     oc.add(object);
+    //     bel.addElem(oc, 1.0);
+    // }
+    // {
+    //     ObstacleConfiguration oc;
+    //     Object object;
+    //     object.add(AABB(Vector3f(1.8, 1.4, 1.0), Vector3f(2.5, 2.4, 1.025)));
+    //     oc.add(object);
+    //     bel.addElem(oc, 1.0);
+    // }
+
+    // bel.viz(viz);
 }
 
 
