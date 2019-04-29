@@ -223,7 +223,6 @@ int main(int argc, char* argv[])
     tester.attemptStrategy(strat);
     strat.saveToFile();
 
-    viz.vizEEGraph(strat.graph);
     
     PROFILE_PRINT_SUMMARY_FOR_ALL();
     std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();

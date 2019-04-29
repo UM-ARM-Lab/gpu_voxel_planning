@@ -241,6 +241,12 @@ target_link_libraries(voxelgrid_library
   ${EXTERN_LIBS}
   )
 
+add_library(gpu_voxels_viz
+  src/gpu_voxel_rviz_visualization.cpp)
+target_link_libraries(gpu_voxels_viz
+  voxelgrid_library
+  )
+
 
 set(Planning_SOURCES
   src/scenarios/scenarios.cpp
@@ -263,6 +269,15 @@ add_library(planning_library
 target_link_libraries(planning_library
   ${EXTERN_LIBS}
   voxelgrid_library
+  victor_halton_roadmap
+  gpu_voxels_viz
+  )
+
+add_executable(compile_time
+  src/compile_time.cpp
+  )
+target_link_libraries(compile_time
+  planning_library
   )
 
 
@@ -302,7 +317,6 @@ target_link_libraries(wip_prob_map
 
 add_executable(wip_BTP
   src/wip_BTP.cpp)
-
 target_link_libraries(wip_BTP
   # ${EXTERN_LIBS}
   planning_library
