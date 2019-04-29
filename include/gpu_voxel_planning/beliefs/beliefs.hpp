@@ -38,29 +38,21 @@ namespace GVP
         
         ObstacleBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
         {
-            // int num_samples = 100;
-            // std::mt19937 rng;
-            // std::normal_distribution<double> offset(0, noise);
-            // for(int i=0; i<num_samples; i++)
-            // {
-            //     ObstacleConfiguration sample = oc;
-            //     for(auto& object: sample.obstacles)
-            //     {
-            //         std::cout << "shifting\n";
-            //         object.shift(Vector3f(offset(rng) + bias[0],
-            //                               offset(rng) + bias[1],
-            //                               offset(rng) + bias[2]));
-            //     }
-            //     addElem(sample, 1.0);
-            // }
-            ObstacleConfiguration sample = oc;
-            for(auto& object: sample.obstacles)
+            int num_samples = 100;
+            std::mt19937 rng;
+            std::normal_distribution<double> offset(0, noise);
+            for(int i=0; i<num_samples; i++)
             {
-                std::cout << "shifting\n";
-                object.shift(Vector3f(0.1,0.1,0.1));
+                ObstacleConfiguration sample = oc;
+                for(auto& object: sample.obstacles)
+                {
+                    object.shift(Vector3f(offset(rng) + bias[0],
+                                          offset(rng) + bias[1],
+                                          offset(rng) + bias[2]));
+                }
+                sample.remakeGrid();
+                addElem(sample, 1.0);
             }
-
-            addElem(sample, 1.0);
         }
         
         void addElem(ObstacleConfiguration obs, double weight)
@@ -115,8 +107,8 @@ namespace GVP
         {
             for(int i=0; i<particles.size(); i++)
             {
-                double alpha = std::max(weights[i]/sum, 1.0/255);
-                std::string name = "particle_belief_" + std::to_string(i);
+                double alpha = std::max(weights[i]/sum, 1.0/10);
+                std::string name = "belief_particle_" + std::to_string(i);
                 viz.vizGrid(particles[i].occupied, name, makeColor(1.0, 0, 0, alpha));
             }
         }

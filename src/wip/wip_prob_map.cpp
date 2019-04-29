@@ -142,6 +142,7 @@ void obstacleBelief(GpuVoxelRvizVisualizer& viz)
 {
     TableWithBox scenario(true, true, false);
     std::cout << "num obstacles: " << scenario.unknown_obstacles.obstacles.size() << "\n";
+    viz.vizGrid(scenario.unknown_obstacles.occupied, "unknown_base", makeColor(0, 0, 0, 1.0));
     ObstacleBelief bel(scenario.unknown_obstacles, 0.1, std::vector<double>{0,0,0});
 
     bel.viz(viz);
