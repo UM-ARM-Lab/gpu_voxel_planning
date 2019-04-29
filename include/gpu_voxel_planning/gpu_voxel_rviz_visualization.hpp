@@ -9,7 +9,7 @@
 // #include "scenarios.hpp"
 #include "urdf_model.hpp"
 #include "path_utils_addons.hpp"
-#include "strategies/victor_selective_densification.hpp"
+// #include "strategies/victor_selective_densification.hpp"
 
 inline visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,
                                                      const std::string& global_frame,
@@ -93,7 +93,7 @@ inline visualization_msgs::MarkerArray visualize3DPath(const std::vector<Eigen::
 
 
 
-static inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double a = 1.0)
+inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double a = 1.0)
 {
     std_msgs::ColorRGBA color;
     color.r = r;     color.g = g;    color.b = b;     color.a = a;
@@ -150,82 +150,82 @@ public:
         grid_pub.publish(visualizeDenseGrid(grid, global_frame, name, color));
     }
 
-    void vizEEGraph(const HaltonGraph &g)
-    {
-        visualization_msgs::MarkerArray marker_array;
-        int id = 0;
-        for(const auto n:g.getNodes())
-        {
-            for(const auto e:n.getOutEdges())
-            {
-                if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
-                {
-                    continue;
-                }
-                std_msgs::ColorRGBA color = makeColor(0.0, 0.0, 0.0);
-                std::string ns = "valid";
-                if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
-                {
-                    color = makeColor(1.0, 0, 0);
-                    ns = "invalid";
-                }
+    // void vizEEGraph(const HaltonGraph &g)
+    // {
+    //     visualization_msgs::MarkerArray marker_array;
+    //     int id = 0;
+    //     for(const auto n:g.getNodes())
+    //     {
+    //         for(const auto e:n.getOutEdges())
+    //         {
+    //             if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
+    //             {
+    //                 continue;
+    //             }
+    //             std_msgs::ColorRGBA color = makeColor(0.0, 0.0, 0.0);
+    //             std::string ns = "valid";
+    //             if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
+    //             {
+    //                 color = makeColor(1.0, 0, 0);
+    //                 ns = "invalid";
+    //             }
 
                 
-                GVP::VictorRightArmConfig q_start(g.getNode(e.getFromIndex()).getValue());
-                GVP::VictorRightArmConfig q_goal(g.getNode(e.getToIndex()).getValue());
+    //             GVP::VictorRightArmConfig q_start(g.getNode(e.getFromIndex()).getValue());
+    //             GVP::VictorRightArmConfig q_goal(g.getNode(e.getToIndex()).getValue());
 
-                GVP::Path edge_config = interpolate(q_start, q_goal, 0.01);
+    //             GVP::Path edge_config = interpolate(q_start, q_goal, 0.01);
                 
-                std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(edge_config);
+    //             std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(edge_config);
 
-                auto arr = visualize3DPath(path_3d, global_frame, ns, color);
-                arr.markers[0].id = id++;
-                marker_array.markers.push_back(arr.markers[0]);
-            }
-        }
-        ee_path_pub.publish(marker_array);
-    }
+    //             auto arr = visualize3DPath(path_3d, global_frame, ns, color);
+    //             arr.markers[0].id = id++;
+    //             marker_array.markers.push_back(arr.markers[0]);
+    //         }
+    //     }
+    //     ee_path_pub.publish(marker_array);
+    // }
 
     
-    void vizEESDGraph(const SDRoadmap &g)
-    {
-        visualization_msgs::MarkerArray marker_array;
-        int id = 0;
-        for(const auto n:g.getNodes())
-        {
-            // if(DepthNode(n.getValue()).depth != depth)
-            // {
-            //     continue;
-            // }
-            for(const auto e:n.getOutEdges())
-            {
-                if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
-                {
-                    continue;
-                }
-                std_msgs::ColorRGBA color = makeColor(0.0, 0.0, 0.0);
-                std::string ns = "valid";
-                if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
-                {
-                    color = makeColor(1.0, 0, 0);
-                    ns = "invalid";
-                }
+    // void vizEESDGraph(const SDRoadmap &g)
+    // {
+    //     visualization_msgs::MarkerArray marker_array;
+    //     int id = 0;
+    //     for(const auto n:g.getNodes())
+    //     {
+    //         // if(DepthNode(n.getValue()).depth != depth)
+    //         // {
+    //         //     continue;
+    //         // }
+    //         for(const auto e:n.getOutEdges())
+    //         {
+    //             if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
+    //             {
+    //                 continue;
+    //             }
+    //             std_msgs::ColorRGBA color = makeColor(0.0, 0.0, 0.0);
+    //             std::string ns = "valid";
+    //             if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
+    //             {
+    //                 color = makeColor(1.0, 0, 0);
+    //                 ns = "invalid";
+    //             }
 
                 
-                GVP::VictorRightArmConfig q_start(g.getNodeValue(e.getFromIndex()).q);
-                GVP::VictorRightArmConfig q_goal(g.getNodeValue(e.getToIndex()).q);
+    //             GVP::VictorRightArmConfig q_start(g.getNodeValue(e.getFromIndex()).q);
+    //             GVP::VictorRightArmConfig q_goal(g.getNodeValue(e.getToIndex()).q);
 
-                GVP::Path edge_config = interpolate(q_start, q_goal, 0.01);
+    //             GVP::Path edge_config = interpolate(q_start, q_goal, 0.01);
                 
-                std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(edge_config);
+    //             std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(edge_config);
 
-                auto arr = visualize3DPath(path_3d, global_frame, ns, color);
-                arr.markers[0].id = id++;
-                marker_array.markers.push_back(arr.markers[0]);
-            }
-        }
-        ee_path_pub.publish(marker_array);
-    }
+    //             auto arr = visualize3DPath(path_3d, global_frame, ns, color);
+    //             arr.markers[0].id = id++;
+    //             marker_array.markers.push_back(arr.markers[0]);
+    //         }
+    //     }
+    //     ee_path_pub.publish(marker_array);
+    // }
 
     
 
