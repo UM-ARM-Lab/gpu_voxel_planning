@@ -97,11 +97,12 @@ namespace GVP
         
         bool move(const VictorRightArmConfig &c, const DenseGrid &true_world)
         {
+            PROFILE_START("simulation_state_move");
             robot.set(c.asMap());
             if(robot.occupied_space.overlapsWith(&true_world))
             {
                 bel->updateCollisionSpace(robot, true_world);
-                // addChs(true_world);
+
                 robot.set(current_config);
                 return false;
             }
@@ -110,6 +111,7 @@ namespace GVP
             PROFILE_START("Update belief from free obs");
             updateFreeSpace(robot.occupied_space);
             PROFILE_RECORD("Update belief from free obs");
+            PROFILE_RECORD("simulation_state_move");
             return true;
         }
     };

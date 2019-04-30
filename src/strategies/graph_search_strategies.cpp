@@ -152,6 +152,9 @@ namespace GVP
             {
                 return EigenHelpers::Distance(q1, q2);
             };
+
+        PROFILE_START("lazysp_successful");
+        PROFILE_START("lazysp_no_path_found");
         
         auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
             graph, start, goal, heuristic_fn, eval_fn);
@@ -161,6 +164,16 @@ namespace GVP
         }
         PROFILE_RECORD_DOUBLE("lazySP path cost ", result.second);
         std::cout << "LazySP path cost " << result.second << "\n";
+
+        if(result.second < std::numeric_limits<double>::max())
+        {
+            PROFILE_RECORD("lazysp_successful");
+        }
+        else
+        {
+            PROFILE_RECORD("lazysp_no_path_found");
+        }
+        
         return result.first;
     }
 
@@ -344,7 +357,7 @@ namespace GVP
     std::vector<NodeIndex> HOPGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
                                                 GpuVoxelRvizVisualizer& viz)
     {
-        
+        PROFILE_START("HOP_plan");
         std::map<NodeIndex, double> actions;
         using pair_type = decltype(actions)::value_type;
         Roadmap orig_graph = graph;
@@ -413,6 +426,7 @@ namespace GVP
         auto pr = std::max_element(actions.begin(), actions.end(),
                                    [](const pair_type &p1, const pair_type &p2)
                                    {return p1.second < p2.second;});
+        PROFILE_RECORD("HOP_plan");
         return std::vector<NodeIndex>{start, pr->first};
 
     }

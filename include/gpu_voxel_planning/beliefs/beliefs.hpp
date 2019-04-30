@@ -108,6 +108,7 @@ namespace GVP
 
         void updateFreeSpace(const DenseGrid &new_free) override
         {
+            PROFILE_START("Obstacle_belief_update_free");
             for(int i=0; i<particles.size(); i++)
             {
                 if(weights[i] == 0)
@@ -120,18 +121,19 @@ namespace GVP
                 }
             }
             recomputeWeights();
+            PROFILE_RECORD("Obstacle_belief_update_free");
         }
 
         void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
         {
+            PROFILE_START("Obstacle_belief_update_collision");
             DistanceGrid dg;
             dg.mergeOccupied(&robot.occupied_space);
             for(auto& particle: particles)
             {
                 particle.project(dg);
             }
-            
-            //Not implemented yet
+            PROFILE_RECORD("Obstacle_belief_update_collision");
         }
 
         DenseGrid sampleState() const override
