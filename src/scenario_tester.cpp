@@ -14,7 +14,9 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
             scenario.viz(viz);
             return false;
         }
+        PROFILE_START("scenario_viz");
         scenario.viz(viz);
+        PROFILE_START("scenario_record");
         // ros::Duration(0.01).sleep();
         ros::Duration(0.001).sleep();
     }

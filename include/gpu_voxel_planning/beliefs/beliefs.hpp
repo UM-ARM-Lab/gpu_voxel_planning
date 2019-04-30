@@ -124,6 +124,13 @@ namespace GVP
 
         void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
         {
+            DistanceGrid dg;
+            dg.mergeOccupied(&robot.occupied_space);
+            for(auto& particle: particles)
+            {
+                particle.project(dg);
+            }
+            
             //Not implemented yet
         }
 

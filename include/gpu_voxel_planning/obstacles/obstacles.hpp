@@ -76,7 +76,13 @@ namespace GVP
 
         void project(DistanceGrid& dg)
         {
-            throw std::logic_error("Not implemented");
+            auto result = dg.getClosestObstacle(&occupied);
+            Vector3i on_self = result.first;
+            Vector3i on_distance_grid = Vector3i(result.second.getObstacle());
+            Vector3i diff_i = on_distance_grid - on_self;
+            Vector3f diff(diff_i.x, diff_i.y, diff_i.z);
+            std::cout << "Shifting box by " << diff * VOXEL_SIDE_LENGTH << "\n";
+            shift(diff*VOXEL_SIDE_LENGTH);
         }
     };
 
@@ -99,6 +105,29 @@ namespace GVP
         void add(const Object& object)
         {
             obstacles.push_back(object);
+            remakeGrid();
+        }
+
+        void project(DistanceGrid& dg)
+        {
+            if(obstacles.size()==0)
+            {
+                std::cout << "No projection because no obstacles";
+                return;
+            }
+            
+            int closest_ind = -1;
+            double closest_dist = std::numeric_limits<double>::infinity();
+            for(int i=0; i<obstacles.size(); i++)
+            {
+                double d = dg.getClosestObstacleDistance(&obstacles[i].occupied);
+                if(d < closest_dist)
+                {
+                    d = closest_dist;
+                    closest_ind = i;
+                }
+            }
+            obstacles[closest_ind].project(dg);
             remakeGrid();
         }
     };

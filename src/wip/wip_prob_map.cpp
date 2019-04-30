@@ -147,6 +147,13 @@ void obstacleBelief(GpuVoxelRvizVisualizer& viz)
     ObstacleBelief bel(scenario.unknown_obstacles, 0.1, std::vector<double>{0,0,0});
 
     bel.viz(viz);
+    DistanceGrid dg;
+    viz.vizGrid(scenario.getState().robot.occupied_space, "test_robot", makeColor(0,1,0,1));
+    std::cout << "Projecting\n";
+    bel.updateCollisionSpace(scenario.getState().robot, DenseGrid());
+    bel.viz(viz);
+
+    
 
     // return;
     // ObstacleBelief bel;
