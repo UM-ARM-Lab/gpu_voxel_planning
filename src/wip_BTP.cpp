@@ -71,18 +71,20 @@ int main(int argc, char* argv[])
     // Roadmap rm;
     // rm.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
 
+    BeliefParams bp(BeliefType::CHS);
+    // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
+
 
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    TableWithBox scenario(true, true, false);
+    TableWithBox scenario(bp, true, true, false);
     // SlottedWall scenario(true);
     // Bookshelf scenario(true);
 
     // OptimisticGraphSearch strat;
     HOPGraphSearch strat;
     // ParetoCostGraphSearch strat(1.0);
-    
     
     
     SimulationScenarioTester tester(scenario, n);

@@ -140,7 +140,8 @@ void testDistanceGrid()
 
 void obstacleBelief(GpuVoxelRvizVisualizer& viz)
 {
-    TableWithBox scenario(true, true, false);
+    BeliefParams bp(BeliefType::CHS);
+    TableWithBox scenario(bp, true, true, false);
     std::cout << "num obstacles: " << scenario.unknown_obstacles.obstacles.size() << "\n";
     viz.vizGrid(scenario.unknown_obstacles.occupied, "unknown_base", makeColor(0, 0, 0, 1.0));
     ObstacleBelief bel(scenario.unknown_obstacles, 0.1, std::vector<double>{0,0,0});
@@ -199,10 +200,11 @@ int main(int argc, char* argv[])
     return 1;
 
 
+    BeliefParams bp(BeliefType::CHS);
 
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    TableWithBox scenario(true, true, true);
+    TableWithBox scenario(bp, true, true, true);
     // SlottedWall scenario(true);
     // Bookshelf scenario(true);
 

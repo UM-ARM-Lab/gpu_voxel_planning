@@ -15,6 +15,10 @@ namespace GVP
         double noise;
 
         BeliefParams() : belief_type(BeliefType::CHS), bias(std::vector<double>{0,0,0}), noise(0) {};
+
+        BeliefParams(BeliefType bt, std::vector<double> bias = std::vector<double>{0,0,0},
+            double noise = 0) :
+            belief_type(bt), bias(bias), noise(noise) {}
     };
     
     

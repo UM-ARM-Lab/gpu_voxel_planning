@@ -6,12 +6,14 @@ SimulationScenario::SimulationScenario() : s(victor) {}
 
 void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp)
 {
-    if(bp.belief_type = BeliefType::CHS)
+    if(bp.belief_type == BeliefType::CHS)
     {
+        std::cout << "Using CHS belief\n";
         s.bel = std::make_unique<ChsBelief>();
     }
-    else if(bp.belief_type = BeliefType::Obstacle)
+    else if(bp.belief_type == BeliefType::Obstacle)
     {
+        std::cout << "Using Obstacle belief\n";
         s.bel = std::make_unique<ObstacleBelief>(unknown_obstacles, bp.noise, bp.bias);
     }
 }
@@ -74,7 +76,7 @@ void SimulationScenario::combineObstacles()
 /****************************************
  **         Table With Box
  ****************************************/
-TableWithBox::TableWithBox(bool table_known, bool visible_cave_known, bool full_cave_known) :
+TableWithBox::TableWithBox(BeliefParams bp, bool table_known, bool visible_cave_known, bool full_cave_known) :
     name(std::string("Table_with_Box_") +
          "table_" + (table_known ? "" : "un") + "known_" + 
          "visible_cave_" + (visible_cave_known ? "" : "un" ) + "known_" + 
@@ -94,7 +96,7 @@ TableWithBox::TableWithBox(bool table_known, bool visible_cave_known, bool full_
     combineObstacles();
 
 
-    setPrior(unknown_obstacles, BeliefParams());
+    setPrior(unknown_obstacles, bp);
 
     for(auto& ob: known_obstacles.obstacles)
     {

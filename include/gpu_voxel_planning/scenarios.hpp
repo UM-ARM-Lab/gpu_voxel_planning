@@ -95,7 +95,8 @@ namespace GVP
         Vector3f cavesideoffset;
         const std::string name;
 
-        TableWithBox(bool table_known=true, bool visible_cave_known=false, bool full_cave_known=false);
+        TableWithBox(BeliefParams bp, bool table_known=true, bool visible_cave_known=true,
+                     bool full_cave_known=false);
 
         virtual std::string getName() const override
         {

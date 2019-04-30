@@ -362,7 +362,7 @@ namespace GVP
 
             VictorRightArmConfig goal_config(graph.getNode(goal).getValue());
             sampled_state.robot.set(goal_config.asMap());
-            if(sampled_state.robot.occupied_space.overlapsWith(&s.known_obstacles))
+            if(sampled_state.robot.occupied_space.overlapsWith(&sampled_state.known_obstacles))
             {
                 continue;
             }
