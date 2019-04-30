@@ -107,7 +107,9 @@ namespace GVP
             }
 
             updateConfig(c.asMap());
+            PROFILE_START("Update belief from free obs");
             updateFreeSpace(robot.occupied_space);
+            PROFILE_RECORD("Update belief from free obs");
             return true;
         }
     };

@@ -150,6 +150,10 @@ namespace GVP
             for(int i=0; i<particles.size(); i++)
             {
                 double alpha = std::max(weights[i]/sum, 1.0/10);
+                if(weights[i] == 0)
+                {
+                    alpha = 0;
+                }
                 std::string name = "belief_particle_" + std::to_string(i);
                 viz.vizGrid(particles[i].occupied, name, makeColor(1.0, 0, 0, alpha));
             }

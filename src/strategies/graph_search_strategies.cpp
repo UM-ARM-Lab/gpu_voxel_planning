@@ -352,13 +352,19 @@ namespace GVP
         for(int i=0; i<num_samples; i++)
         {
             // std::cout << "Checking sample " << i << "\n\n";
+            PROFILE_START("Copy_graph");
             graph = orig_graph;
-            
+            PROFILE_RECORD("Copy_graph");
+
+            PROFILE_START("Sample_state");
             State sampled_state(s.robot);
             sampled_state.robot_self_collide_obstacles = s.robot_self_collide_obstacles;
             sampled_state.known_obstacles = s.bel->sampleState();
             sampled_state.known_obstacles.add(&s.known_obstacles);
+            PROFILE_RECORD("Sample_state");
+            PROFILE_START("Viz_sample");
             viz.vizGrid(sampled_state.known_obstacles, "sampled_world", makeColor(0, 0, 1.0, 1.0));
+            PROFILE_RECORD("Viz_sample");
 
             VictorRightArmConfig goal_config(graph.getNode(goal).getValue());
             sampled_state.robot.set(goal_config.asMap());
@@ -374,8 +380,10 @@ namespace GVP
                 continue;
             }
 
+            PROFILE_START("Viz_sample_ee_path");
             viz.vizEEPath(interpolate(s.getCurConfig(), graph.getNode(result[1]).getValue(), 0.1),
                           "sampledPath");
+            PROFILE_RECORD("Viz_sample_ee_path");
 
             NodeIndex a = result[1];
             // std::cout << "Best action: " << a << "\n";
@@ -385,8 +393,10 @@ namespace GVP
             }
             actions[a] += 1.0;
 
+            PROFILE_START("Viz sample sv");
             DenseGrid sv = getSweptVolume(s, graph.getEdge(start, a));
             viz.vizGrid(sv, "swept volume", makeColor(1, 1, 0, 0.7));
+            PROFILE_RECORD("Viz sample sv");
             // std::cout << "Edge eval: " << evaluateEdge(graph.getEdge(start, a), sampled_state) << "\n";
             // std::cout << "Edge Check: " << checkEdge(graph.getEdge(start, a), sampled_state) << "\n";
             // arc_helpers::WaitForInput();
