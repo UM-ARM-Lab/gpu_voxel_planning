@@ -6,6 +6,18 @@
 
 namespace GVP
 {
+    enum BeliefType{CHS, IID, Obstacle};
+    
+    struct BeliefParams
+    {
+        BeliefType belief_type;
+        std::vector<double> bias;
+        double noise;
+
+        BeliefParams() : belief_type(BeliefType::CHS), bias(std::vector<double>{0,0,0}), noise(0) {};
+    };
+    
+    
     class Belief
     {
     public:
@@ -20,6 +32,8 @@ namespace GVP
         virtual DenseGrid sampleState() const = 0;
 
         virtual ~Belief() = default;
+
+        virtual std::unique_ptr<Belief> clone() const= 0;
     };
 
 
@@ -54,6 +68,17 @@ namespace GVP
                 addElem(sample, 1.0);
             }
         }
+
+        std::unique_ptr<Belief> clone() const override
+        {
+            std::unique_ptr<ObstacleBelief> b = std::make_unique<ObstacleBelief>();
+            b->particles = particles;
+            b->weights = weights;
+            b->cum_sum = cum_sum;
+            b->sum = sum;
+            return b;
+        }
+
         
         void addElem(ObstacleConfiguration obs, double weight)
         {
@@ -100,6 +125,19 @@ namespace GVP
 
         DenseGrid sampleState() const override
         {
+            std::mt19937 rng;
+            rng.seed(std::random_device()());
+            std::uniform_real_distribution<double> dist(0.0, sum);
+            double r = dist(rng);
+
+            for(int i=0; i<particles.size(); i++)
+            {
+                if(r <= cum_sum[i])
+                {
+                    return particles[i].occupied;
+                }
+            }
+
             //Not implemented yet
         }
 
@@ -133,6 +171,14 @@ namespace GVP
         DenseGrid known_free;
 
     public:
+        std::unique_ptr<Belief> clone() const override
+        {
+            std::unique_ptr<ChsBelief> b = std::make_unique<ChsBelief>();
+            b->known_free = known_free;
+            b->chs = chs;
+            return b;
+        }
+        
         void viz(const GpuVoxelRvizVisualizer& viz) override
         {
             viz.vizChs(chs);

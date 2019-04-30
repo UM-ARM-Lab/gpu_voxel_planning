@@ -351,7 +351,7 @@ namespace GVP
 
         for(int i=0; i<num_samples; i++)
         {
-            std::cout << "Checking sample " << i << "\n\n";
+            // std::cout << "Checking sample " << i << "\n\n";
             graph = orig_graph;
             
             State sampled_state(s.robot);
@@ -378,7 +378,7 @@ namespace GVP
                           "sampledPath");
 
             NodeIndex a = result[1];
-            std::cout << "Best action: " << a << "\n";
+            // std::cout << "Best action: " << a << "\n";
             if(actions.count(a) == 0)
             {
                 actions[a] = 0;
@@ -387,8 +387,8 @@ namespace GVP
 
             DenseGrid sv = getSweptVolume(s, graph.getEdge(start, a));
             viz.vizGrid(sv, "swept volume", makeColor(1, 1, 0, 0.7));
-            std::cout << "Edge eval: " << evaluateEdge(graph.getEdge(start, a), sampled_state) << "\n";
-            std::cout << "Edge Check: " << checkEdge(graph.getEdge(start, a), sampled_state) << "\n";
+            // std::cout << "Edge eval: " << evaluateEdge(graph.getEdge(start, a), sampled_state) << "\n";
+            // std::cout << "Edge Check: " << checkEdge(graph.getEdge(start, a), sampled_state) << "\n";
             // arc_helpers::WaitForInput();
 
         }

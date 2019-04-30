@@ -38,6 +38,7 @@ namespace GVP
         ObstacleConfiguration unknown_obstacles;
         
         SimulationScenario();
+        virtual void setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp);
 
         virtual void validate();
 

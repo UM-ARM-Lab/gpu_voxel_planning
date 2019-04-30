@@ -20,8 +20,7 @@ namespace GVP
 
         State(Robot &robot) : robot(robot)
         {
-            bel = std::make_unique<ChsBelief>();
-        };
+        }
 
         VictorRightArmConfig getCurConfig() const
         {
@@ -94,9 +93,7 @@ namespace GVP
     class SimulationState : public State
     {
     public:
-        SimulationState(Robot &robot) : State(robot)
-        {
-        };
+        SimulationState(Robot& robot) : State(robot) {}
         
         bool move(const VictorRightArmConfig &c, const DenseGrid &true_world)
         {

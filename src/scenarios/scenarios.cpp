@@ -2,8 +2,19 @@
 
 using namespace GVP;
 
-
 SimulationScenario::SimulationScenario() : s(victor) {}
+
+void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp)
+{
+    if(bp.belief_type = BeliefType::CHS)
+    {
+        s.bel = std::make_unique<ChsBelief>();
+    }
+    else if(bp.belief_type = BeliefType::Obstacle)
+    {
+        s.bel = std::make_unique<ObstacleBelief>(unknown_obstacles, bp.noise, bp.bias);
+    }
+}
 
 void SimulationScenario::validate()
 {
@@ -81,6 +92,9 @@ TableWithBox::TableWithBox(bool table_known, bool visible_cave_known, bool full_
     full_cave_known ? known_obstacles.add(cave_back) : unknown_obstacles.add(cave_back);
 
     combineObstacles();
+
+
+    setPrior(unknown_obstacles, BeliefParams());
 
     for(auto& ob: known_obstacles.obstacles)
     {
