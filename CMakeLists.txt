@@ -463,4 +463,5 @@ catkin_add_gtest(test_GVP
 target_link_libraries(test_GVP
   ${EXTERN_LIBS}
   voxelgrid_library
+  planning_library
 )

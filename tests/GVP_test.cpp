@@ -88,16 +88,16 @@ TEST(GVP, dense_grid_copyRandomOccupiedElement)
     }
 }
 
-TEST(GVP, cur_config)
-{
-    GVP::VictorRightArm v;
-    GVP::SimulationState s(v);
-    GVP::VictorRightArmConfig q(std::vector<double>{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7});
-    DenseGrid true_world;
-    s.move(q, true_world);
-    EXPECT_EQ(q, s.getCurConfig()) << "Current config not equal to config of last most";
+// TEST(GVP, cur_config)
+// {
+//     GVP::VictorRightArm v;
+//     GVP::SimulationState s(v);
+//     GVP::VictorRightArmConfig q(std::vector<double>{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7});
+//     DenseGrid true_world;
+//     s.move(q, true_world);
+//     EXPECT_EQ(q, s.getCurConfig()) << "Current config not equal to config of last most";
     
-}
+// }
 
 
 TEST(GVP, CHS_probabilities)
