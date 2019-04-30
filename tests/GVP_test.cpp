@@ -249,7 +249,6 @@ TEST(GVP, test_AABB_projection)
     g.insertBox(Vector3f(1.0, 0.8, 0.5), Vector3f(2.0, 1.0, 0.7));
     DistanceGrid dg;
     dg.mergeOccupied(&g);
-    dg.computeDistances();
 
     ASSERT_NEAR(dg.getClosestObstacleDistance(&ob.grid) * VOXEL_SIDE_LENGTH, 0.3, VOXEL_SIDE_LENGTH + eps) <<
         "Distance not correct before projection";

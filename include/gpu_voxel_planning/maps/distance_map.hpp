@@ -20,6 +20,9 @@
 class DistanceGrid : private gpu_voxels::voxelmap::DistanceVoxelMap
 {
 public:
+    bool ready_for_operations;
+    
+public:
     DistanceGrid();
 
     // DistanceGrid(const DistanceGrid &other) :
@@ -42,6 +45,7 @@ public:
     //     return *this;
     // }
 
+
     void insertBox(const Vector3f &corner_min, const Vector3f &corner_max);
 
     void computeDistances();
@@ -51,6 +55,8 @@ public:
     DistanceVoxel::pba_dist_t getClosestObstacleDistance(const DenseGrid *other);
 
     bool mergeOccupied(const DenseGrid *other);
+
+    void checkReadyForComputation();
 };
 
 
