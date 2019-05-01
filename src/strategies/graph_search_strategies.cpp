@@ -75,7 +75,7 @@ namespace GVP
     std::vector<NodeIndex> GraphSearchStrategy::plan(NodeIndex start, NodeIndex goal, State &s,
                                                      GpuVoxelRvizVisualizer& viz)
     {
-        return lazySp(start, goal, s);
+        return lazySp(start, goal, s, graph);
     }
 
 
@@ -116,10 +116,6 @@ namespace GVP
         return DenseGrid(precomputed_swept_volumes[e_hashed]);
     }
 
-
-
-
-
     bool GraphSearchStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s)
     {
         PROFILE_START("EdgeCheck");
@@ -139,7 +135,8 @@ namespace GVP
         return calculateEdgeWeight(s, e);
     }
 
-    std::vector<NodeIndex> GraphSearchStrategy::lazySp(NodeIndex start, NodeIndex goal, State &s)
+    std::vector<NodeIndex> GraphSearchStrategy::lazySp(NodeIndex start, NodeIndex goal, State &s,
+                                                       Roadmap &rm)
     {
         const auto eval_fn =
             [&] (arc_dijkstras::Graph<std::vector<double>> &g, arc_dijkstras::GraphEdge &e)
@@ -157,7 +154,7 @@ namespace GVP
         PROFILE_START("lazysp_no_path_found");
         
         auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
-            graph, start, goal, heuristic_fn, eval_fn);
+            rm, start, goal, heuristic_fn, eval_fn);
         if(result.second == std::numeric_limits<double>::infinity())
         {
             std::cout << "No path found on graph\n";
@@ -360,14 +357,11 @@ namespace GVP
         PROFILE_START("HOP_plan");
         std::map<NodeIndex, double> actions;
         using pair_type = decltype(actions)::value_type;
-        Roadmap orig_graph = graph;
+        Roadmap graph_cpy = graph;
 
         for(int i=0; i<num_samples; i++)
         {
             // std::cout << "Checking sample " << i << "\n\n";
-            PROFILE_START("Copy_graph");
-            graph = orig_graph;
-            PROFILE_RECORD("Copy_graph");
 
             State sampled_state = s.sample();
             
@@ -382,7 +376,11 @@ namespace GVP
                 continue;
             }
 
-            auto result = lazySp(start, goal, sampled_state);
+            PROFILE_START("Copy_graph");
+            graph_cpy = graph;
+            PROFILE_RECORD("Copy_graph");
+
+            auto result = lazySp(start, goal, sampled_state, graph_cpy);
 
             if(result.size() < 2)
             {
@@ -411,7 +409,6 @@ namespace GVP
             // arc_helpers::WaitForInput();
 
         }
-        graph = orig_graph;
 
         for(auto it: actions)
         {
@@ -456,7 +453,7 @@ namespace GVP
             return false;
         }
 
-        auto path = lazySp(start, goal, s);
+        auto path = lazySp(start, goal, s, graph);
         return path.size() > 0;
     }
 

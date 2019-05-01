@@ -60,7 +60,7 @@ namespace GVP
     protected:
         DenseGrid computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
         void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
-        std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s);
+        std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s, Roadmap &rm);
     };
 
 
