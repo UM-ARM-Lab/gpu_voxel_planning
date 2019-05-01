@@ -186,22 +186,6 @@ namespace GVP
     };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
     class VictorLeftArmAndBase: public Robot
     {

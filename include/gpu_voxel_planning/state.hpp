@@ -23,6 +23,13 @@ namespace GVP
         {
         }
 
+        State(const State& s) : State(s.robot)
+        {
+            robot_self_collide_obstacles = s.robot_self_collide_obstacles;
+            known_obstacles = s.known_obstacles;
+            current_config = s.current_config;
+        }
+
         VictorRightArmConfig getCurConfig() const
         {
             return VictorRightArmConfig(current_config);
@@ -84,11 +91,13 @@ namespace GVP
 
         State sample()
         {
+            PROFILE_START("Sample_state");
             State sampled(robot);
             sampled.robot_self_collide_obstacles = robot_self_collide_obstacles;
             sampled.known_obstacles = bel->sampleState();
             sampled.known_obstacles.add(&known_obstacles);
             return sampled;
+            PROFILE_RECORD("Sample_state");
         }
     };
 

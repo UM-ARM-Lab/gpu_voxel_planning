@@ -52,7 +52,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         PROFILE_RECORD(name + " Planning Time");
 
         viz.vizEEPath(path, "Path Found");
-        std::cout << "path found with " << path.size() << " verts\n";
+        // std::cout << "path found with " << path.size() << " verts\n";
         
         PROFILE_START(name + " Motion Time");
         attemptPath(path);
