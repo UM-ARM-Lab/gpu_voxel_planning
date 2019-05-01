@@ -136,6 +136,29 @@ namespace GVP
                                             GpuVoxelRvizVisualizer& viz) override;
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
     };
+
+
+    class OROGraphSearch : public GraphSearchStrategy
+    {
+    public:
+        int num_samples;
+
+    public:
+        OROGraphSearch() : num_samples(10) {}
+        virtual std::string getName() const override;
+        bool pathExists(NodeIndex start, NodeIndex goal, State &s);
+        std::vector<NodeIndex> getPossibleActions(NodeIndex cur);
+        double simulateTransition(State& state, Roadmap& rm, NodeIndex& cur, NodeIndex next,
+                                  GpuVoxelRvizVisualizer& viz);
+        double rolloutOptimistic(State& state, Roadmap& rm, NodeIndex cur, NodeIndex goal,
+                                 GpuVoxelRvizVisualizer& viz);
+                
+
+        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
+                                            GpuVoxelRvizVisualizer& viz) override;
+        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+        
+    };
 }
 
 #endif

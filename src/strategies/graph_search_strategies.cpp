@@ -431,7 +431,168 @@ namespace GVP
     {
         return "HOP Graph Search";
     }
-    
-    
 
+
+
+    /***********************************
+     **             ORO               **
+     **      Optimistic Rollout       **
+     **********************************/
+    double OROGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    {
+        if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
+        {
+            return std::numeric_limits<double>::infinity();
+        }
+        return e.getWeight();
+    }
+
+    bool OROGraphSearch::pathExists(NodeIndex start, NodeIndex goal, State &s)
+    {
+        VictorRightArmConfig goal_config(graph.getNode(goal).getValue());
+        s.robot.set(goal_config.asMap());
+        if(s.robot.occupied_space.overlapsWith(&s.known_obstacles))
+        {
+            return false;
+        }
+
+        auto path = lazySp(start, goal, s);
+        return path.size() > 0;
+    }
+
+    std::vector<NodeIndex> OROGraphSearch::getPossibleActions(NodeIndex cur)
+    {
+        std::vector<NodeIndex> possible_actions;
+        for(const auto& e: graph.getNode(cur).getOutEdges())
+        {
+            possible_actions.push_back(e.getToIndex());
+        }
+        return possible_actions;
+    }
+
+    double OROGraphSearch::simulateTransition(State& state, Roadmap& rm, NodeIndex& cur, NodeIndex next,
+                                              GpuVoxelRvizVisualizer& viz)
+    {
+        auto& e = rm.getEdge(cur, next);
+        if(checkEdge(e, state))
+        {
+            state.bel->updateFreeSpace(getSweptVolume(state, e));
+            auto q1 = rm.getNode(cur).getValue();
+            auto q2 = rm.getNode(next).getValue();
+            cur = next;
+            return EigenHelpers::Distance(q1, q2);;
+        }
+        
+        VictorRightArmConfig c1(rm.getNode(cur).getValue());
+        VictorRightArmConfig c2(rm.getNode(next).getValue());
+        auto path = interpolate(c1, c2, discretization);
+
+        double d = 0;
+        for(const auto &c: path)
+        {
+            state.robot.set(c.asMap());
+            if(state.robot.occupied_space.overlapsWith(&state.known_obstacles))
+            {
+                state.bel->updateCollisionSpace(state.robot, state.known_obstacles);
+                break;
+            }
+
+            state.bel->updateFreeSpace(state.robot.occupied_space);
+        }
+        
+        return 2*d;
+    }
+
+    double OROGraphSearch::rolloutOptimistic(State& state, Roadmap& rm, NodeIndex cur, NodeIndex goal,
+                                             GpuVoxelRvizVisualizer& viz)
+    {
+        
+    }
+
+    std::vector<NodeIndex> OROGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
+                                                GpuVoxelRvizVisualizer& viz)
+    {
+        PROFILE_START("ORO_plan");
+        std::map<NodeIndex, double> actions;
+        using pair_type = decltype(actions)::value_type;
+        Roadmap orig_graph = graph;
+
+        for(int i=0; i<num_samples; i++)
+        {
+            // std::cout << "Checking sample " << i << "\n\n";
+            PROFILE_START("Copy_graph");
+            graph = orig_graph;
+            PROFILE_RECORD("Copy_graph");
+
+            State sampled_state = s.sample();
+
+
+            PROFILE_START("Viz_sample");
+            viz.vizGrid(sampled_state.known_obstacles, "sampled_world", makeColor(0, 0, 1.0, 1.0));
+            PROFILE_RECORD("Viz_sample");
+
+            if(!pathExists(start, goal, sampled_state))
+            {
+                continue;
+            }
+
+            for(auto initial_action: getPossibleActions(start))
+            {
+                State rollout_state(sampled_state);
+                rollout_state.bel = s.bel->clone();
+                Roadmap rollout_graph = graph;
+                NodeIndex cur = start;
+
+                double rollout_cost = simulateTransition(rollout_state, rollout_graph, cur, initial_action,
+                                                         viz);
+
+                rollout_cost += rolloutOptimistic(rollout_state, rollout_graph, cur, goal, viz);
+
+                if(actions.count(initial_action) == 0)
+                {
+                    actions[initial_action] = 0;
+                }
+                actions[initial_action] += rollout_cost;
+
+            }
+
+            
+            
+
+
+            // PROFILE_START("Viz_sample_ee_path");
+            // viz.vizEEPath(interpolate(s.getCurConfig(), graph.getNode(result[1]).getValue(), 0.1),
+            //               "sampledPath");
+            // PROFILE_RECORD("Viz_sample_ee_path");
+
+
+            // PROFILE_START("Viz sample sv");
+            // DenseGrid sv = getSweptVolume(s, graph.getEdge(start, a));
+            // viz.vizGrid(sv, "swept volume", makeColor(1, 1, 0, 0.7));
+            // PROFILE_RECORD("Viz sample sv");
+            // std::cout << "Edge eval: " << evaluateEdge(graph.getEdge(start, a), sampled_state) << "\n";
+            // std::cout << "Edge Check: " << checkEdge(graph.getEdge(start, a), sampled_state) << "\n";
+            // arc_helpers::WaitForInput();
+
+        }
+        graph = orig_graph;
+
+        for(auto it: actions)
+        {
+            std::cout << it.first << ": " << it.second << "\n";
+        }
+
+
+        auto pr = std::min_element(actions.begin(), actions.end(),
+                                   [](const pair_type &p1, const pair_type &p2)
+                                   {return p1.second < p2.second;});
+        PROFILE_RECORD("ORO_plan");
+        return std::vector<NodeIndex>{start, pr->first};
+
+    }
+
+    std::string OROGraphSearch::getName() const
+    {
+        return "ORO Graph Search";
+    }
 }
