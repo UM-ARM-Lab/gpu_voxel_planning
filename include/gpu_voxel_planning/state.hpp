@@ -4,6 +4,7 @@
 #include "robot_model.hpp"
 #include <stdexcept>
 #include <arc_utilities/timing.hpp>
+#include <arc_utilities/math_helpers.hpp>
 #include "beliefs/beliefs.hpp"
 
 namespace GVP
@@ -93,11 +94,16 @@ namespace GVP
     class SimulationState : public State
     {
     public:
+        double accumulated_cost = 0;
+
+    public:
         SimulationState(Robot& robot) : State(robot) {}
         
         bool move(const VictorRightArmConfig &c, const DenseGrid &true_world)
         {
             PROFILE_START("simulation_state_move");
+            accumulated_cost += EigenHelpers::Distance(VictorRightArmConfig(current_config).asVector(),
+                                                       c.asVector());
             robot.set(c.asMap());
             if(robot.occupied_space.overlapsWith(&true_world))
             {

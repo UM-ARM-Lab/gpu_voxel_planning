@@ -59,7 +59,8 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         PROFILE_RECORD(name + " Motion Time");
 
     }
-    std::cout << "Reached Goal\n";
+    std::cout << "Reached Goal with cost " << scenario.getSimulationState().accumulated_cost << "\n";
+    PROFILE_RECORD_DOUBLE("accumulated_cost", scenario.getSimulationState().accumulated_cost);
     return true;
 }
 
