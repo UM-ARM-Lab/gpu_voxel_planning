@@ -369,12 +369,8 @@ namespace GVP
             graph = orig_graph;
             PROFILE_RECORD("Copy_graph");
 
-            PROFILE_START("Sample_state");
-            State sampled_state(s.robot);
-            sampled_state.robot_self_collide_obstacles = s.robot_self_collide_obstacles;
-            sampled_state.known_obstacles = s.bel->sampleState();
-            sampled_state.known_obstacles.add(&s.known_obstacles);
-            PROFILE_RECORD("Sample_state");
+            State sampled_state = s.sample();
+            
             PROFILE_START("Viz_sample");
             viz.vizGrid(sampled_state.known_obstacles, "sampled_world", makeColor(0, 0, 1.0, 1.0));
             PROFILE_RECORD("Viz_sample");

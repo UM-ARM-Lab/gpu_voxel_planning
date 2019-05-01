@@ -81,6 +81,15 @@ namespace GVP
                 current_config[kv.first] = kv.second;
             }
         }
+
+        State sample()
+        {
+            State sampled(robot);
+            sampled.robot_self_collide_obstacles = robot_self_collide_obstacles;
+            sampled.known_obstacles = bel->sampleState();
+            sampled.known_obstacles.add(&known_obstacles);
+            return sampled;
+        }
     };
 
 
