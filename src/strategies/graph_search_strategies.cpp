@@ -465,6 +465,59 @@ namespace GVP
         return path.size() > 0;
     }
 
+    std::vector<NodeIndex> OROGraphSearch::lazySpForRollout(NodeIndex start, NodeIndex goal, State &s,
+                                                            Roadmap &rm,
+                                                            arc_dijkstras::EvaluatedEdges& additional_invalid)
+    {
+        const auto eval_fn =
+            [&] (const arc_dijkstras::Graph<std::vector<double>> &g, const arc_dijkstras::GraphEdge &e)
+            {
+                auto hashed_edge = arc_dijkstras::getSortedHashable(e);
+                if(additional_invalid.count(hashed_edge))
+                {
+                    return std::numeric_limits<double>::infinity();
+                }
+
+                if(getSweptVolume(s, e).overlapsWith(&s.known_obstacles))
+                {
+                    additional_invalid[hashed_edge] = std::numeric_limits<double>::infinity();
+                    return std::numeric_limits<double>::infinity();
+                }
+
+                return calculateEdgeWeight(s, e);
+            };
+
+        const auto heuristic_fn =
+            [] (const std::vector<double>& q1, const std::vector<double>& q2)
+            {
+                return EigenHelpers::Distance(q1, q2);
+            };
+
+        PROFILE_START("lazysp_successful");
+        PROFILE_START("lazysp_no_path_found");
+        
+        auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
+            rm, start, goal, heuristic_fn, eval_fn);
+        if(result.second == std::numeric_limits<double>::infinity())
+        {
+            std::cout << "No path found on graph\n";
+        }
+        PROFILE_RECORD_DOUBLE("lazySP path cost ", result.second);
+        std::cout << "LazySP for Rollout path cost " << result.second << "\n";
+
+        if(result.second < std::numeric_limits<double>::max())
+        {
+            PROFILE_RECORD("lazysp_successful");
+        }
+        else
+        {
+            PROFILE_RECORD("lazysp_no_path_found");
+        }
+        
+        return result.first;
+    }
+
+
     std::vector<NodeIndex> OROGraphSearch::getPossibleActions(NodeIndex cur)
     {
         std::vector<NodeIndex> possible_actions;
@@ -475,12 +528,13 @@ namespace GVP
         return possible_actions;
     }
 
-    double OROGraphSearch::simulateTransition(State& state, Roadmap& rm, const DenseGrid& occupied,
+    double OROGraphSearch::simulateTransition(State& state, const Roadmap& rm, const DenseGrid& occupied,
                                               NodeIndex& cur, NodeIndex next,
+                                              arc_dijkstras::EvaluatedEdges& additional_invalid,
                                               GpuVoxelRvizVisualizer& viz)
     {
         // std::cout << "Simulating Transition\n";
-        auto& e = rm.getEdge(cur, next);
+        const auto& e = rm.getEdge(cur, next);
         // std::cout << "Edge " << e << " is invalid? " << e.isInvalid() << "\n";
         // if(checkEdge(e, state))
         if(!getSweptVolume(state, e).overlapsWith(&occupied))
@@ -488,14 +542,14 @@ namespace GVP
             PROFILE_START("simulate_belief_update_free");
             state.bel->updateFreeSpace(getSweptVolume(state, e));
             PROFILE_RECORD("simulate_belief_update_free");
-            auto q1 = rm.getNode(cur).getValue();
-            auto q2 = rm.getNode(next).getValue();
+            const auto q1 = rm.getNode(cur).getValue();
+            const auto q2 = rm.getNode(next).getValue();
             cur = next;
             return EigenHelpers::Distance(q1, q2);;
         }
         
-        VictorRightArmConfig c1(rm.getNode(cur).getValue());
-        VictorRightArmConfig c2(rm.getNode(next).getValue());
+        const VictorRightArmConfig c1(rm.getNode(cur).getValue());
+        const VictorRightArmConfig c2(rm.getNode(next).getValue());
         auto path = interpolate(c1, c2, discretization);
 
         double d = 0;
@@ -507,8 +561,10 @@ namespace GVP
                 PROFILE_START("simulate_belief_update_collision");
                 state.bel->updateCollisionSpace(state.robot, occupied);
                 PROFILE_RECORD("simulate_belief_update_collision");
-                e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
-                rm.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+                additional_invalid[arc_dijkstras::getSortedHashable(e)] =
+                    std::numeric_limits<double>::infinity();
+                // e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+                // rm.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
                 break;
             }
 
@@ -523,15 +579,17 @@ namespace GVP
 
     double OROGraphSearch::rolloutOptimistic(State& state, Roadmap& rm, const DenseGrid& occupied,
                                              NodeIndex cur, NodeIndex goal,
+                                             arc_dijkstras::EvaluatedEdges& additional_invalid,
                                              GpuVoxelRvizVisualizer& viz)
     {
+
         PROFILE_START("Rollout");
         std::cout << "Rolling out\n";
         double rollout_cost = 0;
         while(cur != goal)
         {
             PROFILE_START("rollout lazysp");
-            auto path = lazySp(cur, goal, state, rm);
+            auto path = lazySpForRollout(cur, goal, state, rm, additional_invalid);
             PROFILE_RECORD("rollout lazysp");
 
             PROFILE_START("Rollout viz sv");
@@ -539,9 +597,11 @@ namespace GVP
             viz.vizGrid(sv, "swept volume", makeColor(1, 1, 0, 0.7));
             PROFILE_RECORD("Rollout viz sv");
 
-            PROFILE_START("Simulate transition");
-            rollout_cost += simulateTransition(state, rm, occupied, cur, path[1], viz);
-            PROFILE_RECORD("Simulate transition");
+            PROFILE_START("Simulate transition in rollout");
+            rollout_cost += simulateTransition(state, rm, occupied, cur, path[1],
+                                               additional_invalid,
+                                               viz);
+            PROFILE_RECORD("Simulate transition in rollout");
             // if(cur == path[1])
             // {
             //     std::cout << "Transition succeeded\n";
@@ -583,19 +643,24 @@ namespace GVP
             {
                 State rollout_state(s);
                 rollout_state.bel = s.bel->clone();
-                PROFILE_START("Copy_graph");
-                Roadmap rollout_graph = graph;
-                PROFILE_RECORD("Copy_graph");
+                // PROFILE_START("Copy_graph");
+                // Roadmap rollout_graph = graph;
+                arc_dijkstras::EvaluatedEdges invalid_edges_during_rollout;
+                // PROFILE_RECORD("Copy_graph");
                 NodeIndex cur = start;
 
-                double rollout_cost = simulateTransition(rollout_state, rollout_graph,
+                PROFILE_START("Simulate transition first");
+                double rollout_cost = simulateTransition(rollout_state, graph,
                                                          sampled_state.known_obstacles,
                                                          cur, initial_action,
+                                                         invalid_edges_during_rollout,
                                                          viz);
+                PROFILE_RECORD("Simulate transition first");
 
-                rollout_cost += rolloutOptimistic(rollout_state, rollout_graph,
+                rollout_cost += rolloutOptimistic(rollout_state, graph,
                                                   sampled_state.known_obstacles,
-                                                  cur, goal, viz);
+                                                  cur, goal, invalid_edges_during_rollout,
+                                                  viz);
 
                 if(actions.count(initial_action) == 0)
                 {

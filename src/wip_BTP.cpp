@@ -86,8 +86,7 @@ int main(int argc, char* argv[])
     // HOPGraphSearch strat;
     OROGraphSearch strat;
     // ParetoCostGraphSearch strat(1.0);
-    
-    
+
     SimulationScenarioTester tester(scenario, n);
     std::cout << "Attempting strategy\n";
     tester.attemptStrategy(strat);

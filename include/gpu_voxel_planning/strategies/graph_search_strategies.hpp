@@ -151,12 +151,18 @@ namespace GVP
         virtual std::string getName() const override;
         bool pathExists(NodeIndex start, NodeIndex goal, State &s);
         std::vector<NodeIndex> getPossibleActions(NodeIndex cur);
-        double simulateTransition(State& state, Roadmap& rm, const DenseGrid& occupied,
+        double simulateTransition(State& state, const Roadmap& rm, const DenseGrid& occupied,
                                   NodeIndex& cur, NodeIndex next,
+                                  arc_dijkstras::EvaluatedEdges& additional_invalid,
                                   GpuVoxelRvizVisualizer& viz);
         double rolloutOptimistic(State& state, Roadmap& rm, const DenseGrid& occupied,
                                  NodeIndex cur, NodeIndex goal,
+                                 arc_dijkstras::EvaluatedEdges& additional_invalid,
                                  GpuVoxelRvizVisualizer& viz);
+
+        std::vector<NodeIndex> lazySpForRollout(NodeIndex start, NodeIndex goal, State &s,
+                                                Roadmap &rm,
+                                                arc_dijkstras::EvaluatedEdges& additional_invalid);
                 
 
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
