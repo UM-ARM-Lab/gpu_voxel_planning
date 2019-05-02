@@ -9,6 +9,7 @@
 #include <cmath>
 #include <arc_utilities/timing.hpp>
 #include "strategies/memorized_swept_volumes.hpp"
+#include "path_utils_addons.hpp"
 
 namespace GVP
 {
@@ -35,6 +36,8 @@ namespace GVP
         GraphSearchStrategy(const std::string &graph_filepath, const std::string& swept_volumes_filepath);
         GraphSearchStrategy(const std::string &graph_filepath);
         GraphSearchStrategy();
+
+        virtual ~GraphSearchStrategy() = default;
 
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) = 0;
 
