@@ -148,9 +148,11 @@ namespace GVP
         virtual std::string getName() const override;
         bool pathExists(NodeIndex start, NodeIndex goal, State &s);
         std::vector<NodeIndex> getPossibleActions(NodeIndex cur);
-        double simulateTransition(State& state, Roadmap& rm, NodeIndex& cur, NodeIndex next,
+        double simulateTransition(State& state, Roadmap& rm, const DenseGrid& occupied,
+                                  NodeIndex& cur, NodeIndex next,
                                   GpuVoxelRvizVisualizer& viz);
-        double rolloutOptimistic(State& state, Roadmap& rm, NodeIndex cur, NodeIndex goal,
+        double rolloutOptimistic(State& state, Roadmap& rm, const DenseGrid& occupied,
+                                 NodeIndex cur, NodeIndex goal,
                                  GpuVoxelRvizVisualizer& viz);
                 
 

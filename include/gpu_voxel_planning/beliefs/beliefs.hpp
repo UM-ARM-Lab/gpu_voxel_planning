@@ -56,7 +56,7 @@ namespace GVP
         
         ObstacleBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
         {
-            int num_samples = 100;
+            int num_samples = 10;
             std::mt19937 rng;
             std::normal_distribution<double> offset(0, noise);
             for(int i=0; i<num_samples; i++)
@@ -150,8 +150,6 @@ namespace GVP
                     return particles[i].occupied;
                 }
             }
-
-            //Not implemented yet
         }
 
         void viz(const GpuVoxelRvizVisualizer& viz) override

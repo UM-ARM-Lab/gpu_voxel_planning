@@ -81,7 +81,7 @@ namespace GVP
             Vector3i on_distance_grid = Vector3i(result.second.getObstacle());
             Vector3i diff_i = on_distance_grid - on_self;
             Vector3f diff(diff_i.x, diff_i.y, diff_i.z);
-            std::cout << "Shifting box by " << diff * VOXEL_SIDE_LENGTH << "\n";
+            // std::cout << "Shifting box by " << diff * VOXEL_SIDE_LENGTH << "\n";
             shift(diff*VOXEL_SIDE_LENGTH);
         }
     };
