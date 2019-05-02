@@ -60,24 +60,34 @@ namespace GVP
 
     
 
-    template<const std::vector<std::string>* joint_names>
     class VictorArmConfig
     {
+
     public:
+        const std::vector<std::string>* joint_names;
         std::vector<double> joint_values;
 
-        VictorArmConfig() {};
+        VictorArmConfig(const std::vector<std::string>* joint_names) :
+            joint_names(joint_names)
+        {};
 
-        VictorArmConfig(std::vector<double> joint_values) : joint_values(joint_values){};
+        VictorArmConfig(const std::vector<std::string>* joint_names,
+                        std::vector<double> joint_values) :
+            joint_names(joint_names), joint_values(joint_values){};
 
-        VictorArmConfig(const double* values) {
+        VictorArmConfig(const std::vector<std::string>* joint_names,
+                        const double* values) :
+            joint_names(joint_names)
+        {
             for(size_t i=0; i<joint_names->size(); i++)
             {
                 joint_values.push_back(values[i]);
             }
         }
 
-        VictorArmConfig(const robot::JointValueMap &jvm)
+        VictorArmConfig(const std::vector<std::string>* joint_names,
+                        const robot::JointValueMap &jvm):
+            joint_names(joint_names)
         {
             for(size_t i=0; i<joint_names->size(); i++)
             {
@@ -100,7 +110,7 @@ namespace GVP
             return joint_values;
         }
 
-        bool operator==(const VictorArmConfig<joint_names> &other) const
+        bool operator==(const VictorArmConfig &other) const
         {
             if(joint_values.size() != other.joint_values.size())
             {
@@ -113,18 +123,61 @@ namespace GVP
                 {
                     return false;
                 }
+                // if(joint_names[i] != other.joint_names[i])
+                // {
+                //     return false;
+                // }
             }
             return true;
         }
 
-        bool operator!=(const VictorArmConfig<joint_names> &other) const
+        bool operator!=(const VictorArmConfig &other) const
         {
             return !(operator==(other));
         }
     };
 
-    typedef VictorArmConfig<&right_arm_joint_names> VictorRightArmConfig;
-    typedef VictorArmConfig<&left_arm_joint_names> VictorLeftArmConfig;
+    class VictorRightArmConfig : public VictorArmConfig
+    {
+    public:
+        VictorRightArmConfig() :
+            VictorArmConfig(&right_arm_joint_names)
+        {}
+
+        VictorRightArmConfig(std::vector<double> joint_values) :
+            VictorArmConfig(&right_arm_joint_names, joint_values)
+        {}
+
+        VictorRightArmConfig(const double* values) :
+            VictorArmConfig(&right_arm_joint_names, values)
+        {}
+
+        VictorRightArmConfig(const robot::JointValueMap &jvm) :
+            VictorArmConfig(&right_arm_joint_names, jvm)
+        {}
+    };
+
+    class VictorLeftArmConfig : public VictorArmConfig
+    {
+    public:
+        VictorLeftArmConfig() :
+            VictorArmConfig(&left_arm_joint_names)
+        {}
+
+        VictorLeftArmConfig(std::vector<double> joint_values) :
+            VictorArmConfig(&left_arm_joint_names, joint_values)
+        {}
+
+        VictorLeftArmConfig(const double* values) :
+            VictorArmConfig(&left_arm_joint_names, values)
+        {}
+
+        VictorLeftArmConfig(const robot::JointValueMap &jvm):
+            VictorArmConfig(&left_arm_joint_names, jvm)
+        {}
+    };
+    
+
     
 
 

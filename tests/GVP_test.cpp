@@ -47,6 +47,26 @@ TEST(GVP, dense_grid_assignment)
     EXPECT_EQ(occ, g2.countOccupied()) << "Clearing map 1 affected map 2";
 }
 
+TEST(GVP, right_arm_config_setting_and_equality)
+{
+    GVP::VictorRightArmConfig a(std::vector<double>{1,2,3,4,5,6,7});
+    GVP::VictorRightArmConfig b(std::vector<double>{1,2,3,4,5,6,7});
+    GVP::VictorRightArmConfig c(a.asMap());
+    GVP::VictorRightArmConfig d(a.asVector());
+    GVP::VictorRightArmConfig z(std::vector<double>{1,2,3,4,5,6,0});
+
+
+    EXPECT_EQ(a, b);
+    EXPECT_EQ(a, c);
+    EXPECT_EQ(b, c);
+    EXPECT_EQ(a, d);
+    EXPECT_NE(a, z);
+    EXPECT_NE(b, z);
+    EXPECT_NE(c, z);
+    
+
+}
+
 TEST(GVP, dense_grid_get_occupied_indices)
 {
     DenseGrid g;
