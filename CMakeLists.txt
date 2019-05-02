@@ -250,8 +250,8 @@ target_link_libraries(gpu_voxels_viz
 
 set(Planning_SOURCES
   src/scenarios/scenarios.cpp
-  src/scenario_tester.cpp
   src/strategies/graph_search_strategies.cpp
+  src/scenario_tester.cpp
   # src/strategies/victor_selective_densification.cpp      #Removed due to long compilation time
   # src/strategies/selective_densification_strategies.cpp  #Removed due to long compilation time
   # src/strategies/ompl_strategies.cpp                     #Removed due to long compilation time
@@ -262,10 +262,6 @@ set(Planning_SOURCES
 add_library(planning_library
   ${Planning_SOURCES}
   )
-# add_dependencies(planning_library
-#   ${EXTERN_LIBS}
-#   ${catkin_EXPORTED_TARGETS}
-#   )
 target_link_libraries(planning_library
   ${EXTERN_LIBS}
   voxelgrid_library
@@ -273,26 +269,12 @@ target_link_libraries(planning_library
   gpu_voxels_viz
   )
 
-add_executable(compile_time
-  src/compile_time.cpp
-  )
-target_link_libraries(compile_time
-  planning_library
-  )
-
-
 add_executable(wip_prob_map
   src/wip/wip_prob_map.cpp
   )
-# add_dependencies(wip_prob_map
-#   planning_library
-#   ${EXTERN_LIBS}
-#   ${catkin_EXPORTED_TARGETS}
-#   )
 target_link_libraries(wip_prob_map
   # ${EXTERN_LIBS}
   planning_library
-  victor_halton_roadmap
   )
 
 #Commented out for speed
@@ -458,8 +440,7 @@ target_link_libraries(test_path_utils
 
 
 catkin_add_gtest(test_GVP
-  tests/GVP_test.cpp
-  src/path_utils.cpp)
+  tests/GVP_test.cpp)
 target_link_libraries(test_GVP
   ${EXTERN_LIBS}
   voxelgrid_library
