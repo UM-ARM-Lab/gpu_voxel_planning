@@ -39,7 +39,7 @@ namespace GVP
 
         virtual ~GraphSearchStrategy() = default;
 
-        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) = 0;
+        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) = 0;
 
         virtual Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
 
@@ -48,7 +48,7 @@ namespace GVP
 
         void initialize(const Scenario &scenario);
 
-        virtual DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
+        virtual DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e);
         
         /* Checks an edge against known obstacles to see if there is a collision.
          * Changes the graph edge validity accordingly
@@ -61,7 +61,7 @@ namespace GVP
         void saveToFile() {saveToFile(swept_volumes_filepath);}
 
     protected:
-        DenseGrid computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
+        DenseGrid computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e);
         void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
         std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s, Roadmap &rm);
     };
@@ -72,7 +72,7 @@ namespace GVP
     public:
         OmniscientGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
         OmniscientGraphSearch() {}
-        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
         virtual std::string getName() const override;
         virtual Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
     };
@@ -84,7 +84,7 @@ namespace GVP
         OptimisticGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
         OptimisticGraphSearch() {}
 
-        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
         virtual std::string getName() const override;
     };        
 
@@ -96,7 +96,7 @@ namespace GVP
         ParetoCostGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
         ParetoCostGraphSearch(double alpha) : alpha(alpha){}
         
-        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
         virtual std::string getName() const override;
     };
 
@@ -109,7 +109,7 @@ namespace GVP
         UnknownSpaceCostGraphSearch(double alpha, double free_cost) :
             alpha(alpha), free_cost(free_cost){}
 
-        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
         virtual std::string getName() const override;
     };
 
@@ -122,8 +122,8 @@ namespace GVP
         virtual std::string getName() const override;
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
                                             GpuVoxelRvizVisualizer& viz) override;
-        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
-        virtual DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e) override;
+        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+        virtual DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) override;
     };
 
     
@@ -137,7 +137,7 @@ namespace GVP
         virtual std::string getName() const override;
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
                                             GpuVoxelRvizVisualizer& viz) override;
-        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
     };
 
 
@@ -161,7 +161,7 @@ namespace GVP
 
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
                                             GpuVoxelRvizVisualizer& viz) override;
-        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
+        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
         
     };
 }

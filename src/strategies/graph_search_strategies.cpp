@@ -80,7 +80,7 @@ namespace GVP
     }
 
 
-    DenseGrid GraphSearchStrategy::computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
+    DenseGrid GraphSearchStrategy::computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e)
     {
         PROFILE_START("ComputeSweptVolume");
         VictorRightArmConfig q_start(graph.getNode(e.getFromIndex()).getValue());
@@ -104,7 +104,7 @@ namespace GVP
     }
 
 
-    DenseGrid GraphSearchStrategy::getSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
+    DenseGrid GraphSearchStrategy::getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e)
     {
         PROFILE_START("GetSweptVolume");
         arc_dijkstras::HashableEdge e_hashed = arc_dijkstras::getSortedHashable(e);
@@ -188,7 +188,7 @@ namespace GVP
     /**********************************
      **  Omniscient Graph Search
      ********************************/
-    double OmniscientGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    double OmniscientGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     {
         return e.getWeight();
     }
@@ -233,7 +233,7 @@ namespace GVP
     /**********************************
      **  Optimistic Graph Search
      ********************************/
-    double OptimisticGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    double OptimisticGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     {
         if(s.bel->calcProbFree(getSweptVolume(s, e)) > 0)
         {
@@ -251,7 +251,7 @@ namespace GVP
      /**********************************
      **  ParetoCost Graph Search
      ********************************/
-    double ParetoCostGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    double ParetoCostGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     {
         double edge_probability = s.calcProbFree(getSweptVolume(s, e));
         double p_cost = -std::log(edge_probability);
@@ -275,7 +275,7 @@ namespace GVP
     /* This is just a Best First search using the the collision measure belief with additional term
      *  Should be implemented in the belief
      */ 
-    // double UnknownSpaceCostGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    // double UnknownSpaceCostGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     // {
     //     DenseGrid sv = getSweptVolume(s, e);
     //     double edge_probability = s.calcProbFree(sv);
@@ -301,7 +301,7 @@ namespace GVP
     /********************************
      **   AStar Graph Search
      *******************************/
-    double AStarGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    double AStarGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     {
         return e.getWeight();
     }
@@ -336,7 +336,7 @@ namespace GVP
         return result.first;
     }
 
-    DenseGrid AStarGraphSearch::getSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
+    DenseGrid AStarGraphSearch::getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e)
     {
         return computeSweptVolume(s, e);
     }
@@ -347,7 +347,7 @@ namespace GVP
      **             HOP               **
      **  Averaging over Clairvoyance  **
      **********************************/
-    double HOPGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    double HOPGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     {
         if(e.isInvalid())
         {
@@ -440,7 +440,7 @@ namespace GVP
      **             ORO               **
      **      Optimistic Rollout       **
      **********************************/
-    double OROGraphSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+    double OROGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     {
         if(e.isInvalid())
         {
