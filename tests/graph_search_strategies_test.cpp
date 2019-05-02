@@ -13,7 +13,7 @@ TEST(GS_Strat, dummy_test)
 
     TableWithBox scenario(bp, true, true, false);
 
-    // auto path = strat.applyTo(scenario, viz);
+    auto path = strat.applyTo(scenario, viz);
 }
 
 

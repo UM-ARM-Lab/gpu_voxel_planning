@@ -183,6 +183,18 @@ void obstacleBelief(GpuVoxelRvizVisualizer& viz)
     // bel.viz(viz);
 }
 
+void StratTest(GpuVoxelRvizVisualizer& viz)
+{
+    BeliefParams bp(BeliefType::CHS);
+
+    OptimisticGraphSearch strat;
+
+    TableWithBox scenario(bp, true, true, false);
+
+    auto path = strat.applyTo(scenario, viz);
+
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -202,6 +214,7 @@ int main(int argc, char* argv[])
 
     // testDistanceGrid();
     // return 1;
+    StratTest(viz);
 
     obstacleBelief(viz);
     return 1;
