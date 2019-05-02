@@ -446,3 +446,12 @@ target_link_libraries(test_GVP
   voxelgrid_library
   planning_library
 )
+
+catkin_add_gtest(test_graph_search
+  tests/graph_search_strategies_test.cpp)
+target_link_libraries(test_graph_search
+  ${EXTERN_LIBS}
+  voxelgrid_library
+  planning_library
+  victor_halton_roadmap
+)

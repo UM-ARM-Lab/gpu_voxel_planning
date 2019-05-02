@@ -22,6 +22,10 @@ public:
 class VictorKinematics : UrdfArm
 {
 public:
+    VictorKinematics(bool mock) // Constructor used to mock for tests
+    {
+    }
+    
     VictorKinematics()
     {
         robot_model_loader::RobotModelLoader robot_model_load("robot_description");

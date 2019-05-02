@@ -83,6 +83,8 @@ visualization_msgs::MarkerArray GVP::visualize3DPath(const std::vector<Eigen::Ve
 }
 
 
+
+
 GVP::GpuVoxelRvizVisualizer::GpuVoxelRvizVisualizer(ros::NodeHandle &n)
 {
     grid_pub = n.advertise<visualization_msgs::Marker>("grid", 10);
@@ -97,15 +99,9 @@ void GVP::GpuVoxelRvizVisualizer::vizEEPosition(const std::vector<double> config
 }
 
 void GVP::GpuVoxelRvizVisualizer::vizGrid(const DenseGrid& grid, const std::string& name,
-                                          const std_msgs::ColorRGBA& color)
+                                          const std_msgs::ColorRGBA& color) const
 {
     grid_pub.publish(visualizeDenseGrid(grid, global_frame, name, color));
-}
-
-void GVP::GpuVoxelRvizVisualizer::vizGrid(const DenseGrid &grid, const std::string &ns,
-                                          const std_msgs::ColorRGBA &color) const
-{
-    grid_pub.publish(visualizeDenseGrid(grid, global_frame, ns, color));
 }
 
 void GVP::GpuVoxelRvizVisualizer::vizChs(const std::vector<DenseGrid> &chss,

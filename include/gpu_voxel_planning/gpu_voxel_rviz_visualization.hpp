@@ -37,6 +37,13 @@ namespace GVP{
 
     class GpuVoxelRvizVisualizer
     {
+    public:
+        ros::Publisher grid_pub;
+        ros::Publisher chs_pub;
+        ros::Publisher ee_path_pub;
+        std::string global_frame = "gpu_voxel_world";
+        VictorKinematics urdf;
+
     private:
         std::vector<Eigen::Vector3d> configPathTo3DPath(std::vector<GVP::VictorRightArmConfig> path_config)
         {
@@ -48,18 +55,13 @@ namespace GVP{
             return path_3d;
         }
 
-    
     public:
-        ros::Publisher grid_pub;
-        ros::Publisher chs_pub;
-        ros::Publisher ee_path_pub;
-        std::string global_frame = "gpu_voxel_world";
-        VictorKinematics urdf;
-
         GpuVoxelRvizVisualizer(ros::NodeHandle &n);
 
+        virtual
         void vizEEPosition(const std::vector<double> config);
 
+        virtual
         void vizEEPath(const std::vector<GVP::VictorRightArmConfig> path_config,
                        std::string path_name)
         {
@@ -69,7 +71,8 @@ namespace GVP{
         }
 
 
-        void vizGrid(const DenseGrid& grid, const std::string& name, const std_msgs::ColorRGBA& color);
+        virtual
+        void vizGrid(const DenseGrid& grid, const std::string& name, const std_msgs::ColorRGBA& color) const;
 
         // void vizEEGraph(const HaltonGraph &g)
         // {
@@ -149,11 +152,14 @@ namespace GVP{
         // }
 
     
-
-        void vizGrid(const DenseGrid &grid, const std::string &ns, const std_msgs::ColorRGBA &color) const;
-
+        virtual
         void vizChs(const std::vector<DenseGrid> &chss, const std::string &ns = "chs") const;
+
+
+    protected:
+        GpuVoxelRvizVisualizer() : urdf(true) {}; //used for mocking
     };
+
 
 }
 
