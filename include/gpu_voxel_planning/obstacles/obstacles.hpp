@@ -11,29 +11,31 @@ namespace GVP
     public:
         Vector3f ll;
         Vector3f ur;
-        DenseGrid grid;
+        // DenseGrid grid;
         
         AABB(Vector3f ll, Vector3f ur):
             ll(ll), ur(ur)
         {
-            remakeGrid();
+            // remakeGrid();
         }
 
-        void remakeGrid()
+        DenseGrid getGrid() const
         {
-            grid = DenseGrid();
+            DenseGrid grid;
             grid.insertBox(ll, ur);
+            return grid;
         }
 
         void shift(Vector3f dx)
         {
             ll += dx;
             ur += dx;
-            remakeGrid();
+            // remakeGrid();
         }
 
         void project(DistanceGrid& dg)
         {
+            DenseGrid grid = getGrid();
             auto result = dg.getClosestObstacle(&grid);
             Vector3i on_self = result.first;
             Vector3i on_distance_grid = Vector3i(result.second.getObstacle());
@@ -55,7 +57,8 @@ namespace GVP
             occupied = DenseGrid();
             for(const auto& aabb: aabbs)
             {
-                occupied.add(&aabb.grid);
+                DenseGrid g = aabb.getGrid();
+                occupied.add(&g);
             }
         }
 

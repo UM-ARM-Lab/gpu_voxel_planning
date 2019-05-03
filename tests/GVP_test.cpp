@@ -255,10 +255,10 @@ TEST(GVP, test_AABB_obstacle_collision_with_shifts)
     DenseGrid g1;
     g1.insertBox(v1, v2);
 
-    EXPECT_EQ(ob.grid.collideWith(&g1), g1.countOccupied());
+    EXPECT_EQ(ob.getGrid().collideWith(&g1), g1.countOccupied());
     ob.shift(Vector3f(0.1, 0.1, 0.1));
-    EXPECT_LT(ob.grid.collideWith(&g1), g1.countOccupied());
-    EXPECT_GT(ob.grid.collideWith(&g1), 0);
+    EXPECT_LT(ob.getGrid().collideWith(&g1), g1.countOccupied());
+    EXPECT_GT(ob.getGrid().collideWith(&g1), 0);
 }
 
 TEST(GVP, test_AABB_projection)
@@ -270,12 +270,14 @@ TEST(GVP, test_AABB_projection)
     DistanceGrid dg;
     dg.mergeOccupied(&g);
 
-    ASSERT_NEAR(dg.getClosestObstacleDistance(&ob.grid) * VOXEL_SIDE_LENGTH, 0.3, VOXEL_SIDE_LENGTH + eps) <<
+    DenseGrid g_ob = ob.getGrid();
+    ASSERT_NEAR(dg.getClosestObstacleDistance(&g_ob) * VOXEL_SIDE_LENGTH, 0.3, VOXEL_SIDE_LENGTH + eps) <<
         "Distance not correct before projection";
 
     
     ob.project(dg);
-    EXPECT_NEAR(dg.getClosestObstacleDistance(&ob.grid)*VOXEL_SIDE_LENGTH, 0, VOXEL_SIDE_LENGTH + eps) <<
+    g_ob = ob.getGrid();
+    EXPECT_NEAR(dg.getClosestObstacleDistance(&g_ob)*VOXEL_SIDE_LENGTH, 0, VOXEL_SIDE_LENGTH + eps) <<
         "Distance not correct after projection";
 }
 
