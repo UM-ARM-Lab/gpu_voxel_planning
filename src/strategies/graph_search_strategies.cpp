@@ -446,6 +446,10 @@ namespace GVP
         {
             return std::numeric_limits<double>::infinity();
         }
+        if(s.calcProbFree(getSweptVolume(s, e)) == 0)
+        {
+            return std::numeric_limits<double>::infinity();
+        }
         return e.getWeight();
     }
 
