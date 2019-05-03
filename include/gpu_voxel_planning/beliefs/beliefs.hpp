@@ -115,7 +115,7 @@ namespace GVP
                 {
                     continue;
                 }
-                if(particles[i].occupied.collideWith(&new_free) > 2)
+                if(particles[i].occupied.collideWith(&new_free) > 2) //heuristic for near collisions
                 {
                     weights[i] = 0;
                 }

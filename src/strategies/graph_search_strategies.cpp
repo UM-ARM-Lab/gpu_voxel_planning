@@ -463,8 +463,9 @@ namespace GVP
         }
 
         std::cout << "Checking if path exists\n";
-
-        auto path = lazySp(start, goal, s, graph);
+        arc_dijkstras::EvaluatedEdges invalid_edges;
+        // auto path = lazySp(start, goal, s, graph);
+        auto path = lazySpForRollout(start, goal, s, graph, invalid_edges);
         std::cout << "Check complete\n";
         return path.size() > 0;
     }
@@ -633,6 +634,7 @@ namespace GVP
         {
             // std::cout << "Checking sample " << i << "\n\n";
             State sampled_state = s.sample();
+            sampled_state.bel = s.bel->clone();
 
             PROFILE_START("Viz_sample");
             viz.vizGrid(sampled_state.known_obstacles, "sampled_world", makeColor(0, 0, 1.0, 1.0));

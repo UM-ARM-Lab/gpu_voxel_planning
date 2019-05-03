@@ -99,6 +99,8 @@ namespace GVP
             return sampled;
             PROFILE_RECORD("Sample_state");
         }
+
+        virtual ~State() = default;
     };
 
 
