@@ -6,7 +6,7 @@
 
 namespace GVP
 {
-    enum BeliefType{CHS, IID, Obstacle};
+    enum BeliefType{CHS, IID, Obstacle, Bonkers};
     
     struct BeliefParams
     {
@@ -56,7 +56,7 @@ namespace GVP
         
         ObstacleBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
         {
-            int num_samples = 10;
+            int num_samples = 20;
             std::mt19937 rng;
             std::normal_distribution<double> offset(0, noise);
             for(int i=0; i<num_samples; i++)
@@ -115,7 +115,7 @@ namespace GVP
                 {
                     continue;
                 }
-                if(particles[i].occupied.overlapsWith(&new_free))
+                if(particles[i].occupied.collideWith(&new_free) > 2)
                 {
                     weights[i] = 0;
                 }

@@ -2,6 +2,28 @@
 
 using namespace GVP;
 
+ObstacleConfiguration getBonkersBelief()
+{
+    ObstacleConfiguration oc;
+    Object chair;
+
+    chair.add(AABB(Vector3f(1.0, 1.0, 0.0), Vector3f(1.05, 1.05, 1.2)));
+    chair.add(AABB(Vector3f(1.5, 1.0, 0.0), Vector3f(1.55, 1.05, 1.2)));
+    chair.add(AABB(Vector3f(1.0, 1.5, 0.0), Vector3f(1.05, 1.55, 0.6)));
+    chair.add(AABB(Vector3f(1.5, 1.5, 0.0), Vector3f(1.55, 1.55, 0.6)));
+    chair.add(AABB(Vector3f(1.0, 1.0, 0.55), Vector3f(1.55, 1.55, 0.6)));
+
+    chair.add(AABB(Vector3f(1.0, 1.0, 1.1), Vector3f(1.5, 1.05, 1.2)));
+
+    chair.shift(Vector3f(0.0, 2.0, 0));
+    
+    oc.add(chair);
+    return oc;
+}
+
+
+
+
 SimulationScenario::SimulationScenario() : s(victor) {}
 
 void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp)
@@ -15,6 +37,11 @@ void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, Beli
     {
         std::cout << "Using Obstacle belief\n";
         s.bel = std::make_unique<ObstacleBelief>(unknown_obstacles, bp.noise, bp.bias);
+    }
+    else if(bp.belief_type = BeliefType::Bonkers)
+    {
+        std::cout << "Using Bonkers belief\n";
+        s.bel = std::make_unique<ObstacleBelief>(getBonkersBelief(), bp.noise, bp.bias);
     }
 }
 
