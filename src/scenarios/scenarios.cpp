@@ -38,11 +38,17 @@ void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, Beli
         std::cout << "Using Obstacle belief\n";
         s.bel = std::make_unique<ObstacleBelief>(unknown_obstacles, bp.noise, bp.bias);
     }
-    else if(bp.belief_type = BeliefType::Bonkers)
+    else if(bp.belief_type == BeliefType::Bonkers)
     {
         std::cout << "Using Bonkers belief\n";
         s.bel = std::make_unique<ObstacleBelief>(getBonkersBelief(), bp.noise, bp.bias);
     }
+    else if(bp.belief_type == BeliefType::IID)
+    {
+        std::cout << "Using IID belief\n";
+        s.bel = std::make_unique<IIDBelief>(unknown_obstacles, bp.noise, bp.bias);
+    }
+    std::cout << "Invalid belief type\n";
 }
 
 void SimulationScenario::validate()

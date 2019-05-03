@@ -71,7 +71,8 @@ int main(int argc, char* argv[])
     // Roadmap rm;
     // rm.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
 
-    BeliefParams bp(BeliefType::CHS);
+    // BeliefParams bp(BeliefType::CHS);
+    BeliefParams bp(BeliefType::IID, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
 

@@ -446,7 +446,7 @@ namespace GVP
         {
             return std::numeric_limits<double>::infinity();
         }
-        if(s.calcProbFree(getSweptVolume(s, e)) == 0)
+        if(s.calcProbFree(getSweptVolume(s, e)) <= 0)
         {
             return std::numeric_limits<double>::infinity();
         }
@@ -500,7 +500,7 @@ namespace GVP
 
         PROFILE_START("lazysp_successful");
         PROFILE_START("lazysp_no_path_found");
-        
+
         auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
             rm, start, goal, heuristic_fn, eval_fn);
         if(result.second == std::numeric_limits<double>::infinity())

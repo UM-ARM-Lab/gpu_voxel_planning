@@ -106,7 +106,7 @@ namespace GVP
             return agreement / sum;
         }
 
-        void updateFreeSpace(const DenseGrid &new_free) override
+        virtual void updateFreeSpace(const DenseGrid &new_free) override
         {
             PROFILE_START("Obstacle_belief_update_free");
             for(int i=0; i<particles.size(); i++)
@@ -124,7 +124,7 @@ namespace GVP
             PROFILE_RECORD("Obstacle_belief_update_free");
         }
 
-        void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
+        virtual void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
         {
             PROFILE_START("Obstacle_belief_update_collision");
             DistanceGrid dg;
@@ -136,7 +136,7 @@ namespace GVP
             PROFILE_RECORD("Obstacle_belief_update_collision");
         }
 
-        DenseGrid sampleState() const override
+        virtual DenseGrid sampleState() const override
         {
             std::mt19937 rng;
             rng.seed(std::random_device()());
@@ -177,7 +177,35 @@ namespace GVP
             }
         }
     };
+    /*********************************
+     **         IID Belief          **
+     ********************************/
+    class IIDBelief : public ObstacleBelief
+    {
+    public:
+        IIDBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias) :
+            ObstacleBelief(oc, noise, bias)
+        {
+        }
 
+        void updateFreeSpace(const DenseGrid &new_free) override
+        {
+        }
+
+        void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
+        {
+        }
+
+        DenseGrid sampleState() const override
+        {
+            return DenseGrid();
+        }
+    };
+
+
+    /*********************************
+     **         CHS Belief          **
+     ********************************/
     
     class ChsBelief : public Belief
     {
