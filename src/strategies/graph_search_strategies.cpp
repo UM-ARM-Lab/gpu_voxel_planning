@@ -343,6 +343,76 @@ namespace GVP
 
 
 
+
+
+
+    /***********************************
+     **        Thompson               **
+     **********************************/
+    double ThompsonGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
+    {
+        if(e.isInvalid())
+        {
+            return std::numeric_limits<double>::infinity();
+        }
+        return e.getWeight();
+    }
+
+
+    State ThompsonGraphSearch::sampleValidState()
+    {
+        
+    }
+
+    std::vector<NodeIndex> ThompsonGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
+                                                GpuVoxelRvizVisualizer& viz)
+    {
+        PROFILE_START("Thompson_plan");
+
+        while(true)
+        {
+            Roadmap graph_cpy = graph;
+            State sampled_state = s.sample();
+            
+            PROFILE_START("Viz_sample");
+            viz.vizGrid(sampled_state.known_obstacles, "sampled_world", makeColor(0, 0, 1.0, 1.0));
+            PROFILE_RECORD("Viz_sample");
+            
+            VictorRightArmConfig goal_config(graph.getNode(goal).getValue());
+            sampled_state.robot.set(goal_config.asMap());
+            if(sampled_state.robot.occupied_space.overlapsWith(&sampled_state.known_obstacles))
+            {
+                continue;
+            }
+
+            auto result = lazySp(start, goal, sampled_state, graph_cpy);
+
+            if(result.size() < 2)
+            {
+                continue;
+            }
+
+            PROFILE_START("Viz_sample_ee_path");
+            viz.vizEEPath(interpolate(s.getCurConfig(), graph.getNode(result[1]).getValue(), 0.1),
+                          "sampledPath");
+            PROFILE_RECORD("Viz_sample_ee_path");
+            return result;
+                
+        }
+
+    }
+
+    std::string ThompsonGraphSearch::getName() const
+    {
+        return "Thompson Graph Search";
+    }
+
+
+
+
+
+
+
     /***********************************
      **             HOP               **
      **  Averaging over Clairvoyance  **

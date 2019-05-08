@@ -4,7 +4,7 @@
 
 using namespace GVP;
 
-TEST(GS_Strat, dummy_test)
+TEST(GS_Strat, ORO_)
 {
     BeliefParams bp(BeliefType::CHS);
     MockGpuVoxelRvizVisualizer viz;

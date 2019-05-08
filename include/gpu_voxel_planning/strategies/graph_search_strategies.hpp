@@ -126,6 +126,20 @@ namespace GVP
         virtual DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) override;
     };
 
+
+    class ThompsonGraphSearch : public GraphSearchStrategy
+    {
+    public:
+        ThompsonGraphSearch() {}
+        virtual std::string getName() const override;
+
+        State sampleValidState();
+        
+        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
+                                            GpuVoxelRvizVisualizer& viz) override;
+        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+    };
+
     
     class HOPGraphSearch : public GraphSearchStrategy
     {

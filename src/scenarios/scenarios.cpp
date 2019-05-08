@@ -28,27 +28,32 @@ SimulationScenario::SimulationScenario() : s(victor) {}
 
 void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp)
 {
-    if(bp.belief_type == BeliefType::CHS)
+    switch(bp.belief_type)
     {
+    case BeliefType::CHS:
         std::cout << "Using CHS belief\n";
         s.bel = std::make_unique<ChsBelief>();
-    }
-    else if(bp.belief_type == BeliefType::Obstacle)
-    {
+        break;
+    case BeliefType::Obstacle:
         std::cout << "Using Obstacle belief\n";
         s.bel = std::make_unique<ObstacleBelief>(unknown_obstacles, bp.noise, bp.bias);
-    }
-    else if(bp.belief_type == BeliefType::Bonkers)
-    {
+        break;
+    case BeliefType::Bonkers:
         std::cout << "Using Bonkers belief\n";
         s.bel = std::make_unique<ObstacleBelief>(getBonkersBelief(), bp.noise, bp.bias);
-    }
-    else if(bp.belief_type == BeliefType::IID)
-    {
+        break;
+    case BeliefType::MoE:
+        std::cout << "Using MoE belief\n";
+        s.bel = std::make_unique<MoEBelief>(getBonkersBelief(), bp.noise, bp.bias);
+        break;
+    case BeliefType::IID:
         std::cout << "Using IID belief\n";
         s.bel = std::make_unique<IIDBelief>(unknown_obstacles, bp.noise, bp.bias);
-    }
-    std::cout << "Invalid belief type\n";
+        break;
+    default:
+        std::cout << "Invalid belief type " << bp.belief_type << "\n";
+        throw std::invalid_argument("Invalid belief type");
+    }        
 }
 
 void SimulationScenario::validate()
