@@ -6,7 +6,7 @@
 
 namespace GVP
 {
-    enum BeliefType{CHS, IID, Obstacle, Bonkers};
+    enum BeliefType{CHS, IID, Obstacle, Bonkers, MoE};
     
     struct BeliefParams
     {
@@ -291,6 +291,102 @@ namespace GVP
             return sampled_obstacles;
         }
     };
+
+    /*********************************
+     **  Mixture Of Experts Belief  **
+     ********************************/
+    class MoEBelief : public Belief
+    {
+    public:
+        std::vector<std::unique_ptr<Belief>> experts;
+        std::vector<double> weights;
+
+    public:
+        MoEBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
+        {
+            weights = std::vector<double>{1.0, 1.0};
+            experts.push_back(std::make_unique<ChsBelief>());
+            experts.push_back(std::make_unique<ObstacleBelief>(oc, noise, bias));
+        }
+        
+        
+        /* Returns a vector of the cumulative sum of the expert weights*/
+        std::vector<double> cumSum() const
+        {
+            std::vector<double> cs;
+            double sum = 0;
+            for(const auto& w: weights)
+            {
+                sum += w;
+                cs.push_back(sum);
+            }
+            return cs;
+        }
+
+        void viz(const GpuVoxelRvizVisualizer& viz)
+        {
+            for(const auto& expert: experts)
+            {
+                expert->viz(viz);
+            }
+        }
+
+
+        std::unique_ptr<Belief> clone() const override
+        {
+            throw std::logic_error("not implemented");
+        }
+        
+        double calcProbFree(const DenseGrid &volume) override
+        {
+            double normalizing = cumSum().back();
+            double p = 0;
+            for(int i=0; i<experts.size(); i++)
+            {
+                p += weights[i] * experts[i]->calcProbFree(volume);
+            }
+            return p;
+        }
+
+        void updateFreeSpace(const DenseGrid &new_free) override
+        {
+            for(int i=0; i<experts.size(); i++)
+            {
+                double loss = 1.0 - experts[i]->calcProbFree(new_free);
+                weights[i] *= std::exp(-loss);
+                experts[i]->updateFreeSpace(new_free);
+            }
+        }
+
+        void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
+        {
+            for(int i=0; i<experts.size(); i++)
+            {
+                double loss = experts[i]->calcProbFree(robot.occupied_space);
+                weights[i] *= std::exp(-loss);
+                experts[i]->updateCollisionSpace(robot, true_world);
+            }
+        }
+
+        DenseGrid sampleState() const override
+        {
+            std::vector<double> cum_sum = cumSum();
+            std::mt19937 rng;
+            rng.seed(std::random_device()());
+            std::uniform_real_distribution<double> dist(0.0, cum_sum.back());
+            double r = dist(rng);
+
+            for(int i=0; i<experts.size(); i++)
+            {
+                if(r <= cum_sum[i])
+                {
+                    return experts[i]->sampleState();
+                }
+            }
+            throw std::logic_error("Sampling from mixture of experts did not find an expert");
+        }
+    };
 }
+
 
 #endif

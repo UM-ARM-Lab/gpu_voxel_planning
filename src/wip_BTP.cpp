@@ -72,9 +72,10 @@ int main(int argc, char* argv[])
     // rm.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
 
     // BeliefParams bp(BeliefType::CHS);
-    BeliefParams bp(BeliefType::IID, std::vector<double>{0,0,0}, 0.1);
+    // BeliefParams bp(BeliefType::IID, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
+    BeliefParams bp(BeliefType::MoE, std::vector<double>{0,0,0}, 0.05);
 
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
@@ -83,10 +84,11 @@ int main(int argc, char* argv[])
     // SlottedWall scenario(true);
     // Bookshelf scenario(true);
 
-    OptimisticGraphSearch strat;
+    // OptimisticGraphSearch strat;
+    // ThompsonGraphSearch strat;
     // HOPGraphSearch strat;
     // OROGraphSearch strat;
-    // ParetoCostGraphSearch strat(1.0);
+    ParetoCostGraphSearch strat(1.0);
 
     SimulationScenarioTester tester(scenario, n);
     std::cout << "Attempting strategy\n";
