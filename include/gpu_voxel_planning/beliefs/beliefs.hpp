@@ -3,10 +3,12 @@
 #include "gpu_voxel_rviz_visualization.hpp"
 #include "obstacles/obstacles.hpp"
 #include <random>
+#include <arc_utilities/arc_helpers.hpp>
+#include <arc_utilities/pretty_print.hpp>
 
 namespace GVP
 {
-    enum BeliefType{CHS, IID, Obstacle, Bonkers, MoE};
+    enum BeliefType{CHS, IID, Obstacle, Bonkers, MoEObstacle, MoEBonkers};
     
     struct BeliefParams
     {
@@ -367,8 +369,8 @@ namespace GVP
             experts.push_back(std::make_unique<ChsBelief>());
             experts.push_back(std::make_unique<ObstacleBelief>(oc, noise, bias));
         }
-        
-        
+
+
         /* Returns a vector of the cumulative sum of the expert weights*/
         std::vector<double> cumSum() const
         {

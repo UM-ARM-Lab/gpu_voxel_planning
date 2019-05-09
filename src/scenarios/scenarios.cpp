@@ -42,8 +42,12 @@ void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, Beli
         std::cout << "Using Bonkers belief\n";
         s.bel = std::make_unique<ObstacleBelief>(getBonkersBelief(), bp.noise, bp.bias);
         break;
-    case BeliefType::MoE:
-        std::cout << "Using MoE belief\n";
+    case BeliefType::MoEObstacle:
+        std::cout << "Using MoE Obstalcebelief\n";
+        s.bel = std::make_unique<MoEBelief>(unknown_obstacles, bp.noise, bp.bias);
+        break;
+    case BeliefType::MoEBonkers:
+        std::cout << "Using MoE Obstalcebelief\n";
         s.bel = std::make_unique<MoEBelief>(getBonkersBelief(), bp.noise, bp.bias);
         break;
     case BeliefType::IID:
