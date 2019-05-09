@@ -105,6 +105,20 @@ namespace GVP
             }
         }
 
+        /* Returns a particle representation of the obstacle configuration*/
+        std::vector<double> asParticle() const
+        {
+            std::vector<double> particle;
+            for(const auto& obstacle: obstacles)
+            {
+                Vector3f object_particle = obstacle.aabbs[0].ll;
+                particle.push_back(object_particle.x);
+                particle.push_back(object_particle.y);
+                particle.push_back(object_particle.z);
+            }
+            return particle;
+        }
+
         void add(const Object& object)
         {
             obstacles.push_back(object);

@@ -47,8 +47,8 @@ namespace GVP
     public:
         std::vector<ObstacleConfiguration> particles;
         std::vector<double> weights;
-        std::vector<double> cum_sum;
-        double sum = 0;
+        // std::vector<double> cum_sum;
+        // double sum = 0;
 
     public:
         ObstacleBelief()
@@ -56,7 +56,7 @@ namespace GVP
         
         ObstacleBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
         {
-            int num_samples = 20;
+            int num_samples = 100;
             std::mt19937 rng;
             std::normal_distribution<double> offset(0, noise);
             for(int i=0; i<num_samples; i++)
@@ -78,8 +78,8 @@ namespace GVP
             std::unique_ptr<ObstacleBelief> b = std::make_unique<ObstacleBelief>();
             b->particles = particles;
             b->weights = weights;
-            b->cum_sum = cum_sum;
-            b->sum = sum;
+            // b->cum_sum = cum_sum;
+            // b->sum = sum;
             return b;
         }
 
@@ -88,14 +88,19 @@ namespace GVP
         {
             particles.push_back(obs);
             weights.push_back(weight);
-            sum += weight;
-            cum_sum.push_back(sum);
+            // sum += weight;
+            // cum_sum.push_back(sum);
         }
 
 
         double calcProbFree(const DenseGrid &volume) override
         {
             double agreement = 0;
+            if(cumSum().back() <= 0)
+            {
+                return 1.0;
+            }
+            
             for(int i=0; i<particles.size(); i++)
             {
                 if(!particles[i].occupied.overlapsWith(&volume))
@@ -103,7 +108,7 @@ namespace GVP
                     agreement += weights[i];
                 }
             }
-            return agreement / sum;
+            return agreement / cumSum().back();
         }
 
         virtual void updateFreeSpace(const DenseGrid &new_free) override
@@ -115,24 +120,65 @@ namespace GVP
                 {
                     continue;
                 }
-                if(particles[i].occupied.collideWith(&new_free) > 2) //heuristic for near collisions
+                if(particles[i].occupied.collideWith(&new_free) > 0) //heuristic for near collisions
                 {
                     weights[i] = 0;
                 }
             }
-            recomputeWeights();
+            // recomputeWeights();
             PROFILE_RECORD("Obstacle_belief_update_free");
+        }
+
+        std::vector<std::vector<double>> getParticleVectors() const
+        {
+            std::vector<std::vector<double>> pvs;
+            for(const auto& particle: particles)
+            {
+                pvs.push_back(particle.asParticle());
+            }
+            return pvs;
+        }
+
+        std::vector<double>
+        kernelDensityEstimate(std::vector<std::vector<double>> prior, double bandwidth) const
+        {
+            std::vector<double> new_weights;
+            double normalizing = cumSum().back() * weights.size();
+            for(const auto& particle: particles)
+            {
+                double w_i = 0;
+                for(int i=0; i<weights.size(); i++)
+                {
+                    // double d = EigenHelpers::Distance(particle.asParticle(), prior[i]);
+                    double density = 1;
+                    auto pv = particle.asParticle();
+                    for(int j=0; j<pv.size(); j++)
+                    {
+                        double d = pv[j] - prior[i][j];
+                        density *= arc_helpers::EvaluateGaussianPDF(0, bandwidth, d);
+                    }
+                    w_i += density * weights[i];
+                }
+                new_weights.push_back(w_i/normalizing);
+            }
+            return new_weights;
         }
 
         virtual void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
         {
             PROFILE_START("Obstacle_belief_update_collision");
+            auto prior = getParticleVectors();
+            
             DistanceGrid dg;
             dg.mergeOccupied(&robot.occupied_space);
             for(auto& particle: particles)
             {
                 particle.project(dg);
             }
+            weights = kernelDensityEstimate(prior, 0.05);
+            // recomputeWeights();
+            std::cout << "Sum of particle weights is " << cumSum().back() << "\n";
+            
             PROFILE_RECORD("Obstacle_belief_update_collision");
         }
 
@@ -140,8 +186,10 @@ namespace GVP
         {
             std::mt19937 rng;
             rng.seed(std::random_device()());
-            std::uniform_real_distribution<double> dist(0.0, sum);
+            std::uniform_real_distribution<double> dist(0.0, cumSum().back());
             double r = dist(rng);
+
+            auto cum_sum = cumSum();
 
             for(int i=0; i<particles.size(); i++)
             {
@@ -156,7 +204,7 @@ namespace GVP
         {
             for(int i=0; i<particles.size(); i++)
             {
-                double alpha = std::max(weights[i]/sum, 1.0/10);
+                double alpha = std::max(weights[i]/cumSum().back(), 1.0/10);
                 if(weights[i] == 0)
                 {
                     alpha = 0;
@@ -166,15 +214,26 @@ namespace GVP
             }
         }
 
-    protected:
-        void recomputeWeights()
+    // protected:
+        // void recomputeWeights()
+        // {
+        //     sum = 0;
+        //     for(int i=0; i<weights.size(); i++)
+        //     {
+        //         sum += weights[i];
+        //         cum_sum[i] = sum;
+        //     }
+        // }
+        std::vector<double> cumSum() const
         {
-            sum = 0;
-            for(int i=0; i<weights.size(); i++)
+            double sum = 0;
+            std::vector<double> cum_sum;
+            for(const auto& w: weights)
             {
-                sum += weights[i];
-                cum_sum[i] = sum;
+                sum += w;
+                cum_sum.push_back(sum);
             }
+            return cum_sum;
         }
     };
     /*********************************
