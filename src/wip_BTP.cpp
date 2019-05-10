@@ -75,8 +75,8 @@ int main(int argc, char* argv[])
     // BeliefParams bp(BeliefType::IID, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
-    // BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.05);
-    BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
+    BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.05);
+    // BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
 
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;

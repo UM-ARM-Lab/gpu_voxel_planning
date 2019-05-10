@@ -49,8 +49,6 @@ namespace GVP
     public:
         std::vector<ObstacleConfiguration> particles;
         std::vector<double> weights;
-        // std::vector<double> cum_sum;
-        // double sum = 0;
 
     public:
         ObstacleBelief()
@@ -80,8 +78,6 @@ namespace GVP
             std::unique_ptr<ObstacleBelief> b = std::make_unique<ObstacleBelief>();
             b->particles = particles;
             b->weights = weights;
-            // b->cum_sum = cum_sum;
-            // b->sum = sum;
             return b;
         }
 
@@ -90,8 +86,6 @@ namespace GVP
         {
             particles.push_back(obs);
             weights.push_back(weight);
-            // sum += weight;
-            // cum_sum.push_back(sum);
         }
 
 
@@ -127,7 +121,6 @@ namespace GVP
                     weights[i] = 0;
                 }
             }
-            // recomputeWeights();
             PROFILE_RECORD("Obstacle_belief_update_free");
         }
 
@@ -141,6 +134,10 @@ namespace GVP
             return pvs;
         }
 
+        /**
+         * Computes weights of the current posterior particles given a prior
+         * Note!! This assumes the prior is weighted evently, which is not the case
+         **/
         std::vector<double>
         kernelDensityEstimate(std::vector<std::vector<double>> prior, double bandwidth) const
         {
@@ -217,15 +214,6 @@ namespace GVP
         }
 
     // protected:
-        // void recomputeWeights()
-        // {
-        //     sum = 0;
-        //     for(int i=0; i<weights.size(); i++)
-        //     {
-        //         sum += weights[i];
-        //         cum_sum[i] = sum;
-        //     }
-        // }
         std::vector<double> cumSum() const
         {
             double sum = 0;
@@ -359,16 +347,58 @@ namespace GVP
     class MoEBelief : public Belief
     {
     public:
-        std::vector<std::unique_ptr<Belief>> experts;
         std::vector<double> weights;
+        ChsBelief expert_chs;
+        ObstacleBelief expert_particle;
+        std::vector<Belief*> experts;
+        std::vector<std::vector<double>> particle_prior;
 
     public:
-        MoEBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
+        MoEBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias):
+            expert_particle(oc, noise, bias)
         {
             weights = std::vector<double>{1.0, 1.0};
-            experts.push_back(std::make_unique<ChsBelief>());
-            experts.push_back(std::make_unique<ObstacleBelief>(oc, noise, bias));
+            experts.push_back(&expert_chs);
+            experts.push_back(&expert_particle);
+            particle_prior = expert_particle.getParticleVectors();
+
+            updateWeights();
+            std::cout << "Weights are: " << PrettyPrint::PrettyPrint(weights) << "\n";
+
         }
+
+        double
+        kernelDensityLikelihood(std::vector<std::vector<double>> prior,
+                                std::vector<std::vector<double>> posterior,
+                                std::vector<double> posterior_weights,
+                                double bandwidth) const
+        {
+            std::vector<double> new_weights;
+            double posterior_mass = std::accumulate(posterior_weights.begin(), posterior_weights.end(),
+                                                    (double)0.0);
+            // std::cout << "posterior mass: " << posterior_mass << "\n";
+            double normalizing = prior.size() * posterior_mass;
+            // std::cout << "normalizing factor: " << normalizing << "\n";
+            double total = 0;
+            
+            for(const auto& particle: posterior)
+            {
+                double w_i = 0;
+                for(int i=0; i<prior.size(); i++)
+                {
+                    double density = 1;
+                    for(int j=0; j<prior[i].size(); j++)
+                    {
+                        double d = particle[j] - prior[i][j];
+                        density *= arc_helpers::EvaluateGaussianPDF(0, bandwidth, d);
+                    }
+                    w_i += density * posterior_weights[i];
+                }
+                total += w_i/normalizing;
+            }
+            return total;
+        }
+
 
 
         /* Returns a vector of the cumulative sum of the expert weights*/
@@ -397,6 +427,16 @@ namespace GVP
         {
             throw std::logic_error("not implemented");
         }
+
+        void updateWeights()
+        {
+            // weights[0] = weights[0] //CHS weights do not update
+            // std::cout << "expert cum sum: " << expert_particle.cumSum().back() << "\n";
+            weights[1] = kernelDensityLikelihood(particle_prior,
+                                                 expert_particle.getParticleVectors(),
+                                                 expert_particle.weights,
+                                                 0.1);
+        }
         
         double calcProbFree(const DenseGrid &volume) override
         {
@@ -404,29 +444,35 @@ namespace GVP
             double p = 0;
             for(int i=0; i<experts.size(); i++)
             {
-                p += weights[i] * experts[i]->calcProbFree(volume);
+                p += (weights[i]/normalizing) * experts[i]->calcProbFree(volume);
             }
             return p;
         }
 
         void updateFreeSpace(const DenseGrid &new_free) override
         {
+            // std::cout << "Free loss:\n";
             for(int i=0; i<experts.size(); i++)
             {
-                double loss = 1.0 - experts[i]->calcProbFree(new_free);
-                weights[i] *= std::exp(-loss);
+                // double loss = 1.0 - experts[i]->calcProbFree(new_free);
+                // std::cout << i << ": " << loss << "\n";
+                // weights[i] *= std::exp(-loss);
                 experts[i]->updateFreeSpace(new_free);
             }
+            updateWeights();
         }
 
         void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
         {
             for(int i=0; i<experts.size(); i++)
             {
-                double loss = experts[i]->calcProbFree(robot.occupied_space);
-                weights[i] *= std::exp(-loss);
+                // double loss = experts[i]->calcProbFree(robot.occupied_space);
+                // weights[i] *= std::exp(-loss);
                 experts[i]->updateCollisionSpace(robot, true_world);
+                // std::cout << i << ": " << weights[i] << "\n";
             }
+            updateWeights();
+            std::cout << "Weights are: " << PrettyPrint::PrettyPrint(weights) << "\n";
         }
 
         DenseGrid sampleState() const override
