@@ -6,7 +6,7 @@
 #include <arc_utilities/arc_helpers.hpp>
 
 #include <ros/ros.h>
-#include "gpu_voxel_rviz_visualization.hpp"
+#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
 #include "robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"

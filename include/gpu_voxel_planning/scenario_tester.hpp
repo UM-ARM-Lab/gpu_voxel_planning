@@ -3,7 +3,7 @@
 
 #include "scenarios.hpp"
 #include "strategies/strategies.hpp"
-#include "gpu_voxel_rviz_visualization.hpp"
+#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
 #include <ros/ros.h>
 
 

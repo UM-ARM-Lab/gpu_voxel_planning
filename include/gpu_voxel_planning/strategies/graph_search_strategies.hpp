@@ -4,7 +4,7 @@
 #include "strategies/victor_halton_roadmap.hpp"
 #include "state.hpp"
 #include "strategies/strategies.hpp"
-#include "gpu_voxel_rviz_visualization.hpp"
+#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
 #include <graph_planner/dijkstras_addons.hpp>
 #include <cmath>
 #include <arc_utilities/timing.hpp>

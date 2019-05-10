@@ -1,4 +1,4 @@
-#include "gpu_voxel_rviz_visualization.hpp"
+#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
 
 using namespace GVP;
 

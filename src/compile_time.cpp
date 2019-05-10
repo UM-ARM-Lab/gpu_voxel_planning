@@ -8,7 +8,7 @@
 
 
 //Removing victor_selective_densification
-// #include "gpu_voxel_rviz_visualization.hpp"  //short 6s
+// #include "ros_interface/gpu_voxel_rviz_visualization.hpp"  //short 6s
 // #include "beliefs/beliefs.hpp" //short 6s
 // #include "state.hpp" //short 6s
 // #include "scenarios.hpp" //short 6s
