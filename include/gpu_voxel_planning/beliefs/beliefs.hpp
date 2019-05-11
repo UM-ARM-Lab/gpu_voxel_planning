@@ -33,7 +33,7 @@ namespace GVP
 
         virtual void updateFreeSpace(const DenseGrid &new_free) = 0;
 
-        virtual void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) = 0;
+        virtual void updateCollisionSpace(Robot& robot, const size_t first_link_in_collision) = 0;
 
         virtual DenseGrid sampleState() const = 0;
 
@@ -163,7 +163,7 @@ namespace GVP
             return new_weights;
         }
 
-        virtual void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
+        virtual void updateCollisionSpace(Robot& robot, const size_t first_link_in_collision) override
         {
             PROFILE_START("Obstacle_belief_update_collision");
             auto prior = getParticleVectors();
@@ -241,7 +241,7 @@ namespace GVP
         {
         }
 
-        void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
+        void updateCollisionSpace(Robot& robot, const size_t first_link_in_collision) override
         {
         }
 
@@ -297,24 +297,14 @@ namespace GVP
             }
         }
 
-        virtual void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
+        virtual void updateCollisionSpace(Robot& robot, const size_t first_link_in_collision) override
         {
-            addChs(robot, true_world);
+            addChs(robot, first_link_in_collision);
         }
             
-        virtual void addChs(Robot& robot, const DenseGrid &true_world)
+        virtual void addChs(Robot& robot, const size_t first_link_in_collision)
         {
             auto link_occupancies = robot.getLinkOccupancies();
-            size_t first_link_in_collision = 0;
-            for(auto &link:link_occupancies)
-            {
-                if(link.overlapsWith(&true_world))
-                {
-                    break;
-                }
-                first_link_in_collision++;
-            }
-
             if(first_link_in_collision >= link_occupancies.size())
             {
                 throw std::logic_error("Trying to add CHS, but no link collided");
@@ -462,13 +452,13 @@ namespace GVP
             updateWeights();
         }
 
-        void updateCollisionSpace(Robot& robot, const DenseGrid &true_world) override
+        void updateCollisionSpace(Robot& robot, const size_t first_link_in_collision) override
         {
             for(int i=0; i<experts.size(); i++)
             {
                 // double loss = experts[i]->calcProbFree(robot.occupied_space);
                 // weights[i] *= std::exp(-loss);
-                experts[i]->updateCollisionSpace(robot, true_world);
+                experts[i]->updateCollisionSpace(robot, first_link_in_collision);
                 // std::cout << i << ": " << weights[i] << "\n";
             }
             updateWeights();

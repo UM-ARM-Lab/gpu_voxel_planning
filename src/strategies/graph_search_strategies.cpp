@@ -1,4 +1,5 @@
 #include "strategies/graph_search_strategies.hpp"
+#include "robot/robot_helpers.hpp"
 
 
 
@@ -634,7 +635,7 @@ namespace GVP
             if(state.robot.occupied_space.overlapsWith(&occupied))
             {
                 PROFILE_START("simulate_belief_update_collision");
-                state.bel->updateCollisionSpace(state.robot, occupied);
+                state.bel->updateCollisionSpace(state.robot, getFirstLinkInCollision(state.robot, occupied));
                 PROFILE_RECORD("simulate_belief_update_collision");
                 additional_invalid[arc_dijkstras::getSortedHashable(e)] =
                     std::numeric_limits<double>::infinity();

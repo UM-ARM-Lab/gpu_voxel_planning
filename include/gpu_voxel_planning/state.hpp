@@ -2,6 +2,7 @@
 #define GPU_PLANNING_STATE_HPP
 
 #include "robot_model.hpp"
+#include "robot/robot_helpers.hpp"
 #include <stdexcept>
 #include <arc_utilities/timing.hpp>
 #include <arc_utilities/math_helpers.hpp>
@@ -128,7 +129,7 @@ namespace GVP
             robot.set(c.asMap());
             if(robot.occupied_space.overlapsWith(&true_world))
             {
-                bel->updateCollisionSpace(robot, true_world);
+                bel->updateCollisionSpace(robot, getFirstLinkInCollision(robot, true_world));
 
                 robot.set(current_config);
                 return false;

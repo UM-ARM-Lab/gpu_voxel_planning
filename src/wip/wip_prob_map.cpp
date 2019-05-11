@@ -150,7 +150,7 @@ void obstacleBelief(GpuVoxelRvizVisualizer& viz)
     DistanceGrid dg;
     viz.vizGrid(scenario.getState().robot.occupied_space, "test_robot", makeColor(0,1,0,1));
     std::cout << "Projecting\n";
-    bel.updateCollisionSpace(scenario.getState().robot, DenseGrid());
+    bel.updateCollisionSpace(scenario.getState().robot, 0);
     bel.viz(viz);
 
     
