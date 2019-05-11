@@ -5,7 +5,7 @@
 #include <arc_utilities/arc_helpers.hpp>
 
 #include <ros/ros.h>
-#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "ros_interface/ros_interface.hpp"
 #include "robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     // precomputeEdges();
     // return 1;
     
-    GpuVoxelRvizVisualizer viz(n);
+    // GpuVoxelRvizVisualizer viz(n);
 
     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
 
@@ -71,11 +71,11 @@ int main(int argc, char* argv[])
     // Roadmap rm;
     // rm.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
 
-    // BeliefParams bp(BeliefType::CHS);
+    BeliefParams bp(BeliefType::CHS);
     // BeliefParams bp(BeliefType::IID, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
-    BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.05);
+    // BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.05);
     // BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
 
     ros::Duration(1.0).sleep();

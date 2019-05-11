@@ -9,13 +9,13 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
 {
     for(const auto &c:path)
     {
-        if(!scenario.getSimulationState().move(c, scenario.getTrueObstacles()))
+        if(!scenario.getSimulationState().move(c, scenario.getTrueObstacles(), ri))
         {
-            scenario.viz(viz);
+            scenario.viz(ri.viz);
             return false;
         }
         PROFILE_START("Viz_scenario");
-        scenario.viz(viz);
+        scenario.viz(ri.viz);
         PROFILE_RECORD("Viz_scenario");
         // ros::Duration(0.01).sleep();
         ros::Duration(0.001).sleep();
@@ -25,13 +25,13 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
 
 bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
 {
-    scenario.viz(viz);
+    scenario.viz(ri.viz);
     try{
         scenario.validate();
     }
     catch(std::invalid_argument &e)
     {
-        scenario.viz(viz);
+        scenario.viz(ri.viz);
         throw e;
     }
     
@@ -42,7 +42,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         std::vector<VictorRightArmConfig> path;
         try
         {
-            path = strategy.applyTo(scenario, viz);
+            path = strategy.applyTo(scenario, ri.viz);
         }
         catch(std::runtime_error &e)
         {
@@ -51,7 +51,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         }
         PROFILE_RECORD(name + " Planning Time");
 
-        viz.vizEEPath(path, "Path Found");
+        ri.viz.vizEEPath(path, "Path Found");
         // std::cout << "path found with " << path.size() << " verts\n";
         
         PROFILE_START(name + " Motion Time");

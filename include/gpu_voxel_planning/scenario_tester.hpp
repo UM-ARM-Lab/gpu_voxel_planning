@@ -3,7 +3,7 @@
 
 #include "scenarios.hpp"
 #include "strategies/strategies.hpp"
-#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "ros_interface/ros_interface.hpp"
 #include <ros/ros.h>
 
 
@@ -13,12 +13,12 @@ namespace GVP
     {
     public:
         SimulationScenario &scenario;
-        GpuVoxelRvizVisualizer viz;
+        RosInterface ri;
         ros::NodeHandle &n;
         
 
         SimulationScenarioTester(SimulationScenario &scenario, ros::NodeHandle &n) :
-            scenario(scenario), n(n), viz(n)
+            scenario(scenario), n(n), ri(n)
         {
         }
 

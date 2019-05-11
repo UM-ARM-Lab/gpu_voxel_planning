@@ -6,16 +6,25 @@
     <!-- <arg name="model"  default="$(find gpu_voxel_planning)/urdf/victor_right_arm_only.urdf.xacro"/> -->
     <arg name="model"  default="$(find gpu_voxel_planning)/urdf/victor.urdf.xacro"/>
 
-    <param name="$(arg robot_description)" command="$(find xacro)/xacro --xacro-ns --inorder $(arg model)"/>
+    <!-- <param name="$(arg robot_description)" command="$(find xacro)/xacro -\-xacro-ns -\-inorder $(arg model)"/> -->
     <!-- <node pkg="victor_hardware_interface" type="joint_state_publisher.py" name="joint_state_publisher"/> -->
 
     <param name="$(arg robot_description)_semantic" textfile="$(find victor_moveit_config)/config/victor.srdf" />
-    <node pkg="robot_state_publisher"     type="robot_state_publisher"    name="robot_state_publisher"/>
+    <!-- <node pkg="robot_state_publisher"     type="robot_state_publisher"    name="robot_state_publisher"/> -->
 
+    <!-- <node pkg="victor_hardware_interface" type="joint_state_publisher.py"  name="victor_joint_state_publisher"/> -->
 
     <group ns="$(arg robot_description)_kinematics">
       <rosparam command="load" file="$(find victor_moveit_config)/config/kinematics.yaml"/>
     </group>
+
+    <include file="$(find victor_fake_hardware_interface)/launch/fake_dual_arm_lcm_bridge.launch">
+      <arg name="model" value="$(arg model)"/>
+    </include>
+
+    <node pkg="gpu_voxel_planning" type="execute_path_with_collision_detection.py"
+          name="execute_path_with_collision_detection"/>
+
 
 
 

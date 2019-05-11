@@ -8,7 +8,7 @@ add_compile_options(-std=c++14)
 set(CATKIN_PACKAGES
   roscpp
   victor_hardware_interface
-  or_victor
+  arm_or_robots
   trajectory_msgs
   arc_utilities
   arm_pointcloud_utilities

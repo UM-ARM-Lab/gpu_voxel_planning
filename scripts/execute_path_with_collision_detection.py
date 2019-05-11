@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 from openravepy import *
-import or_victor.motion
+import arm_or_robots.motion_victor
 # import victor_hardware_interface.msg as vhimsg
 import gpu_voxel_planning.srv as gvpsrv
 from victor_hardware_interface import victor_utils as vu
@@ -232,7 +232,7 @@ if __name__ == "__main__":
     rospy.init_node("execute_path_with_collision_detection")
     voice = rospy.Publisher("polly", String, queue_size=10)
 
-    vm = or_victor.motion_victor.MotionEnabledVictor(viewer=False)
+    vm = arm_or_robots.motion_victor.MotionEnabledVictor(viewer=False, world_frame="gpu_voxel_world")
     vm.set_manipulator("right_arm")
     vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
 

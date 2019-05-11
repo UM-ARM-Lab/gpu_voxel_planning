@@ -6,6 +6,7 @@
 #include <arc_utilities/timing.hpp>
 #include <arc_utilities/math_helpers.hpp>
 #include "beliefs/beliefs.hpp"
+#include "ros_interface/ros_interface.hpp"
 
 namespace GVP
 {
@@ -119,7 +120,7 @@ namespace GVP
     public:
         SimulationState(Robot& robot) : State(robot) {}
         
-        bool move(const VictorRightArmConfig &c, const DenseGrid &true_world)
+        bool move(const VictorRightArmConfig &c, const DenseGrid &true_world, RosInterface& ri)
         {
             PROFILE_START("simulation_state_move");
             accumulated_cost += EigenHelpers::Distance(VictorRightArmConfig(current_config).asVector(),
@@ -132,6 +133,7 @@ namespace GVP
                 robot.set(current_config);
                 return false;
             }
+            ri.moveRightArm(c);
 
             updateConfig(c.asMap());
             PROFILE_START("Update belief from free obs");
