@@ -26,6 +26,7 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
 bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
 {
     scenario.viz(ri.viz);
+    scenario.initFakeVictor(ri);
     try{
         scenario.validate();
     }

@@ -225,14 +225,14 @@ def speak_collision_link():
                 rospy.sleep(1)
 
 
-
-
 if __name__ == "__main__":
     
     rospy.init_node("execute_path_with_collision_detection")
     voice = rospy.Publisher("polly", String, queue_size=10)
 
     vm = arm_or_robots.motion_victor.MotionEnabledVictor(viewer=False, world_frame="gpu_voxel_world")
+    vm.set_manipulator("left_arm")
+    vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
     vm.set_manipulator("right_arm")
     vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
 

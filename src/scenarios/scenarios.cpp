@@ -26,6 +26,14 @@ ObstacleConfiguration getBonkersBelief()
 
 SimulationScenario::SimulationScenario() : s(victor) {}
 
+void SimulationScenario::initFakeVictor(RosInterface &ri)
+{
+    //NOTE:!!! These values are duplicated, and harded coded elsewhere in this code
+    VictorLeftArmConfig lac(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0});
+    ri.setLeftArm(lac);
+    ri.setRightGripper(1.5);
+}
+
 void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp)
 {
     switch(bp.belief_type)
@@ -91,7 +99,8 @@ void SimulationScenario::viz(const GpuVoxelRvizVisualizer& viz)
 void SimulationScenario::addLeftArm()
 {
     VictorLeftArmAndBase left;
-    left.set(VictorLeftArmConfig(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0}).asMap());
+    VictorLeftArmConfig lac(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0});
+    left.set(lac.asMap());
     s.robot_self_collide_obstacles.add(&left.occupied_space);
 
     robot::JointValueMap jvm;

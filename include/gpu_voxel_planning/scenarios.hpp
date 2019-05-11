@@ -38,6 +38,8 @@ namespace GVP
         ObstacleConfiguration unknown_obstacles;
         
         SimulationScenario();
+
+        void initFakeVictor(RosInterface &ri);
         virtual void setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp);
 
         virtual void validate();

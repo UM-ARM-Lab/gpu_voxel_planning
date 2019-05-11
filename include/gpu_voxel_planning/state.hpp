@@ -133,7 +133,7 @@ namespace GVP
                 robot.set(current_config);
                 return false;
             }
-            ri.moveRightArm(c);
+            ri.setRightArm(c);
 
             updateConfig(c.asMap());
             PROFILE_START("Update belief from free obs");

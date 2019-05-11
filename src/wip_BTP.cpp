@@ -85,13 +85,15 @@ int main(int argc, char* argv[])
     // SlottedWall scenario(true);
     // Bookshelf scenario(true);
 
+    SimulationScenarioTester tester(scenario, n);
+
     // OptimisticGraphSearch strat;
     // ThompsonGraphSearch strat;
     // HOPGraphSearch strat;
     // OROGraphSearch strat;
     ParetoCostGraphSearch strat(1.0);
 
-    SimulationScenarioTester tester(scenario, n);
+
     std::cout << "Attempting strategy\n";
     tester.attemptStrategy(strat);
     // strat.saveToFile();
