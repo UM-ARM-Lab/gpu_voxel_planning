@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 #include "ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include "robot_model.hpp"
+#include "robot/robot_model.hpp"
 #include <gpu_voxel_planning/AttemptPathStart.h>
 #include <gpu_voxel_planning/AttemptPathResult.h>
 #include <victor_hardware_interface/MotionCommand.h>

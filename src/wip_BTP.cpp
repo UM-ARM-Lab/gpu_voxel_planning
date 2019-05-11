@@ -6,12 +6,10 @@
 
 #include <ros/ros.h>
 #include "ros_interface/ros_interface.hpp"
-#include "robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
 #include "strategies/graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
-#include "urdf_model.hpp"
 // #include "strategies/victor_selective_densification.hpp"
 // #include "strategies/selective_densification_strategies.hpp"
 // #include "strategies/ompl_strategies.hpp"

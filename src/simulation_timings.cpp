@@ -6,7 +6,6 @@
 
 #include <ros/ros.h>
 #include "ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include "robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
 #include "strategies/graph_search_strategies.hpp"

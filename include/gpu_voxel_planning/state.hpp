@@ -1,7 +1,7 @@
 #ifndef GPU_PLANNING_STATE_HPP
 #define GPU_PLANNING_STATE_HPP
 
-#include "robot_model.hpp"
+#include "robot/robot_model.hpp"
 #include "robot/robot_helpers.hpp"
 #include <stdexcept>
 #include <arc_utilities/timing.hpp>

@@ -7,12 +7,11 @@
 
 #include <ros/ros.h>
 #include "ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include "robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
 #include "strategies/graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
-#include "urdf_model.hpp"
+#include "robot/urdf_model.hpp"
 
 
 using namespace GVP;

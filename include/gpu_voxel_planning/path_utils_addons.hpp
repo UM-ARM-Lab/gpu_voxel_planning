@@ -2,7 +2,7 @@
 #define GVP_PATH_UTILS_ADDONS_HPP
 
 #include "path_utils.hpp"
-#include "robot_model.hpp"
+#include "robot/robot_model.hpp"
 
 
 namespace GVP

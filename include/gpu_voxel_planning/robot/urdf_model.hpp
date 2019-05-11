@@ -1,7 +1,7 @@
 #ifndef GPU_VOXEL_URDF_MODEL_HPP
 #define GPU_VOXEL_URDF_MODEL_HPP
 
-#include "robot_model.hpp"
+#include "robot/robot_model.hpp"
 
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/robot_model/robot_model.h>

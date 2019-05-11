@@ -7,7 +7,7 @@
 #include "maps/prob_map.hpp"
 // #include "state.hpp"
 // #include "scenarios.hpp"
-#include "urdf_model.hpp"
+#include "robot/urdf_model.hpp"
 #include "path_utils_addons.hpp"
 // #include "strategies/victor_selective_densification.hpp"
 
