@@ -1,33 +1,10 @@
-#ifndef GVP_SCENARIOS_HPP
-#define GVP_SCENARIOS_HPP
+#ifndef GVP_SIMULATION_SCENARIOS_HPP
+#define GVP_SIMULATION_SCENARIOS_HPP
 
-
-#include "state.hpp"
-#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "scenarios/scenarios.hpp"
 
 namespace GVP
 {
-    class Scenario
-    {
-    public:
-        VictorRightArm victor;
-        robot::JointValueMap goal_config;
-        virtual State& getState() = 0;
-        virtual const State& getState() const = 0;
-        virtual std::string getName() const = 0;
-        
-        virtual bool completed() const
-        {
-            return VictorRightArmConfig(getState().current_config) == VictorRightArmConfig(goal_config);
-        }
-
-        virtual void viz(const GpuVoxelRvizVisualizer& viz)
-        {
-        }
-
-        Scenario(){}
-    };
-
     
     class SimulationScenario : public Scenario
     {

@@ -249,7 +249,7 @@ target_link_libraries(gpu_voxels_viz
 
 
 set(Planning_SOURCES
-  src/scenarios/scenarios.cpp
+  src/scenarios/simulation_scenarios.cpp
   src/strategies/graph_search_strategies.cpp
   src/scenario_tester.cpp
   # src/strategies/victor_selective_densification.cpp      #Removed due to long compilation time

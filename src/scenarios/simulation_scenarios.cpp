@@ -1,4 +1,4 @@
-#include "scenarios.hpp"
+#include "scenarios/simulation_scenarios.hpp"
 
 using namespace GVP;
 

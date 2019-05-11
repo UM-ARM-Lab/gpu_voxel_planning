@@ -1,7 +1,7 @@
 #ifndef SCENARIO_TESTER_HPP
 #define SCENARIO_TESTER_HPP
 
-#include "scenarios.hpp"
+#include "scenarios/simulation_scenarios.hpp"
 #include "strategies/strategies.hpp"
 #include "ros_interface/ros_interface.hpp"
 #include <ros/ros.h>
