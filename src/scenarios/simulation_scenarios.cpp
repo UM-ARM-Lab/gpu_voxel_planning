@@ -2,7 +2,7 @@
 
 using namespace GVP;
 
-ObstacleConfiguration getBonkersBelief()
+static ObstacleConfiguration getBonkersBelief()
 {
     ObstacleConfiguration oc;
     Object chair;

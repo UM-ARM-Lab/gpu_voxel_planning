@@ -14,6 +14,8 @@ namespace GVP
     class State
     {
     public:
+        double accumulated_cost = 0;
+        
         Robot &robot;
         DenseGrid robot_self_collide_obstacles;
         DenseGrid known_obstacles;
@@ -116,11 +118,11 @@ namespace GVP
     class SimulationState : public State
     {
     public:
-        double accumulated_cost = 0;
-
-    public:
         SimulationState(Robot& robot) : State(robot) {}
-        
+
+        /* Simulated move of a short segment (one discretization unit)
+         * Returns true if no collision, false if collision
+         */
         bool move(const VictorRightArmConfig &c, const DenseGrid &true_world, RosInterface& ri)
         {
             PROFILE_START("simulation_state_move");
@@ -136,6 +138,38 @@ namespace GVP
             }
             ri.setRightArm(c);
 
+            updateConfig(c.asMap());
+            PROFILE_START("Update belief from free obs");
+            updateFreeSpace(robot.occupied_space);
+            PROFILE_RECORD("Update belief from free obs");
+            PROFILE_RECORD("simulation_state_move");
+            return true;
+        }
+    };
+
+
+    /*****************************************
+     *      State for Real Robot Trials
+     ***************************************/
+    class RealState : public State
+    {
+    public:
+        RealState(Robot& robot) : State(robot) {}
+
+        /*
+         *  Moves robot either to new config, or stops at collision.
+         *   Unlike SimulationState moves, these moves can be long
+         */
+        bool move(const VictorRightArmConfig &c, RosInterface& ri)
+        {
+            PROFILE_START("simulation_state_move");
+            accumulated_cost += EigenHelpers::Distance(VictorRightArmConfig(current_config).asVector(),
+                                                       c.asVector());
+            ri.moveRightArm(c);
+            //TODO: handle physical robot case of collision
+
+
+            //TODO: update entire swept volume
             updateConfig(c.asMap());
             PROFILE_START("Update belief from free obs");
             updateFreeSpace(robot.occupied_space);

@@ -250,6 +250,7 @@ target_link_libraries(gpu_voxels_viz
 
 set(Planning_SOURCES
   src/scenarios/simulation_scenarios.cpp
+  src/scenarios/real_scenario.cpp
   src/strategies/graph_search_strategies.cpp
   src/scenario_tester.cpp
   # src/strategies/victor_selective_densification.cpp      #Removed due to long compilation time
@@ -300,6 +301,14 @@ target_link_libraries(wip_prob_map
 add_executable(wip_BTP
   src/wip_BTP.cpp)
 target_link_libraries(wip_BTP
+  # ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
+
+add_executable(wip_real_trials
+  src/wip_real_trials.cpp)
+target_link_libraries(wip_real_trials
   # ${EXTERN_LIBS}
   planning_library
   victor_halton_roadmap
