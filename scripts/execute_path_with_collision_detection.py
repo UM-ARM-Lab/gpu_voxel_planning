@@ -193,12 +193,20 @@ def execute_path(path):
     
     cur_pos = vu.jvq_to_list(right_arm_listener.get().measured_joint_position)
 
+    _, cur_ind, _ = pu.closest_point(path, cur_pos);
+    free_poses = path[0:cur_ind];
     next_poses = pu.densify(pu.travel_along(path, .15, cur_pos), .03)
 
+    for pos in free_poses:
+        jtp_msg = JointTrajectoryPoint()
+        jtp_msg.positions = pos
+        msg.free_path.points.appeng(jtp_msg)
+        
     for pos in next_poses:
         jtp_msg = JointTrajectoryPoint()
         jtp_msg.positions = pos
         msg.collision_path.points.append(jtp_msg)
+
     
     backup_path = pu.travel_along(path, -0.1, cur_pos)
 
