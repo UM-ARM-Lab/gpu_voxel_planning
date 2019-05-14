@@ -19,6 +19,7 @@ namespace GVP{
         ros::Publisher right_arm_pub;
         ros::Publisher left_arm_pub;
         ros::Publisher right_gripper_pub;
+        ros::ServiceClient get_attempt_status_client;
 
         RosInterface(ros::NodeHandle &n) :
             viz(n)
@@ -28,6 +29,8 @@ namespace GVP{
             right_arm_pub = n.advertise<MotionCommand>("right_arm/motion_command", 10);
             left_arm_pub = n.advertise<MotionCommand>("left_arm/motion_command", 10);
             right_gripper_pub = n.advertise<Robotiq3FingerCommand>("right_arm/gripper_command", 10);
+            get_attempt_status_client = n.serviceClient<gpu_voxel_planning::AttemptPathResult>("get_path_status");
+            
         }
 
         victor_hardware_interface::MotionCommand vectorToMotionCommand(const std::vector<double>& c)
@@ -68,17 +71,38 @@ namespace GVP{
         }
 
 
-        void moveRightArm(const VictorRightArmConfig &c)
+        gpu_voxel_planning::AttemptPathResultResponse
+        moveRightArm(const std::vector<VictorRightArmConfig> &path)
         {
             gpu_voxel_planning::AttemptPathStart srv;
-            srv.request.path.points.resize(1);
-            srv.request.path.points[0].positions = c.asVector();
+            srv.request.path.points.resize(path.size());
+            for(int i=0; i<path.size(); i++)
+            {
+                srv.request.path.points[i].positions = path[i].asVector();
+            }
 
             if(!attempt_path_client.call(srv))
             {
                 std::cout << "Failed to send command to ros robot\n";
             }
+            return getPathResponse(); // Blocks until path is complete
         }
+
+        gpu_voxel_planning::AttemptPathResultResponse getPathResponse()
+        {
+            gpu_voxel_planning::AttemptPathResult path_res;
+            bool path_finished = false;
+            while(ros::ok() && !path_finished)
+            {
+                // std::cout << "path not yet finished\n";
+                get_attempt_status_client.call(path_res);
+                path_finished = path_res.response.finished;
+                ros::spinOnce();
+
+            }
+            return path_res.response;
+        }
+
     };
 }
 

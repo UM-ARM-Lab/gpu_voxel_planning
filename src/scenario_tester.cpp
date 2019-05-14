@@ -82,20 +82,17 @@ std::string SimulationScenarioTester::getName(const Strategy &strategy) const
 *******************************/
 bool RealScenarioTester::attemptPath(const std::vector<VictorRightArmConfig> &path)
 {
-    for(const auto &c:path)
-    {
-        if(!scenario.getRealState().move(c, ri))
-        {
-            scenario.viz(ri.viz);
-            return false;
-        }
-        PROFILE_START("Viz_scenario");
-        scenario.viz(ri.viz);
-        PROFILE_RECORD("Viz_scenario");
-        // ros::Duration(0.01).sleep();
-        ros::Duration(0.001).sleep();
-    }
-    return true;
+
+    bool succeeded = scenario.getRealState().move(path, ri);
+
+    PROFILE_START("Viz_scenario");
+    scenario.viz(ri.viz);
+    PROFILE_RECORD("Viz_scenario");
+    //     // ros::Duration(0.01).sleep();
+    //     ros::Duration(0.001).sleep();
+    // }
+    // return true;
+    return succeeded;
 }
 
 bool RealScenarioTester::attemptStrategy(Strategy &strategy)

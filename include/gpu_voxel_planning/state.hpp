@@ -160,21 +160,35 @@ namespace GVP
          *  Moves robot either to new config, or stops at collision.
          *   Unlike SimulationState moves, these moves can be long
          */
-        bool move(const VictorRightArmConfig &c, RosInterface& ri)
+        bool move(const std::vector<VictorRightArmConfig> &path, RosInterface& ri)
         {
-            PROFILE_START("simulation_state_move");
-            accumulated_cost += EigenHelpers::Distance(VictorRightArmConfig(current_config).asVector(),
-                                                       c.asVector());
-            ri.moveRightArm(c);
-            //TODO: handle physical robot case of collision
+            PROFILE_START("real_state_move");
+            // accumulated_cost += EigenHelpers::Distance(VictorRightArmConfig(current_config).asVector(),
+            //                                            c.asVector());
+            gpu_voxel_planning::AttemptPathResultResponse resp = ri.moveRightArm(path);
 
+            if(resp.ci.collided)
+            {
+                //TODO: handle physical robot case of collision
 
+                
+                throw std::logic_error("Not implemented exception");
+                return false;
+            }
             //TODO: update entire swept volume
-            updateConfig(c.asMap());
             PROFILE_START("Update belief from free obs");
-            updateFreeSpace(robot.occupied_space);
+            DenseGrid sv;
+            for(const auto c: path)
+            {
+                robot.set(c.asMap());
+                sv.add(&robot.occupied_space);
+            }
+            updateFreeSpace(sv);
             PROFILE_RECORD("Update belief from free obs");
-            PROFILE_RECORD("simulation_state_move");
+
+
+            updateConfig(path.back().asMap());
+            PROFILE_RECORD("real_state_move");
             return true;
         }
     };
