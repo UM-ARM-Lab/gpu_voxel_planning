@@ -217,8 +217,7 @@ namespace GVP
         
         virtual std::vector<std::string> getLinkNames() const override
         {
-            return std::vector<std::string> {
-                "link_2, link_3, link_4, link_5, link_6, link_7, gripper"};
+            return collision_link_names;
         }
 
 

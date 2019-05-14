@@ -1,0 +1,26 @@
+<launch>
+
+    <!-- <arg name="model"  default="$(find gpu_voxel_planning)/urdf/victor_right_arm_only.urdf.xacro"/> -->
+    <arg name="model"  default="$(find gpu_voxel_planning)/urdf/victor.urdf.xacro"/>
+
+    <include file="$(find gpu_voxel_planning)/launch/gvp_extras.launch">
+      <arg name="model" value="$(arg model)"/>
+    </include>
+
+
+    <!-- <group> -->
+    <!--   <machine name="realtime" -->
+    <!--            address="realtime.local" -->
+    <!--            user="armlab" -->
+    <!--            /> -->
+    <!--   <include file="$(find victor_hardware_interface)/launch/dual_arm_lcm_bridge.launch"> -->
+    <!--     <arg name="model" value="$(arg model)"/> -->
+    <!--     <arg name="talkative" value="True"/> -->
+    <!--   </include> -->
+    <!-- </group> -->
+
+
+
+
+
+</launch>

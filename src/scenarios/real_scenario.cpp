@@ -29,9 +29,9 @@ RealScenario::RealScenario() : s(victor) {}
 void RealScenario::initFakeVictor(RosInterface &ri)
 {
     //NOTE:!!! These values are duplicated, and harded coded elsewhere in this code
-    VictorLeftArmConfig lac(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0});
-    ri.setLeftArm(lac);
-    ri.setRightGripper(1.5);
+    // VictorLeftArmConfig lac(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0});
+    // ri.setLeftArm(lac);
+    // ri.setRightGripper(1.5);
 }
 
 // void RealScenario::setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp)
@@ -93,6 +93,8 @@ void RealScenario::viz(const GpuVoxelRvizVisualizer& viz)
 
     std_msgs::ColorRGBA robot_color = makeColor(0.7, 0.5, 0.4, 1.0);
     viz.vizGrid(s.robot_self_collide_obstacles, "passive_robot", robot_color);
+    viz.vizGrid(s.robot.occupied_space, "active_robot", robot_color);
+    
     viz.vizGrid(s.robot.occupied_space, "active_robot", robot_color);
     s.bel->viz(viz);
 }

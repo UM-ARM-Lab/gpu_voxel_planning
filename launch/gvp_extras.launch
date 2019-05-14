@@ -18,10 +18,6 @@
       <rosparam command="load" file="$(find victor_moveit_config)/config/kinematics.yaml"/>
     </group>
 
-    <include file="$(find victor_fake_hardware_interface)/launch/fake_dual_arm_lcm_bridge.launch">
-      <arg name="model" value="$(arg model)"/>
-    </include>
-
     <node pkg="gpu_voxel_planning" type="execute_path_with_collision_detection.py"
           name="execute_path_with_collision_detection"/>
 

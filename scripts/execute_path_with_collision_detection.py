@@ -200,7 +200,7 @@ def execute_path(path):
     for pos in free_poses:
         jtp_msg = JointTrajectoryPoint()
         jtp_msg.positions = pos
-        msg.free_path.points.appeng(jtp_msg)
+        msg.free_path.points.append(jtp_msg)
         
     for pos in next_poses:
         jtp_msg = JointTrajectoryPoint()

@@ -8,6 +8,7 @@
 #include <arc_utilities/math_helpers.hpp>
 #include "beliefs/beliefs.hpp"
 #include "ros_interface/ros_interface.hpp"
+#include "arc_utilities/stl_wrappers.hpp"
 
 namespace GVP
 {
@@ -170,11 +171,35 @@ namespace GVP
             if(resp.ci.collided)
             {
                 //TODO: handle physical robot case of collision
+                DenseGrid sv;
+                for(const auto free_point: resp.ci.free_path.points)
+                {
+                    robot.set(VictorRightArmConfig(free_point.positions).asMap());
+                    sv.add(&robot.occupied_space);
+                }
+                updateFreeSpace(sv);
+
+                robot.set(VictorRightArmConfig(resp.ci.collision_path.points.back().positions).asMap());
+
+                std::cout << "Collision link: " << resp.ci.collision_links.front() << "\n";
+
+
+                int first_col_link = arc_std::find(robot.getLinkNames(), resp.ci.collision_links.front());
+
+                std::cout << "first col link: " << first_col_link << "\n";
+
+                if(first_col_link < 0)
+                {
+                    throw std::logic_error("link in collision not found");
+                }
 
                 
-                throw std::logic_error("Not implemented exception");
+                bel->updateCollisionSpace(robot, first_col_link);
+                
+                // throw std::logic_error("Not implemented exception");
                 return false;
             }
+            
             //TODO: update entire swept volume
             PROFILE_START("Update belief from free obs");
             DenseGrid sv;
