@@ -274,6 +274,8 @@ namespace GVP
         void viz(const GpuVoxelRvizVisualizer& viz) override
         {
             viz.vizChs(chs);
+            
+            viz.vizGrid(known_free, "known_free", makeColor(0, 0, 1, 0.1));
         }
 
         double calcProbFree(const DenseGrid &volume) override
