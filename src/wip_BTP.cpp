@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
     tester.attemptStrategy(strat);
     // strat.saveToFile();
 
-    strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map");
+    strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
 
     // viz.vizEEGraph(strat.graph);
     // viz.vizEESDGraph(strat.sd_graph);
