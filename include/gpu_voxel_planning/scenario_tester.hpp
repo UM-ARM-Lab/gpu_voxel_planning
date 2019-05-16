@@ -16,10 +16,12 @@ namespace GVP
         SimulationScenario &scenario;
         RosInterface ri;
         ros::NodeHandle &n;
+
+        int num_path_attempts;
         
 
         SimulationScenarioTester(SimulationScenario &scenario, ros::NodeHandle &n) :
-            scenario(scenario), n(n), ri(n)
+            scenario(scenario), n(n), ri(n), num_path_attempts(0)
         {
         }
 

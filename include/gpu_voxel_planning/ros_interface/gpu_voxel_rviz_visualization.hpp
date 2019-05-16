@@ -25,6 +25,7 @@ namespace GVP{
     visualization_msgs::MarkerArray visualize3DPath(const std::vector<Eigen::Vector3d> path,
                                                     const std::string& frame,
                                                     const std::string& ns,
+                                                    const int id,
                                                     const std_msgs::ColorRGBA& color);
 
     inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double a = 1.0)
@@ -63,11 +64,11 @@ namespace GVP{
 
         virtual
         void vizEEPath(const std::vector<GVP::VictorRightArmConfig> path_config,
-                       std::string path_name)
+                       std::string path_name, int id, const std_msgs::ColorRGBA& color)
         {
             std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(path_config);
-            ee_path_pub.publish(visualize3DPath(path_3d, global_frame, path_name,
-                                                makeColor(0.0, 0.0, 1.0)));
+            ee_path_pub.publish(visualize3DPath(path_3d, global_frame, path_name, id,
+                                                color));
         }
 
 

@@ -397,7 +397,7 @@ namespace GVP
 
             PROFILE_START("Viz_sample_ee_path");
             viz.vizEEPath(interpolate(s.getCurConfig(), graph.getNode(result[1]).getValue(), 0.1),
-                          "sampledPath");
+                          "sampledPath", 0, makeColor(0.0, 0.0, 1.0));
             PROFILE_RECORD("Viz_sample_ee_path");
             return result;
                 
@@ -467,7 +467,7 @@ namespace GVP
 
             PROFILE_START("Viz_sample_ee_path");
             viz.vizEEPath(interpolate(s.getCurConfig(), graph.getNode(result[1]).getValue(), 0.1),
-                          "sampledPath");
+                          "sampledPath", 0, makeColor(0.0, 0.0, 1.0));
             PROFILE_RECORD("Viz_sample_ee_path");
 
             NodeIndex a = result[1];

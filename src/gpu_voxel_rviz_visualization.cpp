@@ -59,10 +59,12 @@ visualization_msgs::MarkerArray GVP::visualizePoint(const Eigen::Vector3d pos,
 visualization_msgs::MarkerArray GVP::visualize3DPath(const std::vector<Eigen::Vector3d> path,
                                                      const std::string& frame,
                                                      const std::string& ns,
+                                                     const int id,
                                                      const std_msgs::ColorRGBA& color)
 {
     visualization_msgs::Marker path_marker;
     path_marker.ns = ns;
+    path_marker.id = id;
     path_marker.header.frame_id = frame;
     path_marker.type = visualization_msgs::Marker::LINE_STRIP;
     path_marker.color = color;

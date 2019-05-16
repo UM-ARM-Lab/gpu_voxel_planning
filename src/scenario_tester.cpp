@@ -10,19 +10,27 @@ using namespace GVP;
 *******************************/
 bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfig> &path)
 {
+    num_path_attempts++;
     for(const auto &c:path)
     {
         if(!scenario.getSimulationState().move(c, scenario.getTrueObstacles(), ri))
         {
+            PROFILE_START("Viz_scenario");
             scenario.viz(ri.viz);
+            PROFILE_RECORD("Viz_scenario");
+            PROFILE_RECORD_DOUBLE("Bump", 0);
+            ri.viz.vizEEPath(path, "invalid_attempt", num_path_attempts, makeColor(1.0, 0.0, 0.0));
             return false;
         }
         PROFILE_START("Viz_scenario");
-        // scenario.viz(ri.viz);
+        //Commented out for speed!
+        scenario.viz(ri.viz);
+        
         PROFILE_RECORD("Viz_scenario");
         // ros::Duration(0.01).sleep();
         ros::Duration(0.001).sleep();
     }
+    ri.viz.vizEEPath(path, "valid_attempt", num_path_attempts, makeColor(0.0, 0.0, 1.0));
     return true;
 }
 
@@ -58,7 +66,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         }
         PROFILE_RECORD(name + " Planning Time");
 
-        ri.viz.vizEEPath(path, "Path Found");
+        ri.viz.vizEEPath(path, "attempt", 0, makeColor(0.0, 0.0, 0.0));
         // std::cout << "path found with " << path.size() << " verts\n";
         
         PROFILE_START(name + " Motion Time");
@@ -133,7 +141,7 @@ bool RealScenarioTester::attemptStrategy(Strategy &strategy)
         }
         PROFILE_RECORD(name + " Planning Time");
 
-        ri.viz.vizEEPath(path, "Path Found");
+        ri.viz.vizEEPath(path, "Path Found", 0, makeColor(0.0, 0.0, 1.0));
         // std::cout << "path found with " << path.size() << " verts\n";
         
         PROFILE_START(name + " Motion Time");
