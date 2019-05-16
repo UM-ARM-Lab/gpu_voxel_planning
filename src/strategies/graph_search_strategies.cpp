@@ -196,7 +196,7 @@ namespace GVP
 
     std::string OmniscientGraphSearch::getName() const
     {
-        return "Omniscient Graph Search";
+        return "Omniscient";
     }
     
     Path OmniscientGraphSearch::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
@@ -245,7 +245,7 @@ namespace GVP
 
     std::string OptimisticGraphSearch::getName() const
     {
-        return "Optimistic Graph Search";
+        return "Optimistic";
     }
 
     
@@ -263,7 +263,7 @@ namespace GVP
     std::string ParetoCostGraphSearch::getName() const
     {
         std::stringstream ss;
-        ss << "ParetoCost Graph Search: alpha = " << alpha;
+        ss << "ParetoCosta" << alpha;
         return ss.str();
     }
 
@@ -309,7 +309,7 @@ namespace GVP
 
     std::string AStarGraphSearch::getName() const
     {
-        return "AStar Optimistic Graph Search";
+        return "AStar Optimistic";
     }
     
     std::vector<NodeIndex> AStarGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
@@ -405,7 +405,7 @@ namespace GVP
 
     std::string ThompsonGraphSearch::getName() const
     {
-        return "Thompson Graph Search";
+        return "Thompson";
     }
 
 
@@ -502,7 +502,7 @@ namespace GVP
 
     std::string HOPGraphSearch::getName() const
     {
-        return "HOP Graph Search";
+        return "HOP";
     }
 
 
@@ -783,6 +783,6 @@ namespace GVP
 
     std::string OROGraphSearch::getName() const
     {
-        return "ORO Graph Search";
+        return "ORO";
     }
 }

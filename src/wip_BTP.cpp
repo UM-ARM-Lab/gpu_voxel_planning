@@ -56,40 +56,28 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
 
 
-    // precomputeEdges();
-    // return 1;
-    
-    // GpuVoxelRvizVisualizer viz(n);
 
-    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
-
-    // SDRoadmap rm;
-    // rm.saveToFile(graph_filepath);
-
-    // Roadmap rm;
-    // rm.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
-
-    BeliefParams bp(BeliefType::CHS);
+    // BeliefParams bp(BeliefType::CHS);
     // BeliefParams bp(BeliefType::IID, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
     // BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.05);
-    // BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
+    BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
 
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
     TableWithBox scenario(bp, true, true, false);
-    // SlottedWall scenario(true);
-    // Bookshelf scenario(true);
+    // SlottedWall scenario(bp);
+    // Bookshelf scenario(bp);
 
     SimulationScenarioTester tester(scenario, n);
 
-    // OptimisticGraphSearch strat;
+    OptimisticGraphSearch strat;
     // ThompsonGraphSearch strat;
     // HOPGraphSearch strat;
     // OROGraphSearch strat;
-    ParetoCostGraphSearch strat(1.0);
+    // ParetoCostGraphSearch strat(1.0);
 
 
     std::cout << "Attempting strategy\n";

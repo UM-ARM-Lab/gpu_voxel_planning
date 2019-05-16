@@ -36,6 +36,7 @@ void SimulationScenario::initFakeVictor(RosInterface &ri)
 
 void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp)
 {
+    belief_name = bp.toString();
     switch(bp.belief_type)
     {
     case BeliefType::CHS:
@@ -65,7 +66,8 @@ void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, Beli
     default:
         std::cout << "Invalid belief type " << bp.belief_type << "\n";
         throw std::invalid_argument("Invalid belief type");
-    }        
+    }
+
 }
 
 void SimulationScenario::validate()
@@ -112,6 +114,11 @@ void SimulationScenario::addLeftArm()
 
 void SimulationScenario::combineObstacles()
 {
+    for(auto& ob: known_obstacles.obstacles)
+    {
+        s.known_obstacles.add(&ob.occupied);
+    }
+
     for(const auto& ob: known_obstacles.obstacles)
     {
         true_obstacles.add(ob);
@@ -149,10 +156,6 @@ TableWithBox::TableWithBox(BeliefParams bp, bool table_known, bool visible_cave_
 
     setPrior(unknown_obstacles, bp);
 
-    for(auto& ob: known_obstacles.obstacles)
-    {
-        s.known_obstacles.add(&ob.occupied);
-    }
 
     s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
     goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
@@ -212,21 +215,16 @@ Object TableWithBox::getCaveBack()
 /****************************************
  **         SlottedWall
  ****************************************/
-SlottedWall::SlottedWall(bool all_known):
-    name(std::string("Sloted Wall") +
-         "obstacles" + (all_known ? "" : "un") + "known")
+SlottedWall::SlottedWall(BeliefParams bp):
+    name("Sloted Wall")
 {
     addLeftArm();
 
-    Object slotted_wall = getSlottedWall();
-    all_known ? known_obstacles.add(slotted_wall) : unknown_obstacles.add(slotted_wall);
-
-    for(auto& ob: known_obstacles.obstacles)
-    {
-        s.known_obstacles.add(&ob.occupied);
-    }
+    known_obstacles.add(getFrontWall());
+    unknown_obstacles.add(getSlottedWall());
 
     combineObstacles();
+    setPrior(unknown_obstacles, bp);
     
     // s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
     // goal_config = VictorRightArmConfig(std::vector<double>{0, 0.32, 0, -1.32, -0.2, 0.9, 0.3}).asMap();
@@ -238,9 +236,9 @@ SlottedWall::SlottedWall(bool all_known):
     victor.set(s.current_config);
 }
 
-Object SlottedWall::getSlottedWall()
+Object SlottedWall::getFrontWall() const
 {
-    Object slotted_wall;
+    Object front_wall;
     double lower_wall_height = 1.1;
     double gap_height = .4;
 
@@ -249,22 +247,33 @@ Object SlottedWall::getSlottedWall()
     
     Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front wall
     Vector3f ufwd(0.04, 0.4, 0.3);
-    
+
     Vector3f mfwc(1.5, 1.8, 0);  //middle front wall
     Vector3f mfwd(0.04, 0.2, 1.5);
+
+    front_wall.add(AABB(lfwc, lfwc+lfwd));
+    front_wall.add(AABB(ufwc, ufwc+ufwd));
+    front_wall.add(AABB(mfwc, mfwc+mfwd));
+    return front_wall;
+}
+
+Object SlottedWall::getSlottedWall() const
+{
+    Object slotted_wall;
+    double lower_wall_height = 1.1;
+    double gap_height = .4;
+
+    
    
-    Vector3f lswc = lfwc;  // lower side wall corner
+    Vector3f lswc(1.5, 1.6, 0.0);  // lower side wall corner
     Vector3f lswd(.75, 0.04, lower_wall_height); //lower side wall dims
-    Vector3f cswc = ufwc; //close side wall corner
+    Vector3f cswc(1.5, 1.6, lower_wall_height + gap_height); //close side wall corner
     Vector3f cswd(0.2, 0.04, 0.3);
     Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
     Vector3f fswd(0.3, 0.04, 0.6);
     Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
     Vector3f mswd(0.3, 0.04, 0.2);
 
-    slotted_wall.add(AABB(lfwc, lfwc+lfwd));
-    slotted_wall.add(AABB(ufwc, ufwc+ufwd));
-    slotted_wall.add(AABB(mfwc, mfwc+mfwd));
             
     slotted_wall.add(AABB(lswc, lswc+lswd));
     slotted_wall.add(AABB(cswc, cswc+cswd));
@@ -279,9 +288,8 @@ Object SlottedWall::getSlottedWall()
  **         Bookshelf
  ****************************************/
 
-Bookshelf::Bookshelf(bool all_known):
-    name(std::string("Bookshelf") +
-         "obstacles" + (all_known ? "" : "un") + "known")
+Bookshelf::Bookshelf(BeliefParams bp):
+    name(std::string("Bookshelf"))
 {
     addLeftArm();
 
@@ -294,16 +302,12 @@ Bookshelf::Bookshelf(bool all_known):
     Object bookshelf = getBookshelf();
     Object table = getTable();
 
-    all_known ? known_obstacles.add(bookshelf) : unknown_obstacles.add(bookshelf);
-    all_known ? known_obstacles.add(table) : unknown_obstacles.add(table);
+    known_obstacles.add(bookshelf);
+    unknown_obstacles.add(table);
 
-    for(auto& ob: known_obstacles.obstacles)
-    {
-        s.known_obstacles.add(&ob.occupied);
-    }
 
     combineObstacles();
-
+    setPrior(unknown_obstacles, bp);
     
     // s.current_config = VictorRightArmConfig(std::vector<double>
     //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();

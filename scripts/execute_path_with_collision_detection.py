@@ -30,7 +30,7 @@ ros_path = []
 path_in_progress = False
 
 
-ext_torque_limits = [20, 20, 15, 5, 4, 3, .9]
+ext_torque_limits = [30, 20, 10, 5, 4, 3, .9]
 
 right_arm_listener = None
 vm = None

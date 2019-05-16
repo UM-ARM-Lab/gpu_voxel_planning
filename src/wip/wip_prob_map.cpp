@@ -203,6 +203,8 @@ int main(int argc, char* argv[])
     GpuVoxelRvizVisualizer viz(n);
     ros::Duration(1.0).sleep();
 
+
+
     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph";
 
     // checkBasicViz(viz);
@@ -213,18 +215,18 @@ int main(int argc, char* argv[])
 
     // testDistanceGrid();
     // return 1;
-    StratTest(viz);
+    // StratTest(viz);
 
-    obstacleBelief(viz);
-    return 1;
+    // obstacleBelief(viz);
+    // return 1;
 
 
-    BeliefParams bp(BeliefType::CHS);
+    BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0.0, 0.0, 0.0}, 0.001);
 
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    TableWithBox scenario(bp, true, true, true);
-    // SlottedWall scenario(true);
+    // TableWithBox scenario(bp, true, true, true);
+    SlottedWall scenario(bp);
     // Bookshelf scenario(true);
 
     // AStarGraphSearch strat;
@@ -235,8 +237,8 @@ int main(int argc, char* argv[])
     // UnknownSpaceCostGraphSearch strat(10.0, 0.0001);
 
 
-    // testAngles(scenario, viz);
-    // return 1;
+    testAngles(scenario, viz);
+    return 1;
 
     
     

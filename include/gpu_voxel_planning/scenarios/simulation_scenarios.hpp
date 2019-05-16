@@ -13,6 +13,8 @@ namespace GVP
         ObstacleConfiguration true_obstacles;
         ObstacleConfiguration known_obstacles;
         ObstacleConfiguration unknown_obstacles;
+
+        std::string belief_name;
         
         SimulationScenario();
 
@@ -100,14 +102,14 @@ namespace GVP
     {
         const std::string name;
     public:
-        SlottedWall(bool all_known);
+        SlottedWall(BeliefParams bp);
 
         std::string getName() const
         {
             return "SlottedWall";
         }
-
-        Object getSlottedWall();
+        Object getFrontWall() const;
+        Object getSlottedWall() const;
     };
 
 
@@ -119,7 +121,7 @@ namespace GVP
     {
         const std::string name;
     public:
-        Bookshelf(bool all_known);
+        Bookshelf(BeliefParams bp);
 
         std::string getName() const
         {

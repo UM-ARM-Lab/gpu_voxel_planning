@@ -278,15 +278,15 @@ target_link_libraries(wip_prob_map
   planning_library
   )
 
-#Commented out for speed
-# add_executable(simulation_timings
-#   src/simulation_timings.cpp
-#   )
-# target_link_libraries(simulation_timings
-#   ${EXTERN_LIBS}
-#   planning_library
-#   victor_halton_roadmap
-#   )
+
+add_executable(simulation_timings
+  src/simulation_timings.cpp
+  )
+target_link_libraries(simulation_timings
+  ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
 
 
 #Commented out for speed

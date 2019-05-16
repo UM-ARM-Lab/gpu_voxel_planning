@@ -18,7 +18,7 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
             return false;
         }
         PROFILE_START("Viz_scenario");
-        scenario.viz(ri.viz);
+        // scenario.viz(ri.viz);
         PROFILE_RECORD("Viz_scenario");
         // ros::Duration(0.01).sleep();
         ros::Duration(0.001).sleep();
@@ -28,6 +28,9 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
 
 bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
 {
+    PROFILE_RECORD_DOUBLE("Scenario: " + scenario.getName(), 0);
+    PROFILE_RECORD_DOUBLE("Strategy: " + strategy.getName(), 0);
+    PROFILE_RECORD_DOUBLE("Belief: " + scenario.belief_name, 0);
     scenario.viz(ri.viz);
     scenario.initFakeVictor(ri);
     try{

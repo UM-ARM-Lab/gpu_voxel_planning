@@ -21,6 +21,24 @@ namespace GVP
         BeliefParams(BeliefType bt, std::vector<double> bias = std::vector<double>{0,0,0},
             double noise = 0) :
             belief_type(bt), bias(bias), noise(noise) {}
+
+        std::string toString() const
+        {
+            std::map<BeliefType, std::string> m{
+                {BeliefType::CHS, "CHS"},
+                {BeliefType::IID, "IID"},
+                {BeliefType::Obstacle, "Obstacle"},
+                {BeliefType::Bonkers, "Bonkers"},
+                {BeliefType::MoEObstacle, "MoE"},
+                {BeliefType::MoEBonkers, "MoEBonkers"}
+            };
+
+                
+            std::string name = m[belief_type] + "_"
+                + std::to_string(bias[0]) + "_" + std::to_string(bias[1]) + "_" +std::to_string(bias[2]) + "_"
+                + std::to_string(noise);
+            return name;
+        }
     };
     
     
@@ -36,6 +54,8 @@ namespace GVP
         virtual void updateCollisionSpace(Robot& robot, const size_t first_link_in_collision) = 0;
 
         virtual DenseGrid sampleState() const = 0;
+
+        // virtual std::string getName() const = 0;
 
         virtual ~Belief() = default;
 
@@ -56,7 +76,7 @@ namespace GVP
         
         ObstacleBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
         {
-            int num_samples = 100;
+            int num_samples = 100; //HARDCODED PARAM
             std::mt19937 rng;
             std::normal_distribution<double> offset(0, noise);
             for(int i=0; i<num_samples; i++)
@@ -141,8 +161,14 @@ namespace GVP
         std::vector<double>
         kernelDensityEstimate(std::vector<std::vector<double>> prior, double bandwidth) const
         {
-            std::vector<double> new_weights;
+
             double normalizing = cumSum().back() * weights.size();
+            if(normalizing <= 0)
+            {
+                return std::vector<double>(particles.size(), 0);
+            }
+
+            std::vector<double> new_weights;
             for(const auto& particle: particles)
             {
                 double w_i = 0;
@@ -368,6 +394,12 @@ namespace GVP
             std::vector<double> new_weights;
             double posterior_mass = std::accumulate(posterior_weights.begin(), posterior_weights.end(),
                                                     (double)0.0);
+
+            if(posterior_mass <= 0.0)
+            {
+                return 0.0;
+            }
+            
             // std::cout << "posterior mass: " << posterior_mass << "\n";
             double normalizing = prior.size() * posterior_mass;
             // std::cout << "normalizing factor: " << normalizing << "\n";
