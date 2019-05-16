@@ -20,6 +20,7 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
             PROFILE_RECORD("Viz_scenario");
             PROFILE_RECORD_DOUBLE("Bump", 0);
             ri.viz.vizEEPath(path, "invalid_attempt", num_path_attempts, makeColor(1.0, 0.0, 0.0));
+            last_invalid = true;
             return false;
         }
         PROFILE_START("Viz_scenario");
@@ -30,7 +31,11 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
         // ros::Duration(0.01).sleep();
         ros::Duration(0.001).sleep();
     }
-    ri.viz.vizEEPath(path, "valid_attempt", num_path_attempts, makeColor(0.0, 0.0, 1.0));
+    if(!last_invalid)
+    {
+        ri.viz.vizEEPath(path, "valid_attempt", num_path_attempts, makeColor(0.0, 0.0, 1.0));
+    }
+    last_invalid = false;
     return true;
 }
 

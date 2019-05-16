@@ -18,6 +18,7 @@ namespace GVP
         ros::NodeHandle &n;
 
         int num_path_attempts;
+        bool last_invalid = false;
         
 
         SimulationScenarioTester(SimulationScenario &scenario, ros::NodeHandle &n) :
