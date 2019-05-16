@@ -13,20 +13,21 @@ import matplotlib.dates as mdates
 import rospy
 import rospkg
 import pandas as pd
+from collections import OrderedDict
 
 
-short_scenario = {
-    "Bookshelf": "Bookshelf",
-    "Table_with_Box_table_known_visible_cave_known_full_cave_unknown": "Box"}
+short_scenario = OrderedDict([
+    ("Bookshelf", "Bookshelf"),
+    ("Table_with_Box_table_known_visible_cave_known_full_cave_unknown", "Box")])
 
-short_belief = {
-    "CHS_0.000000_0.000000_0.000000_0.000000": "CHS",
-    "Obstacle_0.000000_0.000000_0.000000_0.100000": "Good Particles"}
+short_belief = OrderedDict([
+    ("CHS_0.000000_0.000000_0.000000_0.000000", "CHS"),
+    ("Obstacle_0.000000_0.000000_0.000000_0.100000", "Good Particles")])
 
-short_strategy = {
-    "Optimistic": "Optimistic",
-    "ParetoCosta1": "CollisionMeasure a=1",
-    "ParetoCosta10": "CollisionMeasure a=10"}
+short_strategy = OrderedDict([
+    ("Optimistic", "Optimistic"),
+    ("ParetoCosta1", "CollisionMeasure a=1"),
+    ("ParetoCosta10", "CollisionMeasure a=10")])
 
 
 experiment_dir = "/experiments/"
@@ -42,6 +43,8 @@ class Experiment:
     pareto_weight = None
     succeeded = True
     planning_time = None
+    num_collision = None
+    num_steps = None
 
 def get_experiment(experiments, scenario, strategy, belief):
     """
@@ -155,7 +158,8 @@ def write_latex(experiments, save_path):
             for strat in strategies:
                 write_line(f, scenario, strat)
             f.write("\\hline\n")
-            f.write("\\end{tabular}")
+            f.write("\\end{tabular}\n")
+            f.write("\\caption{" + scenario + "}\n")
             f.write("\\label{tab:experiment_" + scenario + "}\n")
             f.write("\\end{table}\n")
 
@@ -184,6 +188,11 @@ def load_file(filepath, filename):
                 exp.belief = parts[1]
             elif parts[0] == "Action_Limit_Exceeded":
                 exp.succeeded = False
+            elif parts[0] == "Bump" and exp.num_collision is None:
+                exp.num_collision = parts[2]
+            elif len(parts) > 4 and parts[2] == "Planning" and exp.planning_time is None:
+                exp.planning_time = parts[4]
+                exp.num_steps = parts[5]
             line = f.readline()
 
     print filename
