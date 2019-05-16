@@ -59,9 +59,13 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrategyFactories()
 {
     std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> factories;
-    factories.push_back([](){ return std::make_shared<OptimisticGraphSearch>();});
-    factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(1.0);});
-    factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(10.0);});
+    // factories.push_back([](){ return std::make_shared<OptimisticGraphSearch>();});
+    // factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(1.0);});
+    // factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(10.0);});
+    factories.push_back([](){ return std::make_shared<ThompsonGraphSearch>();});
+    factories.push_back([](){ return std::make_shared<HOPGraphSearch>();});
+    factories.push_back([](){ return std::make_shared<OROGraphSearch>();});
+    
     return factories;
 }
 

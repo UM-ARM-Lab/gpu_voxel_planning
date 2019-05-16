@@ -73,8 +73,8 @@ int main(int argc, char* argv[])
 
     SimulationScenarioTester tester(scenario, n);
 
-    OptimisticGraphSearch strat;
-    // ThompsonGraphSearch strat;
+    // OptimisticGraphSearch strat;
+    ThompsonGraphSearch strat;
     // HOPGraphSearch strat;
     // OROGraphSearch strat;
     // ParetoCostGraphSearch strat(1.0);
