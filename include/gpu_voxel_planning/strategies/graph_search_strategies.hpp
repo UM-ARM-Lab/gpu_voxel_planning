@@ -164,7 +164,7 @@ namespace GVP
         OROGraphSearch() : num_samples(10) {}
         virtual std::string getName() const override;
         bool pathExists(NodeIndex start, NodeIndex goal, State &s);
-        std::vector<NodeIndex> getPossibleActions(NodeIndex cur);
+        std::vector<NodeIndex> getPossibleActions(State& state, NodeIndex cur);
         double simulateTransition(State& state, const Roadmap& rm, const DenseGrid& occupied,
                                   NodeIndex& cur, NodeIndex next,
                                   arc_dijkstras::EvaluatedEdges& additional_invalid,

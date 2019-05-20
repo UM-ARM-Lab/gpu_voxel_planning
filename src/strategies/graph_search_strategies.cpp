@@ -596,11 +596,17 @@ namespace GVP
     }
 
 
-    std::vector<NodeIndex> OROGraphSearch::getPossibleActions(NodeIndex cur)
+    std::vector<NodeIndex> OROGraphSearch::getPossibleActions(State& state, NodeIndex cur)
     {
         std::vector<NodeIndex> possible_actions;
         for(const auto& e: graph.getNode(cur).getOutEdges())
         {
+            DenseGrid sv = getSweptVolume(state, e);
+            if(calculateEdgeWeight(state, e) <= 0.0)
+            {
+                continue;
+            }
+
             possible_actions.push_back(e.getToIndex());
         }
         return possible_actions;
@@ -615,7 +621,11 @@ namespace GVP
         const auto& e = rm.getEdge(cur, next);
         // std::cout << "Edge " << e << " is invalid? " << e.isInvalid() << "\n";
         // if(checkEdge(e, state))
-        if(!getSweptVolume(state, e).overlapsWith(&occupied))
+
+
+        DenseGrid sv = getSweptVolume(state, e);
+        viz.vizGrid(sv, "transition", makeColor(1, 0.5, 0.5, 0.7));
+        if(!sv.overlapsWith(&occupied))
         {
             PROFILE_START("simulate_belief_update_free");
             state.bel->updateFreeSpace(getSweptVolume(state, e));
@@ -625,10 +635,13 @@ namespace GVP
             cur = next;
             return EigenHelpers::Distance(q1, q2);;
         }
+
+        // std::cout << "Simulated transition collided\n";
         
         const VictorRightArmConfig c1(rm.getNode(cur).getValue());
         const VictorRightArmConfig c2(rm.getNode(next).getValue());
         auto path = interpolate(c1, c2, discretization);
+
 
         double d = 0;
         for(const auto &c: path)
@@ -670,6 +683,12 @@ namespace GVP
             auto path = lazySpForRollout(cur, goal, state, rm, additional_invalid);
             PROFILE_RECORD("rollout lazysp");
 
+            if(path.size() < 2)
+            {
+                std::cout << "No path found. Rollout failed\n";
+                return std::numeric_limits<double>::infinity();
+            }
+
             PROFILE_START("Rollout viz sv");
             DenseGrid sv = getSweptVolume(state, graph.getEdge(cur, path[1]));
             viz.vizGrid(sv, "swept volume", makeColor(1, 1, 0, 0.7));
@@ -691,6 +710,7 @@ namespace GVP
             // }
         }
 
+        std::cout << "Rollout reached goal\n";
         PROFILE_RECORD("Rollout");
         return rollout_cost;
     }
@@ -702,6 +722,8 @@ namespace GVP
         PROFILE_START("ORO_plan");
         std::map<NodeIndex, double> actions;
         using pair_type = decltype(actions)::value_type;
+
+        auto all_actions = getPossibleActions(s, start);
 
         for(int i=0; i<num_samples; i++)
         {
@@ -715,11 +737,14 @@ namespace GVP
 
             if(!pathExists(start, goal, sampled_state))
             {
+                std::cout << "Path check failed. Resampling\n";
                 continue;
             }
+            std::cout << "There is a valid path. Rolling out\n";
 
-            for(auto initial_action: getPossibleActions(start))
+            for(auto initial_action: all_actions)
             {
+                std::cout << "Initial action: " << initial_action << "\n";
                 State rollout_state(s);
                 rollout_state.bel = s.bel->clone();
                 // PROFILE_START("Copy_graph");
