@@ -596,16 +596,25 @@ namespace GVP
     }
 
 
-    std::vector<NodeIndex> OROGraphSearch::getPossibleActions(State& state, NodeIndex cur)
+    std::vector<NodeIndex> OROGraphSearch::getPossibleActions(State& state, NodeIndex cur,
+        GpuVoxelRvizVisualizer& viz)
     {
         std::vector<NodeIndex> possible_actions;
         for(const auto& e: graph.getNode(cur).getOutEdges())
         {
             DenseGrid sv = getSweptVolume(state, e);
-            if(calculateEdgeWeight(state, e) <= 0.0)
+
+            if(calculateEdgeWeight(state, e) >= std::numeric_limits<double>::max())
             {
+                
+                // viz.vizGrid(sv, "Possible edge to try", makeColor(1.0, 0.5, 0.5));
+                // std::cout << "This edge is invalid\n";
+                // arc_helpers::WaitForInput();
                 continue;
             }
+            // viz.vizGrid(sv, "Possible edge to try", makeColor(1.0, 0.5, 0.5));
+            // std::cout << "Possibly valid action\n";
+            // arc_helpers::WaitForInput();
 
             possible_actions.push_back(e.getToIndex());
         }
@@ -723,7 +732,13 @@ namespace GVP
         std::map<NodeIndex, double> actions;
         using pair_type = decltype(actions)::value_type;
 
-        auto all_actions = getPossibleActions(s, start);
+        auto all_actions = getPossibleActions(s, start, viz);
+        std::cout << "There are " << all_actions.size() << " possible actions to try\n";
+
+        if(all_actions.size() == 0)
+        {
+            throw std::logic_error("No possible valid actions to try next\n");
+        }
 
         for(int i=0; i<num_samples; i++)
         {
