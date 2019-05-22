@@ -95,6 +95,7 @@ namespace GVP
 
         std::unique_ptr<Belief> clone() const override
         {
+            std::cout << "cloning obstacle belief\n";
             std::unique_ptr<ObstacleBelief> b = std::make_unique<ObstacleBelief>();
             b->particles = particles;
             b->weights = weights;
@@ -372,6 +373,9 @@ namespace GVP
         std::vector<std::vector<double>> particle_prior;
 
     public:
+        MoEBelief(){}
+        
+    public:
         MoEBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias):
             expert_particle(oc, noise, bias)
         {
@@ -449,7 +453,15 @@ namespace GVP
 
         std::unique_ptr<Belief> clone() const override
         {
-            throw std::logic_error("not implemented");
+            std::cout << "Cloning MoE belief\n";
+            std::unique_ptr<MoEBelief> b = std::make_unique<MoEBelief>();
+            b->expert_particle = expert_particle;
+            b->expert_chs = expert_chs;
+            b->weights = weights;
+            b->experts.push_back(&(b->expert_chs));
+            b->experts.push_back(&(b->expert_particle));
+            b->particle_prior = particle_prior;
+            return b;
         }
 
         void updateWeights()
