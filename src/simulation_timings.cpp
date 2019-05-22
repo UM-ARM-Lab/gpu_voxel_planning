@@ -23,6 +23,7 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
     std::cout << scenario.belief_name << "\n";
     
     SimulationScenarioTester tester(scenario, n);
+    ros::Duration(1.0).sleep();
     tester.attemptStrategy(strategy);
 
     std::string filename = scenario.getName() + "_" + strategy.getName() + "_" +

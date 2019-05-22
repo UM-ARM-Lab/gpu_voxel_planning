@@ -16,7 +16,9 @@ namespace GVP
     {
         try
         {
+            std::cout << "Loading swept volumes...";
             precomputed_swept_volumes.loadFromFile(swept_volumes_filepath, graph.getNodes().size());
+            std::cout << "loaded\n";
         }
         catch(const std::runtime_error& e)
         {
@@ -540,6 +542,8 @@ namespace GVP
         // auto path = lazySp(start, goal, s, graph);
         auto path = lazySpForRollout(start, goal, s, graph, invalid_edges);
         std::cout << "Check complete\n";
+        std::cout << "Path is " << PrettyPrint::PrettyPrint(path) << "\n";
+        std::cout << "Path size is " << path.size() << "\n";
         return path.size() > 0;
     }
 
@@ -579,6 +583,7 @@ namespace GVP
         if(result.second == std::numeric_limits<double>::infinity())
         {
             std::cout << "No path found on graph\n";
+            std::cout << "LazySP path size " << result.first.size() << "\n";
         }
         PROFILE_RECORD_DOUBLE("lazySP path cost ", result.second);
         std::cout << "LazySP for Rollout path cost " << result.second << "\n";
@@ -665,6 +670,11 @@ namespace GVP
                     std::numeric_limits<double>::infinity();
                 // e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
                 // rm.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+
+                state.bel->viz(viz);
+                std::cout << "Transition resulted in a collision\n";
+                // arc_helpers::WaitForInput();
+                
                 break;
             }
 
@@ -684,7 +694,7 @@ namespace GVP
     {
 
         PROFILE_START("Rollout");
-        std::cout << "Rolling out\n";
+        std::cout << "New rolling out\n";
         double rollout_cost = 0;
         while(cur != goal)
         {
@@ -708,6 +718,7 @@ namespace GVP
                                                additional_invalid,
                                                viz);
             PROFILE_RECORD("Simulate transition in rollout");
+            // arc_helpers::WaitForInput();
             // if(cur == path[1])
             // {
             //     std::cout << "Transition succeeded\n";
