@@ -27,7 +27,8 @@ short_belief = OrderedDict([
 short_strategy = OrderedDict([
     ("Optimistic", "Optimistic"),
     ("ParetoCosta1", "CollisionMeasure a=1"),
-    ("ParetoCosta10", "CollisionMeasure a=10")])
+    ("ParetoCosta10", "CollisionMeasure a=10"),
+    ("ORO", "ORO")])
 
 
 experiment_dir = "/experiments/"
@@ -210,7 +211,7 @@ def load_all_files():
            name.endswith(".tex"):
            continue;
         experiments.append(load_file(path, name))
-    # plot_data(experiments, path)
+    plot_data(experiments, path)
     write_latex(experiments, path)
     
 
