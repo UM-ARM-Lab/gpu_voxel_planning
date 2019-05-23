@@ -64,9 +64,10 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         {
             path = strategy.applyTo(scenario, ri.viz);
         }
-        catch(std::runtime_error &e)
+        catch(std::logic_error &e)
         {
             std::cout << "No path found\n";
+            PROFILE_RECORD_DOUBLE("Failed", 0);
             return false;
         }
         PROFILE_RECORD(name + " Planning Time");
@@ -139,7 +140,7 @@ bool RealScenarioTester::attemptStrategy(Strategy &strategy)
             std::cout << "plan\n";
             path = strategy.applyTo(scenario, ri.viz);
         }
-        catch(std::runtime_error &e)
+        catch(std::logic_error &e)
         {
             std::cout << "No path found\n";
             return false;

@@ -22,13 +22,17 @@ short_scenario = OrderedDict([
 
 short_belief = OrderedDict([
     ("CHS_0.000000_0.000000_0.000000_0.000000", "CHS"),
-    ("Obstacle_0.000000_0.000000_0.000000_0.100000", "Good Particles")])
+    ("Obstacle_0.000000_0.000000_0.000000_0.100000", "Good Particles"),
+    ("Obstacle_0.100000_0.100000_0.100000_0.400000", "Noisy Particles"),
+    ("Bonkers_0.000000_0.000000_0.000000_0.050000", "Bonkers")])
 
 short_strategy = OrderedDict([
     ("Optimistic", "Optimistic"),
     ("ParetoCosta1", "CollisionMeasure a=1"),
     ("ParetoCosta10", "CollisionMeasure a=10"),
-    ("ORO", "ORO")])
+    ("ORO", "ORO"),
+    ("HOP", "HOP"),
+    ("Thompson", "Thompson")])
 
 
 experiment_dir = "/experiments/"
@@ -132,6 +136,8 @@ def write_latex(experiments, save_path):
         exp = get_experiment(experiments, scenario, strat, bel)
         if exp is None:
             return "-"
+        if not exp.succeeded:
+            return float('inf')
         return exp.exec_cost
 
     def write_belief_headers(f):
@@ -165,6 +171,7 @@ def write_latex(experiments, save_path):
             f.write("\\end{table}\n")
 
     write_table("Bookshelf")
+    write_table("Box")
 
     
 
@@ -189,6 +196,9 @@ def load_file(filepath, filename):
                 exp.belief = parts[1]
             elif parts[0] == "Action_Limit_Exceeded":
                 exp.succeeded = False
+            elif parts[0] == "Failed":
+                exp.succeeded = False
+                exp.exec_cost = -1
             elif parts[0] == "Bump" and exp.num_collision is None:
                 exp.num_collision = parts[2]
             elif len(parts) > 4 and parts[2] == "Planning" and exp.planning_time is None:
@@ -197,7 +207,7 @@ def load_file(filepath, filename):
             line = f.readline()
 
     print filename
-    exp.label = exp.strategy + "_" + short_belief[exp.belief]
+    exp.label =  short_belief[exp.belief] + "_" + short_strategy[exp.strategy]
     # IPython.embed()
     return exp
         

@@ -44,12 +44,16 @@ namespace GVP
         bool isPossiblyValid(const VictorRightArmConfig &c)
         {
             robot.set(c.asMap());
-            if(robot.occupied_space.overlapsWith(&robot_self_collide_obstacles))
+            return isPossiblyValid(robot.occupied_space);
+        }
+
+        bool isPossiblyValid(const DenseGrid &volume)
+        {
+            if(volume.overlapsWith(&robot_self_collide_obstacles))
             {
                 return false;
             }
-
-            if(robot.occupied_space.overlapsWith(&known_obstacles))
+            if(volume.overlapsWith(&known_obstacles))
             {
                 return false;
             }
@@ -58,20 +62,10 @@ namespace GVP
 
         double calcProbFree(const DenseGrid &volume)
         {
-            PROFILE_START("CalcProbFreeKnown");
-            if(robot_self_collide_obstacles.overlapsWith(&volume))
+            if(!isPossiblyValid(volume))
             {
-                PROFILE_RECORD("CalcProbFreeKnown");
                 return 0.0;
             }
-
-            if(known_obstacles.overlapsWith(&volume))
-            {
-                PROFILE_RECORD("CalcProbFreeKnown");
-                return 0.0;
-            }
-            PROFILE_RECORD("CalcProbFreeKnown");
-
             return bel->calcProbFree(volume);
         }
 

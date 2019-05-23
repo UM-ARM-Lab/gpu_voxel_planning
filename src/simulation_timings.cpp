@@ -31,7 +31,7 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
         arc_helpers::GetCurrentTimeAsString();
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
-    strategy.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
+    // strategy.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
 }
 
 // void test1(ros::NodeHandle &n)
@@ -51,6 +51,7 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
 std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenarioFactories(BeliefParams& bp)
 {
     std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
+
     factories.push_back([&](){ return std::make_shared<TableWithBox>(bp, true, true, false);});
     // factories.push_back([](){ return std::make_shared<TableWithBox>(bp, true, false, false);});
     factories.push_back([&](){ return std::make_shared<Bookshelf>(bp);});
@@ -60,12 +61,12 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrategyFactories()
 {
     std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> factories;
-    // factories.push_back([](){ return std::make_shared<OptimisticGraphSearch>();});
+    factories.push_back([](){ return std::make_shared<OptimisticGraphSearch>();});
     // factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(1.0);});
     // factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(10.0);});
-    factories.push_back([](){ return std::make_shared<ThompsonGraphSearch>();});
-    factories.push_back([](){ return std::make_shared<HOPGraphSearch>();});
-    factories.push_back([](){ return std::make_shared<OROGraphSearch>();});
+    // factories.push_back([](){ return std::make_shared<ThompsonGraphSearch>();});
+    // factories.push_back([](){ return std::make_shared<HOPGraphSearch>();});
+    // factories.push_back([](){ return std::make_shared<OROGraphSearch>();});
     
     return factories;
 }
@@ -73,12 +74,12 @@ std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrate
 std::vector<BeliefParams> getBeliefParams()
 {
     std::vector<BeliefParams> bps;
-    bps.emplace_back(BeliefType::CHS);
-    bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
+    // bps.emplace_back(BeliefType::CHS);
+    // bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
     // bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
-    // bps.emplace_back(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
+    bps.emplace_back(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
     // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
-    // bps.emplace_back(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
+    // bps.emplace_back(BeliefType::MoEBonkers, std::bvector<double>{0,0,0}, 0.05);
     return bps;
 }
 

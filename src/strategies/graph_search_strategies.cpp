@@ -81,7 +81,12 @@ namespace GVP
     std::vector<NodeIndex> GraphSearchStrategy::plan(NodeIndex start, NodeIndex goal, State &s,
                                                      GpuVoxelRvizVisualizer& viz)
     {
-        return lazySp(start, goal, s, graph);
+        auto path = lazySp(start, goal, s, graph);
+        if(path.size() < 2)
+        {
+            throw std::logic_error("No plan found");
+        }
+        return path;
     }
 
 
@@ -240,7 +245,7 @@ namespace GVP
      ********************************/
     double OptimisticGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     {
-        if(s.bel->calcProbFree(getSweptVolume(s, e)) > 0)
+        if(s.calcProbFree(getSweptVolume(s, e)) > 0)
         {
             return e.getWeight();
         }
@@ -258,7 +263,13 @@ namespace GVP
      ********************************/
     double ParetoCostGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     {
+
+        
         double edge_probability = s.calcProbFree(getSweptVolume(s, e));
+        if(edge_probability <= 0)
+        {
+            return std::numeric_limits<double>::infinity();
+        }
         double p_cost = -std::log(edge_probability);
         double l_cost = e.getWeight();
         return l_cost + alpha * p_cost;
@@ -360,6 +371,10 @@ namespace GVP
         {
             return std::numeric_limits<double>::infinity();
         }
+        if(!s.isPossiblyValid(getSweptVolume(s, e)))
+        {
+            return std::numeric_limits<double>::infinity();
+        }
         return e.getWeight();
     }
 
@@ -374,7 +389,7 @@ namespace GVP
     {
         PROFILE_START("Thompson_plan");
 
-        while(true)
+        for(int i=0; i<100; i++)
         {
             Roadmap graph_cpy = graph;
             State sampled_state = s.sample();
@@ -402,9 +417,9 @@ namespace GVP
                           "sampledPath", 0, makeColor(0.0, 0.0, 1.0));
             PROFILE_RECORD("Viz_sample_ee_path");
             return result;
-                
         }
-
+        std::cout << "Thompson sampling limit exceeded\n";
+        throw std::logic_error("Thompson sampling limit exceeded");
     }
 
     std::string ThompsonGraphSearch::getName() const

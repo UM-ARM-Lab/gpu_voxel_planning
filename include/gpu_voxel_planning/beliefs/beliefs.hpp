@@ -217,6 +217,11 @@ namespace GVP
 
             auto cum_sum = cumSum();
 
+            if(cum_sum.back() == 0)
+            {
+                return DenseGrid();
+            }
+
             for(int i=0; i<particles.size(); i++)
             {
                 if(r <= cum_sum[i])
