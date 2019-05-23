@@ -24,7 +24,8 @@ short_belief = OrderedDict([
     ("CHS_0.000000_0.000000_0.000000_0.000000", "CHS"),
     ("Obstacle_0.000000_0.000000_0.000000_0.100000", "Good Particles"),
     ("Obstacle_0.100000_0.100000_0.100000_0.400000", "Noisy Particles"),
-    ("Bonkers_0.000000_0.000000_0.000000_0.050000", "Bonkers")])
+    ("Bonkers_0.000000_0.000000_0.000000_0.050000", "Bonkers"),
+    ("MoE_0.000000_0.000000_0.000000_0.100000", "MoE Good")])
 
 short_strategy = OrderedDict([
     ("Optimistic", "Optimistic"),
