@@ -527,10 +527,10 @@ namespace GVP
 
 
     /***********************************
-     **             ORO               **
-     **      Optimistic Rollout       **
+     **              RO               **
+     **           Rollout             **
      **********************************/
-    double OROGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
+    double ROGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e)
     {
         if(e.isInvalid())
         {
@@ -543,7 +543,7 @@ namespace GVP
         return e.getWeight();
     }
 
-    bool OROGraphSearch::pathExists(NodeIndex start, NodeIndex goal, State &s)
+    bool ROGraphSearch::pathExists(NodeIndex start, NodeIndex goal, State &s)
     {
         VictorRightArmConfig goal_config(graph.getNode(goal).getValue());
         s.robot.set(goal_config.asMap());
@@ -562,7 +562,7 @@ namespace GVP
         return path.size() > 0;
     }
 
-    std::vector<NodeIndex> OROGraphSearch::lazySpForRollout(NodeIndex start, NodeIndex goal, State &s,
+    std::vector<NodeIndex> ROGraphSearch::lazySpForRollout(NodeIndex start, NodeIndex goal, State &s,
                                                             Roadmap &rm,
                                                             arc_dijkstras::EvaluatedEdges& additional_invalid)
     {
@@ -616,7 +616,7 @@ namespace GVP
     }
 
 
-    std::vector<NodeIndex> OROGraphSearch::getPossibleActions(State& state, NodeIndex cur,
+    std::vector<NodeIndex> ROGraphSearch::getPossibleActions(State& state, NodeIndex cur,
         GpuVoxelRvizVisualizer& viz)
     {
         std::vector<NodeIndex> possible_actions;
@@ -641,7 +641,7 @@ namespace GVP
         return possible_actions;
     }
 
-    double OROGraphSearch::simulateTransition(State& state, const Roadmap& rm, const DenseGrid& occupied,
+    double ROGraphSearch::simulateTransition(State& state, const Roadmap& rm, const DenseGrid& occupied,
                                               NodeIndex& cur, NodeIndex next,
                                               arc_dijkstras::EvaluatedEdges& additional_invalid,
                                               GpuVoxelRvizVisualizer& viz)
@@ -702,58 +702,11 @@ namespace GVP
         return 2*d;
     }
 
-    double OROGraphSearch::rolloutOptimistic(State& state, Roadmap& rm, const DenseGrid& occupied,
-                                             NodeIndex cur, NodeIndex goal,
-                                             arc_dijkstras::EvaluatedEdges& additional_invalid,
-                                             GpuVoxelRvizVisualizer& viz)
-    {
 
-        PROFILE_START("Rollout");
-        std::cout << "New rolling out\n";
-        double rollout_cost = 0;
-        while(cur != goal)
-        {
-            PROFILE_START("rollout lazysp");
-            auto path = lazySpForRollout(cur, goal, state, rm, additional_invalid);
-            PROFILE_RECORD("rollout lazysp");
-
-            if(path.size() < 2)
-            {
-                std::cout << "No path found. Rollout failed\n";
-                return std::numeric_limits<double>::infinity();
-            }
-
-            PROFILE_START("Rollout viz sv");
-            DenseGrid sv = getSweptVolume(state, graph.getEdge(cur, path[1]));
-            viz.vizGrid(sv, "swept volume", makeColor(1, 1, 0, 0.7));
-            PROFILE_RECORD("Rollout viz sv");
-
-            PROFILE_START("Simulate transition in rollout");
-            rollout_cost += simulateTransition(state, rm, occupied, cur, path[1],
-                                               additional_invalid,
-                                               viz);
-            PROFILE_RECORD("Simulate transition in rollout");
-            // arc_helpers::WaitForInput();
-            // if(cur == path[1])
-            // {
-            //     std::cout << "Transition succeeded\n";
-            // }
-            // else
-            // {
-            //     std::cout << "Transition " << cur << " -> " << path[1] <<  " failed\n";
-            //     std::cout << "path size: " << path.size() << "\n";
-            // }
-        }
-
-        std::cout << "Rollout reached goal\n";
-        PROFILE_RECORD("Rollout");
-        return rollout_cost;
-    }
-
-    std::vector<NodeIndex> OROGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
+    std::vector<NodeIndex> ROGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
                                                 GpuVoxelRvizVisualizer& viz)
     {
-        std::cout << "ORO plan\n";
+        std::cout << getName() << "plan\n";
         PROFILE_START("ORO_plan");
         std::map<NodeIndex, double> actions;
         using pair_type = decltype(actions)::value_type;
@@ -783,6 +736,8 @@ namespace GVP
             }
             std::cout << "There is a valid path. Rolling out\n";
 
+            arc_dijkstras::EvaluatedEdges invalid_edges_for_sample;
+            
             for(auto initial_action: all_actions)
             {
                 std::cout << "Initial action: " << initial_action << "\n";
@@ -802,10 +757,17 @@ namespace GVP
                                                          viz);
                 PROFILE_RECORD("Simulate transition first");
 
-                rollout_cost += rolloutOptimistic(rollout_state, graph,
-                                                  sampled_state.known_obstacles,
-                                                  cur, goal, invalid_edges_during_rollout,
-                                                  viz);
+                for(auto const& kv: invalid_edges_during_rollout)
+                {
+                    invalid_edges_for_sample[kv.first] = kv.second;
+                }
+
+                rollout_cost += rollout(rollout_state, graph,
+                                        sampled_state.known_obstacles,
+                                        cur, goal,
+                                        invalid_edges_during_rollout,
+                                        invalid_edges_for_sample,
+                                        viz);
 
                 if(actions.count(initial_action) == 0)
                 {
@@ -849,8 +811,142 @@ namespace GVP
 
     }
 
+
+
+
+    /***********************************
+     **             ORO               **
+     **      Optimistic Rollout       **
+     **********************************/
+
     std::string OROGraphSearch::getName() const
     {
         return "ORO";
     }
+
+
+    double OROGraphSearch::rollout(State& state, Roadmap& rm, const DenseGrid& occupied,
+                                   NodeIndex cur, NodeIndex goal,
+                                   arc_dijkstras::EvaluatedEdges& invalid_edges_during_rollout,
+                                   arc_dijkstras::EvaluatedEdges& invalid_edges_during_sample,
+                                   GpuVoxelRvizVisualizer& viz)
+    {
+
+        PROFILE_START("Rollout");
+        std::cout << "New rolling out\n";
+        double rollout_cost = 0;
+        while(cur != goal)
+        {
+            PROFILE_START("rollout lazysp");
+            auto path = lazySpForRollout(cur, goal, state, rm, invalid_edges_during_rollout);
+            PROFILE_RECORD("rollout lazysp");
+
+            if(path.size() < 2)
+            {
+                std::cout << "No path found. Rollout failed\n";
+                return std::numeric_limits<double>::infinity();
+            }
+
+            PROFILE_START("Rollout viz sv");
+            DenseGrid sv = getSweptVolume(state, graph.getEdge(cur, path[1]));
+            viz.vizGrid(sv, "swept volume", makeColor(1, 1, 0, 0.7));
+            PROFILE_RECORD("Rollout viz sv");
+
+            PROFILE_START("Simulate transition in rollout");
+            rollout_cost += simulateTransition(state, rm, occupied, cur, path[1],
+                                               invalid_edges_during_rollout,
+                                               viz);
+
+            if(cur != path[1]) //transition failed
+            {
+                const auto e = graph.getEdge(cur, path[1]);
+                std::cout << "Simulated transition failed, marked " << e  << " as invalid\n";
+                auto hashed_edge = arc_dijkstras::getSortedHashable(e);
+                invalid_edges_during_rollout[hashed_edge] = std::numeric_limits<double>::infinity();
+            }
+            
+            PROFILE_RECORD("Simulate transition in rollout");
+            // arc_helpers::WaitForInput();
+            // if(cur == path[1])
+            // {
+            //     std::cout << "Transition succeeded\n";
+            // }
+            // else
+            // {
+            //     std::cout << "Transition " << cur << " -> " << path[1] <<  " failed\n";
+            //     std::cout << "path size: " << path.size() << "\n";
+            // }
+        }
+
+        std::cout << "Rollout reached goal\n";
+        PROFILE_RECORD("Rollout");
+        return rollout_cost;
+    }
+
+
+    /***********************************
+     **            QMDP               **
+     **      Omniscient Rollout       **
+     **********************************/
+
+    std::string QMDP::getName() const
+    {
+        
+        return "QMDP";
+    }
+
+
+    double QMDP::rollout(State& state, Roadmap& rm, const DenseGrid& occupied,
+                         NodeIndex cur, NodeIndex goal,
+                         arc_dijkstras::EvaluatedEdges& invalid_edges_during_rollout,
+                         arc_dijkstras::EvaluatedEdges& invalid_edges_during_sample,
+                         GpuVoxelRvizVisualizer& viz)
+    {
+        if(cur == goal)
+        {
+            std::cout << "No rollout needed\n";
+            return 0;
+        }
+
+        PROFILE_START("Rollout");
+        std::cout << "New rolling out\n";
+        double rollout_cost = 0;
+
+        PROFILE_START("rollout lazysp");
+        state.known_obstacles.add(&occupied);
+        auto path = lazySpForRollout(cur, goal, state, rm, invalid_edges_during_sample);
+
+        if(path.size() < 2)
+        {
+            std::cout << "No path found. QMDP rollout failed\n";
+            return std::numeric_limits<double>::infinity();
+        }
+
+        PROFILE_RECORD("rollout lazysp");
+
+        for(int i=1; i<path.size(); i++)
+        {
+            PROFILE_START("Rollout viz sv");
+            DenseGrid sv = getSweptVolume(state, graph.getEdge(cur, path[i]));
+            viz.vizGrid(sv, "swept volume", makeColor(1, 1, 0, 0.7));
+            PROFILE_RECORD("Rollout viz sv");
+
+            PROFILE_START("Simulate transition in rollout");
+            rollout_cost += simulateTransition(state, rm, occupied, cur, path[i],
+                                               invalid_edges_during_sample,
+                                               viz);
+
+            if(cur != path[i]) //transition failed
+            {
+                assert(false && "QMDP transition failed, though all obstacles should be known");
+            }
+            PROFILE_RECORD("Simulate transition in rollout");
+        }
+        assert(cur == goal);
+
+        std::cout << "Rollout reached goal\n";
+        PROFILE_RECORD("Rollout");
+        return rollout_cost;
+    }
+
 }

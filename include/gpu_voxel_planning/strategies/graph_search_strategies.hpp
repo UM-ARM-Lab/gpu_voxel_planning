@@ -155,14 +155,14 @@ namespace GVP
     };
 
 
-    class OROGraphSearch : public GraphSearchStrategy
+    class ROGraphSearch : public GraphSearchStrategy
     {
     public:
         int num_samples;
 
     public:
-        OROGraphSearch() : num_samples(10) {}
-        virtual std::string getName() const override;
+        ROGraphSearch() : num_samples(10) {}
+
         bool pathExists(NodeIndex start, NodeIndex goal, State &s);
         std::vector<NodeIndex> getPossibleActions(State& state, NodeIndex cur,
             GpuVoxelRvizVisualizer& viz);
@@ -170,10 +170,6 @@ namespace GVP
                                   NodeIndex& cur, NodeIndex next,
                                   arc_dijkstras::EvaluatedEdges& additional_invalid,
                                   GpuVoxelRvizVisualizer& viz);
-        double rolloutOptimistic(State& state, Roadmap& rm, const DenseGrid& occupied,
-                                 NodeIndex cur, NodeIndex goal,
-                                 arc_dijkstras::EvaluatedEdges& additional_invalid,
-                                 GpuVoxelRvizVisualizer& viz);
 
         std::vector<NodeIndex> lazySpForRollout(NodeIndex start, NodeIndex goal, State &s,
                                                 Roadmap &rm,
@@ -183,7 +179,36 @@ namespace GVP
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
                                             GpuVoxelRvizVisualizer& viz) override;
         virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+
+        virtual double rollout(State& state, Roadmap& rm, const DenseGrid& occupied,
+                               NodeIndex cur, NodeIndex goal,
+                               arc_dijkstras::EvaluatedEdges& invalid_edges_during_rollout,
+                               arc_dijkstras::EvaluatedEdges& invalid_edges_during_sample,
+                               GpuVoxelRvizVisualizer& viz) = 0;
         
+    };
+
+    class OROGraphSearch : public ROGraphSearch
+    {
+        virtual std::string getName() const override;
+
+        double rollout(State& state, Roadmap& rm, const DenseGrid& occupied,
+                       NodeIndex cur, NodeIndex goal,
+                       arc_dijkstras::EvaluatedEdges& invalid_edges_during_rollout,
+                       arc_dijkstras::EvaluatedEdges& invalid_edges_during_sample,
+                       GpuVoxelRvizVisualizer& viz) override;
+    };
+
+
+    class QMDP : public ROGraphSearch
+    {
+        virtual std::string getName() const override;
+
+        double rollout(State& state, Roadmap& rm, const DenseGrid& occupied,
+                       NodeIndex cur, NodeIndex goal,
+                       arc_dijkstras::EvaluatedEdges& invalid_edges_during_rollout,
+                       arc_dijkstras::EvaluatedEdges& invalid_edges_during_sample,
+                       GpuVoxelRvizVisualizer& viz) override;
     };
 }
 

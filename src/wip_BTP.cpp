@@ -74,17 +74,18 @@ int main(int argc, char* argv[])
     SimulationScenarioTester tester(scenario, n);
 
     // OptimisticGraphSearch strat;
-    ThompsonGraphSearch strat;
+    // ThompsonGraphSearch strat;
     // HOPGraphSearch strat;
     // OROGraphSearch strat;
-    // ParetoCostGraphSearch strat(1.0);
+    QMDP strat;
+    // ParetoCostGraphSearch strat(10.0);
 
 
     std::cout << "Attempting strategy\n";
     tester.attemptStrategy(strat);
     // strat.saveToFile();
 
-    strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
+    // strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
 
     // viz.vizEEGraph(strat.graph);
     // viz.vizEESDGraph(strat.sd_graph);
