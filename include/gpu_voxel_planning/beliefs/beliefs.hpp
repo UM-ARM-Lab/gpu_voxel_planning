@@ -76,7 +76,7 @@ namespace GVP
         
         ObstacleBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
         {
-            int num_samples = 100; //HARDCODED PARAM
+            int num_samples = 30; //HARDCODED PARAM
             std::mt19937 rng;
             std::normal_distribution<double> offset(0, noise);
             for(int i=0; i<num_samples; i++)
@@ -94,6 +94,11 @@ namespace GVP
         }
 
         std::unique_ptr<Belief> clone() const override
+        {
+            return cloneObstacleBelief();
+        }
+
+        std::unique_ptr<ObstacleBelief> cloneObstacleBelief() const
         {
             std::cout << "cloning obstacle belief\n";
             std::unique_ptr<ObstacleBelief> b = std::make_unique<ObstacleBelief>();
@@ -295,13 +300,19 @@ namespace GVP
         DenseGrid known_free;
 
     public:
-        std::unique_ptr<Belief> clone() const override
+        std::unique_ptr<ChsBelief> cloneChsBelief() const
         {
             std::unique_ptr<ChsBelief> b = std::make_unique<ChsBelief>();
             b->known_free = known_free;
             b->chs = chs;
             return b;
         }
+
+        std::unique_ptr<Belief> clone() const override
+        {
+            return cloneChsBelief();
+        }
+
         
         void viz(const GpuVoxelRvizVisualizer& viz) override
         {
@@ -377,8 +388,8 @@ namespace GVP
         std::vector<Belief*> experts;
         std::vector<std::vector<double>> particle_prior;
 
-    public:
-        MoEBelief(){}
+    // public:
+    //     MoEBelief(){}
         
     public:
         MoEBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias):
@@ -391,8 +402,29 @@ namespace GVP
 
             updateWeights();
             std::cout << "Weights are: " << PrettyPrint::PrettyPrint(weights) << "\n";
-
         }
+
+        MoEBelief(const ChsBelief &chsb, const ObstacleBelief &obsb):
+            expert_chs(chsb),
+            expert_particle(obsb)
+        {
+        }
+
+        std::unique_ptr<Belief> clone() const override
+        {
+            std::cout << "Cloning MoE belief\n";
+            std::unique_ptr<MoEBelief> b = std::make_unique<MoEBelief>(
+                *expert_chs.cloneChsBelief(),
+                *expert_particle.cloneObstacleBelief());
+            // b->expert_particle = expert_particle;
+            // b->expert_chs = expert_chs;
+            b->weights = weights;
+            b->experts.push_back(&(b->expert_chs));
+            b->experts.push_back(&(b->expert_particle));
+            b->particle_prior = particle_prior;
+            return b;
+        }
+
 
         double
         kernelDensityLikelihood(std::vector<std::vector<double>> prior,
@@ -453,20 +485,6 @@ namespace GVP
             {
                 expert->viz(viz);
             }
-        }
-
-
-        std::unique_ptr<Belief> clone() const override
-        {
-            std::cout << "Cloning MoE belief\n";
-            std::unique_ptr<MoEBelief> b = std::make_unique<MoEBelief>();
-            b->expert_particle = expert_particle;
-            b->expert_chs = expert_chs;
-            b->weights = weights;
-            b->experts.push_back(&(b->expert_chs));
-            b->experts.push_back(&(b->expert_particle));
-            b->particle_prior = particle_prior;
-            return b;
         }
 
         void updateWeights()
