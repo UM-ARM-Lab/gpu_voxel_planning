@@ -22,10 +22,12 @@ short_scenario = OrderedDict([
 
 short_belief = OrderedDict([
     ("CHS_0.000000_0.000000_0.000000_0.000000", "CHS"),
-    ("Obstacle_0.000000_0.000000_0.000000_0.100000", "Good Particles"),
-    ("Obstacle_0.100000_0.100000_0.100000_0.400000", "Noisy Particles"),
-    ("Bonkers_0.000000_0.000000_0.000000_0.050000", "Bonkers"),
-    ("MoE_0.000000_0.000000_0.000000_0.100000", "MoE Good")])
+    ("Obstacle_0.000000_0.000000_0.000000_0.100000", "Particles Good"),
+    ("Obstacle_0.100000_0.100000_0.100000_0.400000", "Particles Noisy"),
+    ("Bonkers_0.000000_0.000000_0.000000_0.050000", "Particles Bonkers"),
+    ("MoE_0.000000_0.000000_0.000000_0.100000", "MoE Good"),
+    ("MoE_0.100000_0.100000_0.100000_0.400000", "MoE Noisy"),
+    ("MoEBonkers_0.000000_0.000000_0.000000_0.050000", "MoE Bonkers")])
 
 short_strategy = OrderedDict([
     ("Optimistic", "Optimistic"),
@@ -138,41 +140,79 @@ def write_latex(experiments, save_path):
         if exp is None:
             return "-"
         if not exp.succeeded:
-            return float('inf')
-        return exp.exec_cost
+            return str(float('inf'))
+        return "%5.1f" % exp.exec_cost
+
+    def gt(scenario, strat, bel):
+        exp = get_experiment(experiments, scenario, strat, bel)
+        if exp is None:
+            return "-"
+        if not exp.succeeded:
+            return str(float('inf'))
+        return "%5.1f" % float(exp.planning_time)
 
     def write_belief_headers(f):
+        f.write("& & \\multicolumn{3}{c|}{MPF} & \\multicolumn{3}{c|}{MoE}\n \\\\ \n")
         for bel in beliefs:
             f.write(" & ")
+            bel = bel.strip("Particles ")
+            bel = bel.strip("MoE ")
             f.write(bel)
         f.write("\\\\")
-        
 
-    def write_line(f, scenario, strat):
+
+    def write_cost_line(f, scenario, strat):
         f.write("\\hline\n")
         f.write(strat)
         for bel in beliefs:
             f.write(" & ")
-            f.write(str(gc(scenario, strat, bel)))
+            f.write(gc(scenario, strat, bel))
         f.write("\\\\\n")
 
-    def write_table(scenario):
-        with open(save_path + "table_" + scenario + ".tex", "w") as f:
+    def write_cost_table(scenario):
+        with open(save_path + "table_" + scenario + "cost.tex", "w") as f:
             f.write("\\begin{table}[]\n")
             f.write("\\centering\n")
             f.write("\\begin{tabular}{|c|" + "c|" * len(beliefs) + "}\n")
             f.write("\\hline\n")
             write_belief_headers(f)
             for strat in strategies:
-                write_line(f, scenario, strat)
+                write_cost_line(f, scenario, strat)
             f.write("\\hline\n")
             f.write("\\end{tabular}\n")
-            f.write("\\caption{" + scenario + "}\n")
-            f.write("\\label{tab:experiment_" + scenario + "}\n")
+            f.write("\\caption{" + scenario + " Policy Cost}\n")
+            f.write("\\label{tab:experiment_" + scenario + "_cost}\n")
             f.write("\\end{table}\n")
 
-    write_table("Bookshelf")
-    write_table("Box")
+    def write_time_line(f, scenario, strat):
+        f.write("\\hline\n")
+        f.write(strat)
+        for bel in beliefs:
+            f.write(" & ")
+            f.write(gt(scenario, strat, bel))
+        f.write("\\\\\n")
+        
+    def write_time_table(scenario):
+        with open(save_path + "table_" + scenario + "timings.tex", "w") as f:
+            f.write("\\begin{table}[]\n")
+            f.write("\\centering\n")
+            f.write("\\begin{tabular}{|c|" + "c|" * len(beliefs) + "}\n")
+            f.write("\\hline\n")
+            write_belief_headers(f)
+            for strat in strategies:
+                write_time_line(f, scenario, strat)
+            f.write("\\hline\n")
+            f.write("\\end{tabular}\n")
+            f.write("\\caption{" + scenario + " Planning Times}\n")
+            f.write("\\label{tab:experiment_" + scenario + "_time}\n")
+            f.write("\\end{table}\n")
+
+        
+
+    write_cost_table("Bookshelf")
+    write_time_table("Bookshelf")
+    write_cost_table("Box")
+    write_time_table("Box")
 
     
 
@@ -222,7 +262,7 @@ def load_all_files():
            name.endswith(".tex"):
            continue;
         experiments.append(load_file(path, name))
-    plot_data(experiments, path)
+    # plot_data(experiments, path)
     write_latex(experiments, path)
     
 
