@@ -55,6 +55,7 @@ namespace GVP{
             auto result = DeserializeFixedSizePOD<uint64_t>(buffer, buffer_position);
             buffer_position += result.second;
             const uint64_t size = result.first;
+            std::cout << "Deserializing " << size << " edges\n";
 
             for(uint64_t i=0; i<size; i++)
             {

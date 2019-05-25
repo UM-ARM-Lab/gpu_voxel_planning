@@ -707,7 +707,7 @@ namespace GVP
                                                 GpuVoxelRvizVisualizer& viz)
     {
         std::cout << getName() << "plan\n";
-        PROFILE_START("ORO_plan");
+        PROFILE_START(getName() + "_plan");
         std::map<NodeIndex, double> actions;
         using pair_type = decltype(actions)::value_type;
 
@@ -806,7 +806,7 @@ namespace GVP
         auto pr = std::min_element(actions.begin(), actions.end(),
                                    [](const pair_type &p1, const pair_type &p2)
                                    {return p1.second < p2.second;});
-        PROFILE_RECORD("ORO_plan");
+        PROFILE_RECORD(getName() + "_plan");
         return std::vector<NodeIndex>{start, pr->first};
 
     }

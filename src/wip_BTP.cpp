@@ -62,16 +62,16 @@ int main(int argc, char* argv[])
     // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
     // BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.05);
-    BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
+    // BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
 
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    TableWithBox scenario(bp, true, true, false);
+    // TableWithBox scenario(bp, true, true, false);
     // SlottedWall scenario(bp);
     // Bookshelf scenario(bp);
 
-    SimulationScenarioTester tester(scenario, n);
+    // SimulationScenarioTester tester(scenario, n);
 
     // OptimisticGraphSearch strat;
     // ThompsonGraphSearch strat;
@@ -80,19 +80,20 @@ int main(int argc, char* argv[])
     QMDP strat;
     // ParetoCostGraphSearch strat(10.0);
 
+    arc_helpers::WaitForInput();
 
-    std::cout << "Attempting strategy\n";
-    tester.attemptStrategy(strat);
-    // strat.saveToFile();
 
-    // strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
+    // std::cout << "Attempting strategy\n";
+    // tester.attemptStrategy(strat);
+    // // strat.saveToFile();
 
-    // viz.vizEEGraph(strat.graph);
-    // viz.vizEESDGraph(strat.sd_graph);
+    // // strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
+
+    // // viz.vizEEGraph(strat.graph);
+    // // viz.vizEESDGraph(strat.sd_graph);
     
-    PROFILE_PRINT_SUMMARY_FOR_ALL();
-    std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
-    PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
-    PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
-
+    // PROFILE_PRINT_SUMMARY_FOR_ALL();
+    // std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
+    // PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
+    // PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
 }

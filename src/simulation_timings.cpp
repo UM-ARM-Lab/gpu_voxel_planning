@@ -61,11 +61,12 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrategyFactories()
 {
     std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> factories;
-    factories.push_back([](){ return std::make_shared<OptimisticGraphSearch>();});
+    // factories.push_back([](){ return std::make_shared<OptimisticGraphSearch>();});
     // factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(1.0);});
     // factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(10.0);});
     // factories.push_back([](){ return std::make_shared<ThompsonGraphSearch>();});
     // factories.push_back([](){ return std::make_shared<HOPGraphSearch>();});
+    factories.push_back([](){ return std::make_shared<QMDP>();});
     // factories.push_back([](){ return std::make_shared<OROGraphSearch>();});
     
     return factories;
@@ -74,12 +75,13 @@ std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrate
 std::vector<BeliefParams> getBeliefParams()
 {
     std::vector<BeliefParams> bps;
-    // bps.emplace_back(BeliefType::CHS);
-    // bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
-    // bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
+    bps.emplace_back(BeliefType::CHS);
+    bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
+    bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
     bps.emplace_back(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
-    // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
-    // bps.emplace_back(BeliefType::MoEBonkers, std::bvector<double>{0,0,0}, 0.05);
+    bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
+    bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
+    bps.emplace_back(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
     return bps;
 }
 
