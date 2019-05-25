@@ -117,6 +117,33 @@ void RealScenario::addLeftArm()
 
 
 /****************************************
+ **         Real Empty
+ ***************************************/
+RealEmpty::RealEmpty(BeliefParams bp) :
+    name("RealEmpty")
+{
+    addLeftArm();
+
+    // known_obstacles.add(getTable());
+
+    // setPrior(unknown_obstacles, bp);
+    setPrior(bp);
+
+    for(auto& ob: known_obstacles.obstacles)
+    {
+        s.known_obstacles.add(&ob.occupied);
+    }
+    s.current_config = VictorRightArmConfig(std::vector<double>{
+            -1.231, 1.225, -0.666, -0.893, -1.496, 0.804, -0.037
+                }).asMap();
+    goal_config = VictorRightArmConfig(std::vector<double>{
+            0.274, 0.712, -0.502, -1.131, -1.339, 1.346, -0.03
+                }).asMap();
+}
+
+
+
+/****************************************
  **         RealTable
  ****************************************/
 RealTable::RealTable(BeliefParams bp) :
@@ -134,8 +161,11 @@ RealTable::RealTable(BeliefParams bp) :
         s.known_obstacles.add(&ob.occupied);
     }
 
-    s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
+    s.current_config = VictorRightArmConfig(std::vector<double>{
+            0,0,0,0,0,0,0
+                }).asMap();
     goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
+
 }
 
 Object RealTable::getTable()

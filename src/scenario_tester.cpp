@@ -109,6 +109,22 @@ bool RealScenarioTester::attemptPath(const std::vector<VictorRightArmConfig> &pa
     //     ros::Duration(0.001).sleep();
     // }
     // return true;
+
+
+    if(!last_invalid)
+    {
+        if(succeeded)
+        {
+            ri.viz.vizEEPath(path, "valid_attempt", num_path_attempts, makeColor(0.0, 0.0, 1.0));
+        }
+        else
+        {
+            ri.viz.vizEEPath(path, "invalid_attempt", num_path_attempts, makeColor(1.0, 0.0, 0.0));
+        }
+    }
+    last_invalid = !succeeded;
+
+    
     return succeeded;
 }
 

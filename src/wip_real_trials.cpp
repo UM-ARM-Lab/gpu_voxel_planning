@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
     ros::init(argc, argv, "wip_roadmap");
     ros::NodeHandle n;
 
-    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
+    // std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
 
 
     BeliefParams bp(BeliefType::CHS);
@@ -34,7 +34,8 @@ int main(int argc, char* argv[])
     // BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
 
     ros::Duration(1.0).sleep();
-    RealTable scenario(bp);
+    // RealTable scenario(bp);
+    RealEmpty scenario(bp);
 
     RealScenarioTester tester(scenario, n);
 
@@ -49,7 +50,7 @@ int main(int argc, char* argv[])
     tester.attemptStrategy(strat);
     // strat.saveToFile();
 
-    strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map");
+    // strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map");
 
     // viz.vizEEGraph(strat.graph);
     // viz.vizEESDGraph(strat.sd_graph);

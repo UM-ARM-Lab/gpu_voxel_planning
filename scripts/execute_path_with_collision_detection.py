@@ -29,8 +29,7 @@ last_collision_info = CollisionInformation()
 ros_path = []
 path_in_progress = False
 
-
-ext_torque_limits = [30, 20, 10, 5, 4, 3, .9]
+ext_torque_limits = [10, 5, 4, 5, 4, 3, .9]
 
 right_arm_listener = None
 vm = None
@@ -44,7 +43,9 @@ def check_collision(motion_status_msg):
         g_links_in_contact = []
         jt = vu.jvq_to_list(motion_status_msg.estimated_external_torque)
 
-        col_indicies = [idx for idx in range(len(jt)) if abs(jt[idx]) > ext_torque_limits[idx]]
+        col_indicies = [idx for idx in range(len(jt))
+                        if abs(jt[idx]) > ext_torque_limits[idx]
+                        if idx > 0]
 
         if(col_indicies):
             print jt

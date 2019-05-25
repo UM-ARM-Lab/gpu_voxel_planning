@@ -40,6 +40,9 @@ namespace GVP
         RealScenario &scenario;
         RosInterface ri;
         ros::NodeHandle &n;
+        int num_path_attempts;
+        bool last_invalid = false;
+
         
 
         RealScenarioTester(RealScenario &scenario, ros::NodeHandle &n) :

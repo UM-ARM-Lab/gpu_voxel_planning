@@ -65,6 +65,24 @@ namespace GVP
 
         Object getTable();
     };
+
+    /****************************************
+     **         Emtpy
+     ****************************************/
+    class RealEmpty : public RealScenario
+    {
+    public:
+        const std::string name;
+
+        RealEmpty(BeliefParams bp);
+
+        virtual std::string getName() const override
+        {
+            return name;
+        }
+
+        // Object getTable();
+    };
 }
 
 
