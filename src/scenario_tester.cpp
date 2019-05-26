@@ -99,7 +99,7 @@ std::string SimulationScenarioTester::getName(const Strategy &strategy) const
 *******************************/
 bool RealScenarioTester::attemptPath(const std::vector<VictorRightArmConfig> &path)
 {
-
+    num_path_attempts++;
     bool succeeded = scenario.getRealState().move(path, ri);
 
     PROFILE_START("Viz_scenario");
@@ -130,6 +130,10 @@ bool RealScenarioTester::attemptPath(const std::vector<VictorRightArmConfig> &pa
 
 bool RealScenarioTester::attemptStrategy(Strategy &strategy)
 {
+    PROFILE_RECORD_DOUBLE("Scenario: " + scenario.getName(), 0);
+    PROFILE_RECORD_DOUBLE("Strategy: " + strategy.getName(), 0);
+    PROFILE_RECORD_DOUBLE("Belief: " + scenario.belief_name, 0);
+
     std::cout << "Attempt Strategy\n";
     std::cout << "Viz Scenario\n";
     scenario.viz(ri.viz);
@@ -167,13 +171,22 @@ bool RealScenarioTester::attemptStrategy(Strategy &strategy)
         // std::cout << "path found with " << path.size() << " verts\n";
         
         PROFILE_START(name + " Motion Time");
-        attemptPath(path);
+        if(attemptPath(path))
+        {
+            path_taken.insert(path_taken.end(), path.begin(), path.end());
+        }
         PROFILE_RECORD(name + " Motion Time");
 
     }
     std::cout << "Reached Goal with cost " << scenario.getState().accumulated_cost << "\n";
     PROFILE_RECORD_DOUBLE("accumulated_cost", scenario.getState().accumulated_cost);
     return true;
+}
+
+bool RealScenarioTester::reversePath()
+{
+    std::reverse(path_taken.begin(), path_taken.end());
+    scenario.getRealState().move(path_taken, ri);
 }
 
 std::string RealScenarioTester::getName(const Strategy &strategy) const

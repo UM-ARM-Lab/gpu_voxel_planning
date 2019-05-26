@@ -158,8 +158,7 @@ namespace GVP
         bool move(const std::vector<VictorRightArmConfig> &path, RosInterface& ri)
         {
             PROFILE_START("real_state_move");
-            // accumulated_cost += EigenHelpers::Distance(VictorRightArmConfig(current_config).asVector(),
-            //                                            c.asVector());
+            std::vector<double> start_config = path.front().asVector();
             gpu_voxel_planning::AttemptPathResultResponse resp = ri.moveRightArm(path);
 
             if(resp.ci.collided)
@@ -173,7 +172,11 @@ namespace GVP
                 }
                 updateFreeSpace(sv);
 
-                robot.set(VictorRightArmConfig(resp.ci.collision_path.points.back().positions).asMap());
+                auto end_config = VictorRightArmConfig(resp.ci.collision_path.points.back().positions);
+                robot.set(end_config.asMap());
+                accumulated_cost += EigenHelpers::Distance(path.front().asVector(),
+                                                           end_config.asVector());
+                                                                           
 
                 std::cout << "Collision link: " << resp.ci.collision_links.front() << "\n";
 
@@ -205,6 +208,8 @@ namespace GVP
             updateFreeSpace(sv);
             PROFILE_RECORD("Update belief from free obs");
 
+            accumulated_cost += EigenHelpers::Distance(path.front().asVector(),
+                                                       path.back().asVector());
 
             updateConfig(path.back().asMap());
             PROFILE_RECORD("real_state_move");

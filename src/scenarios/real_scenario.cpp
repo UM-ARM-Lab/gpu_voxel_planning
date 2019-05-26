@@ -34,27 +34,28 @@ void RealScenario::initFakeVictor(RosInterface &ri)
     // ri.setRightGripper(1.5);
 }
 
-// void RealScenario::setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp)
-void RealScenario::setPrior(BeliefParams bp)
+void RealScenario::setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp)
+// void RealScenario::setPrior(BeliefParams bp)
 {
+    belief_name = bp.toString();
     switch(bp.belief_type)
     {
     case BeliefType::CHS:
         std::cout << "Using CHS belief\n";
         s.bel = std::make_unique<ChsBelief>();
         break;
-    // case BeliefType::Obstacle:
-    //     std::cout << "Using Obstacle belief\n";
-    //     s.bel = std::make_unique<ObstacleBelief>(unknown_obstacles, bp.noise, bp.bias);
-    //     break;
+    case BeliefType::Obstacle:
+        std::cout << "Using Obstacle belief\n";
+        s.bel = std::make_unique<ObstacleBelief>(unknown_obstacles, bp.noise, bp.bias);
+        break;
     case BeliefType::Bonkers:
         std::cout << "Using Bonkers belief\n";
         s.bel = std::make_unique<ObstacleBelief>(getBonkersBelief(), bp.noise, bp.bias);
         break;
-    // case BeliefType::MoEObstacle:
-    //     std::cout << "Using MoE Obstalcebelief\n";
-    //     s.bel = std::make_unique<MoEBelief>(unknown_obstacles, bp.noise, bp.bias);
-    //     break;
+    case BeliefType::MoEObstacle:
+        std::cout << "Using MoE Obstalcebelief\n";
+        s.bel = std::make_unique<MoEBelief>(unknown_obstacles, bp.noise, bp.bias);
+        break;
     case BeliefType::MoEBonkers:
         std::cout << "Using MoE Obstalcebelief\n";
         s.bel = std::make_unique<MoEBelief>(getBonkersBelief(), bp.noise, bp.bias);
@@ -124,22 +125,44 @@ RealEmpty::RealEmpty(BeliefParams bp) :
 {
     addLeftArm();
 
-    // known_obstacles.add(getTable());
+    unknown_obstacles.add(getTable());
 
-    // setPrior(unknown_obstacles, bp);
-    setPrior(bp);
+    setPrior(unknown_obstacles, bp);
+     // setPrior(bp);
 
     for(auto& ob: known_obstacles.obstacles)
     {
         s.known_obstacles.add(&ob.occupied);
     }
     s.current_config = VictorRightArmConfig(std::vector<double>{
-            -1.231, 1.225, -0.666, -0.893, -1.496, 0.804, -0.037
+            -1.513, 1.217, 0.954, -0.935, -1.949, 0.879, -0.029
+            // -1.231, 1.225, -0.666, -0.893, -1.496, 0.804, -0.037
                 }).asMap();
     goal_config = VictorRightArmConfig(std::vector<double>{
             0.274, 0.712, -0.502, -1.131, -1.339, 1.346, -0.03
                 }).asMap();
 }
+
+Object RealEmpty::getTable()
+{
+    Object table;
+    Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
+    Vector3f tc(1.7, 1.4, 0.9); //table corner
+    Vector3f tcf(1.7, 1.4, 0.0); //table corner at floor
+    Vector3f tld(.033, 0.033, tc.z); //table leg dims
+
+
+    table.add(AABB(tc, tc+td));
+    // table.add(AABB(tcf, tcf+tld));
+    // table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+    //                Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld));
+    // table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+    //                Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld));
+    // table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+    //                Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld));
+    return table;
+}
+
 
 
 
@@ -153,8 +176,8 @@ RealTable::RealTable(BeliefParams bp) :
 
     known_obstacles.add(getTable());
 
-    // setPrior(unknown_obstacles, bp);
-    setPrior(bp);
+    setPrior(unknown_obstacles, bp);
+    // setPrior(bp);
 
     for(auto& ob: known_obstacles.obstacles)
     {

@@ -11,12 +11,15 @@ namespace GVP
     public:
         RealState s;
         ObstacleConfiguration known_obstacles;
+        ObstacleConfiguration unknown_obstacles;
+
+        std::string belief_name;
         
         RealScenario();
 
         void initFakeVictor(RosInterface &ri);
-        // virtual void setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp);
-        virtual void setPrior(BeliefParams bp);
+        virtual void setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp);
+        // virtual void setPrior(BeliefParams bp);
 
         virtual void validate();
 
@@ -81,7 +84,7 @@ namespace GVP
             return name;
         }
 
-        // Object getTable();
+        Object getTable();
     };
 }
 

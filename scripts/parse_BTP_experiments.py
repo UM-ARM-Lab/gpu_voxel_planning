@@ -16,9 +16,19 @@ import pandas as pd
 from collections import OrderedDict
 
 
+# Real
+experiment_dir = "/experiments_real/"
+scenarios_to_parse = ["RealTable"]
+
+# Sim
+# experiment_dir = "/experiments/"
+# scenarios_to_parse = ["Box", "Bookshelf"]
+
+
 short_scenario = OrderedDict([
     ("Bookshelf", "Bookshelf"),
-    ("Table_with_Box_table_known_visible_cave_known_full_cave_unknown", "Box")])
+    ("Table_with_Box_table_known_visible_cave_known_full_cave_unknown", "Box"),
+    ("RealEmpty", "RealTable")])
 
 short_belief = OrderedDict([
     ("CHS_0.000000_0.000000_0.000000_0.000000", "CHS"),
@@ -27,18 +37,20 @@ short_belief = OrderedDict([
     ("Bonkers_0.000000_0.000000_0.000000_0.050000", "Particles Bonkers"),
     ("MoE_0.000000_0.000000_0.000000_0.100000", "MoE Good"),
     ("MoE_0.100000_0.100000_0.100000_0.400000", "MoE Noisy"),
-    ("MoEBonkers_0.000000_0.000000_0.000000_0.050000", "MoE Bonkers")])
+    ("MoEBonkers_0.000000_0.000000_0.000000_0.050000", "MoE Bonkers"),
+    ("MoEBonkers_0.100000_0.100000_0.100000_0.400000", "MoE Bonkers")
+])
 
 short_strategy = OrderedDict([
-    ("Optimistic", "Optimistic"),
-    ("ParetoCosta1", "CollisionMeasure a=1"),
-    ("ParetoCosta10", "CollisionMeasure a=10"),
+    ("Optimistic", "OFU"),
+    ("ParetoCosta1", "CM $\\\alpha=1$"),
+    ("ParetoCosta10", "CM $\\\alpha=10$"),
     ("ORO", "ORO"),
-    ("HOP", "HOP"),
-    ("Thompson", "Thompson")])
+    ("HOP", "MCBE"),
+    ("QMDP", "QMDP"),
+    ("Thompson", "TS")])
 
 
-experiment_dir = "/experiments/"
 fmt = "%Y-%m-%dT%H:%M:%S"
 
 class Experiment:
@@ -141,6 +153,8 @@ def write_latex(experiments, save_path):
             return "-"
         if not exp.succeeded:
             return str(float('inf'))
+        if exp.exec_cost is None:
+            return str(float('inf'))
         return "%5.1f" % exp.exec_cost
 
     def gt(scenario, strat, bel):
@@ -209,10 +223,9 @@ def write_latex(experiments, save_path):
 
         
 
-    write_cost_table("Bookshelf")
-    write_time_table("Bookshelf")
-    write_cost_table("Box")
-    write_time_table("Box")
+    for scenario in scenarios_to_parse:
+        write_cost_table(scenario)
+        write_time_table(scenario)
 
     
 

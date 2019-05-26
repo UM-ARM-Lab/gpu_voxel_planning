@@ -42,6 +42,7 @@ namespace GVP
         ros::NodeHandle &n;
         int num_path_attempts;
         bool last_invalid = false;
+        std::vector<VictorRightArmConfig> path_taken;
 
         
 
@@ -51,6 +52,8 @@ namespace GVP
         }
 
         bool attemptPath(const std::vector<VictorRightArmConfig> &path);
+
+        bool reversePath();
 
         bool attemptStrategy(Strategy &strategy);
 

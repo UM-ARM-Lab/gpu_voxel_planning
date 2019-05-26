@@ -12,6 +12,7 @@ set(CATKIN_PACKAGES
   trajectory_msgs
   arc_utilities
   arm_pointcloud_utilities
+  arm_video_recorder
   graph_planner
   moveit_core
   moveit_visual_tools

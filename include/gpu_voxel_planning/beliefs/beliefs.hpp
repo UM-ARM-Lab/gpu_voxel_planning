@@ -327,6 +327,11 @@ namespace GVP
             double p_free = 1.0;
             for(auto &c: chs)
             {
+                if(c.countOccupied() == 0)
+                {
+                    // throw std::runtime_error("Empty CHS");
+                    continue;
+                }
                 p_free *= 1 - ((double)c.collideWith(&volume)/c.countOccupied());
             }
             PROFILE_RECORD("CalcProbFreeCHS");
