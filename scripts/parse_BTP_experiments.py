@@ -14,15 +14,16 @@ import rospy
 import rospkg
 import pandas as pd
 from collections import OrderedDict
+import numpy as np
 
 
 # Real
-experiment_dir = "/experiments_real/"
-scenarios_to_parse = ["RealTable"]
+# experiment_dir = "/experiments_real/"
+# scenarios_to_parse = ["RealTable"]
 
 # Sim
-# experiment_dir = "/experiments/"
-# scenarios_to_parse = ["Box", "Bookshelf"]
+experiment_dir = "/experiments/"
+scenarios_to_parse = ["Box", "Bookshelf"]
 
 
 short_scenario = OrderedDict([
@@ -38,17 +39,31 @@ short_belief = OrderedDict([
     ("MoE_0.000000_0.000000_0.000000_0.100000", "MoE Good"),
     ("MoE_0.100000_0.100000_0.100000_0.400000", "MoE Noisy"),
     ("MoEBonkers_0.000000_0.000000_0.000000_0.050000", "MoE Bonkers"),
-    ("MoEBonkers_0.100000_0.100000_0.100000_0.400000", "MoE Bonkers")
 ])
 
 short_strategy = OrderedDict([
     ("Optimistic", "OFU"),
-    ("ParetoCosta1", "CM $\\\alpha=1$"),
-    ("ParetoCosta10", "CM $\\\alpha=10$"),
+    ("ParetoCosta1", "CM 1"),
+    ("ParetoCosta10", "CM 10"),
     ("ORO", "ORO"),
     ("HOP", "MCBE"),
     ("QMDP", "QMDP"),
     ("Thompson", "TS")])
+
+def super_short_belief(belief_string):
+    sb = short_belief[belief_string]
+    if(sb == "CHS"):
+        return "CHS"
+    if(sb.startswith("Particles")):
+        return "MPF"
+    if(sb.startswith("MoE")):
+        return "MoE"
+
+def is_selected_strat(strat):
+    ss = short_strategy[strat]
+    if ss in ["OFU", "CM 1", "MCBE"]:
+        return True
+    return False
 
 
 fmt = "%Y-%m-%dT%H:%M:%S"
@@ -65,6 +80,53 @@ class Experiment:
     planning_time = None
     num_collision = None
     num_steps = None
+
+class ExperimentGroup:
+    scenario = None
+    strategy = None
+    belief = None
+    exec_costs = None
+    avg_exec_cost = None
+    planning_times = None
+    avg_planning_time = None
+    succeeded = None
+
+def find_all(experiments, scenario, strategy, belief):
+    return [e for e in experiments
+            if e.scenario == scenario
+            if e.strategy == strategy
+            if e.belief == belief]
+            
+
+def group_experiments(experiments):
+    """Groups experiments of the same scenario, strat, belief"""
+    grouped = []
+    for exp in experiments:
+        if len(find_all(grouped, exp.scenario, exp.strategy, exp.belief)):
+            print("Skipping " + exp.scenario + ", " + exp.strategy + ", " + exp.belief + ". Already evaluated")
+            continue
+        eg = ExperimentGroup()
+        eg.scenario = exp.scenario
+        eg.strategy = exp.strategy
+        eg.belief = exp.belief
+        eg.succeeded = True
+        eg.exec_costs = []
+        eg.planning_times = []
+        
+        g = find_all(experiments, exp.scenario, exp.strategy, exp.belief)
+        print(len(g))
+        for e in g:
+            eg.exec_costs.append(exp.exec_cost)
+            eg.planning_times.append(exp.planning_time)
+            eg.succeeded = eg.succeeded and exp.succeeded
+            
+        eg.avg_exec_cost = np.mean(eg.exec_costs)
+        eg.avg_planning_time = np.mean(eg.planning_times)
+        grouped.append(eg)
+        # IPython.embed()
+    return grouped
+            
+        
 
 def get_experiment(experiments, scenario, strategy, belief):
     """
@@ -85,7 +147,7 @@ def get_scenarios(experiments):
     """ Returns a set of all scenarios in the experiments"""
     return {exp.scenario for exp in experiments}
 
-def plot_data(all_experiments, save_path):
+def plot_all_data_for_scenarios(all_experiments, save_path):
     for scenario in get_scenarios(all_experiments):
         exps = [exp for exp in all_experiments if exp.scenario == scenario]
         plot_scenario(exps, save_path)
@@ -97,7 +159,7 @@ def plot_scenario(experiments, save_path):
 
     experiments.sort(key=lambda e:e.label)
 
-    series = pd.Series([e.exec_cost * e.succeeded for e in experiments])
+    series = pd.Series([e.avg_exec_cost * e.succeeded for e in experiments])
     ax = series.plot(kind='bar')
     
     ax.set_title(short_scenario[experiments[0].scenario])
@@ -107,6 +169,64 @@ def plot_scenario(experiments, save_path):
     plt.tight_layout()
     plt.show()
     ax.get_figure().savefig(save_path + experiments[0].scenario + ".png")
+
+
+def plot_sorted(all_experiments, save_path):
+    hardness_map = {"easy": ["CHS", "Particles Good", "MoE Good"],
+                    "medium" : ["CHS", "Particles Noisy", "MoE Noisy"],
+                    "hard" : ["CHS", "Particles Bonkers", "MoE Bonkers"]}
+    
+    for scenario in get_scenarios(all_experiments):
+        for hardness in hardness_map:
+            exps = [exp for exp in all_experiments
+                    if exp.scenario == scenario
+                    if short_belief[exp.belief] in hardness_map[hardness]
+                    if is_selected_strat(exp.strategy)]
+            plot_sorted_single(exps, hardness, save_path)
+
+def plot_sorted_single(experiments, hardness, save_path):
+    """Plots a list of experiments all belonging to the same scenario"""
+
+    for e in experiments:
+        e.label = super_short_belief(e.belief) + "+" + short_strategy[e.strategy]
+        # e.label = e.label.ljust(8)
+
+    def custom_sort(exp):
+        order = ["MoE+CM",
+                 "MoE+MCBE",
+                 "MoE+OFU",
+                 "CHS+CM",
+                 "CHS+MCBE",
+                 "CHS+OFU",
+                 "MPF+CM",
+                 "MPF+MCBE",
+                 "MPF+OFU"]
+        label = exp.label
+        for i in range(len(order)):
+            if label.startswith(order[i]):
+                return i
+        return 100
+        
+
+    # experiments.sort(key=lambda e:e.label)
+    experiments.sort(key=custom_sort)
+
+    costs = [e.avg_exec_cost * e.succeeded for e in experiments]
+    series = pd.Series(costs)
+    ax = series.plot(kind='bar', fontsize=30)
+    
+    ax.set_title(short_scenario[experiments[0].scenario] + "_" + hardness, fontsize=30)
+    
+    x_labels = [e.label for e in experiments]
+    ax.set_xticklabels(x_labels)
+    if(max(costs) > 80):
+        ax.set_yticks(range(0,101,50))
+    else:
+        ax.set_yticks(range(0, 30, 10))
+    plt.tight_layout()
+    plt.show()
+    ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness + ".png")
+
 
 
 def write_latex(experiments, save_path):
@@ -153,9 +273,9 @@ def write_latex(experiments, save_path):
             return "-"
         if not exp.succeeded:
             return str(float('inf'))
-        if exp.exec_cost is None:
+        if exp.avg_exec_cost is None:
             return str(float('inf'))
-        return "%5.1f" % exp.exec_cost
+        return "%5.1f" % exp.avg_exec_cost
 
     def gt(scenario, strat, bel):
         exp = get_experiment(experiments, scenario, strat, bel)
@@ -163,7 +283,7 @@ def write_latex(experiments, save_path):
             return "-"
         if not exp.succeeded:
             return str(float('inf'))
-        return "%5.1f" % float(exp.planning_time)
+        return "%5.1f" % float(exp.avg_planning_time)
 
     def write_belief_headers(f):
         f.write("& & \\multicolumn{3}{c|}{MPF} & \\multicolumn{3}{c|}{MoE}\n \\\\ \n")
@@ -256,7 +376,7 @@ def load_file(filepath, filename):
             elif parts[0] == "Bump" and exp.num_collision is None:
                 exp.num_collision = parts[2]
             elif len(parts) > 4 and parts[2] == "Planning" and exp.planning_time is None:
-                exp.planning_time = parts[4]
+                exp.planning_time = float(parts[4])
                 exp.num_steps = parts[5]
             line = f.readline()
 
@@ -275,7 +395,11 @@ def load_all_files():
            name.endswith(".tex"):
            continue;
         experiments.append(load_file(path, name))
-    # plot_data(experiments, path)
+
+    experiments = group_experiments(experiments)
+        
+    # plot_all_data_for_scenarios(experiments, path)
+    plot_sorted(experiments, path)
     write_latex(experiments, path)
     
 
