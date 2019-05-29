@@ -76,7 +76,7 @@ namespace GVP
         
         ObstacleBelief(const ObstacleConfiguration& oc, const double noise, const std::vector<double>& bias)
         {
-            int num_samples = 30; //HARDCODED PARAM
+            int num_samples = 100; //HARDCODED PARAM
             std::mt19937 rng;
             std::normal_distribution<double> offset(0, noise);
             for(int i=0; i<num_samples; i++)

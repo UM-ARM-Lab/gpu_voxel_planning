@@ -32,19 +32,19 @@ short_scenario = OrderedDict([
     ("RealEmpty", "RealTable")])
 
 short_belief = OrderedDict([
+    ("MoE_0.000000_0.000000_0.000000_0.100000", "MoE Good"),
+    ("MoE_0.100000_0.100000_0.100000_0.400000", "MoE Noisy"),
+    ("MoEBonkers_0.000000_0.000000_0.000000_0.050000", "MoE Bonkers"),
     ("CHS_0.000000_0.000000_0.000000_0.000000", "CHS"),
     ("Obstacle_0.000000_0.000000_0.000000_0.100000", "Particles Good"),
     ("Obstacle_0.100000_0.100000_0.100000_0.400000", "Particles Noisy"),
     ("Bonkers_0.000000_0.000000_0.000000_0.050000", "Particles Bonkers"),
-    ("MoE_0.000000_0.000000_0.000000_0.100000", "MoE Good"),
-    ("MoE_0.100000_0.100000_0.100000_0.400000", "MoE Noisy"),
-    ("MoEBonkers_0.000000_0.000000_0.000000_0.050000", "MoE Bonkers"),
 ])
 
 short_strategy = OrderedDict([
-    ("Optimistic", "OFU"),
     ("ParetoCosta1", "CM 1"),
     ("ParetoCosta10", "CM 10"),
+    ("Optimistic", "OFU"),
     ("ORO", "ORO"),
     ("HOP", "MCBE"),
     ("QMDP", "QMDP"),
@@ -116,10 +116,13 @@ def group_experiments(experiments):
         g = find_all(experiments, exp.scenario, exp.strategy, exp.belief)
         print(len(g))
         for e in g:
-            eg.exec_costs.append(exp.exec_cost)
+            if(exp.exec_cost is None):
+                eg.exec_costs.append(float('inf'))
+            else:
+                eg.exec_costs.append(exp.exec_cost)
             eg.planning_times.append(exp.planning_time)
             eg.succeeded = eg.succeeded and exp.succeeded
-            
+
         eg.avg_exec_cost = np.mean(eg.exec_costs)
         eg.avg_planning_time = np.mean(eg.planning_times)
         grouped.append(eg)
@@ -192,14 +195,23 @@ def plot_sorted_single(experiments, hardness, save_path):
         # e.label = e.label.ljust(8)
 
     def custom_sort(exp):
+        # order = ["MoE+CM",
+        #          "MoE+MCBE",
+        #          "MoE+OFU",
+        #          "CHS+CM",
+        #          "CHS+MCBE",
+        #          "CHS+OFU",
+        #          "MPF+CM",
+        #          "MPF+MCBE",
+        #          "MPF+OFU"]
         order = ["MoE+CM",
-                 "MoE+MCBE",
-                 "MoE+OFU",
                  "CHS+CM",
-                 "CHS+MCBE",
-                 "CHS+OFU",
                  "MPF+CM",
+                 "MoE+MCBE",
+                 "CHS+MCBE",
                  "MPF+MCBE",
+                 "MoE+OFU",
+                 "CHS+OFU",
                  "MPF+OFU"]
         label = exp.label
         for i in range(len(order)):
@@ -219,10 +231,13 @@ def plot_sorted_single(experiments, hardness, save_path):
     
     x_labels = [e.label for e in experiments]
     ax.set_xticklabels(x_labels)
-    if(max(costs) > 80):
+    if short_scenario[experiments[0].scenario] == "Bookshelf":
         ax.set_yticks(range(0,101,50))
     else:
         ax.set_yticks(range(0, 30, 10))
+
+    plt.axvline(x=2.5, linewidth=1, color='k')
+    plt.axvline(x=5.5, linewidth=1, color='k')
     plt.tight_layout()
     plt.show()
     ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness + ".png")
@@ -286,12 +301,13 @@ def write_latex(experiments, save_path):
         return "%5.1f" % float(exp.avg_planning_time)
 
     def write_belief_headers(f):
-        f.write("& & \\multicolumn{3}{c|}{MPF} & \\multicolumn{3}{c|}{MoE}\n \\\\ \n")
+        f.write("& \\multicolumn{3}{c|}{MoE} & CHS & \\multicolumn{3}{c|}{MPF} \n \\\\ \n")
         for bel in beliefs:
             f.write(" & ")
             bel = bel.strip("Particles ")
             bel = bel.strip("MoE ")
-            f.write(bel)
+            classy_names = {"Good": "Easy", "Noisy": "Med", "Bonk": "Hard", "CHS": "CHS"}
+            f.write(classy_names[bel])
         f.write("\\\\")
 
 
