@@ -73,12 +73,12 @@ int main(int argc, char* argv[])
 
     SimulationScenarioTester tester(scenario, n);
 
-    OptimisticGraphSearch strat;
+    // OptimisticGraphSearch strat;
     // ThompsonGraphSearch strat;
     // HOPGraphSearch strat;
     // OROGraphSearch strat;
     // QMDP strat;
-    // ParetoCostGraphSearch strat(10.0);
+    ParetoCostGraphSearch strat(1.0);
 
     // arc_helpers::WaitForInput();
 
