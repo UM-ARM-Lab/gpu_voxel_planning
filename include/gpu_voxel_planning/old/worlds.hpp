@@ -67,6 +67,15 @@ public:
     void makeSlottedWall();
 };
 
+class SimBookshelf : public SimWorld
+{
+public:
+    SimBookshelf();
+    virtual void initializeObstacles() override;
+    void makeBookshelf();
+    void makeTable();
+};
+
 
 class RealWorld
 {

@@ -201,7 +201,8 @@ void setupWorld()
         sim_world->victor_model.gvl.reset();
     }
 
-    sim_world = std::make_shared<SimTable>();
+    // sim_world = std::make_shared<SimTable>();
+    sim_world = std::make_shared<SimBookshelf>();
     // sim_world->initializeObstacles();
 }
 
@@ -214,7 +215,7 @@ void runTest(VictorPlanner &planner)
 
     PROFILE_START(planner.name);
     std::string unused;
-    std::getline(std::cin, unused);
+    // std::getline(std::cin, unused);
     attemptGoal(planner, goal);
     PROFILE_RECORD(planner.name);
     setupWorld();
@@ -315,19 +316,19 @@ int main(int argc, char* argv[])
     {
         std::cout << "\n\n\n\n!!!!!!!!!!!!!!\nTrial " << i + 1<< " of " << num_trials << "!!!!!!!!!!!!!\n\n\n\n\n";
 
-        runTest_Diverse();
+        // runTest_Diverse();
         // runTest_ProbThresholdRRTConnect();
         // runTest_VoxThresholdRRTConnect();
         // runTest_ProbColCostRRTConnect();
         // runTest_VoxCostRRTConnect();
-        // runTest_PlanUpProbColCostRRTConnect();
+        runTest_PlanUpProbColCostRRTConnect();
         // runTest_PlanUpVoxCostRRTConnect();
         // runTest_ProbRRTStar();
     }
     
 
 
-    std::string filename = "victor_sim_times_" + arc_helpers::GetCurrentTimeAsString();
+    std::string filename = "ISER_sim_times_" + arc_helpers::GetCurrentTimeAsString();
     // PROFILE_WRITE_SUMMARY_FOR_ALL("victor_sim_times.txt");
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);

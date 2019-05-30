@@ -202,7 +202,7 @@ int main(int argc, char* argv[])
     signal(SIGTERM, killhandler);
 
     // wip_SamplingRRTConnect(g_sim_world);
-    wip_Diverse(g_sim_world);
+    // wip_Diverse(g_sim_world);
 
 
     // std::string unused;
@@ -214,7 +214,7 @@ int main(int argc, char* argv[])
     
     // VictorLBKPiece planner(&(sim_world->victor_model));
     // VictorThresholdRRTConnect planner(&(sim_world->victor_model));
-    // VictorProbColCostRRTConnect planner(&(sim_world->victor_model));
+    VictorProbColCostRRTConnect planner(&(g_sim_world->victor_model));
     
     // VictorPRM planner(&(sim_world->victor_model));
     // VictorLazyRRTF planner(&(sim_world->victor_model));

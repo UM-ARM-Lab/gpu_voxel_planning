@@ -271,8 +271,8 @@ SimTable::SimTable()
 {
     // double init_angles[] = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
     double init_angles[] = {0,0,0,0,0,0,0};
-    // double goal_angles[] = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
-    double goal_angles[] = {0, 0.32, 0, -1.32, -0.2, 0.9, 0.3};
+    double goal_angles[] = {-0.15, 1.0, 0, -0.5, 0, 1.0, 0};
+    // double goal_angles[] = {0, 0.32, 0, -1.32, -0.2, 0.9, 0.3};
     init_config = victor_model.toVictorConfig(init_angles);
     goal_config = victor_model.toVictorConfig(goal_angles);
 
@@ -319,7 +319,7 @@ void SimTable::makeTable()
         cavecorner = Vector3f(1.7, 2.0, 0.9);
     }
     Vector3f caveheight(0.0, 0.0, 0.4);
-    Vector3f cavetopd(0.4, 0.5, 0.033);
+    Vector3f cavetopd(0.3, 0.5, 0.033);
     Vector3f cavesidedim(0.033, cavetopd.y, caveheight.z);
     Vector3f cavesideoffset(cavetopd.x, 0.0, 0.0);
     Vector3f caveholecorner = cavecorner + cavesideoffset + Vector3f(0, 0.15, 0.15);
@@ -376,6 +376,133 @@ void SimTable::makeTable()
     }
 
 
+}
+
+
+/***
+ **   Simulated Bookshelf World
+ ***/
+SimBookshelf::SimBookshelf()
+{
+    // double init_angles[] = {-1.4, 1.4, 1.4, -0.5, 0.01, 0.01, 0.05};
+    double init_angles[] = {-1.2, 1.3, -0.8, 0.4, 0.4, 0.3, 0.3};
+    double goal_angles[] = {0.3, 1.2, -0.3, 1.5, 0, -0.7, -0.9};
+    // double goal_angles[] = {0, 0.32, 0, -1.32, -0.2, 0.9, 0.3};
+    init_config = victor_model.toVictorConfig(init_angles);
+    goal_config = victor_model.toVictorConfig(goal_angles);
+
+    initializeObstacles();
+    initializeVictor();
+}
+
+void SimBookshelf::initializeObstacles()
+{
+    makeTable();
+    makeBookshelf();
+    gvl->visualizeMap(SIM_OBSTACLES_MAP);
+    gvl->visualizeMap(KNOWN_OBSTACLES_MAP);
+
+}
+
+
+void SimBookshelf::makeBookshelf()
+{
+    double lower_wall_height = 1.1;
+    double gap_height = .4;
+
+    Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
+    Vector3f lfwd(0.04, 0.4, lower_wall_height);
+    
+    Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front wall
+    Vector3f ufwd(0.04, 0.4, 0.3);
+    
+    Vector3f mfwc(1.5, 1.8, 0);  //middle front wall
+    Vector3f mfwd(0.04, 0.2, 1.5);
+   
+    Vector3f lswc = lfwc;  // lower side wall corner
+    Vector3f lswd(.75, 0.04, lower_wall_height); //lower side wall dims
+    Vector3f cswc = ufwc; //close side wall corner
+    Vector3f cswd(0.2, 0.04, 0.3);
+    Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
+    Vector3f fswd(0.3, 0.04, 0.6);
+    Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
+    Vector3f mswd(0.3, 0.04, 0.2);
+
+
+    double bookshelf_width = 0.8;
+    double bookshelf_height = 1.6;
+    double bookshelf_depth = 0.4;
+    Vector3f backwallc(1.2, 0.8, 0.0); //backwall cornder
+    Vector3f backwall_thickness(bookshelf_width, 0.04, bookshelf_height);
+    Vector3f sidewall(0.04, bookshelf_depth,  bookshelf_height);
+    Vector3f swoff(bookshelf_width, 0, 0);
+    Vector3f shelf(bookshelf_width + 0.04, bookshelf_depth, 0.02);
+    Vector3f shelf_spacing(0, 0, 0.4);
+
+    Vector3f bookc(1.6, 0.82, 1.2);
+    Vector3f bookd(0.05, 0.3, 0.3);
+
+    gvl->insertBoxIntoMap(backwallc, backwallc + backwall_thickness, SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(backwallc, backwallc + sidewall, SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(backwallc + swoff, backwallc + sidewall + swoff, SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    for(int i=0; i<5; i++)
+    {
+        gvl->insertBoxIntoMap(backwallc + shelf_spacing*(float)i, backwallc + shelf + shelf_spacing*(float)i,
+                              SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    }
+    // gvl->insertBoxIntoMap(bookc, bookc+bookd));
+
+    
+    gvl->insertBoxIntoMap(backwallc, backwallc + backwall_thickness, KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(backwallc, backwallc + sidewall, KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(backwallc + swoff, backwallc + sidewall + swoff, KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    for(int i=0; i<5; i++)
+    {
+        gvl->insertBoxIntoMap(backwallc + shelf_spacing*(float)i, backwallc + shelf + shelf_spacing*(float)i,
+                              KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    }
+
+
+}
+
+
+void SimBookshelf::makeTable()
+{
+    Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
+    Vector3f tc(1.7, 1.4, 0.9); //table corner
+    Vector3f tld(.033, 0.033, tc.z); //table leg dims
+
+    //table top
+    gvl->insertBoxIntoMap(tc, tc + td,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+                          Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld,
+                          SIM_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+
+
+    // gvl->insertBoxIntoMap(tc, tc + td,
+    //                       KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    // gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0),
+    //                       Vector3f(tc.x, tc.y, 0) + tld,
+    //                       KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    // gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+    //                       Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld,
+    //                       KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    // gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+    //                       Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld,
+    //                       KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
+    // gvl->insertBoxIntoMap(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+    //                       Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld,
+    //                       KNOWN_OBSTACLES_MAP, PROB_OCCUPIED, 2);
 }
 
 
