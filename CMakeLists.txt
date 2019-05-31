@@ -115,35 +115,35 @@ include_directories(
   )
 
 
-# add_library(path_smoothing src/ompl_modifications/path_smoothing.cpp
-#   ${OMPL_LIBRARIES}
-#   )
+add_library(path_smoothing src/ompl_modifications/path_smoothing.cpp
+  ${OMPL_LIBRARIES}
+  )
 
-# add_library(lazyrrtf src/ompl_modifications/lazyrrt_fullpath.cpp)
-# target_link_libraries(lazyrrtf
-#   ${OMPL_LIBRARIES}
-#   )
+add_library(lazyrrtf src/ompl_modifications/lazyrrt_fullpath.cpp)
+target_link_libraries(lazyrrtf
+  ${OMPL_LIBRARIES}
+  )
 
-# add_library(custom_rrtstar src/ompl_modifications/custom_rrtstar.cpp)
-# target_link_libraries(custom_rrtstar
-#   ${OMPL_LIBRARIES}
-#   )
+add_library(custom_rrtstar src/ompl_modifications/custom_rrtstar.cpp)
+target_link_libraries(custom_rrtstar
+  ${OMPL_LIBRARIES}
+  )
 
-# add_library(flrrtc src/ompl_modifications/fullpath_lrrtconnect.cpp)
-# target_link_libraries(flrrtc
-#   ${OMPL_LIBRARIES}
-#   )
+add_library(flrrtc src/ompl_modifications/fullpath_lrrtconnect.cpp)
+target_link_libraries(flrrtc
+  ${OMPL_LIBRARIES}
+  )
 
-# add_library(crrtc src/ompl_modifications/custom_rrtconnect.cpp)
-# target_link_libraries(crrtc
-#   ${OMPL_LIBRARIES}
-#   )
+add_library(crrtc src/ompl_modifications/custom_rrtconnect.cpp)
+target_link_libraries(crrtc
+  ${OMPL_LIBRARIES}
+  )
 
-# add_library(costrrtc src/ompl_modifications/cost_rrtconnect.cpp)
-# target_link_libraries(costrrtc
-#   ${OMPL_LIBRARIES}
-#   path_smoothing
-#   )
+add_library(costrrtc src/ompl_modifications/cost_rrtconnect.cpp)
+target_link_libraries(costrrtc
+  ${OMPL_LIBRARIES}
+  path_smoothing
+  )
 
 
 
@@ -172,15 +172,15 @@ include_directories(
 #   )
 
 
-# add_library(victor_model
-#   src/old/gpu_voxels_victor.cpp
-#   src/old/worlds.cpp
-#   src/path_utils.cpp)
-# add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
-# target_link_libraries(victor_model
-#   ${catkin_LIBRARIES}
-#   ${gpu_voxels_LIBRARIES}
-#   )
+add_library(victor_model
+  src/old/gpu_voxels_victor.cpp
+  src/old/worlds.cpp
+  src/path_utils.cpp)
+add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
+target_link_libraries(victor_model
+  ${catkin_LIBRARIES}
+  ${gpu_voxels_LIBRARIES}
+  )
 
 
 
@@ -196,38 +196,38 @@ include_directories(
 #   )
 
 
-# add_library(victor_validator src/old/victor_validator.cpp)
-# target_link_libraries(victor_validator
-#   victor_model)
+add_library(victor_validator src/old/victor_validator.cpp)
+target_link_libraries(victor_validator
+  victor_model)
 
-# add_library(victor_planning src/old/victor_planning.cpp)
-# target_link_libraries(victor_planning
-#   victor_validator
-#   victor_model
-#   ${EXTERN_LIBS}
-#   lazyrrtf
-#   crrtc
-#   costrrtc
-#   custom_rrtstar
-#   )
+add_library(victor_planning src/old/victor_planning.cpp)
+target_link_libraries(victor_planning
+  victor_validator
+  victor_model
+  ${EXTERN_LIBS}
+  lazyrrtf
+  crrtc
+  costrrtc
+  custom_rrtstar
+  )
 
 
-# add_library(victor_local_controller src/old/victor_local_controller.cpp)
-# target_link_libraries(victor_local_controller
-#   # victor_validator
-#   victor_model                 
-#   ${EXTERN_LIBS}
-#   )
+add_library(victor_local_controller src/old/victor_local_controller.cpp)
+target_link_libraries(victor_local_controller
+  # victor_validator
+  victor_model                 
+  ${EXTERN_LIBS}
+  )
 
-# add_executable(wip_victor_sim src/old/wip_victor_sim.cpp)
-# target_link_libraries(wip_victor_sim
-#   ${EXTERN_LIBS}
-#   lazyrrtf
-#   victor_model
-#   victor_planning
-#   victor_local_controller
-#   victor_validator
-#   )
+add_executable(wip_victor_sim src/old/wip_victor_sim.cpp)
+target_link_libraries(wip_victor_sim
+  ${EXTERN_LIBS}
+  lazyrrtf
+  victor_model
+  victor_planning
+  victor_local_controller
+  victor_validator
+  )
 
 
 add_library(victor_halton_roadmap
@@ -333,14 +333,14 @@ target_link_libraries(wip_real_trials
 #   )
 
 
-# add_executable(victor_sim_timings src/old/victor_sim_timings.cpp)
-# target_link_libraries(victor_sim_timings
-#   ${EXTERN_LIBS}
-#   lazyrrtf
-#   victor_model
-#   victor_planning
-#   victor_validator
-#   )
+add_executable(victor_sim_timings src/old/victor_sim_timings.cpp)
+target_link_libraries(victor_sim_timings
+  ${EXTERN_LIBS}
+  lazyrrtf
+  victor_model
+  victor_planning
+  victor_validator
+  )
 
 
 

@@ -31,14 +31,19 @@ int main(int argc, char* argv[])
     // std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
 
 
-    // BeliefParams bp(BeliefType::CHS);
+    BeliefParams bp(BeliefType::CHS);
     // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
-    // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
     // BeliefParams bp(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
     // BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
-    BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
     // BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
-    // BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0.1,0.1,0.1}, 0.4);
+
+
+    
+    // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
+
+    // BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
+    // BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
+    // BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
 
     ros::Duration(1.0).sleep();
     // RealTable scenario(bp);
@@ -47,10 +52,10 @@ int main(int argc, char* argv[])
     RealScenarioTester tester(scenario, n);
 
     // OptimisticGraphSearch strat;
-    // ParetoCostGraphSearch strat(1.0);
+    ParetoCostGraphSearch strat(1.0);
     // ThompsonGraphSearch strat;
-    HOPGraphSearch strat;
-
+    // HOPGraphSearch strat;
+     
 
     std::string filename = scenario.getName() + "_" + strat.getName() + "_" +
         scenario.belief_name + "_" +

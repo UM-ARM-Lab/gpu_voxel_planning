@@ -15,21 +15,23 @@ import rospkg
 import pandas as pd
 from collections import OrderedDict
 import numpy as np
+import seaborn as sns
 
 
 # Real
-# experiment_dir = "/experiments_real/"
-# scenarios_to_parse = ["RealTable"]
+experiment_dir = "/experiments_real/"
+scenarios_to_parse = ["RealTable", "Refrigerator"]
 
 # Sim
-experiment_dir = "/experiments/"
-scenarios_to_parse = ["Box", "Bookshelf"]
+# experiment_dir = "/experiments/"
+# scenarios_to_parse = ["Box", "Bookshelf"]
 
 
 short_scenario = OrderedDict([
     ("Bookshelf", "Bookshelf"),
     ("Table_with_Box_table_known_visible_cave_known_full_cave_unknown", "Box"),
-    ("RealEmpty", "RealTable")])
+    ("RealEmpty", "RealTable"),
+    ("Fridge", "Refrigerator")])
 
 short_belief = OrderedDict([
     ("MoE_0.000000_0.000000_0.000000_0.100000", "MoE Good"),
@@ -61,6 +63,7 @@ def super_short_belief(belief_string):
 
 def is_selected_strat(strat):
     ss = short_strategy[strat]
+    return True
     if ss in ["OFU", "CM 1", "MCBE"]:
         return True
     return False
@@ -96,7 +99,6 @@ def find_all(experiments, scenario, strategy, belief):
             if e.scenario == scenario
             if e.strategy == strategy
             if e.belief == belief]
-            
 
 def group_experiments(experiments):
     """Groups experiments of the same scenario, strat, belief"""
@@ -128,7 +130,24 @@ def group_experiments(experiments):
         grouped.append(eg)
         # IPython.embed()
     return grouped
-            
+
+def average_same_xval(xs, ys):
+    if len(xs) != len(ys):
+        raise "Can't average when xs and ys have different lengths"
+        
+    avg_xs = []
+    avg_ys = []
+    for x in xs:
+        if x in avg_xs:
+            continue
+        same_y_costs = [ys[i] for i in range(len(ys)) if xs[i] == x]
+        
+        
+        avg_xs.append(x)
+        avg_ys.append(np.mean(same_y_costs))
+    return avg_xs, avg_ys
+        
+    
         
 
 def get_experiment(experiments, scenario, strategy, belief):
@@ -193,6 +212,21 @@ def plot_sorted_single(experiments, hardness, save_path):
     for e in experiments:
         e.label = super_short_belief(e.belief) + "+" + short_strategy[e.strategy]
         # e.label = e.label.ljust(8)
+    order = ["MoE+CM 1",
+             "CHS+CM 1",
+             "MPF+CM 1",
+             # "CHS+MCBE",
+             # "MPF+MCBE",
+             "MoE+OFU",
+             "MoE+TS",
+             "CHS+QMDP",
+             "MoE+MCBE",
+             "CHS+ORO",
+
+             # "CHS+OFU",
+             # "MPF+OFU"
+
+    ]
 
     def custom_sort(exp):
         # order = ["MoE+CM",
@@ -204,15 +238,6 @@ def plot_sorted_single(experiments, hardness, save_path):
         #          "MPF+CM",
         #          "MPF+MCBE",
         #          "MPF+OFU"]
-        order = ["MoE+CM",
-                 "CHS+CM",
-                 "MPF+CM",
-                 "MoE+MCBE",
-                 "CHS+MCBE",
-                 "MPF+MCBE",
-                 "MoE+OFU",
-                 "CHS+OFU",
-                 "MPF+OFU"]
         label = exp.label
         for i in range(len(order)):
             if label.startswith(order[i]):
@@ -222,25 +247,90 @@ def plot_sorted_single(experiments, hardness, save_path):
 
     # experiments.sort(key=lambda e:e.label)
     experiments.sort(key=custom_sort)
-
+    experiments = [e for e in experiments if e.label in order]
+    
     costs = [e.avg_exec_cost * e.succeeded for e in experiments]
-    series = pd.Series(costs)
-    ax = series.plot(kind='bar', fontsize=30)
-    
-    ax.set_title(short_scenario[experiments[0].scenario] + "_" + hardness, fontsize=30)
-    
-    x_labels = [e.label for e in experiments]
-    ax.set_xticklabels(x_labels)
-    if short_scenario[experiments[0].scenario] == "Bookshelf":
-        ax.set_yticks(range(0,101,50))
-    else:
-        ax.set_yticks(range(0, 30, 10))
+    planning_times = [e.avg_planning_time * e.succeeded for e in experiments]
 
-    plt.axvline(x=2.5, linewidth=1, color='k')
-    plt.axvline(x=5.5, linewidth=1, color='k')
+    x_labels, costs = average_same_xval([e.label for e in experiments], costs)
+    x_labels, planning_times = average_same_xval([e.label for e in experiments], planning_times)
+
+    x_labels = x_labels + ["CHS+RRT"]
+    costs = costs + [100]
+    planning_times = planning_times + [15*60]
+    hue = [float(label == "MoE+CM 1") for label in x_labels ]
+    # hue = [c for c in costs]
+    clipped_times = [min(p, 100) for p in planning_times]
+    clipped_policy = [min(p, 40) for p in costs]
+
+    data = pd.DataFrame({"average policy cost":clipped_policy,
+                         "planning time (s)":clipped_times,
+                         "method":x_labels,
+                         "hue":hue})
+    
+    # series = pd.Series(costs)
+    # ax = series.plot(kind='bar', fontsize=30)
+    # IPython.embed()
+    sns.set(style="whitegrid", font_scale=2.2)
+    ax = sns.barplot(x="method", y="average policy cost", data=data, hue="hue", dodge=False)
+
+
+
+
+    ax.legend_.remove()
+    
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
+    ax.set_title(short_scenario[experiments[0].scenario] + " " + hardness + "\n", fontsize=30)
+    # ax.set_xticklabels(x_labels)
+    # ax.set_yticks([25, 50])
+    ax.set_yticks([20, 40])
+    labels = [item.get_text() for item in ax.get_yticklabels()]
+    labels[0] = "20"
+    labels[1] = ">40"
+    if(hardness=="medium" or hardness =="hard"):
+        ax.yaxis.set_label_text(" ")
+        labels[0] = " "
+        labels[1] = "   "
+    ax.set_yticklabels(labels)
+    ax.xaxis.set_label_text("")
+
+    # plt.axvline(x=2.5, linewidth=1, color='k')
+    plt.axvline(x=0.5, linewidth=1, color='k')
     plt.tight_layout()
     plt.show()
     ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness + ".png")
+
+
+    ax = sns.barplot(x="method", y="planning time (s)", data=data, hue="hue", dodge=False)
+
+    ax.legend_.remove()
+    
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
+    ax.set_yticks([50, 100])
+    labels = [item.get_text() for item in ax.get_yticklabels()]
+    labels[0] = "50"
+    labels[1] = ">100"
+    if(hardness=="medium" or hardness =="hard"):
+        ax.yaxis.set_label_text(" ")
+        labels[0] = " "
+        labels[1] = "   "
+    ax.set_yticklabels(labels)
+
+    ax.set_yticklabels(labels)
+    ax.xaxis.set_label_text("")
+
+    # plt.axvline(x=2.5, linewidth=1, color='k')
+    plt.axvline(x=0.5, linewidth=1, color='k')
+    plt.tight_layout()
+    plt.show()
+    ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness + "_times.png")
+
+def plot_avg_fig(all_experiments, save_path):
+    scenario = "Bookshelf"
+    exps = [exp for exp in all_experiments
+            if exp.scenario == scenario
+            if is_selected_strat(exp.strategy)]
+    plot_sorted_single(exps, "all", save_path)
 
 
 
@@ -415,7 +505,8 @@ def load_all_files():
     experiments = group_experiments(experiments)
         
     # plot_all_data_for_scenarios(experiments, path)
-    plot_sorted(experiments, path)
+    # plot_sorted(experiments, path) - this is the one currently in the paper
+    # plot_avg_fig(experiments, path)
     write_latex(experiments, path)
     
 

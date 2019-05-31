@@ -47,6 +47,8 @@ namespace GVP
 
         void addLeftArm();
 
+        DenseGrid loadPointCloudFromFile();
+
     };
 
 

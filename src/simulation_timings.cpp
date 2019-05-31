@@ -31,7 +31,7 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
         arc_helpers::GetCurrentTimeAsString();
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
-    // strategy.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
+    strategy.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
 }
 
 // void test1(ros::NodeHandle &n)
@@ -88,14 +88,16 @@ std::vector<BeliefParams> getBeliefParams()
 
 void testAll(ros::NodeHandle &n)
 {
-
-    for(auto bp: getBeliefParams())
+    for(int i=0; i<10; i++)
     {
-        for(auto scenario_factory:getScenarioFactories(bp))
+        for(auto bp: getBeliefParams())
         {
-            for(auto strategy_factory: getStrategyFactories())
+            for(auto scenario_factory:getScenarioFactories(bp))
             {
-                test(n, *scenario_factory(), *strategy_factory());
+                for(auto strategy_factory: getStrategyFactories())
+                {
+                    test(n, *scenario_factory(), *strategy_factory());
+                }
             }
         }
     }
