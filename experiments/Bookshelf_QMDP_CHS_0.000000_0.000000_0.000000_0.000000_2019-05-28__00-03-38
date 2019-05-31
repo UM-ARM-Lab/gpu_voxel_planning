@@ -1,0 +1,265 @@
+2019-05-28 00:03:38
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000               1        0.000000        0.000000        0.000000
+Bookshelf, QMDP Motion Time                             35.904226              12        2.992019
+Bookshelf, QMDP Planning Time                          474.958750              12       39.579896
+Bump                                                     0.000000               4        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                         92.159425           16221        0.005681
+ComputeSweptVolume                                       8.706291              98        0.088840
+GetSweptVolume                                           9.684218           59052        0.000164
+QMDP_plan                                              474.953111               8       59.369139
+Rollout                                                337.141326            1900        0.177443
+Rollout viz sv                                          35.997008            5239        0.006871
+Scenario: Bookshelf                                      0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                        27.595744           19844        0.001391
+Simulate transition first                              100.292631            1910        0.052509
+Simulate transition in rollout                          57.410030            5239        0.010958
+Strategy: QMDP                                           0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                              0.011156             644        0.000017
+Viz_sample                                               0.536940              80        0.006712
+Viz_scenario                                            32.044746             648        0.049452
+accumulated_cost                                         0.000000               1        0.000000       12.663134       12.663134
+astar_add_neighbors                                     53.007051          535623        0.000099
+astar_cost_to_come                                       9.432663        22808998        0.000000
+astar_edge_validity_check                                4.978753        22855794        0.000000
+astar_expansion_in_closed_list                           0.386002         2185232        0.000000
+astar_heuristic                                          7.272727        20349107        0.000000
+astar_num_edge_expansions                                0.000000           33349        0.000000 22855794.000000      685.351705
+astar_num_lower_cost_edge_expansions                     0.000000           33349        0.000000 20349107.000000      610.186422
+astar_num_node_expansions                                0.000000           33349        0.000000   670010.000000       20.090857
+astar_push_to_queue                                      7.425793        20349107        0.000000
+astar_queue_reduction                                    0.190353          636661        0.000000
+lazySP path cost                                         0.000000            1980        0.000000     8744.282059        4.416304
+lazy_sp a_star                                          55.232280           33349        0.001656
+lazysp astar iters                                       0.000000            1980        0.000000    33349.000000       16.842929
+lazysp_successful                                      251.289350            1980        0.126914
+rollout lazysp                                         240.826709            1900        0.126751
+simulate_belief_update_collision                        53.728220             367        0.146398
+simulate_belief_update_free                             16.256357            6782        0.002397
+simulate_belief_update_free_before_collision             0.106529           10129        0.000011
+simulation_state_move                                    2.552278             644        0.003963
+
+2019-05-28 00:03:38
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000        0.000000 
+Bookshelf, QMDP Motion Time                              1.438605 
+Bookshelf, QMDP Motion Time                              0.870294 
+Bookshelf, QMDP Motion Time                              0.763649 
+Bookshelf, QMDP Motion Time                              2.016589 
+Bookshelf, QMDP Motion Time                              1.994990 
+Bookshelf, QMDP Motion Time                              4.310662 
+Bookshelf, QMDP Motion Time                              4.471538 
+Bookshelf, QMDP Motion Time                              5.285078 
+Bookshelf, QMDP Motion Time                              1.730193 
+Bookshelf, QMDP Motion Time                              1.641405 
+Bookshelf, QMDP Motion Time                              4.985946 
+Bookshelf, QMDP Motion Time                              6.395278 
+Bookshelf, QMDP Planning Time                           51.056966 
+Bookshelf, QMDP Planning Time                           39.896421 
+Bookshelf, QMDP Planning Time                            0.000058 
+Bookshelf, QMDP Planning Time                           75.868911 
+Bookshelf, QMDP Planning Time                            0.000082 
+Bookshelf, QMDP Planning Time                           99.394125 
+Bookshelf, QMDP Planning Time                            0.000138 
+Bookshelf, QMDP Planning Time                          144.158299 
+Bookshelf, QMDP Planning Time                           22.746849 
+Bookshelf, QMDP Planning Time                            0.000062 
+Bookshelf, QMDP Planning Time                           28.490767 
+Bookshelf, QMDP Planning Time                           13.346071 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+ComputeSweptVolume                                       0.038273 
+ComputeSweptVolume                                       0.061111 
+ComputeSweptVolume                                       0.065504 
+ComputeSweptVolume                                       0.078938 
+ComputeSweptVolume                                       0.070636 
+ComputeSweptVolume                                       0.071786 
+ComputeSweptVolume                                       0.080462 
+ComputeSweptVolume                                       0.072509 
+ComputeSweptVolume                                       0.076795 
+ComputeSweptVolume                                       0.077190 
+ComputeSweptVolume                                       0.085962 
+ComputeSweptVolume                                       0.086819 
+ComputeSweptVolume                                       0.087109 
+ComputeSweptVolume                                       0.087946 
+ComputeSweptVolume                                       0.079278 
+ComputeSweptVolume                                       0.079058 
+ComputeSweptVolume                                       0.079602 
+ComputeSweptVolume                                       0.079360 
+ComputeSweptVolume                                       0.079698 
+ComputeSweptVolume                                       0.081161 
+ComputeSweptVolume                                       0.081930 
+ComputeSweptVolume                                       0.093892 
+ComputeSweptVolume                                       0.092093 
+ComputeSweptVolume                                       0.091899 
+ComputeSweptVolume                                       0.091908 
+ComputeSweptVolume                                       0.088080 
+ComputeSweptVolume                                       0.094280 
+ComputeSweptVolume                                       0.094044 
+ComputeSweptVolume                                       0.092750 
+ComputeSweptVolume                                       0.086457 
+ComputeSweptVolume                                       0.092502 
+ComputeSweptVolume                                       0.093469 
+ComputeSweptVolume                                       0.095698 
+ComputeSweptVolume                                       0.095231 
+ComputeSweptVolume                                       0.094695 
+ComputeSweptVolume                                       0.095054 
+ComputeSweptVolume                                       0.096665 
+ComputeSweptVolume                                       0.095463 
+ComputeSweptVolume                                       0.095416 
+ComputeSweptVolume                                       0.095083 
+ComputeSweptVolume                                       0.096403 
+ComputeSweptVolume                                       0.095798 
+ComputeSweptVolume                                       0.095892 
+ComputeSweptVolume                                       0.096091 
+ComputeSweptVolume                                       0.098381 
+ComputeSweptVolume                                       0.095770 
+ComputeSweptVolume                                       0.097224 
+ComputeSweptVolume                                       0.099063 
+ComputeSweptVolume                                       0.097101 
+ComputeSweptVolume                                       0.098083 
+ComputeSweptVolume                                       0.106373 
+ComputeSweptVolume                                       0.099679 
+ComputeSweptVolume                                       0.110126 
+ComputeSweptVolume                                       0.099933 
+ComputeSweptVolume                                       0.100488 
+ComputeSweptVolume                                       0.063075 
+ComputeSweptVolume                                       0.088717 
+ComputeSweptVolume                                       0.086661 
+ComputeSweptVolume                                       0.097085 
+ComputeSweptVolume                                       0.085693 
+ComputeSweptVolume                                       0.068138 
+ComputeSweptVolume                                       0.058200 
+ComputeSweptVolume                                       0.067287 
+ComputeSweptVolume                                       0.081262 
+ComputeSweptVolume                                       0.097363 
+ComputeSweptVolume                                       0.091614 
+ComputeSweptVolume                                       0.101658 
+ComputeSweptVolume                                       0.072322 
+ComputeSweptVolume                                       0.105277 
+ComputeSweptVolume                                       0.085961 
+ComputeSweptVolume                                       0.096308 
+ComputeSweptVolume                                       0.087913 
+ComputeSweptVolume                                       0.093618 
+ComputeSweptVolume                                       0.087657 
+ComputeSweptVolume                                       0.063605 
+ComputeSweptVolume                                       0.099399 
+ComputeSweptVolume                                       0.073276 
+ComputeSweptVolume                                       0.082523 
+ComputeSweptVolume                                       0.101296 
+ComputeSweptVolume                                       0.103747 
+ComputeSweptVolume                                       0.094128 
+ComputeSweptVolume                                       0.102455 
+ComputeSweptVolume                                       0.092437 
+ComputeSweptVolume                                       0.096565 
+ComputeSweptVolume                                       0.084684 
+ComputeSweptVolume                                       0.090850 
+ComputeSweptVolume                                       0.099591 
+ComputeSweptVolume                                       0.100679 
+ComputeSweptVolume                                       0.099793 
+ComputeSweptVolume                                       0.099298 
+ComputeSweptVolume                                       0.101022 
+ComputeSweptVolume                                       0.099827 
+ComputeSweptVolume                                       0.083842 
+ComputeSweptVolume                                       0.099920 
+ComputeSweptVolume                                       0.095814 
+ComputeSweptVolume                                       0.074104 
+ComputeSweptVolume                                       0.088102 
+ComputeSweptVolume                                       0.101319 
+QMDP_plan                                               51.053056 
+QMDP_plan                                               39.896232 
+QMDP_plan                                               75.868720 
+QMDP_plan                                               99.393912 
+QMDP_plan                                              144.158100 
+QMDP_plan                                               22.746651 
+QMDP_plan                                               28.490585 
+QMDP_plan                                               13.345855 
+Scenario: Bookshelf                                      0.000000        0.000000 
+Strategy: QMDP                                           0.000000        0.000000 
+Viz_sample                                               0.006183 
+Viz_sample                                               0.006633 
+Viz_sample                                               0.006496 
+Viz_sample                                               0.006897 
+Viz_sample                                               0.005891 
+Viz_sample                                               0.005949 
+Viz_sample                                               0.007596 
+Viz_sample                                               0.005883 
+Viz_sample                                               0.006535 
+Viz_sample                                               0.006366 
+Viz_sample                                               0.005902 
+Viz_sample                                               0.006698 
+Viz_sample                                               0.006103 
+Viz_sample                                               0.006919 
+Viz_sample                                               0.006344 
+Viz_sample                                               0.007121 
+Viz_sample                                               0.006186 
+Viz_sample                                               0.006460 
+Viz_sample                                               0.006115 
+Viz_sample                                               0.005936 
+Viz_sample                                               0.005914 
+Viz_sample                                               0.006306 
+Viz_sample                                               0.006417 
+Viz_sample                                               0.006454 
+Viz_sample                                               0.006004 
+Viz_sample                                               0.006275 
+Viz_sample                                               0.014693 
+Viz_sample                                               0.006055 
+Viz_sample                                               0.006077 
+Viz_sample                                               0.006469 
+Viz_sample                                               0.006002 
+Viz_sample                                               0.005927 
+Viz_sample                                               0.005991 
+Viz_sample                                               0.005831 
+Viz_sample                                               0.006397 
+Viz_sample                                               0.005894 
+Viz_sample                                               0.005927 
+Viz_sample                                               0.006514 
+Viz_sample                                               0.005997 
+Viz_sample                                               0.006119 
+Viz_sample                                               0.006189 
+Viz_sample                                               0.006569 
+Viz_sample                                               0.005985 
+Viz_sample                                               0.014130 
+Viz_sample                                               0.014062 
+Viz_sample                                               0.006574 
+Viz_sample                                               0.014670 
+Viz_sample                                               0.014635 
+Viz_sample                                               0.006658 
+Viz_sample                                               0.006042 
+Viz_sample                                               0.006104 
+Viz_sample                                               0.006212 
+Viz_sample                                               0.006024 
+Viz_sample                                               0.006100 
+Viz_sample                                               0.006091 
+Viz_sample                                               0.006004 
+Viz_sample                                               0.005924 
+Viz_sample                                               0.006062 
+Viz_sample                                               0.006687 
+Viz_sample                                               0.006046 
+Viz_sample                                               0.006211 
+Viz_sample                                               0.006059 
+Viz_sample                                               0.005975 
+Viz_sample                                               0.006051 
+Viz_sample                                               0.005965 
+Viz_sample                                               0.006046 
+Viz_sample                                               0.006032 
+Viz_sample                                               0.005906 
+Viz_sample                                               0.006001 
+Viz_sample                                               0.006394 
+Viz_sample                                               0.005980 
+Viz_sample                                               0.005936 
+Viz_sample                                               0.005992 
+Viz_sample                                               0.005936 
+Viz_sample                                               0.005946 
+Viz_sample                                               0.006126 
+Viz_sample                                               0.005932 
+Viz_sample                                               0.006328 
+Viz_sample                                               0.005986 
+Viz_sample                                               0.005894 
+accumulated_cost                                         0.000000       12.663134 
+

@@ -1,0 +1,207 @@
+2019-05-31 03:10:05
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                          0.573324              86        0.006667
+ComputeSweptVolume                                       8.861865             103        0.086038
+EdgeCheck                                                9.747608             129        0.075563
+Fridge, ParetoCosta1 Motion Time                        43.139475              10        4.313948
+Fridge, ParetoCosta1 Planning Time                      13.179644              10        1.317964
+GetSweptVolume                                           9.508561             291        0.032675
+Obstacle_belief_update_collision                         1.121675               3        0.373892
+Obstacle_belief_update_free                              0.494258              10        0.049426
+Scenario: Fridge                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                         9.032278            8925        0.001012
+Strategy: ParetoCosta1                                   0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                              0.657988               7        0.093998
+Viz_scenario                                             2.636799              10        0.263680
+accumulated_cost                                         0.000000               1        0.000000        8.082635        8.082635
+astar_add_neighbors                                      0.216561            1812        0.000120
+astar_cost_to_come                                       0.033541           77707        0.000000
+astar_edge_validity_check                                0.017413           80480        0.000000
+astar_expansion_in_closed_list                           0.001383            7162        0.000000
+astar_heuristic                                          0.054699           70532        0.000001
+astar_num_edge_expansions                                0.000000             152        0.000000    80480.000000      529.473684
+astar_num_lower_cost_edge_expansions                     0.000000             152        0.000000    70532.000000      464.026316
+astar_num_node_expansions                                0.000000             152        0.000000     2223.000000       14.625000
+astar_push_to_queue                                      0.025072           70532        0.000000
+astar_queue_reduction                                    0.000861            2071        0.000000
+lazySP path cost                                         0.000000               7        0.000000       24.302306        3.471758
+lazy_sp a_star                                           0.228539             152        0.001504
+lazysp astar iters                                       0.000000               7        0.000000      152.000000       21.714286
+lazysp_successful                                       13.174725               7        1.882104
+real_state_move                                         28.426374               7        4.060911
+
+2019-05-31 03:10:05
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+CalcProbFreeCHS                                          0.000004 
+CalcProbFreeCHS                                          0.009128 
+CalcProbFreeCHS                                          0.002493 
+CalcProbFreeCHS                                          0.002177 
+CalcProbFreeCHS                                          0.002183 
+CalcProbFreeCHS                                          0.002577 
+CalcProbFreeCHS                                          0.008910 
+CalcProbFreeCHS                                          0.008869 
+CalcProbFreeCHS                                          0.002182 
+CalcProbFreeCHS                                          0.002181 
+CalcProbFreeCHS                                          0.002176 
+CalcProbFreeCHS                                          0.002190 
+CalcProbFreeCHS                                          0.002404 
+CalcProbFreeCHS                                          0.002500 
+CalcProbFreeCHS                                          0.002178 
+CalcProbFreeCHS                                          0.002207 
+CalcProbFreeCHS                                          0.002217 
+CalcProbFreeCHS                                          0.002224 
+CalcProbFreeCHS                                          0.002253 
+CalcProbFreeCHS                                          0.002268 
+CalcProbFreeCHS                                          0.002185 
+CalcProbFreeCHS                                          0.002217 
+CalcProbFreeCHS                                          0.002176 
+CalcProbFreeCHS                                          0.002460 
+CalcProbFreeCHS                                          0.004603 
+CalcProbFreeCHS                                          0.011830 
+CalcProbFreeCHS                                          0.012116 
+CalcProbFreeCHS                                          0.004591 
+CalcProbFreeCHS                                          0.004805 
+CalcProbFreeCHS                                          0.004773 
+CalcProbFreeCHS                                          0.004790 
+CalcProbFreeCHS                                          0.004360 
+CalcProbFreeCHS                                          0.004797 
+CalcProbFreeCHS                                          0.004354 
+CalcProbFreeCHS                                          0.004652 
+CalcProbFreeCHS                                          0.006462 
+CalcProbFreeCHS                                          0.004349 
+CalcProbFreeCHS                                          0.005009 
+CalcProbFreeCHS                                          0.012034 
+CalcProbFreeCHS                                          0.004376 
+CalcProbFreeCHS                                          0.004359 
+CalcProbFreeCHS                                          0.004360 
+CalcProbFreeCHS                                          0.004701 
+CalcProbFreeCHS                                          0.004629 
+CalcProbFreeCHS                                          0.006788 
+CalcProbFreeCHS                                          0.007138 
+CalcProbFreeCHS                                          0.007063 
+CalcProbFreeCHS                                          0.014677 
+CalcProbFreeCHS                                          0.006681 
+CalcProbFreeCHS                                          0.006883 
+CalcProbFreeCHS                                          0.014904 
+CalcProbFreeCHS                                          0.006522 
+CalcProbFreeCHS                                          0.006851 
+CalcProbFreeCHS                                          0.014628 
+CalcProbFreeCHS                                          0.006902 
+CalcProbFreeCHS                                          0.006924 
+CalcProbFreeCHS                                          0.014232 
+CalcProbFreeCHS                                          0.006516 
+CalcProbFreeCHS                                          0.007161 
+CalcProbFreeCHS                                          0.007018 
+CalcProbFreeCHS                                          0.014611 
+CalcProbFreeCHS                                          0.006852 
+CalcProbFreeCHS                                          0.006887 
+CalcProbFreeCHS                                          0.014670 
+CalcProbFreeCHS                                          0.014614 
+CalcProbFreeCHS                                          0.006937 
+CalcProbFreeCHS                                          0.008877 
+CalcProbFreeCHS                                          0.006547 
+CalcProbFreeCHS                                          0.007116 
+CalcProbFreeCHS                                          0.008631 
+CalcProbFreeCHS                                          0.006782 
+CalcProbFreeCHS                                          0.014214 
+CalcProbFreeCHS                                          0.006926 
+CalcProbFreeCHS                                          0.006543 
+CalcProbFreeCHS                                          0.006865 
+CalcProbFreeCHS                                          0.007137 
+CalcProbFreeCHS                                          0.014698 
+CalcProbFreeCHS                                          0.006896 
+CalcProbFreeCHS                                          0.007140 
+CalcProbFreeCHS                                          0.006957 
+CalcProbFreeCHS                                          0.006982 
+CalcProbFreeCHS                                          0.014780 
+CalcProbFreeCHS                                          0.006661 
+CalcProbFreeCHS                                          0.006966 
+CalcProbFreeCHS                                          0.014514 
+CalcProbFreeCHS                                          0.014324 
+Fridge, ParetoCosta1 Motion Time                         2.549130 
+Fridge, ParetoCosta1 Motion Time                         1.471800 
+Fridge, ParetoCosta1 Motion Time                         4.659093 
+Fridge, ParetoCosta1 Motion Time                         3.496253 
+Fridge, ParetoCosta1 Motion Time                         2.282176 
+Fridge, ParetoCosta1 Motion Time                         5.354617 
+Fridge, ParetoCosta1 Motion Time                         6.801400 
+Fridge, ParetoCosta1 Motion Time                         4.893185 
+Fridge, ParetoCosta1 Motion Time                         4.665162 
+Fridge, ParetoCosta1 Motion Time                         6.966660 
+Fridge, ParetoCosta1 Planning Time                       0.079544 
+Fridge, ParetoCosta1 Planning Time                       0.000032 
+Fridge, ParetoCosta1 Planning Time                       3.109434 
+Fridge, ParetoCosta1 Planning Time                       0.062703 
+Fridge, ParetoCosta1 Planning Time                       0.000033 
+Fridge, ParetoCosta1 Planning Time                       1.682604 
+Fridge, ParetoCosta1 Planning Time                       0.386664 
+Fridge, ParetoCosta1 Planning Time                       0.000032 
+Fridge, ParetoCosta1 Planning Time                       6.982335 
+Fridge, ParetoCosta1 Planning Time                       0.876263 
+Obstacle_belief_update_collision                         0.366501 
+Obstacle_belief_update_collision                         0.368952 
+Obstacle_belief_update_collision                         0.386223 
+Obstacle_belief_update_free                              0.051276 
+Obstacle_belief_update_free                              0.045481 
+Obstacle_belief_update_free                              0.052835 
+Obstacle_belief_update_free                              0.045130 
+Obstacle_belief_update_free                              0.045973 
+Obstacle_belief_update_free                              0.062356 
+Obstacle_belief_update_free                              0.053795 
+Obstacle_belief_update_free                              0.045909 
+Obstacle_belief_update_free                              0.045549 
+Obstacle_belief_update_free                              0.045954 
+Scenario: Fridge                                         0.000000        0.000000 
+Strategy: ParetoCosta1                                   0.000000        0.000000 
+Update belief from free obs                              0.047476 
+Update belief from free obs                              0.105247 
+Update belief from free obs                              0.049034 
+Update belief from free obs                              0.158723 
+Update belief from free obs                              0.048921 
+Update belief from free obs                              0.103899 
+Update belief from free obs                              0.144688 
+Viz_scenario                                             0.246709 
+Viz_scenario                                             0.247916 
+Viz_scenario                                             0.252514 
+Viz_scenario                                             0.254084 
+Viz_scenario                                             0.254219 
+Viz_scenario                                             0.286852 
+Viz_scenario                                             0.273427 
+Viz_scenario                                             0.273376 
+Viz_scenario                                             0.275340 
+Viz_scenario                                             0.272362 
+accumulated_cost                                         0.000000        8.082635 
+lazySP path cost                                         0.000000        0.838143 
+lazySP path cost                                         0.000000        3.439435 
+lazySP path cost                                         0.000000        2.365832 
+lazySP path cost                                         0.000000        4.380412 
+lazySP path cost                                         0.000000        2.909853 
+lazySP path cost                                         0.000000        5.695701 
+lazySP path cost                                         0.000000        4.672931 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000       30.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000       22.000000 
+lazysp astar iters                                       0.000000        8.000000 
+lazysp astar iters                                       0.000000       76.000000 
+lazysp astar iters                                       0.000000       12.000000 
+lazysp_successful                                        0.075599 
+lazysp_successful                                        3.109312 
+lazysp_successful                                        0.062562 
+lazysp_successful                                        1.682436 
+lazysp_successful                                        0.386523 
+lazysp_successful                                        6.982222 
+lazysp_successful                                        0.876072 
+real_state_move                                          1.223581 
+real_state_move                                          4.405995 
+real_state_move                                          2.027632 
+real_state_move                                          5.066949 
+real_state_move                                          4.619518 
+real_state_move                                          4.389220 
+real_state_move                                          6.693480 
+

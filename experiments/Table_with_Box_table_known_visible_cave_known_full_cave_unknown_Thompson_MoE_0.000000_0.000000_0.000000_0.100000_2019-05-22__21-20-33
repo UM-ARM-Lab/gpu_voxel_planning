@@ -1,0 +1,170 @@
+2019-05-22 21:20:33
+
+Label                                                                                        tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.000000_0.000000_0.000000_0.100000                                                  0.000000               1        0.000000        0.000000        0.000000
+Bump                                                                                             0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                                                               5.892609              75        0.078568
+EdgeCheck                                                                                        6.965486             239        0.029144
+GetSweptVolume                                                                                   6.385147             290        0.022018
+Obstacle_belief_update_collision                                                                 0.491952               1        0.491952
+Obstacle_belief_update_free                                                                     12.532708             471        0.026609
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                        0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                                 6.172803            7248        0.000852
+Strategy: Thompson                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time           15.078695               6        2.513116
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          8.623152               6        1.437192
+Update belief from free obs                                                                     12.748285             471        0.027066
+Viz_sample                                                                                       0.050136              12        0.004178
+Viz_sample_ee_path                                                                               0.001154               5        0.000231
+Viz_scenario                                                                                     0.291800             472        0.000618
+accumulated_cost                                                                                 0.000000               1        0.000000        9.275637        9.275637
+astar_add_neighbors                                                                              0.878998            6655        0.000132
+astar_cost_to_come                                                                               0.158367          312861        0.000001
+astar_edge_validity_check                                                                        0.072072          318002        0.000000
+astar_expansion_in_closed_list                                                                   0.006152           35626        0.000000
+astar_heuristic                                                                                  0.204037          277235        0.000001
+astar_num_edge_expansions                                                                        0.000000             194        0.000000   318002.000000     1639.185567
+astar_num_lower_cost_edge_expansions                                                             0.000000             194        0.000000   277235.000000     1429.046392
+astar_num_node_expansions                                                                        0.000000             194        0.000000     9892.000000       50.989691
+astar_push_to_queue                                                                              0.099387          277235        0.000000
+astar_queue_reduction                                                                            0.002679            9699        0.000000
+lazySP path cost                                                                                 0.000000               6        0.000000             inf             inf
+lazy_sp a_star                                                                                   0.911951             194        0.004701
+lazysp astar iters                                                                               0.000000               6        0.000000      194.000000       32.333333
+lazysp_no_path_found                                                                             6.323930               1        6.323930
+lazysp_successful                                                                                1.703678               5        0.340736
+simulation_state_move                                                                           13.623439             471        0.028924
+
+2019-05-22 21:20:33
+
+Label                                                                                                time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.000000_0.000000_0.000000_0.100000                                                  0.000000        0.000000 
+Bump                                                                                             0.000000        0.000000 
+ComputeSweptVolume                                                                               0.067180 
+ComputeSweptVolume                                                                               0.038610 
+ComputeSweptVolume                                                                               0.064730 
+ComputeSweptVolume                                                                               0.061214 
+ComputeSweptVolume                                                                               0.061913 
+ComputeSweptVolume                                                                               0.068830 
+ComputeSweptVolume                                                                               0.076064 
+ComputeSweptVolume                                                                               0.058173 
+ComputeSweptVolume                                                                               0.086763 
+ComputeSweptVolume                                                                               0.064187 
+ComputeSweptVolume                                                                               0.082932 
+ComputeSweptVolume                                                                               0.085776 
+ComputeSweptVolume                                                                               0.062134 
+ComputeSweptVolume                                                                               0.062110 
+ComputeSweptVolume                                                                               0.097966 
+ComputeSweptVolume                                                                               0.074615 
+ComputeSweptVolume                                                                               0.083891 
+ComputeSweptVolume                                                                               0.075328 
+ComputeSweptVolume                                                                               0.084385 
+ComputeSweptVolume                                                                               0.080675 
+ComputeSweptVolume                                                                               0.080144 
+ComputeSweptVolume                                                                               0.089050 
+ComputeSweptVolume                                                                               0.082133 
+ComputeSweptVolume                                                                               0.075456 
+ComputeSweptVolume                                                                               0.068138 
+ComputeSweptVolume                                                                               0.072955 
+ComputeSweptVolume                                                                               0.087345 
+ComputeSweptVolume                                                                               0.081223 
+ComputeSweptVolume                                                                               0.077147 
+ComputeSweptVolume                                                                               0.081007 
+ComputeSweptVolume                                                                               0.087306 
+ComputeSweptVolume                                                                               0.063215 
+ComputeSweptVolume                                                                               0.087726 
+ComputeSweptVolume                                                                               0.073491 
+ComputeSweptVolume                                                                               0.075699 
+ComputeSweptVolume                                                                               0.085059 
+ComputeSweptVolume                                                                               0.074148 
+ComputeSweptVolume                                                                               0.085429 
+ComputeSweptVolume                                                                               0.065025 
+ComputeSweptVolume                                                                               0.084095 
+ComputeSweptVolume                                                                               0.075355 
+ComputeSweptVolume                                                                               0.078021 
+ComputeSweptVolume                                                                               0.087173 
+ComputeSweptVolume                                                                               0.077514 
+ComputeSweptVolume                                                                               0.080610 
+ComputeSweptVolume                                                                               0.086379 
+ComputeSweptVolume                                                                               0.077270 
+ComputeSweptVolume                                                                               0.086099 
+ComputeSweptVolume                                                                               0.079010 
+ComputeSweptVolume                                                                               0.084009 
+ComputeSweptVolume                                                                               0.084297 
+ComputeSweptVolume                                                                               0.086317 
+ComputeSweptVolume                                                                               0.085982 
+ComputeSweptVolume                                                                               0.065908 
+ComputeSweptVolume                                                                               0.076368 
+ComputeSweptVolume                                                                               0.087955 
+ComputeSweptVolume                                                                               0.079107 
+ComputeSweptVolume                                                                               0.079625 
+ComputeSweptVolume                                                                               0.074453 
+ComputeSweptVolume                                                                               0.086558 
+ComputeSweptVolume                                                                               0.087712 
+ComputeSweptVolume                                                                               0.085499 
+ComputeSweptVolume                                                                               0.084533 
+ComputeSweptVolume                                                                               0.089372 
+ComputeSweptVolume                                                                               0.086916 
+ComputeSweptVolume                                                                               0.083566 
+ComputeSweptVolume                                                                               0.084413 
+ComputeSweptVolume                                                                               0.087371 
+ComputeSweptVolume                                                                               0.069526 
+ComputeSweptVolume                                                                               0.086442 
+ComputeSweptVolume                                                                               0.087712 
+ComputeSweptVolume                                                                               0.082296 
+ComputeSweptVolume                                                                               0.077092 
+ComputeSweptVolume                                                                               0.088659 
+ComputeSweptVolume                                                                               0.080220 
+Obstacle_belief_update_collision                                                                 0.491952 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                        0.000000        0.000000 
+Strategy: Thompson                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            3.556945 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            4.103936 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            1.831510 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            1.912944 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            2.041871 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            1.631490 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          1.453782 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          6.429382 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.000199 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.356211 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.280228 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.103350 
+Viz_sample                                                                                       0.003680 
+Viz_sample                                                                                       0.006458 
+Viz_sample                                                                                       0.003902 
+Viz_sample                                                                                       0.004957 
+Viz_sample                                                                                       0.003783 
+Viz_sample                                                                                       0.003835 
+Viz_sample                                                                                       0.004099 
+Viz_sample                                                                                       0.003558 
+Viz_sample                                                                                       0.004007 
+Viz_sample                                                                                       0.004233 
+Viz_sample                                                                                       0.004058 
+Viz_sample                                                                                       0.003565 
+Viz_sample_ee_path                                                                               0.000199 
+Viz_sample_ee_path                                                                               0.000224 
+Viz_sample_ee_path                                                                               0.000210 
+Viz_sample_ee_path                                                                               0.000291 
+Viz_sample_ee_path                                                                               0.000229 
+accumulated_cost                                                                                 0.000000        9.275637 
+lazySP path cost                                                                                 0.000000        3.417765 
+lazySP path cost                                                                                 0.000000             inf 
+lazySP path cost                                                                                 0.000000        1.831070 
+lazySP path cost                                                                                 0.000000        4.803016 
+lazySP path cost                                                                                 0.000000        3.272969 
+lazySP path cost                                                                                 0.000000        1.638643 
+lazysp astar iters                                                                               0.000000       17.000000 
+lazysp astar iters                                                                               0.000000      134.000000 
+lazysp astar iters                                                                               0.000000        1.000000 
+lazysp astar iters                                                                               0.000000       36.000000 
+lazysp astar iters                                                                               0.000000        5.000000 
+lazysp astar iters                                                                               0.000000        1.000000 
+lazysp_no_path_found                                                                             6.323930 
+lazysp_successful                                                                                1.401178 
+lazysp_successful                                                                                0.005204 
+lazysp_successful                                                                                0.255589 
+lazysp_successful                                                                                0.034726 
+lazysp_successful                                                                                0.006981 
+

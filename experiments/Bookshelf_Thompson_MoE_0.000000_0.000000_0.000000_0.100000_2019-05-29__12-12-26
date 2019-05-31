@@ -1,0 +1,98 @@
+2019-05-29 12:12:26
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+Bookshelf, Thompson Motion Time                        904.381384               8      113.047673
+Bookshelf, Thompson Planning Time                      314.851258               8       39.356407
+Bump                                                     0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                     257.114233             841        0.305724
+EdgeCheck                                              286.974204            1768        0.162316
+GetSweptVolume                                         271.850042            2130        0.127629
+Obstacle_belief_update_collision                         3.520017               1        3.520017
+Obstacle_belief_update_free                             74.877521             657        0.113969
+Scenario: Bookshelf                                      0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                       254.069455           72818        0.003489
+Strategy: Thompson                                       0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                             76.015618             657        0.115701
+Viz_sample                                               0.056754               7        0.008108
+Viz_sample_ee_path                                       0.001726               7        0.000247
+Viz_scenario                                           818.231838             658        1.243513
+accumulated_cost                                         0.000000               1        0.000000       12.931636       12.931636
+astar_add_neighbors                                     24.432509          216397        0.000113
+astar_cost_to_come                                       4.776424         7810724        0.000001
+astar_edge_validity_check                                2.090646         8023945        0.000000
+astar_expansion_in_closed_list                           0.293306         1394191        0.000000
+astar_heuristic                                          5.529373         6396034        0.000001
+astar_num_edge_expansions                                0.000000            1551        0.000000  8023945.000000     5173.401032
+astar_num_lower_cost_edge_expansions                     0.000000            1551        0.000000  6396034.000000     4123.813024
+astar_num_node_expansions                                0.000000            1551        0.000000   392266.000000      252.911670
+astar_push_to_queue                                      2.546616         6396034        0.000000
+astar_queue_reduction                                    0.106957          390715        0.000000
+lazySP path cost                                         0.000000               7        0.000000       44.800333        6.400048
+lazy_sp a_star                                          25.472579            1551        0.016423
+lazysp astar iters                                       0.000000               7        0.000000     1551.000000      221.571429
+lazysp_successful                                      314.233196               7       44.890457
+simulation_state_move                                   81.538884             657        0.124108
+
+2019-05-29 12:12:26
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+Bookshelf, Thompson Motion Time                        130.819247 
+Bookshelf, Thompson Motion Time                        170.547145 
+Bookshelf, Thompson Motion Time                         59.870613 
+Bookshelf, Thompson Motion Time                        128.641499 
+Bookshelf, Thompson Motion Time                        102.443868 
+Bookshelf, Thompson Motion Time                        114.069299 
+Bookshelf, Thompson Motion Time                         83.854095 
+Bookshelf, Thompson Motion Time                        114.135619 
+Bookshelf, Thompson Planning Time                      191.810922 
+Bookshelf, Thompson Planning Time                      112.034634 
+Bookshelf, Thompson Planning Time                        2.142544 
+Bookshelf, Thompson Planning Time                        7.685896 
+Bookshelf, Thompson Planning Time                        0.000275 
+Bookshelf, Thompson Planning Time                        0.993930 
+Bookshelf, Thompson Planning Time                        0.108146 
+Bookshelf, Thompson Planning Time                        0.074911 
+Bump                                                     0.000000        0.000000 
+Obstacle_belief_update_collision                         3.520017 
+Scenario: Bookshelf                                      0.000000        0.000000 
+Strategy: Thompson                                       0.000000        0.000000 
+Viz_sample                                               0.007091 
+Viz_sample                                               0.007242 
+Viz_sample                                               0.008439 
+Viz_sample                                               0.008438 
+Viz_sample                                               0.008034 
+Viz_sample                                               0.010198 
+Viz_sample                                               0.007312 
+Viz_sample_ee_path                                       0.000226 
+Viz_sample_ee_path                                       0.000331 
+Viz_sample_ee_path                                       0.000186 
+Viz_sample_ee_path                                       0.000250 
+Viz_sample_ee_path                                       0.000223 
+Viz_sample_ee_path                                       0.000245 
+Viz_sample_ee_path                                       0.000265 
+accumulated_cost                                         0.000000       12.931636 
+lazySP path cost                                         0.000000       10.009513 
+lazySP path cost                                         0.000000       11.018620 
+lazySP path cost                                         0.000000        6.309769 
+lazySP path cost                                         0.000000        6.609354 
+lazySP path cost                                         0.000000        5.387259 
+lazySP path cost                                         0.000000        3.498003 
+lazySP path cost                                         0.000000        1.967815 
+lazysp astar iters                                       0.000000      535.000000 
+lazysp astar iters                                       0.000000      673.000000 
+lazysp astar iters                                       0.000000      100.000000 
+lazysp astar iters                                       0.000000      174.000000 
+lazysp astar iters                                       0.000000       65.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp_successful                                      191.740446 
+lazysp_successful                                      111.938012 
+lazysp_successful                                        2.048688 
+lazysp_successful                                        7.592989 
+lazysp_successful                                        0.896285 
+lazysp_successful                                        0.013220 
+lazysp_successful                                        0.003554 
+

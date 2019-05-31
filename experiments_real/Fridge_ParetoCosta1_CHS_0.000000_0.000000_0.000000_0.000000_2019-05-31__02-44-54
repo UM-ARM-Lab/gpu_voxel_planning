@@ -1,0 +1,106 @@
+2019-05-31 02:45:46
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000               1        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                          0.687327             108        0.006364
+ComputeSweptVolume                                       9.273609             114        0.081347
+EdgeCheck                                               10.095074             143        0.070595
+Fridge, ParetoCosta1 Motion Time                        40.061071              10        4.006107
+Fridge, ParetoCosta1 Planning Time                      11.566092              10        1.156609
+GetSweptVolume                                           9.865034             337        0.029273
+Scenario: Fridge                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                         9.414928            9759        0.000965
+Strategy: ParetoCosta1                                   0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                              0.286769               7        0.040967
+Viz_scenario                                             0.326951              10        0.032695
+accumulated_cost                                         0.000000               1        0.000000        8.077067        8.077067
+astar_add_neighbors                                      0.324660            2735        0.000119
+astar_cost_to_come                                       0.051946          117727        0.000000
+astar_edge_validity_check                                0.026942          121230        0.000000
+astar_expansion_in_closed_list                           0.002311           11617        0.000000
+astar_heuristic                                          0.079423          106100        0.000001
+astar_num_edge_expansions                                0.000000             166        0.000000   121230.000000      730.301205
+astar_num_lower_cost_edge_expansions                     0.000000             166        0.000000   106100.000000      639.156627
+astar_num_node_expansions                                0.000000             166        0.000000     3257.000000       19.620482
+astar_push_to_queue                                      0.037516          106100        0.000000
+astar_queue_reduction                                    0.001192            3091        0.000000
+lazySP path cost                                         0.000000               7        0.000000       25.574836        3.653548
+lazy_sp a_star                                           0.340504             166        0.002051
+lazysp astar iters                                       0.000000               7        0.000000      166.000000       23.714286
+lazysp_successful                                       11.560986               7        1.651569
+real_state_move                                         29.433063               7        4.204723
+
+2019-05-31 02:45:46
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000        0.000000 
+Fridge, ParetoCosta1 Motion Time                         1.933686 
+Fridge, ParetoCosta1 Motion Time                         1.537640 
+Fridge, ParetoCosta1 Motion Time                         4.361502 
+Fridge, ParetoCosta1 Motion Time                         2.927290 
+Fridge, ParetoCosta1 Motion Time                         2.422908 
+Fridge, ParetoCosta1 Motion Time                         4.999908 
+Fridge, ParetoCosta1 Motion Time                         5.524733 
+Fridge, ParetoCosta1 Motion Time                         5.126139 
+Fridge, ParetoCosta1 Motion Time                         4.497742 
+Fridge, ParetoCosta1 Motion Time                         6.729522 
+Fridge, ParetoCosta1 Planning Time                       0.052691 
+Fridge, ParetoCosta1 Planning Time                       0.000033 
+Fridge, ParetoCosta1 Planning Time                       1.594202 
+Fridge, ParetoCosta1 Planning Time                       0.009052 
+Fridge, ParetoCosta1 Planning Time                       0.000036 
+Fridge, ParetoCosta1 Planning Time                       5.166116 
+Fridge, ParetoCosta1 Planning Time                       0.385965 
+Fridge, ParetoCosta1 Planning Time                       0.000037 
+Fridge, ParetoCosta1 Planning Time                       3.768019 
+Fridge, ParetoCosta1 Planning Time                       0.589940 
+Scenario: Fridge                                         0.000000        0.000000 
+Strategy: ParetoCosta1                                   0.000000        0.000000 
+Update belief from free obs                              0.001502 
+Update belief from free obs                              0.051412 
+Update belief from free obs                              0.002462 
+Update belief from free obs                              0.073747 
+Update belief from free obs                              0.002263 
+Update belief from free obs                              0.062625 
+Update belief from free obs                              0.092759 
+Viz_scenario                                             0.026375 
+Viz_scenario                                             0.026221 
+Viz_scenario                                             0.027980 
+Viz_scenario                                             0.030744 
+Viz_scenario                                             0.026917 
+Viz_scenario                                             0.033308 
+Viz_scenario                                             0.035847 
+Viz_scenario                                             0.035894 
+Viz_scenario                                             0.044073 
+Viz_scenario                                             0.039592 
+accumulated_cost                                         0.000000        8.077067 
+lazySP path cost                                         0.000000        0.838143 
+lazySP path cost                                         0.000000        3.318843 
+lazySP path cost                                         0.000000        2.245239 
+lazySP path cost                                         0.000000        5.044636 
+lazySP path cost                                         0.000000        3.574077 
+lazySP path cost                                         0.000000        5.788334 
+lazySP path cost                                         0.000000        4.765564 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000       22.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000       60.000000 
+lazysp astar iters                                       0.000000       14.000000 
+lazysp astar iters                                       0.000000       54.000000 
+lazysp astar iters                                       0.000000       12.000000 
+lazysp_successful                                        0.048623 
+lazysp_successful                                        1.594069 
+lazysp_successful                                        0.008890 
+lazysp_successful                                        5.165939 
+lazysp_successful                                        0.385810 
+lazysp_successful                                        3.767889 
+lazysp_successful                                        0.589765 
+real_state_move                                          1.510610 
+real_state_move                                          4.332288 
+real_state_move                                          2.395093 
+real_state_move                                          4.965325 
+real_state_move                                          5.089202 
+real_state_move                                          4.452152 
+real_state_move                                          6.688392 
+

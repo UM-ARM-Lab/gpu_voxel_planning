@@ -1,0 +1,99 @@
+2019-05-31 03:14:06
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                      14.188515             166        0.085473
+Copy_graph                                               3.011746             535        0.005629
+EdgeCheck                                               30.926117            8359        0.003700
+Fridge, HOP Motion Time                                 31.359530               8        3.919941
+Fridge, HOP Planning Time                               54.566903               8        6.820863
+GetSweptVolume                                          15.161609            8894        0.001705
+HOP_plan                                                54.540874               6        9.090146
+Obstacle_belief_update_collision                         0.717849               2        0.358925
+Obstacle_belief_update_free                              0.422586               8        0.052823
+Scenario: Fridge                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                        15.040626           14865        0.001012
+Strategy: HOP                                            0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                              0.651381               6        0.108564
+Viz sample sv                                            2.677092             535        0.005004
+Viz_sample                                               2.831368             600        0.004719
+Viz_sample_ee_path                                       0.092504             535        0.000173
+Viz_scenario                                             2.062148               8        0.257769
+accumulated_cost                                         0.000000               1        0.000000        6.904490        6.904490
+astar_add_neighbors                                      9.099411           69931        0.000130
+astar_cost_to_come                                       1.441111         3179118        0.000000
+astar_edge_validity_check                                0.738664         3252092        0.000000
+astar_expansion_in_closed_list                           0.054331          258843        0.000000
+astar_heuristic                                          2.219514         2920275        0.000001
+astar_num_edge_expansions                                0.000000            6407        0.000000  3252092.000000      507.584205
+astar_num_lower_cost_edge_expansions                     0.000000            6407        0.000000  2920275.000000      455.794444
+astar_num_node_expansions                                0.000000            6407        0.000000    85333.000000       13.318714
+astar_push_to_queue                                      1.097353         2920275        0.000000
+astar_queue_reduction                                    0.032889           78926        0.000000
+lazySP path cost                                         0.000000             535        0.000000     1289.108246        2.409548
+lazy_sp a_star                                           9.527965            6407        0.001487
+lazysp astar iters                                       0.000000             535        0.000000     6407.000000       11.975701
+lazysp_successful                                       40.610602             535        0.075908
+real_state_move                                         23.850734               6        3.975122
+
+2019-05-31 03:14:06
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+Fridge, HOP Motion Time                                  2.517183 
+Fridge, HOP Motion Time                                  1.493110 
+Fridge, HOP Motion Time                                  4.636506 
+Fridge, HOP Motion Time                                  3.414533 
+Fridge, HOP Motion Time                                  2.289841 
+Fridge, HOP Motion Time                                  5.307298 
+Fridge, HOP Motion Time                                  4.748678 
+Fridge, HOP Motion Time                                  6.952380 
+Fridge, HOP Planning Time                                2.508092 
+Fridge, HOP Planning Time                                0.000032 
+Fridge, HOP Planning Time                               13.689006 
+Fridge, HOP Planning Time                                7.891626 
+Fridge, HOP Planning Time                                0.000041 
+Fridge, HOP Planning Time                               17.258777 
+Fridge, HOP Planning Time                                6.075045 
+Fridge, HOP Planning Time                                7.144283 
+HOP_plan                                                 2.500770 
+HOP_plan                                                13.685377 
+HOP_plan                                                 7.887966 
+HOP_plan                                                17.255310 
+HOP_plan                                                 6.071185 
+HOP_plan                                                 7.140265 
+Obstacle_belief_update_collision                         0.348705 
+Obstacle_belief_update_collision                         0.369145 
+Obstacle_belief_update_free                              0.043950 
+Obstacle_belief_update_free                              0.052288 
+Obstacle_belief_update_free                              0.063779 
+Obstacle_belief_update_free                              0.044942 
+Obstacle_belief_update_free                              0.053044 
+Obstacle_belief_update_free                              0.045610 
+Obstacle_belief_update_free                              0.065430 
+Obstacle_belief_update_free                              0.053543 
+Scenario: Fridge                                         0.000000        0.000000 
+Strategy: HOP                                            0.000000        0.000000 
+Update belief from free obs                              0.054494 
+Update belief from free obs                              0.130242 
+Update belief from free obs                              0.055817 
+Update belief from free obs                              0.126848 
+Update belief from free obs                              0.132274 
+Update belief from free obs                              0.151705 
+Viz_scenario                                             0.243757 
+Viz_scenario                                             0.241077 
+Viz_scenario                                             0.282785 
+Viz_scenario                                             0.244559 
+Viz_scenario                                             0.257054 
+Viz_scenario                                             0.257211 
+Viz_scenario                                             0.275612 
+Viz_scenario                                             0.260093 
+accumulated_cost                                         0.000000        6.904490 
+real_state_move                                          1.251734 
+real_state_move                                          4.353113 
+real_state_move                                          2.032498 
+real_state_move                                          5.049384 
+real_state_move                                          4.472475 
+real_state_move                                          6.691530 
+

@@ -1,0 +1,164 @@
+2019-05-26 15:35:06
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.100000_0.100000_0.100000_0.400000          0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                      25.935559             281        0.092297
+Copy_graph                                               6.031044            1019        0.005919
+EdgeCheck                                               86.070553           16484        0.005221
+GetSweptVolume                                          28.425656           17499        0.001624
+HOP_plan                                               158.683211              11       14.425746
+Obstacle_belief_update_collision                         8.188162               7        1.169737
+Obstacle_belief_update_free                              0.770259              18        0.042792
+RealEmpty, HOP Motion Time                              66.127197              18        3.673733
+RealEmpty, HOP Planning Time                           158.733772              18        8.818543
+Scenario: RealEmpty                                      0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                        27.783312           25446        0.001092
+Strategy: HOP                                            0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                              0.976242              11        0.088749
+Viz sample sv                                            7.998643            1015        0.007880
+Viz_sample                                               5.320298            1100        0.004837
+Viz_sample_ee_path                                       0.210242            1015        0.000207
+Viz_scenario                                            10.989366              18        0.610520
+accumulated_cost                                         0.000000               1        0.000000       11.328962       11.328962
+astar_add_neighbors                                     29.869165          260687        0.000115
+astar_cost_to_come                                       4.700401         9970467        0.000000
+astar_edge_validity_check                                2.529990        10104900        0.000000
+astar_expansion_in_closed_list                           0.266883         1247532        0.000000
+astar_heuristic                                          6.988941         8722935        0.000001
+astar_num_edge_expansions                                0.000000           10999        0.000000 10104900.000000      918.710792
+astar_num_lower_cost_edge_expansions                     0.000000           10999        0.000000  8722935.000000      793.066188
+astar_num_node_expansions                                0.000000           10999        0.000000   368219.000000       33.477498
+astar_push_to_queue                                      3.715089         8722935        0.000000
+astar_queue_reduction                                    0.125384          357224        0.000000
+lazySP path cost                                         0.000000            1019        0.000000             inf             inf
+lazy_sp a_star                                          31.269260           10999        0.002843
+lazysp astar iters                                       0.000000            1019        0.000000    10999.000000       10.793916
+lazysp_no_path_found                                    13.610057               4        3.402514
+lazysp_successful                                      104.181561            1015        0.102642
+real_state_move                                         31.914544              11        2.901322
+
+2019-05-26 15:35:06
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.100000_0.100000_0.100000_0.400000          0.000000        0.000000 
+HOP_plan                                                22.658376 
+HOP_plan                                                 7.677222 
+HOP_plan                                                 6.787148 
+HOP_plan                                                 7.036231 
+HOP_plan                                                26.042582 
+HOP_plan                                                13.564862 
+HOP_plan                                                23.673366 
+HOP_plan                                                25.508441 
+HOP_plan                                                 9.259273 
+HOP_plan                                                11.326011 
+HOP_plan                                                 5.149697 
+Obstacle_belief_update_collision                         1.232144 
+Obstacle_belief_update_collision                         1.413185 
+Obstacle_belief_update_collision                         1.104328 
+Obstacle_belief_update_collision                         1.071693 
+Obstacle_belief_update_collision                         1.101900 
+Obstacle_belief_update_collision                         1.184713 
+Obstacle_belief_update_collision                         1.080198 
+Obstacle_belief_update_free                              0.099472 
+Obstacle_belief_update_free                              0.101670 
+Obstacle_belief_update_free                              0.079840 
+Obstacle_belief_update_free                              0.112464 
+Obstacle_belief_update_free                              0.105090 
+Obstacle_belief_update_free                              0.055623 
+Obstacle_belief_update_free                              0.101761 
+Obstacle_belief_update_free                              0.013576 
+Obstacle_belief_update_free                              0.100748 
+Obstacle_belief_update_free                              0.000003 
+Obstacle_belief_update_free                              0.000002 
+Obstacle_belief_update_free                              0.000001 
+Obstacle_belief_update_free                              0.000002 
+Obstacle_belief_update_free                              0.000002 
+Obstacle_belief_update_free                              0.000002 
+Obstacle_belief_update_free                              0.000001 
+Obstacle_belief_update_free                              0.000001 
+Obstacle_belief_update_free                              0.000001 
+RealEmpty, HOP Motion Time                               3.464730 
+RealEmpty, HOP Motion Time                               1.313369 
+RealEmpty, HOP Motion Time                               3.908729 
+RealEmpty, HOP Motion Time                               1.631806 
+RealEmpty, HOP Motion Time                               3.792915 
+RealEmpty, HOP Motion Time                               2.620106 
+RealEmpty, HOP Motion Time                               0.975407 
+RealEmpty, HOP Motion Time                               4.397102 
+RealEmpty, HOP Motion Time                               2.531886 
+RealEmpty, HOP Motion Time                               2.124872 
+RealEmpty, HOP Motion Time                               0.916677 
+RealEmpty, HOP Motion Time                               5.361138 
+RealEmpty, HOP Motion Time                               3.249901 
+RealEmpty, HOP Motion Time                               6.766014 
+RealEmpty, HOP Motion Time                               5.687877 
+RealEmpty, HOP Motion Time                               3.232296 
+RealEmpty, HOP Motion Time                               8.777551 
+RealEmpty, HOP Motion Time                               5.374821 
+RealEmpty, HOP Planning Time                            22.666214 
+RealEmpty, HOP Planning Time                             0.000035 
+RealEmpty, HOP Planning Time                             7.681301 
+RealEmpty, HOP Planning Time                             0.000040 
+RealEmpty, HOP Planning Time                             6.791503 
+RealEmpty, HOP Planning Time                             7.040293 
+RealEmpty, HOP Planning Time                             0.000032 
+RealEmpty, HOP Planning Time                            26.046638 
+RealEmpty, HOP Planning Time                             0.000038 
+RealEmpty, HOP Planning Time                            13.569051 
+RealEmpty, HOP Planning Time                             0.000043 
+RealEmpty, HOP Planning Time                            23.678086 
+RealEmpty, HOP Planning Time                             0.000091 
+RealEmpty, HOP Planning Time                            25.512728 
+RealEmpty, HOP Planning Time                             9.263621 
+RealEmpty, HOP Planning Time                             0.000036 
+RealEmpty, HOP Planning Time                            11.330083 
+RealEmpty, HOP Planning Time                             5.153937 
+Scenario: RealEmpty                                      0.000000        0.000000 
+Strategy: HOP                                            0.000000        0.000000 
+Update belief from free obs                              0.105971 
+Update belief from free obs                              0.116937 
+Update belief from free obs                              0.198246 
+Update belief from free obs                              0.107767 
+Update belief from free obs                              0.108427 
+Update belief from free obs                              0.005380 
+Update belief from free obs                              0.003646 
+Update belief from free obs                              0.113961 
+Update belief from free obs                              0.003471 
+Update belief from free obs                              0.106199 
+Update belief from free obs                              0.106237 
+Viz_scenario                                             0.627442 
+Viz_scenario                                             0.603940 
+Viz_scenario                                             0.634758 
+Viz_scenario                                             0.621258 
+Viz_scenario                                             0.601673 
+Viz_scenario                                             0.588420 
+Viz_scenario                                             0.592030 
+Viz_scenario                                             0.585190 
+Viz_scenario                                             0.610563 
+Viz_scenario                                             0.596405 
+Viz_scenario                                             0.586603 
+Viz_scenario                                             0.710140 
+Viz_scenario                                             0.617663 
+Viz_scenario                                             0.601533 
+Viz_scenario                                             0.612337 
+Viz_scenario                                             0.582727 
+Viz_scenario                                             0.598883 
+Viz_scenario                                             0.617801 
+accumulated_cost                                         0.000000       11.328962 
+lazysp_no_path_found                                     7.572896 
+lazysp_no_path_found                                     1.936147 
+lazysp_no_path_found                                     2.709318 
+lazysp_no_path_found                                     1.391695 
+real_state_move                                          0.709095 
+real_state_move                                          1.010095 
+real_state_move                                          3.190545 
+real_state_move                                          0.383072 
+real_state_move                                          1.921004 
+real_state_move                                          0.328718 
+real_state_move                                          2.630747 
+real_state_move                                          6.162569 
+real_state_move                                          2.648007 
+real_state_move                                          8.176207 
+real_state_move                                          4.754484 
+

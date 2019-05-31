@@ -1,0 +1,85 @@
+2019-05-23 10:43:38
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+Bookshelf, HOP Motion Time                               7.810035               4        1.952509
+Bookshelf, HOP Planning Time                           994.698403               4      248.674601
+ComputeSweptVolume                                      13.169404             163        0.080794
+Copy_graph                                               2.486011             400        0.006215
+EdgeCheck                                              214.213360           65940        0.003249
+GetSweptVolume                                          14.740928           66314        0.000222
+HOP_plan                                               994.679346               4      248.669837
+Obstacle_belief_update_free                              6.618691             312        0.021214
+Scenario: Bookshelf                                      0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                        13.677942           14919        0.000917
+Strategy: HOP                                            0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                              6.765647             312        0.021685
+Viz sample sv                                            2.516404             374        0.006728
+Viz_sample                                               3.395801             400        0.008490
+Viz_sample_ee_path                                       0.079742             374        0.000213
+Viz_scenario                                             0.000118             312        0.000000
+accumulated_cost                                         0.000000               1        0.000000        6.123117        6.123117
+astar_add_neighbors                                    736.518106         6823520        0.000108
+astar_cost_to_come                                     138.681378       258071019        0.000001
+astar_edge_validity_check                               60.770362       264628667        0.000000
+astar_expansion_in_closed_list                           9.459262        46379080        0.000000
+astar_heuristic                                        164.959668       211691939        0.000001
+astar_num_edge_expansions                                0.000000           55893        0.000000 264628667.000000     4734.558299
+astar_num_lower_cost_edge_expansions                     0.000000           55893        0.000000 211691939.000000     3787.449931
+astar_num_node_expansions                                0.000000           55893        0.000000 12946113.000000      231.623155
+astar_push_to_queue                                     78.543032       211691939        0.000000
+astar_queue_reduction                                    3.199253        12890246        0.000000
+lazySP path cost                                         0.000000             400        0.000000             inf             inf
+lazy_sp a_star                                         766.421077           55893        0.013712
+lazysp astar iters                                       0.000000             400        0.000000    55893.000000      139.732500
+lazysp_no_path_found                                    25.547473              26        0.982595
+lazysp_successful                                      956.796849             374        2.558280
+simulation_state_move                                    7.472802             312        0.023951
+
+2019-05-23 10:43:40
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+Bookshelf, HOP Motion Time                               1.357167 
+Bookshelf, HOP Motion Time                               2.997694 
+Bookshelf, HOP Motion Time                               1.728653 
+Bookshelf, HOP Motion Time                               1.726521 
+Bookshelf, HOP Planning Time                           394.248732 
+Bookshelf, HOP Planning Time                           316.434281 
+Bookshelf, HOP Planning Time                           280.155623 
+Bookshelf, HOP Planning Time                             3.859767 
+HOP_plan                                               394.241738 
+HOP_plan                                               316.430737 
+HOP_plan                                               280.151719 
+HOP_plan                                                 3.855152 
+Scenario: Bookshelf                                      0.000000        0.000000 
+Strategy: HOP                                            0.000000        0.000000 
+accumulated_cost                                         0.000000        6.123117 
+lazysp_no_path_found                                     3.668787 
+lazysp_no_path_found                                     0.892401 
+lazysp_no_path_found                                     0.876110 
+lazysp_no_path_found                                     0.838195 
+lazysp_no_path_found                                     0.905886 
+lazysp_no_path_found                                     0.872568 
+lazysp_no_path_found                                     0.876747 
+lazysp_no_path_found                                     0.857332 
+lazysp_no_path_found                                     0.866729 
+lazysp_no_path_found                                     0.870309 
+lazysp_no_path_found                                     0.891420 
+lazysp_no_path_found                                     0.886151 
+lazysp_no_path_found                                     0.884119 
+lazysp_no_path_found                                     0.918526 
+lazysp_no_path_found                                     0.843503 
+lazysp_no_path_found                                     0.838253 
+lazysp_no_path_found                                     0.872087 
+lazysp_no_path_found                                     0.844981 
+lazysp_no_path_found                                     0.882189 
+lazysp_no_path_found                                     0.889778 
+lazysp_no_path_found                                     0.864939 
+lazysp_no_path_found                                     0.904421 
+lazysp_no_path_found                                     0.835212 
+lazysp_no_path_found                                     0.873759 
+lazysp_no_path_found                                     0.901406 
+lazysp_no_path_found                                     0.891665 
+

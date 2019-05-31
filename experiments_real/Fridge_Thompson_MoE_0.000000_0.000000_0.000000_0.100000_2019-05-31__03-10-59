@@ -1,0 +1,115 @@
+2019-05-31 03:11:41
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                       9.638925             115        0.083817
+EdgeCheck                                               10.606453             193        0.054956
+Fridge, Thompson Motion Time                            30.138953               7        4.305565
+Fridge, Thompson Planning Time                          11.370428               7        1.624347
+GetSweptVolume                                          10.289701             250        0.041159
+Obstacle_belief_update_collision                         0.352044               1        0.352044
+Obstacle_belief_update_free                              0.366048               7        0.052293
+Scenario: Fridge                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                         9.849090            9780        0.001007
+Strategy: Thompson                                       0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                              0.759207               6        0.126534
+Viz_sample                                               0.024790               6        0.004132
+Viz_sample_ee_path                                       0.001352               6        0.000225
+Viz_scenario                                             1.776356               7        0.253765
+accumulated_cost                                         0.000000               1        0.000000        8.548714        8.548714
+astar_add_neighbors                                      0.276801            2309        0.000120
+astar_cost_to_come                                       0.047348           95227        0.000000
+astar_edge_validity_check                                0.022385           97709        0.000000
+astar_expansion_in_closed_list                           0.001912            9306        0.000000
+astar_heuristic                                          0.065505           85892        0.000001
+astar_num_edge_expansions                                0.000000             144        0.000000    97709.000000      678.534722
+astar_num_lower_cost_edge_expansions                     0.000000             144        0.000000    85892.000000      596.472222
+astar_num_node_expansions                                0.000000             144        0.000000     3323.000000       23.076389
+astar_push_to_queue                                      0.032883           85892        0.000000
+astar_queue_reduction                                    0.001093            3179        0.000000
+lazySP path cost                                         0.000000               6        0.000000       17.606175        2.934363
+lazy_sp a_star                                           0.290630             144        0.002018
+lazysp astar iters                                       0.000000               6        0.000000      144.000000       24.000000
+lazysp_successful                                       11.053602               6        1.842267
+real_state_move                                         26.095524               6        4.349254
+
+2019-05-31 03:11:41
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+Fridge, Thompson Motion Time                             2.498433 
+Fridge, Thompson Motion Time                             1.485332 
+Fridge, Thompson Motion Time                             4.471537 
+Fridge, Thompson Motion Time                             4.392419 
+Fridge, Thompson Motion Time                             4.708069 
+Fridge, Thompson Motion Time                             5.413946 
+Fridge, Thompson Motion Time                             7.169217 
+Fridge, Thompson Planning Time                           0.114935 
+Fridge, Thompson Planning Time                           0.000034 
+Fridge, Thompson Planning Time                           0.777000 
+Fridge, Thompson Planning Time                           2.868438 
+Fridge, Thompson Planning Time                           7.181642 
+Fridge, Thompson Planning Time                           0.370463 
+Fridge, Thompson Planning Time                           0.057916 
+Obstacle_belief_update_collision                         0.352044 
+Obstacle_belief_update_free                              0.043794 
+Obstacle_belief_update_free                              0.045203 
+Obstacle_belief_update_free                              0.072676 
+Obstacle_belief_update_free                              0.051702 
+Obstacle_belief_update_free                              0.046984 
+Obstacle_belief_update_free                              0.053255 
+Obstacle_belief_update_free                              0.052433 
+Scenario: Fridge                                         0.000000        0.000000 
+Strategy: Thompson                                       0.000000        0.000000 
+Update belief from free obs                              0.047220 
+Update belief from free obs                              0.152430 
+Update belief from free obs                              0.146959 
+Update belief from free obs                              0.140321 
+Update belief from free obs                              0.124744 
+Update belief from free obs                              0.147534 
+Viz_sample                                               0.004806 
+Viz_sample                                               0.004032 
+Viz_sample                                               0.003894 
+Viz_sample                                               0.003900 
+Viz_sample                                               0.004354 
+Viz_sample                                               0.003803 
+Viz_sample_ee_path                                       0.000394 
+Viz_sample_ee_path                                       0.000169 
+Viz_sample_ee_path                                       0.000227 
+Viz_sample_ee_path                                       0.000196 
+Viz_sample_ee_path                                       0.000169 
+Viz_sample_ee_path                                       0.000196 
+Viz_scenario                                             0.236003 
+Viz_scenario                                             0.247818 
+Viz_scenario                                             0.277620 
+Viz_scenario                                             0.247979 
+Viz_scenario                                             0.250252 
+Viz_scenario                                             0.257797 
+Viz_scenario                                             0.258886 
+accumulated_cost                                         0.000000        8.548714 
+lazySP path cost                                         0.000000        0.838143 
+lazySP path cost                                         0.000000        2.516214 
+lazySP path cost                                         0.000000        3.764310 
+lazySP path cost                                         0.000000        5.564390 
+lazySP path cost                                         0.000000        3.139931 
+lazySP path cost                                         0.000000        1.783188 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        9.000000 
+lazysp astar iters                                       0.000000       36.000000 
+lazysp astar iters                                       0.000000       90.000000 
+lazysp astar iters                                       0.000000        7.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp_successful                                        0.049084 
+lazysp_successful                                        0.726710 
+lazysp_successful                                        2.822377 
+lazysp_successful                                        7.135949 
+lazysp_successful                                        0.316167 
+lazysp_successful                                        0.003315 
+real_state_move                                          1.237225 
+real_state_move                                          4.193244 
+real_state_move                                          4.143646 
+real_state_move                                          4.456717 
+real_state_move                                          5.155372 
+real_state_move                                          6.909321 
+

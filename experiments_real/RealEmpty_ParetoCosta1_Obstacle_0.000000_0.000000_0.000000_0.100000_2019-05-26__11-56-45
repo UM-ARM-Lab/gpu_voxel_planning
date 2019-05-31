@@ -1,0 +1,103 @@
+2019-05-26 11:58:15
+
+Label                                      tot time (s)       num_calls    avg time (s)     total value       avg value
+Strategy: ParetoCosta1   0.0000 1 0 0.0000 0.0000 0.0000
+Scenario: RealEmpty   0.0000 1 0 0.0000 0.0000 0.0000
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000   0.0000 1 0 0.0000 0.0000 0.0000
+ComputeSweptVolume                            23.825657             288        0.082728
+EdgeCheck                                     26.978744             405        0.066614
+GetSweptVolume                                25.910269            1317        0.019674
+Obstacle_belief_update_collision               0.669977               2        0.334988
+Obstacle_belief_update_free                    0.199417               8        0.024927
+RealEmpty, ParetoCosta1 Motion Time           33.534783               8        4.191848
+RealEmpty, ParetoCosta1 Planning Time         55.422652               8        6.927832
+Set robot config                              23.306723           25083        0.000929
+Update belief from free obs                    0.490097               6        0.081683
+Viz_scenario                                   1.338968               8        0.167371
+accumulated_cost                               0.000000               1        0.000000        8.230393        8.230393
+astar_add_neighbors                            8.979959           83836        0.000107
+astar_cost_to_come                             1.735355         3316449        0.000001
+astar_edge_validity_check                      0.713685         3317758        0.000000
+astar_expansion_in_closed_list                 0.108097          592939        0.000000
+astar_heuristic                                1.990804         2691599        0.000001
+astar_num_edge_expansions                      0.000000             847        0.000000  3317758.000000     3917.069658
+astar_num_lower_cost_edge_expansions           0.000000             847        0.000000  2691599.000000     3177.802834
+astar_num_node_expansions                      0.000000             847        0.000000   177987.000000      210.138135
+astar_push_to_queue                            0.970867         2691599        0.000000
+astar_queue_reduction                          0.040918          177140        0.000000
+lazySP path cost                               0.000000               6        0.000000       33.613935        5.602322
+lazy_sp a_star                                 9.374283             847        0.011068
+lazysp astar iters                             0.000000               6        0.000000      847.000000      141.166667
+lazysp_successful                             55.418086               6        9.236348
+real_state_move                               26.200248               6        4.366708
+
+2019-05-26 11:58:15
+
+Label                                              time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Obstacle_belief_update_collision               0.350425 
+Obstacle_belief_update_collision               0.319552 
+Obstacle_belief_update_free                    0.027544 
+Obstacle_belief_update_free                    0.027096 
+Obstacle_belief_update_free                    0.034188 
+Obstacle_belief_update_free                    0.027256 
+Obstacle_belief_update_free                    0.022393 
+Obstacle_belief_update_free                    0.024457 
+Obstacle_belief_update_free                    0.018849 
+Obstacle_belief_update_free                    0.017633 
+RealEmpty, ParetoCosta1 Motion Time            2.601102 
+RealEmpty, ParetoCosta1 Motion Time            1.379119 
+RealEmpty, ParetoCosta1 Motion Time            3.719405 
+RealEmpty, ParetoCosta1 Motion Time            2.651398 
+RealEmpty, ParetoCosta1 Motion Time            3.902504 
+RealEmpty, ParetoCosta1 Motion Time            6.287506 
+RealEmpty, ParetoCosta1 Motion Time            8.705147 
+RealEmpty, ParetoCosta1 Motion Time            4.288602 
+RealEmpty, ParetoCosta1 Planning Time         16.055875 
+RealEmpty, ParetoCosta1 Planning Time          0.000036 
+RealEmpty, ParetoCosta1 Planning Time         16.724698 
+RealEmpty, ParetoCosta1 Planning Time          0.000035 
+RealEmpty, ParetoCosta1 Planning Time         18.877052 
+RealEmpty, ParetoCosta1 Planning Time          3.556145 
+RealEmpty, ParetoCosta1 Planning Time          0.153636 
+RealEmpty, ParetoCosta1 Planning Time          0.055177 
+Update belief from free obs                    0.029664 
+Update belief from free obs                    0.029813 
+Update belief from free obs                    0.084650 
+Update belief from free obs                    0.119421 
+Update belief from free obs                    0.111826 
+Update belief from free obs                    0.114724 
+Viz_scenario                                   0.161296 
+Viz_scenario                                   0.160297 
+Viz_scenario                                   0.167892 
+Viz_scenario                                   0.159117 
+Viz_scenario                                   0.175477 
+Viz_scenario                                   0.176434 
+Viz_scenario                                   0.150009 
+Viz_scenario                                   0.188447 
+accumulated_cost                               0.000000        8.230393 
+lazySP path cost                               0.000000        7.065861 
+lazySP path cost                               0.000000        7.006661 
+lazySP path cost                               0.000000        7.314455 
+lazySP path cost                               0.000000        6.071915 
+lazySP path cost                               0.000000        4.034428 
+lazySP path cost                               0.000000        2.120613 
+lazysp astar iters                             0.000000      162.000000 
+lazysp astar iters                             0.000000      250.000000 
+lazysp astar iters                             0.000000      335.000000 
+lazysp astar iters                             0.000000       92.000000 
+lazysp astar iters                             0.000000        5.000000 
+lazysp astar iters                             0.000000        3.000000 
+lazysp_successful                             16.052281 
+lazysp_successful                             16.724518 
+lazysp_successful                             18.876923 
+lazysp_successful                              3.555975 
+lazysp_successful                              0.153391 
+lazysp_successful                              0.054998 
+real_state_move                                1.218509 
+real_state_move                                2.491948 
+real_state_move                                3.726196 
+real_state_move                                6.110049 
+real_state_move                                8.554215 
+real_state_move                                4.099331 
+

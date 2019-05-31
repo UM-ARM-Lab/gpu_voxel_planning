@@ -1,0 +1,105 @@
+2019-05-29 09:08:30
+
+Label                                                                                        tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: CHS_0.000000_0.000000_0.000000_0.000000                                                  0.000000               1        0.000000        0.000000        0.000000
+Bump                                                                                             0.000000               2        0.000000        0.000000        0.000000
+ComputeSweptVolume                                                                               9.796203             123        0.079644
+EdgeCheck                                                                                       10.727358             240        0.044697
+GetSweptVolume                                                                                  10.406175             310        0.033568
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                        0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                                10.315751           11044        0.000934
+Strategy: Thompson                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time           24.108346              10        2.410835
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time         12.325430              10        1.232543
+Update belief from free obs                                                                      0.015785             731        0.000022
+Viz_sample                                                                                       0.030538               8        0.003817
+Viz_sample_ee_path                                                                               0.002220               8        0.000277
+Viz_scenario                                                                                    22.134683             733        0.030197
+accumulated_cost                                                                                 0.000000               1        0.000000       14.352776       14.352776
+astar_add_neighbors                                                                              0.920366            4866        0.000189
+astar_cost_to_come                                                                               0.154491          231860        0.000001
+astar_edge_validity_check                                                                        0.078433          235220        0.000000
+astar_expansion_in_closed_list                                                                   0.007027           25198        0.000000
+astar_heuristic                                                                                  0.222234          206662        0.000001
+astar_num_edge_expansions                                                                        0.000000             178        0.000000   235220.000000     1321.460674
+astar_num_lower_cost_edge_expansions                                                             0.000000             178        0.000000   206662.000000     1161.022472
+astar_num_node_expansions                                                                        0.000000             178        0.000000     6538.000000       36.730337
+astar_push_to_queue                                                                              0.106457          206662        0.000001
+astar_queue_reduction                                                                            0.002851            6360        0.000000
+lazySP path cost                                                                                 0.000000               8        0.000000       26.403698        3.300462
+lazy_sp a_star                                                                                   0.954623             178        0.005363
+lazysp astar iters                                                                               0.000000               8        0.000000      178.000000       22.250000
+lazysp_successful                                                                               11.814484               8        1.476811
+simulation_state_move                                                                            0.964330             731        0.001319
+
+2019-05-29 09:08:30
+
+Label                                                                                                time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: CHS_0.000000_0.000000_0.000000_0.000000                                                  0.000000        0.000000 
+Bump                                                                                             0.000000        0.000000 
+Bump                                                                                             0.000000        0.000000 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                        0.000000        0.000000 
+Strategy: Thompson                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            1.419882 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            1.569668 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            2.375334 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            2.277036 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            2.424556 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            2.520166 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            1.887224 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            3.024279 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            3.497352 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time            3.112847 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.146797 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.000120 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          1.342867 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.070243 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.000179 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.550628 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          8.700064 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          1.272777 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.162060 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.079697 
+Viz_sample                                                                                       0.003557 
+Viz_sample                                                                                       0.003733 
+Viz_sample                                                                                       0.004096 
+Viz_sample                                                                                       0.003505 
+Viz_sample                                                                                       0.003873 
+Viz_sample                                                                                       0.003972 
+Viz_sample                                                                                       0.004014 
+Viz_sample                                                                                       0.003788 
+Viz_sample_ee_path                                                                               0.000409 
+Viz_sample_ee_path                                                                               0.000244 
+Viz_sample_ee_path                                                                               0.000275 
+Viz_sample_ee_path                                                                               0.000173 
+Viz_sample_ee_path                                                                               0.000189 
+Viz_sample_ee_path                                                                               0.000310 
+Viz_sample_ee_path                                                                               0.000301 
+Viz_sample_ee_path                                                                               0.000318 
+accumulated_cost                                                                                 0.000000       14.352776 
+lazySP path cost                                                                                 0.000000        1.507481 
+lazySP path cost                                                                                 0.000000        3.417765 
+lazySP path cost                                                                                 0.000000        1.831070 
+lazySP path cost                                                                                 0.000000        3.309481 
+lazySP path cost                                                                                 0.000000        6.134797 
+lazySP path cost                                                                                 0.000000        5.123123 
+lazySP path cost                                                                                 0.000000        3.441337 
+lazySP path cost                                                                                 0.000000        1.638643 
+lazysp astar iters                                                                               0.000000        1.000000 
+lazysp astar iters                                                                               0.000000       15.000000 
+lazysp astar iters                                                                               0.000000        1.000000 
+lazysp astar iters                                                                               0.000000        7.000000 
+lazysp astar iters                                                                               0.000000       88.000000 
+lazysp astar iters                                                                               0.000000       60.000000 
+lazysp astar iters                                                                               0.000000        5.000000 
+lazysp astar iters                                                                               0.000000        1.000000 
+lazysp_successful                                                                                0.089771 
+lazysp_successful                                                                                1.281741 
+lazysp_successful                                                                                0.005874 
+lazysp_successful                                                                                0.495174 
+lazysp_successful                                                                                8.633833 
+lazysp_successful                                                                                1.207724 
+lazysp_successful                                                                                0.096919 
+lazysp_successful                                                                                0.003449 
+

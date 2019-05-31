@@ -1,0 +1,193 @@
+2019-05-26 12:32:11
+
+Label                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Strategy: Thompson   0.0000 1 0 0.0000 0.0000 0.0000
+Scenario: RealEmpty   0.0000 1 0 0.0000 0.0000 0.0000
+Belief: MoE_0.000000_0.000000_0.000000_0.100000   0.0000 1 0 0.0000 0.0000 0.0000
+ComputeSweptVolume                            5.944716              75        0.079263
+EdgeCheck                                     6.812570             158        0.043118
+GetSweptVolume                                6.447346             216        0.029849
+Obstacle_belief_update_collision              0.532243               2        0.266122
+Obstacle_belief_update_free                   0.174312               8        0.021789
+RealEmpty, Thompson Motion Time              30.923681               8        3.865460
+RealEmpty, Thompson Planning Time             7.727676               8        0.965960
+Set robot config                              6.086162            6824        0.000892
+Update belief from free obs                   0.424861               6        0.070810
+Viz_sample                                    0.023927               7        0.003418
+Viz_sample_ee_path                            0.001367               6        0.000228
+Viz_scenario                                  1.329129               8        0.166141
+accumulated_cost                              0.000000               1        0.000000        7.647650        7.647650
+astar_add_neighbors                           0.384590            3313        0.000116
+astar_cost_to_come                            0.061691          132297        0.000000
+astar_edge_validity_check                     0.033198          133592        0.000000
+astar_expansion_in_closed_list                0.003428           16502        0.000000
+astar_heuristic                               0.089811          115724        0.000001
+astar_num_edge_expansions                     0.000000             114        0.000000   133592.000000     1171.859649
+astar_num_lower_cost_edge_expansions          0.000000             114        0.000000   115724.000000     1015.122807
+astar_num_node_expansions                     0.000000             114        0.000000     4180.000000       36.666667
+astar_push_to_queue                           0.045627          115724        0.000000
+astar_queue_reduction                         0.001266            4066        0.000000
+lazySP path cost                              0.000000               6        0.000000       25.290245        4.215041
+lazy_sp a_star                                0.399839             114        0.003507
+lazysp astar iters                            0.000000               6        0.000000      114.000000       19.000000
+lazysp_successful                             7.373273               6        1.228879
+real_state_move                              24.311985               6        4.051997
+
+2019-05-26 12:32:11
+
+Label                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+ComputeSweptVolume                            0.078006 
+ComputeSweptVolume                            0.079995 
+ComputeSweptVolume                            0.086827 
+ComputeSweptVolume                            0.073445 
+ComputeSweptVolume                            0.061916 
+ComputeSweptVolume                            0.055633 
+ComputeSweptVolume                            0.081821 
+ComputeSweptVolume                            0.050118 
+ComputeSweptVolume                            0.065649 
+ComputeSweptVolume                            0.079823 
+ComputeSweptVolume                            0.060553 
+ComputeSweptVolume                            0.091840 
+ComputeSweptVolume                            0.084167 
+ComputeSweptVolume                            0.079479 
+ComputeSweptVolume                            0.072912 
+ComputeSweptVolume                            0.056269 
+ComputeSweptVolume                            0.089058 
+ComputeSweptVolume                            0.084006 
+ComputeSweptVolume                            0.076693 
+ComputeSweptVolume                            0.064701 
+ComputeSweptVolume                            0.084154 
+ComputeSweptVolume                            0.088850 
+ComputeSweptVolume                            0.074234 
+ComputeSweptVolume                            0.080445 
+ComputeSweptVolume                            0.088029 
+ComputeSweptVolume                            0.080093 
+ComputeSweptVolume                            0.075454 
+ComputeSweptVolume                            0.077078 
+ComputeSweptVolume                            0.053029 
+ComputeSweptVolume                            0.085066 
+ComputeSweptVolume                            0.084966 
+ComputeSweptVolume                            0.084399 
+ComputeSweptVolume                            0.083533 
+ComputeSweptVolume                            0.085895 
+ComputeSweptVolume                            0.079267 
+ComputeSweptVolume                            0.070127 
+ComputeSweptVolume                            0.087454 
+ComputeSweptVolume                            0.077971 
+ComputeSweptVolume                            0.089664 
+ComputeSweptVolume                            0.087500 
+ComputeSweptVolume                            0.078905 
+ComputeSweptVolume                            0.087247 
+ComputeSweptVolume                            0.073155 
+ComputeSweptVolume                            0.085566 
+ComputeSweptVolume                            0.085096 
+ComputeSweptVolume                            0.071276 
+ComputeSweptVolume                            0.086918 
+ComputeSweptVolume                            0.062005 
+ComputeSweptVolume                            0.069205 
+ComputeSweptVolume                            0.070381 
+ComputeSweptVolume                            0.082852 
+ComputeSweptVolume                            0.088085 
+ComputeSweptVolume                            0.083887 
+ComputeSweptVolume                            0.085754 
+ComputeSweptVolume                            0.046123 
+ComputeSweptVolume                            0.087402 
+ComputeSweptVolume                            0.061707 
+ComputeSweptVolume                            0.082259 
+ComputeSweptVolume                            0.051568 
+ComputeSweptVolume                            0.065646 
+ComputeSweptVolume                            0.055726 
+ComputeSweptVolume                            0.063533 
+ComputeSweptVolume                            0.074646 
+ComputeSweptVolume                            0.087494 
+ComputeSweptVolume                            0.049846 
+ComputeSweptVolume                            0.083784 
+ComputeSweptVolume                            0.089720 
+ComputeSweptVolume                            0.080244 
+ComputeSweptVolume                            0.074050 
+ComputeSweptVolume                            0.083749 
+ComputeSweptVolume                            0.077585 
+ComputeSweptVolume                            0.069255 
+ComputeSweptVolume                            0.087116 
+ComputeSweptVolume                            0.200418 
+ComputeSweptVolume                            0.172392 
+Obstacle_belief_update_collision              0.268686 
+Obstacle_belief_update_collision              0.263558 
+Obstacle_belief_update_free                   0.026516 
+Obstacle_belief_update_free                   0.025931 
+Obstacle_belief_update_free                   0.023055 
+Obstacle_belief_update_free                   0.025909 
+Obstacle_belief_update_free                   0.025422 
+Obstacle_belief_update_free                   0.023969 
+Obstacle_belief_update_free                   0.014571 
+Obstacle_belief_update_free                   0.008940 
+RealEmpty, Thompson Motion Time               1.856152 
+RealEmpty, Thompson Motion Time               0.771786 
+RealEmpty, Thompson Motion Time               3.750791 
+RealEmpty, Thompson Motion Time               2.697369 
+RealEmpty, Thompson Motion Time               3.484213 
+RealEmpty, Thompson Motion Time               3.686514 
+RealEmpty, Thompson Motion Time               7.047076 
+RealEmpty, Thompson Motion Time               7.629779 
+RealEmpty, Thompson Planning Time             0.245432 
+RealEmpty, Thompson Planning Time             0.000041 
+RealEmpty, Thompson Planning Time             2.459595 
+RealEmpty, Thompson Planning Time             0.000039 
+RealEmpty, Thompson Planning Time             3.090279 
+RealEmpty, Thompson Planning Time             1.798186 
+RealEmpty, Thompson Planning Time             0.077311 
+RealEmpty, Thompson Planning Time             0.056794 
+Update belief from free obs                   0.029068 
+Update belief from free obs                   0.028589 
+Update belief from free obs                   0.082929 
+Update belief from free obs                   0.091424 
+Update belief from free obs                   0.100144 
+Update belief from free obs                   0.092707 
+Viz_sample                                    0.002915 
+Viz_sample                                    0.003991 
+Viz_sample                                    0.003827 
+Viz_sample                                    0.003822 
+Viz_sample                                    0.003273 
+Viz_sample                                    0.002953 
+Viz_sample                                    0.003146 
+Viz_sample_ee_path                            0.000386 
+Viz_sample_ee_path                            0.000200 
+Viz_sample_ee_path                            0.000164 
+Viz_sample_ee_path                            0.000176 
+Viz_sample_ee_path                            0.000221 
+Viz_sample_ee_path                            0.000219 
+Viz_scenario                                  0.162108 
+Viz_scenario                                  0.160345 
+Viz_scenario                                  0.166267 
+Viz_scenario                                  0.170759 
+Viz_scenario                                  0.164878 
+Viz_scenario                                  0.166050 
+Viz_scenario                                  0.168502 
+Viz_scenario                                  0.170222 
+accumulated_cost                              0.000000        7.647650 
+lazySP path cost                              0.000000        3.490755 
+lazySP path cost                              0.000000        5.145878 
+lazySP path cost                              0.000000        5.929171 
+lazySP path cost                              0.000000        5.182324 
+lazySP path cost                              0.000000        3.746498 
+lazySP path cost                              0.000000        1.795619 
+lazysp astar iters                            0.000000        1.000000 
+lazysp astar iters                            0.000000       27.000000 
+lazysp astar iters                            0.000000       51.000000 
+lazysp astar iters                            0.000000       29.000000 
+lazysp astar iters                            0.000000        5.000000 
+lazysp astar iters                            0.000000        1.000000 
+lazysp_successful                             0.189167 
+lazysp_successful                             2.358930 
+lazysp_successful                             3.039643 
+lazysp_successful                             1.749769 
+lazysp_successful                             0.027668 
+lazysp_successful                             0.008097 
+real_state_move                               0.611138 
+real_state_move                               2.526261 
+real_state_move                               3.318648 
+real_state_move                               3.519740 
+real_state_move                               6.877683 
+real_state_move                               7.458514 
+

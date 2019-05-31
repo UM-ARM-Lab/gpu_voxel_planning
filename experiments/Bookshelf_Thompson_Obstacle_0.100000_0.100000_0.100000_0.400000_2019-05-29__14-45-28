@@ -1,0 +1,143 @@
+2019-05-29 14:45:28
+
+Label                                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000          0.000000               1        0.000000        0.000000        0.000000
+Bookshelf, Thompson Motion Time                            1465.521974              14      104.680141
+Bookshelf, Thompson Planning Time                          2597.008594              14      185.500614
+Bump                                                          0.000000               2        0.000000        0.000000        0.000000
+ComputeSweptVolume                                         1272.582922            5535        0.229916
+EdgeCheck                                                  1460.633614           12107        0.120644
+GetSweptVolume                                             1368.393394           14518        0.094255
+Obstacle_belief_update_collision                              7.016843               2        3.508422
+Obstacle_belief_update_free                                  53.955966            1072        0.050332
+Scenario: Bookshelf                                           0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                           1227.126249          478043        0.002567
+Strategy: Thompson                                            0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                                  53.963122            1072        0.050339
+Viz_sample                                                    0.256988              18        0.014277
+Viz_sample_ee_path                                            0.004488              12        0.000374
+Viz_scenario                                               1394.551257            1074        1.298465
+accumulated_cost                                              0.000000               1        0.000000       21.067347       21.067347
+astar_add_neighbors                                        1048.498978         9483208        0.000111
+astar_cost_to_come                                          231.410234       317328049        0.000001
+astar_edge_validity_check                                    86.148820       327441413        0.000000
+astar_expansion_in_closed_list                               19.618274        91662160        0.000000
+astar_heuristic                                             210.386133       224575576        0.000001
+astar_num_edge_expansions                                     0.000000           10743        0.000000 327441413.000000    30479.513451
+astar_num_lower_cost_edge_expansions                          0.000000           10743        0.000000 224575576.000000    20904.363399
+astar_num_node_expansions                                     0.000000           10743        0.000000 28180679.000000     2623.166620
+astar_push_to_queue                                          98.926189       224575576        0.000000
+astar_queue_reduction                                         7.388655        28169936        0.000000
+lazySP path cost                                              0.000000              12        0.000000       95.192146        7.932679
+lazy_sp a_star                                             1122.604317           10743        0.104496
+lazysp astar iters                                            0.000000              12        0.000000    10743.000000      895.250000
+lazysp_successful                                          2595.357037              12      216.279753
+simulation_state_move                                        62.435143            1072        0.058242
+
+2019-05-29 14:45:30
+
+Label                                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000          0.000000        0.000000 
+Bookshelf, Thompson Motion Time                              62.542643 
+Bookshelf, Thompson Motion Time                             130.173038 
+Bookshelf, Thompson Motion Time                              96.925397 
+Bookshelf, Thompson Motion Time                              66.819954 
+Bookshelf, Thompson Motion Time                              59.805696 
+Bookshelf, Thompson Motion Time                             112.292537 
+Bookshelf, Thompson Motion Time                             131.734761 
+Bookshelf, Thompson Motion Time                             143.918466 
+Bookshelf, Thompson Motion Time                             136.202230 
+Bookshelf, Thompson Motion Time                              65.336767 
+Bookshelf, Thompson Motion Time                             110.776927 
+Bookshelf, Thompson Motion Time                             112.299433 
+Bookshelf, Thompson Motion Time                             134.979601 
+Bookshelf, Thompson Motion Time                             101.714523 
+Bookshelf, Thompson Planning Time                             3.477539 
+Bookshelf, Thompson Planning Time                           110.501853 
+Bookshelf, Thompson Planning Time                             0.000142 
+Bookshelf, Thompson Planning Time                           186.367632 
+Bookshelf, Thompson Planning Time                             0.000107 
+Bookshelf, Thompson Planning Time                          1825.594443 
+Bookshelf, Thompson Planning Time                           282.665704 
+Bookshelf, Thompson Planning Time                           171.360212 
+Bookshelf, Thompson Planning Time                            12.383089 
+Bookshelf, Thompson Planning Time                             2.811808 
+Bookshelf, Thompson Planning Time                             1.127274 
+Bookshelf, Thompson Planning Time                             0.453729 
+Bookshelf, Thompson Planning Time                             0.159985 
+Bookshelf, Thompson Planning Time                             0.105078 
+Bump                                                          0.000000        0.000000 
+Bump                                                          0.000000        0.000000 
+Obstacle_belief_update_collision                              3.744718 
+Obstacle_belief_update_collision                              3.272126 
+Scenario: Bookshelf                                           0.000000        0.000000 
+Strategy: Thompson                                            0.000000        0.000000 
+Viz_sample                                                    0.029819 
+Viz_sample                                                    0.008507 
+Viz_sample                                                    0.006627 
+Viz_sample                                                    0.027869 
+Viz_sample                                                    0.006461 
+Viz_sample                                                    0.006506 
+Viz_sample                                                    0.007387 
+Viz_sample                                                    0.009404 
+Viz_sample                                                    0.011107 
+Viz_sample                                                    0.008986 
+Viz_sample                                                    0.010634 
+Viz_sample                                                    0.031036 
+Viz_sample                                                    0.010264 
+Viz_sample                                                    0.030959 
+Viz_sample                                                    0.009511 
+Viz_sample                                                    0.010493 
+Viz_sample                                                    0.019902 
+Viz_sample                                                    0.011516 
+Viz_sample_ee_path                                            0.000147 
+Viz_sample_ee_path                                            0.000219 
+Viz_sample_ee_path                                            0.000270 
+Viz_sample_ee_path                                            0.000959 
+Viz_sample_ee_path                                            0.000824 
+Viz_sample_ee_path                                            0.000460 
+Viz_sample_ee_path                                            0.000277 
+Viz_sample_ee_path                                            0.000210 
+Viz_sample_ee_path                                            0.000248 
+Viz_sample_ee_path                                            0.000256 
+Viz_sample_ee_path                                            0.000364 
+Viz_sample_ee_path                                            0.000253 
+accumulated_cost                                              0.000000       21.067347 
+lazySP path cost                                              0.000000        4.100838 
+lazySP path cost                                              0.000000        7.757908 
+lazySP path cost                                              0.000000        9.867989 
+lazySP path cost                                              0.000000       14.944955 
+lazySP path cost                                              0.000000       13.343012 
+lazySP path cost                                              0.000000       11.496902 
+lazySP path cost                                              0.000000        9.506873 
+lazySP path cost                                              0.000000        7.581365 
+lazySP path cost                                              0.000000        6.661159 
+lazySP path cost                                              0.000000        5.035364 
+lazySP path cost                                              0.000000        3.430953 
+lazySP path cost                                              0.000000        1.464826 
+lazysp astar iters                                            0.000000        9.000000 
+lazysp astar iters                                            0.000000      376.000000 
+lazysp astar iters                                            0.000000      836.000000 
+lazysp astar iters                                            0.000000     4675.000000 
+lazysp astar iters                                            0.000000     2521.000000 
+lazysp astar iters                                            0.000000     1795.000000 
+lazysp astar iters                                            0.000000      362.000000 
+lazysp astar iters                                            0.000000       90.000000 
+lazysp astar iters                                            0.000000       49.000000 
+lazysp astar iters                                            0.000000       26.000000 
+lazysp astar iters                                            0.000000        3.000000 
+lazysp astar iters                                            0.000000        1.000000 
+lazysp_successful                                             3.403600 
+lazysp_successful                                           110.406271 
+lazysp_successful                                           186.051452 
+lazysp_successful                                          1825.502941 
+lazysp_successful                                           282.560231 
+lazysp_successful                                           171.172569 
+lazysp_successful                                            12.181334 
+lazysp_successful                                             2.618602 
+lazysp_successful                                             1.027815 
+lazysp_successful                                             0.359320 
+lazysp_successful                                             0.065071 
+lazysp_successful                                             0.007831 
+

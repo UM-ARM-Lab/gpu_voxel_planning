@@ -1,0 +1,81 @@
+2019-05-23 10:01:02
+
+Label                                                                                   tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000                                        0.000000               1        0.000000        0.000000        0.000000
+Bump                                                                                        0.000000               2        0.000000        0.000000        0.000000
+ComputeSweptVolume                                                                          7.980163             105        0.076002
+Copy_graph                                                                                  1.465429             224        0.006542
+EdgeCheck                                                                                  18.222326            3396        0.005366
+GetSweptVolume                                                                              8.682568            3617        0.002400
+HOP_plan                                                                                   38.173950               7        5.453421
+Obstacle_belief_update_collision                                                            0.858416               2        0.429208
+Obstacle_belief_update_free                                                                13.100156             670        0.019552
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                            8.889458           10686        0.000832
+Strategy: HOP                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time           16.547454               9        1.838606
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         38.206496               9        4.245166
+Update belief from free obs                                                                13.104111             670        0.019558
+Viz sample sv                                                                               1.584094             221        0.007168
+Viz_sample                                                                                  3.200297             700        0.004572
+Viz_sample_ee_path                                                                          0.050251             221        0.000227
+Viz_scenario                                                                                0.510903             672        0.000760
+accumulated_cost                                                                            0.000000               1        0.000000       13.204394       13.204394
+astar_add_neighbors                                                                         7.433060           47101        0.000158
+astar_cost_to_come                                                                          1.164393         2309719        0.000001
+astar_edge_validity_check                                                                   0.626458         2343982        0.000000
+astar_expansion_in_closed_list                                                              0.046585          201413        0.000000
+astar_heuristic                                                                             1.834227         2108306        0.000001
+astar_num_edge_expansions                                                                   0.000000            2624        0.000000  2343982.000000      893.285823
+astar_num_lower_cost_edge_expansions                                                        0.000000            2624        0.000000  2108306.000000      803.470274
+astar_num_node_expansions                                                                   0.000000            2624        0.000000    56011.000000       21.345655
+astar_push_to_queue                                                                         0.890045         2108306        0.000000
+astar_queue_reduction                                                                       0.021920           53390        0.000000
+lazySP path cost                                                                            0.000000             224        0.000000             inf             inf
+lazy_sp a_star                                                                              7.715664            2624        0.002940
+lazysp astar iters                                                                          0.000000             224        0.000000     2624.000000       11.714286
+lazysp_no_path_found                                                                       11.297208               3        3.765736
+lazysp_successful                                                                          14.741400             221        0.066703
+simulation_state_move                                                                      14.297256             670        0.021339
+
+2019-05-23 10:01:02
+
+Label                                                                                           time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000                                        0.000000        0.000000 
+Bump                                                                                        0.000000        0.000000 
+Bump                                                                                        0.000000        0.000000 
+HOP_plan                                                                                   16.052218 
+HOP_plan                                                                                    1.197117 
+HOP_plan                                                                                    1.277950 
+HOP_plan                                                                                    1.221843 
+HOP_plan                                                                                   13.027152 
+HOP_plan                                                                                    3.182793 
+HOP_plan                                                                                    2.214877 
+Obstacle_belief_update_collision                                                            0.451428 
+Obstacle_belief_update_collision                                                            0.406988 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000        0.000000 
+Strategy: HOP                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            3.053506 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            1.236098 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            1.564609 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            1.721975 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            2.244653 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            1.550888 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            1.723158 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            1.773687 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            1.678880 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         16.059898 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          0.000111 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          1.200998 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          1.281734 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          1.225989 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          0.000139 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         13.030908 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          3.186780 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          2.219939 
+accumulated_cost                                                                            0.000000       13.204394 
+lazysp_no_path_found                                                                        9.263282 
+lazysp_no_path_found                                                                        1.015468 
+lazysp_no_path_found                                                                        1.018457 
+

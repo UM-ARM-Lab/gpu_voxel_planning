@@ -1,0 +1,76 @@
+2019-05-26 12:05:10
+
+Label                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Strategy: HOP   0.0000 1 0 0.0000 0.0000 0.0000
+Scenario: RealEmpty   0.0000 1 0 0.0000 0.0000 0.0000
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000   0.0000 1 0 0.0000 0.0000 0.0000
+ComputeSweptVolume                           18.001132             221        0.081453
+Copy_graph                                    0.645792             108        0.005980
+EdgeCheck                                    65.154686           15068        0.004324
+GetSweptVolume                               19.730455           15173        0.001300
+HOP_plan                                    166.163984               3       55.387995
+Obstacle_belief_update_collision              0.832147               3        0.277382
+Obstacle_belief_update_free                   0.103116               5        0.020623
+RealEmpty, HOP Motion Time                   11.827498               5        2.365500
+RealEmpty, HOP Planning Time                166.179824               5       33.235965
+Set robot config                             17.818009           19222        0.000927
+Update belief from free obs                   0.056388               2        0.028194
+Viz sample sv                                 0.677292             105        0.006450
+Viz_sample                                    1.166668             300        0.003889
+Viz_sample_ee_path                            0.022083             105        0.000210
+Viz_scenario                                  0.783913               5        0.156783
+astar_add_neighbors                          91.394361          857722        0.000107
+astar_cost_to_come                           15.939799        32779252        0.000000
+astar_edge_validity_check                     7.534485        33236080        0.000000
+astar_expansion_in_closed_list                1.087122         5596141        0.000000
+astar_heuristic                              20.509688        27183111        0.000001
+astar_num_edge_expansions                     0.000000           11101        0.000000 33236080.000000     2993.971714
+astar_num_lower_cost_edge_expansions          0.000000           11101        0.000000 27183111.000000     2448.708315
+astar_num_node_expansions                     0.000000           11101        0.000000  1675199.000000      150.905234
+astar_push_to_queue                          10.689316        27183111        0.000000
+astar_queue_reduction                         0.442878         1664101        0.000000
+lazySP path cost                              0.000000             108        0.000000             inf             inf
+lazy_sp a_star                               95.454548           11101        0.008599
+lazysp astar iters                            0.000000             108        0.000000    11101.000000      102.787037
+lazysp_no_path_found                          8.174091               3        2.724697
+lazysp_successful                           152.856189             105        1.455773
+real_state_move                               3.278842               2        1.639421
+
+2019-05-26 12:05:10
+
+Label                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+HOP_plan                                     25.181971 
+HOP_plan                                    139.829216 
+HOP_plan                                      1.152796 
+Obstacle_belief_update_collision              0.269808 
+Obstacle_belief_update_collision              0.279907 
+Obstacle_belief_update_collision              0.282433 
+Obstacle_belief_update_free                   0.027313 
+Obstacle_belief_update_free                   0.025719 
+Obstacle_belief_update_free                   0.026081 
+Obstacle_belief_update_free                   0.023110 
+Obstacle_belief_update_free                   0.000893 
+RealEmpty, HOP Motion Time                    2.964253 
+RealEmpty, HOP Motion Time                    1.765750 
+RealEmpty, HOP Motion Time                    2.536738 
+RealEmpty, HOP Motion Time                    1.828523 
+RealEmpty, HOP Motion Time                    2.732234 
+RealEmpty, HOP Planning Time                 25.189409 
+RealEmpty, HOP Planning Time                  0.000032 
+RealEmpty, HOP Planning Time                139.833435 
+RealEmpty, HOP Planning Time                  0.000065 
+RealEmpty, HOP Planning Time                  1.156883 
+Update belief from free obs                   0.028269 
+Update belief from free obs                   0.028119 
+Viz_scenario                                  0.152768 
+Viz_scenario                                  0.156314 
+Viz_scenario                                  0.164721 
+Viz_scenario                                  0.158471 
+Viz_scenario                                  0.151639 
+lazysp_no_path_found                          6.150735 
+lazysp_no_path_found                          1.026438 
+lazysp_no_path_found                          0.996918 
+real_state_move                               1.609115 
+real_state_move                               1.669727 
+

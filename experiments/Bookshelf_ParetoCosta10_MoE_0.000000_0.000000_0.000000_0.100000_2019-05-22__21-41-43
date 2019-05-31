@@ -1,0 +1,72 @@
+2019-05-22 21:41:43
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+Bookshelf, ParetoCosta10 Motion Time                    19.931819               6        3.321970
+Bookshelf, ParetoCosta10 Planning Time                 265.175116               6       44.195853
+CalcProbFreeCHS                                          0.003896            1724        0.000002
+ComputeSweptVolume                                      24.885849             236        0.105449
+EdgeCheck                                               36.755897            2186        0.016814
+GetSweptVolume                                          27.121823            4990        0.005435
+Obstacle_belief_update_free                             17.595107             510        0.034500
+Scenario: Bookshelf                                      0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                        24.830473           20981        0.001183
+Strategy: ParetoCosta10                                  0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                             17.838611             510        0.034978
+Viz_scenario                                             0.000219             510        0.000000
+accumulated_cost                                         0.000000               1        0.000000       10.009512       10.009512
+astar_add_neighbors                                    129.614234         1269808        0.000102
+astar_cost_to_come                                      29.102415        45396891        0.000001
+astar_edge_validity_check                               10.312755        46031548        0.000000
+astar_expansion_in_closed_list                           1.930808        11121304        0.000000
+astar_heuristic                                         27.156888        34120578        0.000001
+astar_num_edge_expansions                                0.000000            2554        0.000000 46031548.000000    18023.315583
+astar_num_lower_cost_edge_expansions                     0.000000            2554        0.000000 34120578.000000    13359.662490
+astar_num_node_expansions                                0.000000            2554        0.000000  3243791.000000     1270.082616
+astar_push_to_queue                                     12.661738        34120578        0.000000
+astar_queue_reduction                                    0.732051         3241237        0.000000
+lazySP path cost                                         0.000000               6        0.000000       45.293178        7.548863
+lazy_sp a_star                                         137.122802            2554        0.053689
+lazysp astar iters                                       0.000000               6        0.000000     2554.000000      425.666667
+lazysp_successful                                      265.169860               6       44.194977
+simulation_state_move                                   19.380899             510        0.038002
+
+2019-05-22 21:41:43
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+Bookshelf, ParetoCosta10 Motion Time                     3.423271 
+Bookshelf, ParetoCosta10 Motion Time                     3.475426 
+Bookshelf, ParetoCosta10 Motion Time                     3.368035 
+Bookshelf, ParetoCosta10 Motion Time                     3.714993 
+Bookshelf, ParetoCosta10 Motion Time                     3.590250 
+Bookshelf, ParetoCosta10 Motion Time                     2.359844 
+Bookshelf, ParetoCosta10 Planning Time                 221.047615 
+Bookshelf, ParetoCosta10 Planning Time                  42.148316 
+Bookshelf, ParetoCosta10 Planning Time                   1.514870 
+Bookshelf, ParetoCosta10 Planning Time                   0.303571 
+Bookshelf, ParetoCosta10 Planning Time                   0.105609 
+Bookshelf, ParetoCosta10 Planning Time                   0.055136 
+Scenario: Bookshelf                                      0.000000        0.000000 
+Strategy: ParetoCosta10                                  0.000000        0.000000 
+accumulated_cost                                         0.000000       10.009512 
+lazySP path cost                                         0.000000       18.762731 
+lazySP path cost                                         0.000000       10.300975 
+lazySP path cost                                         0.000000        6.830321 
+lazySP path cost                                         0.000000        5.066846 
+lazySP path cost                                         0.000000        3.109614 
+lazySP path cost                                         0.000000        1.222691 
+lazysp astar iters                                       0.000000     1975.000000 
+lazysp astar iters                                       0.000000      557.000000 
+lazysp astar iters                                       0.000000       18.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp_successful                                      221.043438 
+lazysp_successful                                       42.148077 
+lazysp_successful                                        1.514682 
+lazysp_successful                                        0.303326 
+lazysp_successful                                        0.105385 
+lazysp_successful                                        0.054952 
+

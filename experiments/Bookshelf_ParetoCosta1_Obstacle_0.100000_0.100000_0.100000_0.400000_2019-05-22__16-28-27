@@ -1,0 +1,220 @@
+2019-05-22 16:28:27
+
+Label                                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000          0.000000               1        0.000000        0.000000        0.000000
+Bookshelf, ParetoCosta1 Motion Time                           6.691413               8        0.836427
+Bookshelf, ParetoCosta1 Planning Time                         7.753649               8        0.969206
+Bump                                                          0.000000               2        0.000000        0.000000        0.000000
+CalcProbFreeKnown                                             0.187972             135        0.001392
+ComputeSweptVolume                                            3.266967              40        0.081674
+EdgeCheck                                                     3.815248              98        0.038931
+GetSweptVolume                                                3.559540             233        0.015277
+Obstacle_belief_update_collision                              1.547376               2        0.773688
+Obstacle_belief_update_free                                   3.148351             428        0.007356
+Scenario: Bookshelf                                           0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                              3.644283            3827        0.000952
+Strategy: ParetoCosta1                                        0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                                   3.149993             428        0.007360
+Viz_scenario                                                  0.521623             430        0.001213
+accumulated_cost                                              0.000000               1        0.000000        8.392710        8.392710
+astar_add_neighbors                                           0.280006            2475        0.000113
+astar_cost_to_come                                            0.043547          104707        0.000000
+astar_edge_validity_check                                     0.023085          106594        0.000000
+astar_expansion_in_closed_list                                0.001678           10017        0.000000
+astar_heuristic                                               0.069674           94498        0.000001
+astar_num_edge_expansions                                     0.000000             128        0.000000   106594.000000      832.765625
+astar_num_lower_cost_edge_expansions                          0.000000             128        0.000000    94498.000000      738.265625
+astar_num_node_expansions                                     0.000000             128        0.000000     2965.000000       23.164062
+astar_push_to_queue                                           0.035361           94498        0.000000
+astar_queue_reduction                                         0.000990            2837        0.000000
+lazySP path cost                                              0.000000               6        0.000000       25.196674        4.199446
+lazy_sp a_star                                                0.292461             128        0.002285
+lazysp astar iters                                            0.000000               6        0.000000      128.000000       21.333333
+lazysp_successful                                             7.749042               6        1.291507
+simulation_state_move                                         3.998678             428        0.009343
+
+2019-05-22 16:28:27
+
+Label                                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000          0.000000        0.000000 
+Bookshelf, ParetoCosta1 Motion Time                           1.448274 
+Bookshelf, ParetoCosta1 Motion Time                           1.733121 
+Bookshelf, ParetoCosta1 Motion Time                           0.204408 
+Bookshelf, ParetoCosta1 Motion Time                           1.498863 
+Bookshelf, ParetoCosta1 Motion Time                           0.308965 
+Bookshelf, ParetoCosta1 Motion Time                           0.648282 
+Bookshelf, ParetoCosta1 Motion Time                           0.426191 
+Bookshelf, ParetoCosta1 Motion Time                           0.423308 
+Bookshelf, ParetoCosta1 Planning Time                         5.022423 
+Bookshelf, ParetoCosta1 Planning Time                         0.190336 
+Bookshelf, ParetoCosta1 Planning Time                         0.000053 
+Bookshelf, ParetoCosta1 Planning Time                         0.770719 
+Bookshelf, ParetoCosta1 Planning Time                         0.000111 
+Bookshelf, ParetoCosta1 Planning Time                         1.457176 
+Bookshelf, ParetoCosta1 Planning Time                         0.269562 
+Bookshelf, ParetoCosta1 Planning Time                         0.043270 
+Bump                                                          0.000000        0.000000 
+Bump                                                          0.000000        0.000000 
+ComputeSweptVolume                                            0.088964 
+ComputeSweptVolume                                            0.059406 
+ComputeSweptVolume                                            0.080617 
+ComputeSweptVolume                                            0.084466 
+ComputeSweptVolume                                            0.091069 
+ComputeSweptVolume                                            0.082199 
+ComputeSweptVolume                                            0.035570 
+ComputeSweptVolume                                            0.094430 
+ComputeSweptVolume                                            0.096715 
+ComputeSweptVolume                                            0.076421 
+ComputeSweptVolume                                            0.057984 
+ComputeSweptVolume                                            0.065992 
+ComputeSweptVolume                                            0.072777 
+ComputeSweptVolume                                            0.065114 
+ComputeSweptVolume                                            0.070349 
+ComputeSweptVolume                                            0.076481 
+ComputeSweptVolume                                            0.092550 
+ComputeSweptVolume                                            0.084309 
+ComputeSweptVolume                                            0.090353 
+ComputeSweptVolume                                            0.069624 
+ComputeSweptVolume                                            0.087386 
+ComputeSweptVolume                                            0.086373 
+ComputeSweptVolume                                            0.080602 
+ComputeSweptVolume                                            0.081032 
+ComputeSweptVolume                                            0.086632 
+ComputeSweptVolume                                            0.092550 
+ComputeSweptVolume                                            0.083438 
+ComputeSweptVolume                                            0.087828 
+ComputeSweptVolume                                            0.093211 
+ComputeSweptVolume                                            0.093002 
+ComputeSweptVolume                                            0.093299 
+ComputeSweptVolume                                            0.095499 
+ComputeSweptVolume                                            0.078408 
+ComputeSweptVolume                                            0.095710 
+ComputeSweptVolume                                            0.071317 
+ComputeSweptVolume                                            0.081832 
+ComputeSweptVolume                                            0.082838 
+ComputeSweptVolume                                            0.095834 
+ComputeSweptVolume                                            0.070564 
+ComputeSweptVolume                                            0.094220 
+EdgeCheck                                                     0.101900 
+EdgeCheck                                                     0.068845 
+EdgeCheck                                                     0.088194 
+EdgeCheck                                                     0.091167 
+EdgeCheck                                                     0.097781 
+EdgeCheck                                                     0.088905 
+EdgeCheck                                                     0.049603 
+EdgeCheck                                                     0.102518 
+EdgeCheck                                                     0.104288 
+EdgeCheck                                                     0.083655 
+EdgeCheck                                                     0.001774 
+EdgeCheck                                                     0.064728 
+EdgeCheck                                                     0.001853 
+EdgeCheck                                                     0.079645 
+EdgeCheck                                                     0.079986 
+EdgeCheck                                                     0.001681 
+EdgeCheck                                                     0.001646 
+EdgeCheck                                                     0.081807 
+EdgeCheck                                                     0.077544 
+EdgeCheck                                                     0.083523 
+EdgeCheck                                                     0.001959 
+EdgeCheck                                                     0.105920 
+EdgeCheck                                                     0.002215 
+EdgeCheck                                                     0.091123 
+EdgeCheck                                                     0.001640 
+EdgeCheck                                                     0.002366 
+EdgeCheck                                                     0.104307 
+EdgeCheck                                                     0.077149 
+EdgeCheck                                                     0.102403 
+EdgeCheck                                                     0.002043 
+EdgeCheck                                                     0.093127 
+EdgeCheck                                                     0.087326 
+EdgeCheck                                                     0.087811 
+EdgeCheck                                                     0.001750 
+EdgeCheck                                                     0.002403 
+EdgeCheck                                                     0.100059 
+EdgeCheck                                                     0.100826 
+EdgeCheck                                                     0.092635 
+EdgeCheck                                                     0.094956 
+EdgeCheck                                                     0.106956 
+EdgeCheck                                                     0.099927 
+EdgeCheck                                                     0.002272 
+EdgeCheck                                                     0.001845 
+EdgeCheck                                                     0.100129 
+EdgeCheck                                                     0.005479 
+EdgeCheck                                                     0.102363 
+EdgeCheck                                                     0.002502 
+EdgeCheck                                                     0.004489 
+EdgeCheck                                                     0.092447 
+EdgeCheck                                                     0.102333 
+EdgeCheck                                                     0.007341 
+EdgeCheck                                                     0.002051 
+EdgeCheck                                                     0.002947 
+EdgeCheck                                                     0.079943 
+EdgeCheck                                                     0.089253 
+EdgeCheck                                                     0.097465 
+EdgeCheck                                                     0.002152 
+EdgeCheck                                                     0.110267 
+EdgeCheck                                                     0.085048 
+EdgeCheck                                                     0.001830 
+EdgeCheck                                                     0.002891 
+EdgeCheck                                                     0.100967 
+EdgeCheck                                                     0.002184 
+EdgeCheck                                                     0.001703 
+EdgeCheck                                                     0.001731 
+EdgeCheck                                                     0.001691 
+EdgeCheck                                                     0.001986 
+EdgeCheck                                                     0.002062 
+EdgeCheck                                                     0.005892 
+EdgeCheck                                                     0.001635 
+EdgeCheck                                                     0.001694 
+EdgeCheck                                                     0.002095 
+EdgeCheck                                                     0.002273 
+EdgeCheck                                                     0.009349 
+EdgeCheck                                                     0.001928 
+EdgeCheck                                                     0.002152 
+EdgeCheck                                                     0.002373 
+EdgeCheck                                                     0.004402 
+EdgeCheck                                                     0.001531 
+EdgeCheck                                                     0.001755 
+EdgeCheck                                                     0.001797 
+EdgeCheck                                                     0.001721 
+EdgeCheck                                                     0.008874 
+EdgeCheck                                                     0.001821 
+EdgeCheck                                                     0.001817 
+EdgeCheck                                                     0.008384 
+EdgeCheck                                                     0.002157 
+EdgeCheck                                                     0.002202 
+EdgeCheck                                                     0.002269 
+EdgeCheck                                                     0.007988 
+EdgeCheck                                                     0.001628 
+EdgeCheck                                                     0.001925 
+EdgeCheck                                                     0.008126 
+EdgeCheck                                                     0.001771 
+EdgeCheck                                                     0.002069 
+EdgeCheck                                                     0.002645 
+EdgeCheck                                                     0.002032 
+EdgeCheck                                                     0.001625 
+Obstacle_belief_update_collision                              0.777421 
+Obstacle_belief_update_collision                              0.769956 
+Scenario: Bookshelf                                           0.000000        0.000000 
+Strategy: ParetoCosta1                                        0.000000        0.000000 
+accumulated_cost                                              0.000000        8.392710 
+lazySP path cost                                              0.000000        5.439944 
+lazySP path cost                                              0.000000        4.017337 
+lazySP path cost                                              0.000000        4.880707 
+lazySP path cost                                              0.000000        5.390063 
+lazySP path cost                                              0.000000        3.500808 
+lazySP path cost                                              0.000000        1.967815 
+lazysp astar iters                                            0.000000       64.000000 
+lazysp astar iters                                            0.000000        6.000000 
+lazysp astar iters                                            0.000000       18.000000 
+lazysp astar iters                                            0.000000       34.000000 
+lazysp astar iters                                            0.000000        5.000000 
+lazysp astar iters                                            0.000000        1.000000 
+lazysp_successful                                             5.018830 
+lazysp_successful                                             0.190179 
+lazysp_successful                                             0.770559 
+lazysp_successful                                             1.456983 
+lazysp_successful                                             0.269404 
+lazysp_successful                                             0.043087 
+
