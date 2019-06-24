@@ -57,9 +57,9 @@ int main(int argc, char* argv[])
 
 
 
-    BeliefParams bp(BeliefType::CHS);
+    // BeliefParams bp(BeliefType::CHS);
     // BeliefParams bp(BeliefType::IID, std::vector<double>{0,0,0}, 0.1);
-    // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
+    BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
     // BeliefParams bp(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
     // BeliefParams bp(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.05);
     // BeliefParams bp(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
@@ -67,9 +67,9 @@ int main(int argc, char* argv[])
     ros::Duration(1.0).sleep();
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    // TableWithBox scenario(bp, true, true, false);
+    TableWithBox scenario(bp, true, true, false);
     // SlottedWall scenario(bp);
-    Bookshelf scenario(bp);
+    // Bookshelf scenario(bp);
 
     SimulationScenarioTester tester(scenario, n);
 

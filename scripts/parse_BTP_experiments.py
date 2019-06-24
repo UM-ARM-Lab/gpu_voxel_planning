@@ -19,12 +19,12 @@ import seaborn as sns
 
 
 # Real
-experiment_dir = "/experiments_real/"
-scenarios_to_parse = ["RealTable", "Refrigerator"]
+# experiment_dir = "/experiments_real/"
+# scenarios_to_parse = ["RealTable", "Refrigerator"]
 
 # Sim
-# experiment_dir = "/experiments/"
-# scenarios_to_parse = ["Box", "Bookshelf"]
+experiment_dir = "/experiments/"
+scenarios_to_parse = ["Box", "Bookshelf"]
 
 
 short_scenario = OrderedDict([
@@ -194,9 +194,9 @@ def plot_scenario(experiments, save_path):
 
 
 def plot_sorted(all_experiments, save_path):
-    hardness_map = {"easy": ["CHS", "Particles Good", "MoE Good"],
-                    "medium" : ["CHS", "Particles Noisy", "MoE Noisy"],
-                    "hard" : ["CHS", "Particles Bonkers", "MoE Bonkers"]}
+    hardness_map = {"Easy Prior": ["CHS", "Particles Good", "MoE Good"],
+                    "Medium Prior" : ["CHS", "Particles Noisy", "MoE Noisy"],
+                    "Hard Prior" : ["CHS", "Particles Bonkers", "MoE Bonkers"]}
     
     for scenario in get_scenarios(all_experiments):
         for hardness in hardness_map:
@@ -255,7 +255,7 @@ def plot_sorted_single(experiments, hardness, save_path):
     x_labels, costs = average_same_xval([e.label for e in experiments], costs)
     x_labels, planning_times = average_same_xval([e.label for e in experiments], planning_times)
 
-    x_labels = x_labels + ["CHS+RRT"]
+    x_labels = x_labels + ["Baseline [8]"]
     costs = costs + [100]
     planning_times = planning_times + [15*60]
     hue = [float(label == "MoE+CM 1") for label in x_labels ]
@@ -263,7 +263,7 @@ def plot_sorted_single(experiments, hardness, save_path):
     clipped_times = [min(p, 100) for p in planning_times]
     clipped_policy = [min(p, 40) for p in costs]
 
-    data = pd.DataFrame({"average policy cost":clipped_policy,
+    data = pd.DataFrame({"average policy cost (rad)":clipped_policy,
                          "planning time (s)":clipped_times,
                          "method":x_labels,
                          "hue":hue})
@@ -272,7 +272,7 @@ def plot_sorted_single(experiments, hardness, save_path):
     # ax = series.plot(kind='bar', fontsize=30)
     # IPython.embed()
     sns.set(style="whitegrid", font_scale=2.2)
-    ax = sns.barplot(x="method", y="average policy cost", data=data, hue="hue", dodge=False)
+    ax = sns.barplot(x="method", y="average policy cost (rad)", data=data, hue="hue", dodge=False)
 
 
 
@@ -298,7 +298,7 @@ def plot_sorted_single(experiments, hardness, save_path):
     plt.axvline(x=0.5, linewidth=1, color='k')
     plt.tight_layout()
     plt.show()
-    ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness + ".png")
+    ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness.replace(" ", "") + ".png")
 
 
     ax = sns.barplot(x="method", y="planning time (s)", data=data, hue="hue", dodge=False)
@@ -323,7 +323,7 @@ def plot_sorted_single(experiments, hardness, save_path):
     plt.axvline(x=0.5, linewidth=1, color='k')
     plt.tight_layout()
     plt.show()
-    ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness + "_times.png")
+    ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness.replace(" ", "") + "_times.png")
 
 def plot_avg_fig(all_experiments, save_path):
     scenario = "Bookshelf"
@@ -332,6 +332,11 @@ def plot_avg_fig(all_experiments, save_path):
             if is_selected_strat(exp.strategy)]
     plot_sorted_single(exps, "all", save_path)
 
+
+def plot_swarm(all_experiments, save_path):
+    plt.show()
+    ax.get_figure().savefig(save_path + "_swarm.png")
+    
 
 
 def write_latex(experiments, save_path):
@@ -505,7 +510,10 @@ def load_all_files():
     experiments = group_experiments(experiments)
         
     # plot_all_data_for_scenarios(experiments, path)
-    # plot_sorted(experiments, path) - this is the one currently in the paper
+
+    # - this is the one currently in the paper
+    plot_sorted(experiments, path)
+
     # plot_avg_fig(experiments, path)
     write_latex(experiments, path)
     
