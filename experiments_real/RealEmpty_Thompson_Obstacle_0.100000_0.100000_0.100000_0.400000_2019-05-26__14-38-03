@@ -1,0 +1,120 @@
+2019-05-26 14:39:10
+
+Label                                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000          0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                           25.650310             274        0.093614
+EdgeCheck                                                    29.066770             375        0.077511
+GetSweptVolume                                               27.996928             508        0.055112
+Obstacle_belief_update_collision                              2.198335               2        1.099168
+Obstacle_belief_update_free                                   0.635265               8        0.079408
+RealEmpty, Thompson Motion Time                              31.137868               8        3.892234
+RealEmpty, Thompson Planning Time                            33.724537               8        4.215567
+Scenario: RealEmpty                                           0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                             25.028464           23935        0.001046
+Strategy: Thompson                                            0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                                   0.841976               6        0.140329
+Viz_sample                                                    0.021367               6        0.003561
+Viz_sample_ee_path                                            0.001440               6        0.000240
+Viz_scenario                                                  4.535519               8        0.566940
+accumulated_cost                                              0.000000               1        0.000000        6.709960        6.709960
+astar_add_neighbors                                           3.733976           35107        0.000106
+astar_cost_to_come                                            0.696983         1344986        0.000001
+astar_edge_validity_check                                     0.305285         1366838        0.000000
+astar_expansion_in_closed_list                                0.049160          253088        0.000000
+astar_heuristic                                               0.813253         1088802        0.000001
+astar_num_edge_expansions                                     0.000000             290        0.000000  1366838.000000     4713.234483
+astar_num_lower_cost_edge_expansions                          0.000000             290        0.000000  1088802.000000     3754.489655
+astar_num_node_expansions                                     0.000000             290        0.000000    80109.000000      276.237931
+astar_push_to_queue                                           0.401017         1088802        0.000000
+astar_queue_reduction                                         0.019290           79819        0.000000
+lazySP path cost                                              0.000000               6        0.000000       20.183240        3.363873
+lazy_sp a_star                                                3.908208             290        0.013477
+lazysp astar iters                                            0.000000               6        0.000000      290.000000       48.333333
+lazysp_successful                                            33.383434               6        5.563906
+real_state_move                                              21.728590               6        3.621432
+
+2019-05-26 14:39:10
+
+Label                                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000          0.000000        0.000000 
+Obstacle_belief_update_collision                              1.075938 
+Obstacle_belief_update_collision                              1.122398 
+Obstacle_belief_update_free                                   0.105168 
+Obstacle_belief_update_free                                   0.099219 
+Obstacle_belief_update_free                                   0.104738 
+Obstacle_belief_update_free                                   0.062431 
+Obstacle_belief_update_free                                   0.060060 
+Obstacle_belief_update_free                                   0.109278 
+Obstacle_belief_update_free                                   0.067650 
+Obstacle_belief_update_free                                   0.026722 
+RealEmpty, Thompson Motion Time                               3.132758 
+RealEmpty, Thompson Motion Time                               1.353644 
+RealEmpty, Thompson Motion Time                               6.558049 
+RealEmpty, Thompson Motion Time                               3.850663 
+RealEmpty, Thompson Motion Time                               2.853049 
+RealEmpty, Thompson Motion Time                               0.953411 
+RealEmpty, Thompson Motion Time                               7.887749 
+RealEmpty, Thompson Motion Time                               4.548546 
+RealEmpty, Thompson Planning Time                             0.284584 
+RealEmpty, Thompson Planning Time                             0.000034 
+RealEmpty, Thompson Planning Time                            32.861254 
+RealEmpty, Thompson Planning Time                             0.062827 
+RealEmpty, Thompson Planning Time                             0.058076 
+RealEmpty, Thompson Planning Time                             0.000045 
+RealEmpty, Thompson Planning Time                             0.395695 
+RealEmpty, Thompson Planning Time                             0.062022 
+Scenario: RealEmpty                                           0.000000        0.000000 
+Strategy: Thompson                                            0.000000        0.000000 
+Update belief from free obs                                   0.101853 
+Update belief from free obs                                   0.205171 
+Update belief from free obs                                   0.128578 
+Update belief from free obs                                   0.113365 
+Update belief from free obs                                   0.174504 
+Update belief from free obs                                   0.118505 
+Viz_sample                                                    0.004076 
+Viz_sample                                                    0.003024 
+Viz_sample                                                    0.003508 
+Viz_sample                                                    0.002984 
+Viz_sample                                                    0.003783 
+Viz_sample                                                    0.003992 
+Viz_sample_ee_path                                            0.000369 
+Viz_sample_ee_path                                            0.000188 
+Viz_sample_ee_path                                            0.000180 
+Viz_sample_ee_path                                            0.000256 
+Viz_sample_ee_path                                            0.000196 
+Viz_sample_ee_path                                            0.000252 
+Viz_scenario                                                  0.560113 
+Viz_scenario                                                  0.554777 
+Viz_scenario                                                  0.577065 
+Viz_scenario                                                  0.553984 
+Viz_scenario                                                  0.555555 
+Viz_scenario                                                  0.554719 
+Viz_scenario                                                  0.553153 
+Viz_scenario                                                  0.626153 
+accumulated_cost                                              0.000000        6.709960 
+lazySP path cost                                              0.000000        3.490755 
+lazySP path cost                                              0.000000        7.095246 
+lazySP path cost                                              0.000000        2.942228 
+lazySP path cost                                              0.000000        1.788936 
+lazySP path cost                                              0.000000        3.329142 
+lazySP path cost                                              0.000000        1.536933 
+lazysp astar iters                                            0.000000        1.000000 
+lazysp astar iters                                            0.000000      279.000000 
+lazysp astar iters                                            0.000000        1.000000 
+lazysp astar iters                                            0.000000        1.000000 
+lazysp astar iters                                            0.000000        7.000000 
+lazysp astar iters                                            0.000000        1.000000 
+lazysp_successful                                             0.221007 
+lazysp_successful                                            32.803173 
+lazysp_successful                                             0.011187 
+lazysp_successful                                             0.004994 
+lazysp_successful                                             0.337447 
+lazysp_successful                                             0.005626 
+real_state_move                                               0.798556 
+real_state_move                                               5.980262 
+real_state_move                                               3.296021 
+real_state_move                                               0.398366 
+real_state_move                                               7.333792 
+real_state_move                                               3.921592 
+

@@ -1,0 +1,245 @@
+2019-05-23 10:57:25
+
+Label                                                                                   tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoEBonkers_0.000000_0.000000_0.000000_0.050000                                      0.000000               1        0.000000        0.000000        0.000000
+Bump                                                                                        0.000000               2        0.000000        0.000000        0.000000
+ComputeSweptVolume                                                                          7.877545              89        0.088512
+Copy_graph                                                                                  4.512682             700        0.006447
+EdgeCheck                                                                                  98.031332           28272        0.003467
+GetSweptVolume                                                                              8.645055           28894        0.000299
+HOP_plan                                                                                  224.871998               7       32.124571
+Obstacle_belief_update_collision                                                            2.066182               2        1.033091
+Obstacle_belief_update_free                                                                25.237033             620        0.040705
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                            9.045452            9365        0.000966
+Strategy: HOP                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time           30.489383               9        3.387709
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time        224.903553               9       24.989284
+Update belief from free obs                                                                25.512068             620        0.041148
+Viz sample sv                                                                               4.507991             622        0.007248
+Viz_sample                                                                                  3.328134             700        0.004754
+Viz_sample_ee_path                                                                          0.131835             622        0.000212
+Viz_scenario                                                                                0.574352             622        0.000923
+accumulated_cost                                                                            0.000000               1        0.000000       12.205217       12.205217
+astar_add_neighbors                                                                       101.777597          684658        0.000149
+astar_cost_to_come                                                                         16.749525        32798344        0.000001
+astar_edge_validity_check                                                                   8.326151        33348024        0.000000
+astar_expansion_in_closed_list                                                              0.830058         3756549        0.000000
+astar_heuristic                                                                            24.311307        29041795        0.000001
+astar_num_edge_expansions                                                                   0.000000           21654        0.000000 33348024.000000     1540.039900
+astar_num_lower_cost_edge_expansions                                                        0.000000           21654        0.000000 29041795.000000     1341.174610
+astar_num_node_expansions                                                                   0.000000           21654        0.000000  1053164.000000       48.636003
+astar_push_to_queue                                                                        11.719346        29041795        0.000000
+astar_queue_reduction                                                                       0.324898         1031588        0.000000
+lazySP path cost                                                                            0.000000             700        0.000000             inf             inf
+lazy_sp a_star                                                                            105.372776           21654        0.004866
+lazysp astar iters                                                                          0.000000             700        0.000000    21654.000000       30.934286
+lazysp_no_path_found                                                                      107.884924              78        1.383140
+lazysp_successful                                                                          96.310014             622        0.154839
+simulation_state_move                                                                      26.831353             620        0.043276
+
+2019-05-23 10:57:25
+
+Label                                                                                           time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoEBonkers_0.000000_0.000000_0.000000_0.050000                                      0.000000        0.000000 
+Bump                                                                                        0.000000        0.000000 
+Bump                                                                                        0.000000        0.000000 
+ComputeSweptVolume                                                                          0.072707 
+ComputeSweptVolume                                                                          0.047866 
+ComputeSweptVolume                                                                          0.072203 
+ComputeSweptVolume                                                                          0.068795 
+ComputeSweptVolume                                                                          0.068164 
+ComputeSweptVolume                                                                          0.073149 
+ComputeSweptVolume                                                                          0.082571 
+ComputeSweptVolume                                                                          0.069737 
+ComputeSweptVolume                                                                          0.095144 
+ComputeSweptVolume                                                                          0.078098 
+ComputeSweptVolume                                                                          0.094897 
+ComputeSweptVolume                                                                          0.097253 
+ComputeSweptVolume                                                                          0.068915 
+ComputeSweptVolume                                                                          0.072214 
+ComputeSweptVolume                                                                          0.094502 
+ComputeSweptVolume                                                                          0.081431 
+ComputeSweptVolume                                                                          0.091517 
+ComputeSweptVolume                                                                          0.082502 
+ComputeSweptVolume                                                                          0.093855 
+ComputeSweptVolume                                                                          0.090214 
+ComputeSweptVolume                                                                          0.081921 
+ComputeSweptVolume                                                                          0.096189 
+ComputeSweptVolume                                                                          0.084411 
+ComputeSweptVolume                                                                          0.088966 
+ComputeSweptVolume                                                                          0.092650 
+ComputeSweptVolume                                                                          0.101496 
+ComputeSweptVolume                                                                          0.089932 
+ComputeSweptVolume                                                                          0.094446 
+ComputeSweptVolume                                                                          0.092177 
+ComputeSweptVolume                                                                          0.072496 
+ComputeSweptVolume                                                                          0.087795 
+ComputeSweptVolume                                                                          0.089210 
+ComputeSweptVolume                                                                          0.085741 
+ComputeSweptVolume                                                                          0.086739 
+ComputeSweptVolume                                                                          0.071867 
+ComputeSweptVolume                                                                          0.072651 
+ComputeSweptVolume                                                                          0.080351 
+ComputeSweptVolume                                                                          0.095248 
+ComputeSweptVolume                                                                          0.080581 
+ComputeSweptVolume                                                                          0.090306 
+ComputeSweptVolume                                                                          0.086138 
+ComputeSweptVolume                                                                          0.088514 
+ComputeSweptVolume                                                                          0.082236 
+ComputeSweptVolume                                                                          0.087764 
+ComputeSweptVolume                                                                          0.092438 
+ComputeSweptVolume                                                                          0.093621 
+ComputeSweptVolume                                                                          0.091798 
+ComputeSweptVolume                                                                          0.100631 
+ComputeSweptVolume                                                                          0.096348 
+ComputeSweptVolume                                                                          0.094908 
+ComputeSweptVolume                                                                          0.085303 
+ComputeSweptVolume                                                                          0.096096 
+ComputeSweptVolume                                                                          0.096386 
+ComputeSweptVolume                                                                          0.098087 
+ComputeSweptVolume                                                                          0.093263 
+ComputeSweptVolume                                                                          0.090379 
+ComputeSweptVolume                                                                          0.085522 
+ComputeSweptVolume                                                                          0.096478 
+ComputeSweptVolume                                                                          0.089015 
+ComputeSweptVolume                                                                          0.087540 
+ComputeSweptVolume                                                                          0.099163 
+ComputeSweptVolume                                                                          0.084345 
+ComputeSweptVolume                                                                          0.098707 
+ComputeSweptVolume                                                                          0.088400 
+ComputeSweptVolume                                                                          0.090135 
+ComputeSweptVolume                                                                          0.094519 
+ComputeSweptVolume                                                                          0.082983 
+ComputeSweptVolume                                                                          0.097266 
+ComputeSweptVolume                                                                          0.080485 
+ComputeSweptVolume                                                                          0.088974 
+ComputeSweptVolume                                                                          0.072748 
+ComputeSweptVolume                                                                          0.094297 
+ComputeSweptVolume                                                                          0.095039 
+ComputeSweptVolume                                                                          0.081008 
+ComputeSweptVolume                                                                          0.087535 
+ComputeSweptVolume                                                                          0.097386 
+ComputeSweptVolume                                                                          0.097727 
+ComputeSweptVolume                                                                          0.082079 
+ComputeSweptVolume                                                                          0.094421 
+ComputeSweptVolume                                                                          0.090338 
+ComputeSweptVolume                                                                          0.093741 
+ComputeSweptVolume                                                                          0.097515 
+ComputeSweptVolume                                                                          0.097621 
+ComputeSweptVolume                                                                          0.096851 
+ComputeSweptVolume                                                                          0.096357 
+ComputeSweptVolume                                                                          0.093252 
+ComputeSweptVolume                                                                          0.089372 
+ComputeSweptVolume                                                                          0.094615 
+ComputeSweptVolume                                                                          0.157298 
+HOP_plan                                                                                    3.345849 
+HOP_plan                                                                                   32.044435 
+HOP_plan                                                                                   27.199759 
+HOP_plan                                                                                   78.004064 
+HOP_plan                                                                                   44.311386 
+HOP_plan                                                                                   20.711886 
+HOP_plan                                                                                   19.254619 
+Obstacle_belief_update_collision                                                            1.013835 
+Obstacle_belief_update_collision                                                            1.052347 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000        0.000000 
+Strategy: HOP                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            4.234068 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            2.762927 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            3.604005 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            4.047398 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            2.536671 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            2.728897 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            4.174897 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            3.985433 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            2.415089 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          3.353898 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          0.000111 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         32.048346 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         27.203645 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          0.000106 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         78.007725 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         44.315247 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         20.715976 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         19.258500 
+accumulated_cost                                                                            0.000000       12.205217 
+lazysp_no_path_found                                                                        7.603660 
+lazysp_no_path_found                                                                        1.521259 
+lazysp_no_path_found                                                                        1.554334 
+lazysp_no_path_found                                                                        1.558470 
+lazysp_no_path_found                                                                        1.570358 
+lazysp_no_path_found                                                                        1.550795 
+lazysp_no_path_found                                                                        1.548005 
+lazysp_no_path_found                                                                        1.547227 
+lazysp_no_path_found                                                                        1.446570 
+lazysp_no_path_found                                                                        1.490818 
+lazysp_no_path_found                                                                        1.478894 
+lazysp_no_path_found                                                                        1.472472 
+lazysp_no_path_found                                                                        1.446070 
+lazysp_no_path_found                                                                        1.440860 
+lazysp_no_path_found                                                                        1.506071 
+lazysp_no_path_found                                                                        1.484739 
+lazysp_no_path_found                                                                        1.477093 
+lazysp_no_path_found                                                                        1.478490 
+lazysp_no_path_found                                                                        1.447885 
+lazysp_no_path_found                                                                        1.424862 
+lazysp_no_path_found                                                                        1.465730 
+lazysp_no_path_found                                                                        1.434673 
+lazysp_no_path_found                                                                        1.465192 
+lazysp_no_path_found                                                                        1.435945 
+lazysp_no_path_found                                                                        1.434404 
+lazysp_no_path_found                                                                        1.465573 
+lazysp_no_path_found                                                                        1.444354 
+lazysp_no_path_found                                                                        1.445275 
+lazysp_no_path_found                                                                        1.518882 
+lazysp_no_path_found                                                                        1.423862 
+lazysp_no_path_found                                                                        1.477183 
+lazysp_no_path_found                                                                        1.471319 
+lazysp_no_path_found                                                                        1.625220 
+lazysp_no_path_found                                                                        1.470581 
+lazysp_no_path_found                                                                        1.751200 
+lazysp_no_path_found                                                                        1.601517 
+lazysp_no_path_found                                                                        1.579861 
+lazysp_no_path_found                                                                        1.717549 
+lazysp_no_path_found                                                                        1.807354 
+lazysp_no_path_found                                                                        1.556513 
+lazysp_no_path_found                                                                        1.536283 
+lazysp_no_path_found                                                                        1.548479 
+lazysp_no_path_found                                                                        1.514413 
+lazysp_no_path_found                                                                        1.536544 
+lazysp_no_path_found                                                                        1.518137 
+lazysp_no_path_found                                                                        1.575594 
+lazysp_no_path_found                                                                        1.628405 
+lazysp_no_path_found                                                                        1.104589 
+lazysp_no_path_found                                                                        1.125847 
+lazysp_no_path_found                                                                        1.079667 
+lazysp_no_path_found                                                                        1.119875 
+lazysp_no_path_found                                                                        1.124895 
+lazysp_no_path_found                                                                        1.115340 
+lazysp_no_path_found                                                                        1.107186 
+lazysp_no_path_found                                                                        1.090796 
+lazysp_no_path_found                                                                        1.092791 
+lazysp_no_path_found                                                                        1.117390 
+lazysp_no_path_found                                                                        1.094339 
+lazysp_no_path_found                                                                        1.134195 
+lazysp_no_path_found                                                                        1.076895 
+lazysp_no_path_found                                                                        0.877963 
+lazysp_no_path_found                                                                        0.862331 
+lazysp_no_path_found                                                                        0.883847 
+lazysp_no_path_found                                                                        0.909663 
+lazysp_no_path_found                                                                        0.887499 
+lazysp_no_path_found                                                                        0.895321 
+lazysp_no_path_found                                                                        0.882547 
+lazysp_no_path_found                                                                        0.906476 
+lazysp_no_path_found                                                                        0.883268 
+lazysp_no_path_found                                                                        0.912559 
+lazysp_no_path_found                                                                        0.864946 
+lazysp_no_path_found                                                                        0.896009 
+lazysp_no_path_found                                                                        0.884233 
+lazysp_no_path_found                                                                        0.885782 
+lazysp_no_path_found                                                                        0.906652 
+lazysp_no_path_found                                                                        0.874729 
+lazysp_no_path_found                                                                        0.875920 
+lazysp_no_path_found                                                                        0.912397 
+

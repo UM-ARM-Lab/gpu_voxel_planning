@@ -1,0 +1,263 @@
+2019-05-26 12:24:15
+
+Label                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Strategy: HOP   0.0000 1 0 0.0000 0.0000 0.0000
+Scenario: RealEmpty   0.0000 1 0 0.0000 0.0000 0.0000
+Belief: Bonkers_0.000000_0.000000_0.000000_0.050000   0.0000 1 0 0.0000 0.0000 0.0000
+ComputeSweptVolume                            2.268652              28        0.081023
+Copy_graph                                   10.703199            1800        0.005946
+EdgeCheck                                    13.994978            3700        0.003782
+GetSweptVolume                                2.484311            5500        0.000452
+HOP_plan                                     60.983846              18        3.387991
+Obstacle_belief_update_collision              6.937991              13        0.533692
+Obstacle_belief_update_free                   0.122914              31        0.003965
+RealEmpty, HOP Motion Time                   72.242789              31        2.330413
+RealEmpty, HOP Planning Time                 61.060265              31        1.969686
+Set robot config                              5.757721            4883        0.001179
+Update belief from free obs                   0.524341              18        0.029130
+Viz sample sv                                11.874895            1800        0.006597
+Viz_sample                                    5.812739            1800        0.003229
+Viz_sample_ee_path                            0.385409            1800        0.000214
+Viz_scenario                                  4.947762              31        0.159605
+accumulated_cost                              0.000000               1        0.000000       14.717821       14.717821
+astar_add_neighbors                           0.676306            6400        0.000106
+astar_cost_to_come                            0.077770          214000        0.000000
+astar_edge_validity_check                     0.058259          218600        0.000000
+astar_expansion_in_closed_list                0.002193            8500        0.000000
+astar_heuristic                               0.177298          205500        0.000001
+astar_num_edge_expansions                     0.000000            2000        0.000000   218600.000000      109.300000
+astar_num_lower_cost_edge_expansions          0.000000            2000        0.000000   205500.000000      102.750000
+astar_num_node_expansions                     0.000000            2000        0.000000     8400.000000        4.200000
+astar_push_to_queue                           0.094750          205500        0.000000
+astar_queue_reduction                         0.005675            6400        0.000001
+lazySP path cost                              0.000000            1800        0.000000     5695.646695        3.164248
+lazy_sp a_star                                0.787408            2000        0.000394
+lazysp astar iters                            0.000000            1800        0.000000     2000.000000        1.111111
+lazysp_successful                            14.937608            1800        0.008299
+real_state_move                              39.040654              18        2.168925
+
+2019-05-26 12:24:15
+
+Label                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+ComputeSweptVolume                            0.085885 
+ComputeSweptVolume                            0.082274 
+ComputeSweptVolume                            0.090780 
+ComputeSweptVolume                            0.073524 
+ComputeSweptVolume                            0.064182 
+ComputeSweptVolume                            0.059120 
+ComputeSweptVolume                            0.087512 
+ComputeSweptVolume                            0.079151 
+ComputeSweptVolume                            0.083254 
+ComputeSweptVolume                            0.091669 
+ComputeSweptVolume                            0.082813 
+ComputeSweptVolume                            0.091459 
+ComputeSweptVolume                            0.093360 
+ComputeSweptVolume                            0.095064 
+ComputeSweptVolume                            0.092020 
+ComputeSweptVolume                            0.075253 
+ComputeSweptVolume                            0.067855 
+ComputeSweptVolume                            0.061035 
+ComputeSweptVolume                            0.092103 
+ComputeSweptVolume                            0.067681 
+ComputeSweptVolume                            0.064178 
+ComputeSweptVolume                            0.071750 
+ComputeSweptVolume                            0.070273 
+ComputeSweptVolume                            0.094649 
+ComputeSweptVolume                            0.074667 
+ComputeSweptVolume                            0.095416 
+ComputeSweptVolume                            0.101831 
+ComputeSweptVolume                            0.079897 
+HOP_plan                                      3.485962 
+HOP_plan                                      4.683226 
+HOP_plan                                      3.177498 
+HOP_plan                                      3.260287 
+HOP_plan                                      3.325362 
+HOP_plan                                      3.533272 
+HOP_plan                                      3.368060 
+HOP_plan                                      3.400760 
+HOP_plan                                      2.922574 
+HOP_plan                                      3.360317 
+HOP_plan                                      3.461485 
+HOP_plan                                      3.064644 
+HOP_plan                                      3.428067 
+HOP_plan                                      3.341058 
+HOP_plan                                      3.326940 
+HOP_plan                                      3.392636 
+HOP_plan                                      3.538358 
+HOP_plan                                      2.913338 
+Obstacle_belief_update_collision              0.515385 
+Obstacle_belief_update_collision              0.542242 
+Obstacle_belief_update_collision              0.519223 
+Obstacle_belief_update_collision              0.516567 
+Obstacle_belief_update_collision              0.516864 
+Obstacle_belief_update_collision              0.526469 
+Obstacle_belief_update_collision              0.538498 
+Obstacle_belief_update_collision              0.533907 
+Obstacle_belief_update_collision              0.574501 
+Obstacle_belief_update_collision              0.528077 
+Obstacle_belief_update_collision              0.528397 
+Obstacle_belief_update_collision              0.528438 
+Obstacle_belief_update_collision              0.569423 
+Obstacle_belief_update_free                   0.026751 
+Obstacle_belief_update_free                   0.026507 
+Obstacle_belief_update_free                   0.021826 
+Obstacle_belief_update_free                   0.021614 
+Obstacle_belief_update_free                   0.026182 
+Obstacle_belief_update_free                   0.000003 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000002 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000002 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000002 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000002 
+Obstacle_belief_update_free                   0.000001 
+Obstacle_belief_update_free                   0.000001 
+RealEmpty, HOP Motion Time                    2.037656 
+RealEmpty, HOP Motion Time                    0.838033 
+RealEmpty, HOP Motion Time                    3.263815 
+RealEmpty, HOP Motion Time                    1.789066 
+RealEmpty, HOP Motion Time                    0.483810 
+RealEmpty, HOP Motion Time                    1.031384 
+RealEmpty, HOP Motion Time                    0.408869 
+RealEmpty, HOP Motion Time                    1.099850 
+RealEmpty, HOP Motion Time                    0.416397 
+RealEmpty, HOP Motion Time                    1.208073 
+RealEmpty, HOP Motion Time                    0.407775 
+RealEmpty, HOP Motion Time                    1.117603 
+RealEmpty, HOP Motion Time                    0.392494 
+RealEmpty, HOP Motion Time                    6.396046 
+RealEmpty, HOP Motion Time                    3.666463 
+RealEmpty, HOP Motion Time                    2.398817 
+RealEmpty, HOP Motion Time                    3.628983 
+RealEmpty, HOP Motion Time                    2.109277 
+RealEmpty, HOP Motion Time                    4.793980 
+RealEmpty, HOP Motion Time                    2.659586 
+RealEmpty, HOP Motion Time                    1.511119 
+RealEmpty, HOP Motion Time                    2.046500 
+RealEmpty, HOP Motion Time                    0.608883 
+RealEmpty, HOP Motion Time                    2.914454 
+RealEmpty, HOP Motion Time                    1.348027 
+RealEmpty, HOP Motion Time                    2.911195 
+RealEmpty, HOP Motion Time                    1.888165 
+RealEmpty, HOP Motion Time                    4.196063 
+RealEmpty, HOP Motion Time                    2.614984 
+RealEmpty, HOP Motion Time                    6.099455 
+RealEmpty, HOP Motion Time                    5.955968 
+RealEmpty, HOP Planning Time                  3.493307 
+RealEmpty, HOP Planning Time                  0.000045 
+RealEmpty, HOP Planning Time                  4.687015 
+RealEmpty, HOP Planning Time                  3.181328 
+RealEmpty, HOP Planning Time                  0.000036 
+RealEmpty, HOP Planning Time                  3.264058 
+RealEmpty, HOP Planning Time                  0.000036 
+RealEmpty, HOP Planning Time                  3.329104 
+RealEmpty, HOP Planning Time                  0.000037 
+RealEmpty, HOP Planning Time                  3.537191 
+RealEmpty, HOP Planning Time                  0.000040 
+RealEmpty, HOP Planning Time                  3.372104 
+RealEmpty, HOP Planning Time                  0.000038 
+RealEmpty, HOP Planning Time                  3.404680 
+RealEmpty, HOP Planning Time                  2.926317 
+RealEmpty, HOP Planning Time                  0.000036 
+RealEmpty, HOP Planning Time                  3.364356 
+RealEmpty, HOP Planning Time                  0.000034 
+RealEmpty, HOP Planning Time                  3.465891 
+RealEmpty, HOP Planning Time                  3.068534 
+RealEmpty, HOP Planning Time                  0.000036 
+RealEmpty, HOP Planning Time                  3.432022 
+RealEmpty, HOP Planning Time                  0.000037 
+RealEmpty, HOP Planning Time                  3.344899 
+RealEmpty, HOP Planning Time                  0.000033 
+RealEmpty, HOP Planning Time                  3.330949 
+RealEmpty, HOP Planning Time                  0.000037 
+RealEmpty, HOP Planning Time                  3.398469 
+RealEmpty, HOP Planning Time                  0.000038 
+RealEmpty, HOP Planning Time                  3.542480 
+RealEmpty, HOP Planning Time                  2.917081 
+Update belief from free obs                   0.029023 
+Update belief from free obs                   0.086494 
+Update belief from free obs                   0.029336 
+Update belief from free obs                   0.003635 
+Update belief from free obs                   0.004552 
+Update belief from free obs                   0.003666 
+Update belief from free obs                   0.003251 
+Update belief from free obs                   0.103343 
+Update belief from free obs                   0.003689 
+Update belief from free obs                   0.003358 
+Update belief from free obs                   0.063100 
+Update belief from free obs                   0.003686 
+Update belief from free obs                   0.003391 
+Update belief from free obs                   0.003185 
+Update belief from free obs                   0.007450 
+Update belief from free obs                   0.003843 
+Update belief from free obs                   0.095014 
+Update belief from free obs                   0.074326 
+Viz_scenario                                  0.160047 
+Viz_scenario                                  0.156768 
+Viz_scenario                                  0.151609 
+Viz_scenario                                  0.157027 
+Viz_scenario                                  0.155974 
+Viz_scenario                                  0.157328 
+Viz_scenario                                  0.155218 
+Viz_scenario                                  0.154855 
+Viz_scenario                                  0.156494 
+Viz_scenario                                  0.156651 
+Viz_scenario                                  0.152746 
+Viz_scenario                                  0.164304 
+Viz_scenario                                  0.152706 
+Viz_scenario                                  0.176557 
+Viz_scenario                                  0.153784 
+Viz_scenario                                  0.154460 
+Viz_scenario                                  0.160195 
+Viz_scenario                                  0.155832 
+Viz_scenario                                  0.157725 
+Viz_scenario                                  0.158950 
+Viz_scenario                                  0.162832 
+Viz_scenario                                  0.161275 
+Viz_scenario                                  0.151242 
+Viz_scenario                                  0.159548 
+Viz_scenario                                  0.155797 
+Viz_scenario                                  0.157248 
+Viz_scenario                                  0.182623 
+Viz_scenario                                  0.162064 
+Viz_scenario                                  0.192104 
+Viz_scenario                                  0.158223 
+Viz_scenario                                  0.155574 
+accumulated_cost                              0.000000       14.717821 
+real_state_move                               0.680957 
+real_state_move                               3.111469 
+real_state_move                               0.327475 
+real_state_move                               0.253229 
+real_state_move                               0.259474 
+real_state_move                               0.254620 
+real_state_move                               0.239387 
+real_state_move                               6.218414 
+real_state_move                               2.243911 
+real_state_move                               1.953019 
+real_state_move                               4.635382 
+real_state_move                               1.347797 
+real_state_move                               0.457232 
+real_state_move                               1.191813 
+real_state_move                               1.705034 
+real_state_move                               2.421801 
+real_state_move                               5.940174 
+real_state_move                               5.799465 
+

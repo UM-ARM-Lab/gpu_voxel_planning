@@ -1,0 +1,103 @@
+2019-05-27 11:50:15
+
+Label                                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+Bookshelf, QMDP Motion Time                                  53.873289               4       13.468322
+Bookshelf, QMDP Planning Time                              1600.478437               4      400.119609
+ComputeSweptVolume                                           30.618628             302        0.101386
+GetSweptVolume                                               33.777913           56594        0.000597
+Obstacle_belief_update_collision                             57.336284             128        0.447940
+Obstacle_belief_update_free                                 114.768082            8906        0.012887
+QMDP_plan                                                  1600.471959               4      400.117990
+Rollout                                                    1258.873537             460        2.736682
+Rollout viz sv                                               14.359111            1665        0.008624
+Scenario: Bookshelf                                           0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                             38.760783           33329        0.001163
+Simulate transition first                                   200.528752             470        0.426657
+Simulate transition in rollout                               41.224175            1665        0.024759
+Strategy: QMDP                                                0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                                   3.462862             312        0.011099
+Viz_sample                                                    0.386694              40        0.009667
+Viz_scenario                                                 49.205177             312        0.157709
+accumulated_cost                                              0.000000               1        0.000000        6.123117        6.123117
+astar_add_neighbors                                         815.146188         8568088        0.000095
+astar_cost_to_come                                          178.273793       330934083        0.000001
+astar_edge_validity_check                                    75.171447       330934083        0.000000
+astar_expansion_in_closed_list                               10.476574        56214350        0.000000
+astar_heuristic                                             104.685446       266219965        0.000000
+astar_num_edge_expansions                                     0.000000           74133        0.000000 330934083.000000     4464.058962
+astar_num_lower_cost_edge_expansions                          0.000000           74133        0.000000 266219965.000000     3591.112797
+astar_num_node_expansions                                     0.000000           74133        0.000000 15365754.000000      207.272793
+astar_push_to_queue                                          98.511313       266219965        0.000000
+astar_queue_reduction                                         3.723568        15291621        0.000000
+lazySP path cost                                              0.000000             500        0.000000     2937.437165        5.874874
+lazy_sp a_star                                              851.351854           74133        0.011484
+lazysp astar iters                                            0.000000             500        0.000000    74133.000000      148.266000
+lazysp_successful                                          1288.283849             500        2.576568
+rollout lazysp                                             1202.362781             460        2.613832
+simulate_belief_update_collision                             70.506138             128        0.550829
+simulate_belief_update_free                                  27.742378            2007        0.013823
+simulate_belief_update_free_before_collision                 89.499634            6587        0.013587
+simulation_state_move                                         4.332039             312        0.013885
+
+2019-05-27 11:50:16
+
+Label                                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+Bookshelf, QMDP Motion Time                                   6.330897 
+Bookshelf, QMDP Motion Time                                  17.824521 
+Bookshelf, QMDP Motion Time                                  13.082090 
+Bookshelf, QMDP Motion Time                                  16.635781 
+Bookshelf, QMDP Planning Time                               531.709621 
+Bookshelf, QMDP Planning Time                               726.306594 
+Bookshelf, QMDP Planning Time                               316.711383 
+Bookshelf, QMDP Planning Time                                25.750839 
+QMDP_plan                                                   531.704430 
+QMDP_plan                                                   726.306192 
+QMDP_plan                                                   316.710975 
+QMDP_plan                                                    25.750362 
+Scenario: Bookshelf                                           0.000000        0.000000 
+Strategy: QMDP                                                0.000000        0.000000 
+Viz_sample                                                    0.007279 
+Viz_sample                                                    0.008389 
+Viz_sample                                                    0.007071 
+Viz_sample                                                    0.016158 
+Viz_sample                                                    0.006736 
+Viz_sample                                                    0.007038 
+Viz_sample                                                    0.016239 
+Viz_sample                                                    0.008031 
+Viz_sample                                                    0.007173 
+Viz_sample                                                    0.016147 
+Viz_sample                                                    0.007664 
+Viz_sample                                                    0.016108 
+Viz_sample                                                    0.016307 
+Viz_sample                                                    0.007684 
+Viz_sample                                                    0.007347 
+Viz_sample                                                    0.007670 
+Viz_sample                                                    0.006633 
+Viz_sample                                                    0.007571 
+Viz_sample                                                    0.007067 
+Viz_sample                                                    0.007533 
+Viz_sample                                                    0.009409 
+Viz_sample                                                    0.008955 
+Viz_sample                                                    0.008894 
+Viz_sample                                                    0.006888 
+Viz_sample                                                    0.007462 
+Viz_sample                                                    0.015927 
+Viz_sample                                                    0.016165 
+Viz_sample                                                    0.016110 
+Viz_sample                                                    0.008229 
+Viz_sample                                                    0.007519 
+Viz_sample                                                    0.008512 
+Viz_sample                                                    0.007820 
+Viz_sample                                                    0.016217 
+Viz_sample                                                    0.007950 
+Viz_sample                                                    0.008252 
+Viz_sample                                                    0.008937 
+Viz_sample                                                    0.007816 
+Viz_sample                                                    0.008745 
+Viz_sample                                                    0.006858 
+Viz_sample                                                    0.008183 
+accumulated_cost                                              0.000000        6.123117 
+

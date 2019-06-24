@@ -1,0 +1,252 @@
+2019-05-26 15:26:16
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.100000_0.100000_0.100000_0.400000          0.000000               1        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                          0.651729             111        0.005871
+ComputeSweptVolume                                       5.149753              55        0.093632
+EdgeCheck                                                5.843558              76        0.076889
+GetSweptVolume                                           5.611692             196        0.028631
+Obstacle_belief_update_collision                         3.230554               3        1.076851
+Obstacle_belief_update_free                              0.788967              10        0.078897
+RealEmpty, ParetoCosta1 Motion Time                     39.579283              10        3.957928
+RealEmpty, ParetoCosta1 Planning Time                   16.165585              10        1.616559
+Scenario: RealEmpty                                      0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                         5.316786            5002        0.001063
+Strategy: ParetoCosta1                                   0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                              0.921468               7        0.131638
+Viz_scenario                                             5.706082              10        0.570608
+accumulated_cost                                         0.000000               1        0.000000        7.142767        7.142767
+astar_add_neighbors                                      0.324008            2909        0.000111
+astar_cost_to_come                                       0.052595          117448        0.000000
+astar_edge_validity_check                                0.026693          117713        0.000000
+astar_expansion_in_closed_list                           0.002634           14203        0.000000
+astar_heuristic                                          0.078088          103151        0.000001
+astar_num_edge_expansions                                0.000000             126        0.000000   117713.000000      934.230159
+astar_num_lower_cost_edge_expansions                     0.000000             126        0.000000   103151.000000      818.658730
+astar_num_node_expansions                                0.000000             126        0.000000     3442.000000       27.317460
+astar_push_to_queue                                      0.038062          103151        0.000000
+astar_queue_reduction                                    0.001122            3316        0.000000
+lazySP path cost                                         0.000000               7        0.000000       29.001278        4.143040
+lazy_sp a_star                                           0.338383             126        0.002686
+lazysp astar iters                                       0.000000               7        0.000000      126.000000       18.000000
+lazysp_successful                                       16.160682               7        2.308669
+real_state_move                                         26.125424               7        3.732203
+
+2019-05-26 15:26:16
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.100000_0.100000_0.100000_0.400000          0.000000        0.000000 
+ComputeSweptVolume                                       0.093507 
+ComputeSweptVolume                                       0.101320 
+ComputeSweptVolume                                       0.111715 
+ComputeSweptVolume                                       0.082681 
+ComputeSweptVolume                                       0.074049 
+ComputeSweptVolume                                       0.060595 
+ComputeSweptVolume                                       0.100165 
+ComputeSweptVolume                                       0.096936 
+ComputeSweptVolume                                       0.085100 
+ComputeSweptVolume                                       0.065847 
+ComputeSweptVolume                                       0.104258 
+ComputeSweptVolume                                       0.071581 
+ComputeSweptVolume                                       0.090889 
+ComputeSweptVolume                                       0.096408 
+ComputeSweptVolume                                       0.106533 
+ComputeSweptVolume                                       0.067330 
+ComputeSweptVolume                                       0.113076 
+ComputeSweptVolume                                       0.067967 
+ComputeSweptVolume                                       0.094763 
+ComputeSweptVolume                                       0.082209 
+ComputeSweptVolume                                       0.103265 
+ComputeSweptVolume                                       0.100032 
+ComputeSweptVolume                                       0.110793 
+ComputeSweptVolume                                       0.094506 
+ComputeSweptVolume                                       0.092501 
+ComputeSweptVolume                                       0.090218 
+ComputeSweptVolume                                       0.090034 
+ComputeSweptVolume                                       0.089253 
+ComputeSweptVolume                                       0.105677 
+ComputeSweptVolume                                       0.102199 
+ComputeSweptVolume                                       0.095463 
+ComputeSweptVolume                                       0.107383 
+ComputeSweptVolume                                       0.106941 
+ComputeSweptVolume                                       0.095403 
+ComputeSweptVolume                                       0.102257 
+ComputeSweptVolume                                       0.109008 
+ComputeSweptVolume                                       0.096035 
+ComputeSweptVolume                                       0.095719 
+ComputeSweptVolume                                       0.098798 
+ComputeSweptVolume                                       0.089436 
+ComputeSweptVolume                                       0.083658 
+ComputeSweptVolume                                       0.113917 
+ComputeSweptVolume                                       0.096658 
+ComputeSweptVolume                                       0.114332 
+ComputeSweptVolume                                       0.102021 
+ComputeSweptVolume                                       0.074887 
+ComputeSweptVolume                                       0.074464 
+ComputeSweptVolume                                       0.066217 
+ComputeSweptVolume                                       0.078161 
+ComputeSweptVolume                                       0.125089 
+ComputeSweptVolume                                       0.107637 
+ComputeSweptVolume                                       0.115053 
+ComputeSweptVolume                                       0.113587 
+ComputeSweptVolume                                       0.061110 
+ComputeSweptVolume                                       0.081114 
+EdgeCheck                                                0.102806 
+EdgeCheck                                                0.117324 
+EdgeCheck                                                0.119854 
+EdgeCheck                                                0.089716 
+EdgeCheck                                                0.002032 
+EdgeCheck                                                0.002412 
+EdgeCheck                                                0.010080 
+EdgeCheck                                                0.002087 
+EdgeCheck                                                0.090262 
+EdgeCheck                                                0.068828 
+EdgeCheck                                                0.112039 
+EdgeCheck                                                0.116472 
+EdgeCheck                                                0.093664 
+EdgeCheck                                                0.072883 
+EdgeCheck                                                0.120585 
+EdgeCheck                                                0.079202 
+EdgeCheck                                                0.105825 
+EdgeCheck                                                0.002611 
+EdgeCheck                                                0.113481 
+EdgeCheck                                                0.113881 
+EdgeCheck                                                0.075631 
+EdgeCheck                                                0.003397 
+EdgeCheck                                                0.121422 
+EdgeCheck                                                0.074972 
+EdgeCheck                                                0.111892 
+EdgeCheck                                                0.002368 
+EdgeCheck                                                0.089284 
+EdgeCheck                                                0.111587 
+EdgeCheck                                                0.115920 
+EdgeCheck                                                0.118359 
+EdgeCheck                                                0.103190 
+EdgeCheck                                                0.102188 
+EdgeCheck                                                0.006081 
+EdgeCheck                                                0.106852 
+EdgeCheck                                                0.105924 
+EdgeCheck                                                0.096338 
+EdgeCheck                                                0.002475 
+EdgeCheck                                                0.003024 
+EdgeCheck                                                0.114136 
+EdgeCheck                                                0.119522 
+EdgeCheck                                                0.007326 
+EdgeCheck                                                0.009661 
+EdgeCheck                                                0.111628 
+EdgeCheck                                                0.002668 
+EdgeCheck                                                0.118015 
+EdgeCheck                                                0.113718 
+EdgeCheck                                                0.102820 
+EdgeCheck                                                0.117721 
+EdgeCheck                                                0.004362 
+EdgeCheck                                                0.119671 
+EdgeCheck                                                0.007506 
+EdgeCheck                                                0.001932 
+EdgeCheck                                                0.108026 
+EdgeCheck                                                0.002933 
+EdgeCheck                                                0.111157 
+EdgeCheck                                                0.107878 
+EdgeCheck                                                0.097978 
+EdgeCheck                                                0.093256 
+EdgeCheck                                                0.122887 
+EdgeCheck                                                0.113886 
+EdgeCheck                                                0.003318 
+EdgeCheck                                                0.121261 
+EdgeCheck                                                0.116486 
+EdgeCheck                                                0.008458 
+EdgeCheck                                                0.083260 
+EdgeCheck                                                0.081790 
+EdgeCheck                                                0.081699 
+EdgeCheck                                                0.085746 
+EdgeCheck                                                0.136054 
+EdgeCheck                                                0.114871 
+EdgeCheck                                                0.002034 
+EdgeCheck                                                0.002094 
+EdgeCheck                                                0.122884 
+EdgeCheck                                                0.121931 
+EdgeCheck                                                0.076210 
+EdgeCheck                                                0.089827 
+Obstacle_belief_update_collision                         1.060548 
+Obstacle_belief_update_collision                         1.102184 
+Obstacle_belief_update_collision                         1.067822 
+Obstacle_belief_update_free                              0.099068 
+Obstacle_belief_update_free                              0.098603 
+Obstacle_belief_update_free                              0.081685 
+Obstacle_belief_update_free                              0.099817 
+Obstacle_belief_update_free                              0.083189 
+Obstacle_belief_update_free                              0.068797 
+Obstacle_belief_update_free                              0.108149 
+Obstacle_belief_update_free                              0.069409 
+Obstacle_belief_update_free                              0.043025 
+Obstacle_belief_update_free                              0.037226 
+RealEmpty, ParetoCosta1 Motion Time                      3.462134 
+RealEmpty, ParetoCosta1 Motion Time                      1.504690 
+RealEmpty, ParetoCosta1 Motion Time                      3.212874 
+RealEmpty, ParetoCosta1 Motion Time                      1.278100 
+RealEmpty, ParetoCosta1 Motion Time                      4.128561 
+RealEmpty, ParetoCosta1 Motion Time                      2.775392 
+RealEmpty, ParetoCosta1 Motion Time                      0.999368 
+RealEmpty, ParetoCosta1 Motion Time                      4.586234 
+RealEmpty, ParetoCosta1 Motion Time                      9.535724 
+RealEmpty, ParetoCosta1 Motion Time                      8.096205 
+RealEmpty, ParetoCosta1 Planning Time                    1.118062 
+RealEmpty, ParetoCosta1 Planning Time                    0.000033 
+RealEmpty, ParetoCosta1 Planning Time                    2.529947 
+RealEmpty, ParetoCosta1 Planning Time                    0.000038 
+RealEmpty, ParetoCosta1 Planning Time                    8.159815 
+RealEmpty, ParetoCosta1 Planning Time                    0.540453 
+RealEmpty, ParetoCosta1 Planning Time                    0.000035 
+RealEmpty, ParetoCosta1 Planning Time                    3.257221 
+RealEmpty, ParetoCosta1 Planning Time                    0.373243 
+RealEmpty, ParetoCosta1 Planning Time                    0.186738 
+Scenario: RealEmpty                                      0.000000        0.000000 
+Strategy: ParetoCosta1                                   0.000000        0.000000 
+Update belief from free obs                              0.102791 
+Update belief from free obs                              0.106063 
+Update belief from free obs                              0.169846 
+Update belief from free obs                              0.113316 
+Update belief from free obs                              0.137157 
+Update belief from free obs                              0.150732 
+Update belief from free obs                              0.141562 
+Viz_scenario                                             0.570946 
+Viz_scenario                                             0.551602 
+Viz_scenario                                             0.570239 
+Viz_scenario                                             0.563127 
+Viz_scenario                                             0.577578 
+Viz_scenario                                             0.565505 
+Viz_scenario                                             0.565347 
+Viz_scenario                                             0.587327 
+Viz_scenario                                             0.577641 
+Viz_scenario                                             0.576771 
+accumulated_cost                                         0.000000        7.142767 
+lazySP path cost                                         0.000000        3.834047 
+lazySP path cost                                         0.000000        4.782215 
+lazySP path cost                                         0.000000        5.635926 
+lazySP path cost                                         0.000000        4.357519 
+lazySP path cost                                         0.000000        4.994198 
+lazySP path cost                                         0.000000        3.594462 
+lazySP path cost                                         0.000000        1.802910 
+lazysp astar iters                                       0.000000        9.000000 
+lazysp astar iters                                       0.000000       18.000000 
+lazysp astar iters                                       0.000000       59.000000 
+lazysp astar iters                                       0.000000        7.000000 
+lazysp astar iters                                       0.000000       25.000000 
+lazysp astar iters                                       0.000000        5.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp_successful                                        1.114300 
+lazysp_successful                                        2.529756 
+lazysp_successful                                        8.159680 
+lazysp_successful                                        0.540246 
+lazysp_successful                                        3.257080 
+lazysp_successful                                        0.373053 
+lazysp_successful                                        0.186567 
+real_state_move                                          0.952787 
+real_state_move                                          0.714674 
+real_state_move                                          3.550225 
+real_state_move                                          0.433706 
+real_state_move                                          3.998197 
+real_state_move                                          8.957242 
+real_state_move                                          7.518593 
+

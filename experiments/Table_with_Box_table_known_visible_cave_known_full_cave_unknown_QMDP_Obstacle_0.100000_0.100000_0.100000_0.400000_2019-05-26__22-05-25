@@ -1,0 +1,153 @@
+2019-05-26 22:05:25
+
+Label                                                                                    tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000                                         0.000000               1        0.000000        0.000000        0.000000
+Bump                                                                                         0.000000               2        0.000000        0.000000        0.000000
+ComputeSweptVolume                                                                          55.636062             608        0.091507
+GetSweptVolume                                                                              61.010778           51693        0.001180
+Obstacle_belief_update_collision                                                             5.834774              16        0.364673
+Obstacle_belief_update_free                                                                144.844977            9105        0.015908
+QMDP_plan                                                                                 1150.896602               5      230.179320
+Rollout                                                                                    721.843041            2410        0.299520
+Rollout viz sv                                                                              43.511233            5375        0.008095
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                    0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                            55.287731           53358        0.001036
+Simulate transition first                                                                   99.401986            2440        0.040739
+Simulate transition in rollout                                                             150.405262            5375        0.027982
+Strategy: QMDP                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Motion Time           98.858340               7       14.122620
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Planning Time       1150.903767               7      164.414824
+Update belief from free obs                                                                  6.617967             514        0.012875
+Viz_sample                                                                                   0.242038              50        0.004841
+Viz_scenario                                                                                89.679268             516        0.173797
+accumulated_cost                                                                             0.000000               1        0.000000       10.138736       10.138736
+astar_add_neighbors                                                                         52.202431          435369        0.000120
+astar_cost_to_come                                                                           9.295164        22079562        0.000000
+astar_edge_validity_check                                                                    4.981323        22107050        0.000000
+astar_expansion_in_closed_list                                                               0.384922         2260234        0.000000
+astar_heuristic                                                                              7.546233        19662333        0.000000
+astar_num_edge_expansions                                                                    0.000000           22133        0.000000 22107050.000000      998.827543
+astar_num_lower_cost_edge_expansions                                                         0.000000           22133        0.000000 19662333.000000      888.371798
+astar_num_node_expansions                                                                    0.000000           22133        0.000000   620255.000000       28.023991
+astar_push_to_queue                                                                          7.114687        19662333        0.000000
+astar_queue_reduction                                                                        0.165997          598122        0.000000
+lazySP path cost                                                                             0.000000            2460        0.000000     9139.934311        3.715420
+lazy_sp a_star                                                                              54.269085           22133        0.002452
+lazysp astar iters                                                                           0.000000            2460        0.000000    22133.000000        8.997154
+lazysp_successful                                                                          530.086301            2460        0.215482
+rollout lazysp                                                                             524.894206            2410        0.217798
+simulate_belief_update_collision                                                             6.516853              14        0.465490
+simulate_belief_update_free                                                                137.607994            7801        0.017640
+simulate_belief_update_free_before_collision                                                21.883507             790        0.027701
+simulation_state_move                                                                        7.706194             514        0.014993
+
+2019-05-26 22:05:25
+
+Label                                                                                            time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000                                         0.000000        0.000000 
+Bump                                                                                         0.000000        0.000000 
+Bump                                                                                         0.000000        0.000000 
+Obstacle_belief_update_collision                                                             0.353162 
+Obstacle_belief_update_collision                                                             0.374434 
+Obstacle_belief_update_collision                                                             0.356097 
+Obstacle_belief_update_collision                                                             0.438561 
+Obstacle_belief_update_collision                                                             0.359010 
+Obstacle_belief_update_collision                                                             0.323623 
+Obstacle_belief_update_collision                                                             0.331180 
+Obstacle_belief_update_collision                                                             0.308600 
+Obstacle_belief_update_collision                                                             0.379061 
+Obstacle_belief_update_collision                                                             0.366374 
+Obstacle_belief_update_collision                                                             0.385368 
+Obstacle_belief_update_collision                                                             0.363139 
+Obstacle_belief_update_collision                                                             0.407879 
+Obstacle_belief_update_collision                                                             0.379872 
+Obstacle_belief_update_collision                                                             0.381193 
+Obstacle_belief_update_collision                                                             0.327221 
+QMDP_plan                                                                                  252.958247 
+QMDP_plan                                                                                  389.492392 
+QMDP_plan                                                                                  174.422594 
+QMDP_plan                                                                                  278.530526 
+QMDP_plan                                                                                   55.492843 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                    0.000000        0.000000 
+Strategy: QMDP                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Motion Time           13.527645 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Motion Time           11.965054 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Motion Time           13.021446 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Motion Time           14.504271 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Motion Time           13.724282 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Motion Time           17.786345 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Motion Time           14.329298 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Planning Time        252.962530 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Planning Time          0.000131 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Planning Time        389.493000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Planning Time        174.423181 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Planning Time          0.000148 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Planning Time        278.531258 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, QMDP Planning Time         55.493519 
+Viz_sample                                                                                   0.005607 
+Viz_sample                                                                                   0.004459 
+Viz_sample                                                                                   0.005347 
+Viz_sample                                                                                   0.007274 
+Viz_sample                                                                                   0.003794 
+Viz_sample                                                                                   0.012137 
+Viz_sample                                                                                   0.003614 
+Viz_sample                                                                                   0.003936 
+Viz_sample                                                                                   0.011811 
+Viz_sample                                                                                   0.004440 
+Viz_sample                                                                                   0.004787 
+Viz_sample                                                                                   0.004013 
+Viz_sample                                                                                   0.004277 
+Viz_sample                                                                                   0.005022 
+Viz_sample                                                                                   0.004132 
+Viz_sample                                                                                   0.004498 
+Viz_sample                                                                                   0.005113 
+Viz_sample                                                                                   0.007227 
+Viz_sample                                                                                   0.005744 
+Viz_sample                                                                                   0.010827 
+Viz_sample                                                                                   0.004596 
+Viz_sample                                                                                   0.004304 
+Viz_sample                                                                                   0.003797 
+Viz_sample                                                                                   0.004708 
+Viz_sample                                                                                   0.003963 
+Viz_sample                                                                                   0.004005 
+Viz_sample                                                                                   0.004230 
+Viz_sample                                                                                   0.004733 
+Viz_sample                                                                                   0.011259 
+Viz_sample                                                                                   0.004613 
+Viz_sample                                                                                   0.004505 
+Viz_sample                                                                                   0.003724 
+Viz_sample                                                                                   0.003635 
+Viz_sample                                                                                   0.003468 
+Viz_sample                                                                                   0.003635 
+Viz_sample                                                                                   0.004018 
+Viz_sample                                                                                   0.003565 
+Viz_sample                                                                                   0.003677 
+Viz_sample                                                                                   0.003587 
+Viz_sample                                                                                   0.003615 
+Viz_sample                                                                                   0.003634 
+Viz_sample                                                                                   0.003772 
+Viz_sample                                                                                   0.003592 
+Viz_sample                                                                                   0.003596 
+Viz_sample                                                                                   0.003588 
+Viz_sample                                                                                   0.003499 
+Viz_sample                                                                                   0.003686 
+Viz_sample                                                                                   0.003611 
+Viz_sample                                                                                   0.003813 
+Viz_sample                                                                                   0.003552 
+accumulated_cost                                                                             0.000000       10.138736 
+simulate_belief_update_collision                                                             0.447566 
+simulate_belief_update_collision                                                             0.483002 
+simulate_belief_update_collision                                                             0.447348 
+simulate_belief_update_collision                                                             0.538013 
+simulate_belief_update_collision                                                             0.456085 
+simulate_belief_update_collision                                                             0.418700 
+simulate_belief_update_collision                                                             0.428649 
+simulate_belief_update_collision                                                             0.396002 
+simulate_belief_update_collision                                                             0.494835 
+simulate_belief_update_collision                                                             0.465033 
+simulate_belief_update_collision                                                             0.486645 
+simulate_belief_update_collision                                                             0.461789 
+simulate_belief_update_collision                                                             0.513520 
+simulate_belief_update_collision                                                             0.479666 
+

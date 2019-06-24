@@ -6,12 +6,12 @@
 #define SMOOTHING_ITERATIONS 100
 
 /* Expected num total voxels in world in collision */
-#define UNEXPLORED_BIAS 0
+#define UNEXPLORED_BIAS 0.0
 
 /* Max planning time in seconds */
 #define PLANNING_TIMEOUT 30
 
-#define USE_KNOWN_OBSTACLES false
+#define USE_KNOWN_OBSTACLES true
 
 #define MAKE_TABLE true
 
@@ -21,13 +21,15 @@
 
 #define NUM_STEPS_FOR_ADDING_COLLISION 5
 
+#define DISTANCE_FOR_ADDING_CHS 0.05
+
 #define TABLE_WORLD true
 
 #define PEG_IN_HOLE false
 
-#define PLAN_ONLY false
+#define PLAN_ONLY true
 
-#define DO_CONTROL false
+#define DO_CONTROL true
 
 #define DO_PLAN true
 
@@ -39,10 +41,12 @@
 
 #define REAL_ROBOT false
 
-#define ALLOWED_KNOWN_OBSTACLES 30
+#define ALLOWED_KNOWN_OBSTACLES 0
 
 #define DO_RANDOM_WIGGLE false
 
-#define DO_IOU_WIGGLE true
+#define DO_IOU_WIGGLE false
+
+#define DO_PLANNING_FIRST true
 
 #endif

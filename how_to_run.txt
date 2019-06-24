@@ -1,0 +1,37 @@
+
+Terminal 1:
+ssh realtime
+roslaunch victor_hardware_interface dualarm_lcm_bridge.launch
+
+Terminal 2:
+cd /dev/shm
+rm Voxel*
+(removes shared memory, which causes segfault when launched)
+
+Terminal 3:
+svic (source ROS_MASTER_URI and ROS_HOSTNAME)
+roslaunch victor_hardware_interface manual_motion.launch
+(move victor to correct position
+
+Terminal 4:
+~/gvl/bin/gpu_voxels_visualizer -c ~/catkin_ws/src/gpu_voxel_planning/config/VictorSimConfig.xml
+
+Terminal 5:
+svic (source ROS_MASTER_URI and ROS_HOSTNAME)
+rosrun gpu_voxel_planning execute_path_with_collision_detection.py
+
+
+Termianl 6:
+svic
+rosrun gpu_voxel_planning wip_victor_real
+
+
+
+
+
+Setup Procedure:
+Move Victor and table roughly into place
+Run planning code one to move victor precisely to goal location
+Move box into correct location based on hand position
+Run planning code again to confirm box is in correct position
+Manually move robot to the side of the box

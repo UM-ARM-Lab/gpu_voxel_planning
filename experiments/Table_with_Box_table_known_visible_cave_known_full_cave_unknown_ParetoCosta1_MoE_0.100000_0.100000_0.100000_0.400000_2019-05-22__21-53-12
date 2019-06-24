@@ -1,0 +1,222 @@
+2019-05-22 21:53:12
+
+Label                                                                                            tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.100000_0.100000_0.100000_0.400000                                                      0.000000               1        0.000000        0.000000        0.000000
+Bump                                                                                                 0.000000               2        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                                                                      0.223852              86        0.002603
+ComputeSweptVolume                                                                                   4.310377              54        0.079822
+EdgeCheck                                                                                            4.945161             112        0.044153
+GetSweptVolume                                                                                       4.664572             255        0.018292
+Obstacle_belief_update_collision                                                                     0.921183               2        0.460592
+Obstacle_belief_update_free                                                                         12.417165             589        0.021082
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                            0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                                     4.745060            5356        0.000886
+Strategy: ParetoCosta1                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Motion Time           16.153383               8        2.019173
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Planning Time          8.914778               8        1.114347
+Update belief from free obs                                                                         12.687551             589        0.021541
+Viz_scenario                                                                                         0.497206             591        0.000841
+accumulated_cost                                                                                     0.000000               1        0.000000       11.596365       11.596365
+astar_add_neighbors                                                                                  0.343945            2455        0.000140
+astar_cost_to_come                                                                                   0.055331          117671        0.000000
+astar_edge_validity_check                                                                            0.028757          119274        0.000000
+astar_expansion_in_closed_list                                                                       0.002507           11426        0.000000
+astar_heuristic                                                                                      0.084968          106245        0.000001
+astar_num_edge_expansions                                                                            0.000000             117        0.000000   119274.000000     1019.435897
+astar_num_lower_cost_edge_expansions                                                                 0.000000             117        0.000000   106245.000000      908.076923
+astar_num_node_expansions                                                                            0.000000             117        0.000000     3018.000000       25.794872
+astar_push_to_queue                                                                                  0.041284          106245        0.000000
+astar_queue_reduction                                                                                0.001095            2901        0.000000
+lazySP path cost                                                                                     0.000000               6        0.000000       21.339763        3.556627
+lazy_sp a_star                                                                                       0.357191             117        0.003053
+lazysp astar iters                                                                                   0.000000               6        0.000000      117.000000       19.500000
+lazysp_successful                                                                                    8.909198               6        1.484866
+simulation_state_move                                                                               13.770219             589        0.023379
+
+2019-05-22 21:53:12
+
+Label                                                                                                    time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.100000_0.100000_0.100000_0.400000                                                      0.000000        0.000000 
+Bump                                                                                                 0.000000        0.000000 
+Bump                                                                                                 0.000000        0.000000 
+CalcProbFreeCHS                                                                                      0.000002 
+CalcProbFreeCHS                                                                                      0.000002 
+CalcProbFreeCHS                                                                                      0.001447 
+CalcProbFreeCHS                                                                                      0.001457 
+CalcProbFreeCHS                                                                                      0.001467 
+CalcProbFreeCHS                                                                                      0.001642 
+CalcProbFreeCHS                                                                                      0.001456 
+CalcProbFreeCHS                                                                                      0.001454 
+CalcProbFreeCHS                                                                                      0.001772 
+CalcProbFreeCHS                                                                                      0.001465 
+CalcProbFreeCHS                                                                                      0.001722 
+CalcProbFreeCHS                                                                                      0.001448 
+CalcProbFreeCHS                                                                                      0.001461 
+CalcProbFreeCHS                                                                                      0.001723 
+CalcProbFreeCHS                                                                                      0.001601 
+CalcProbFreeCHS                                                                                      0.001455 
+CalcProbFreeCHS                                                                                      0.001458 
+CalcProbFreeCHS                                                                                      0.001479 
+CalcProbFreeCHS                                                                                      0.001450 
+CalcProbFreeCHS                                                                                      0.001448 
+CalcProbFreeCHS                                                                                      0.001453 
+CalcProbFreeCHS                                                                                      0.001909 
+CalcProbFreeCHS                                                                                      0.001460 
+CalcProbFreeCHS                                                                                      0.001456 
+CalcProbFreeCHS                                                                                      0.001454 
+CalcProbFreeCHS                                                                                      0.001463 
+CalcProbFreeCHS                                                                                      0.001736 
+CalcProbFreeCHS                                                                                      0.001448 
+CalcProbFreeCHS                                                                                      0.001670 
+CalcProbFreeCHS                                                                                      0.001450 
+CalcProbFreeCHS                                                                                      0.001448 
+CalcProbFreeCHS                                                                                      0.001790 
+CalcProbFreeCHS                                                                                      0.001549 
+CalcProbFreeCHS                                                                                      0.001459 
+CalcProbFreeCHS                                                                                      0.004627 
+CalcProbFreeCHS                                                                                      0.001457 
+CalcProbFreeCHS                                                                                      0.001770 
+CalcProbFreeCHS                                                                                      0.001934 
+CalcProbFreeCHS                                                                                      0.002887 
+CalcProbFreeCHS                                                                                      0.002891 
+CalcProbFreeCHS                                                                                      0.006225 
+CalcProbFreeCHS                                                                                      0.002919 
+CalcProbFreeCHS                                                                                      0.002918 
+CalcProbFreeCHS                                                                                      0.002940 
+CalcProbFreeCHS                                                                                      0.003175 
+CalcProbFreeCHS                                                                                      0.002921 
+CalcProbFreeCHS                                                                                      0.003219 
+CalcProbFreeCHS                                                                                      0.003106 
+CalcProbFreeCHS                                                                                      0.003234 
+CalcProbFreeCHS                                                                                      0.003171 
+CalcProbFreeCHS                                                                                      0.002921 
+CalcProbFreeCHS                                                                                      0.006043 
+CalcProbFreeCHS                                                                                      0.003225 
+CalcProbFreeCHS                                                                                      0.003277 
+CalcProbFreeCHS                                                                                      0.003012 
+CalcProbFreeCHS                                                                                      0.003295 
+CalcProbFreeCHS                                                                                      0.002904 
+CalcProbFreeCHS                                                                                      0.005986 
+CalcProbFreeCHS                                                                                      0.003243 
+CalcProbFreeCHS                                                                                      0.003089 
+CalcProbFreeCHS                                                                                      0.002907 
+CalcProbFreeCHS                                                                                      0.003069 
+CalcProbFreeCHS                                                                                      0.002945 
+CalcProbFreeCHS                                                                                      0.003082 
+CalcProbFreeCHS                                                                                      0.002915 
+CalcProbFreeCHS                                                                                      0.003221 
+CalcProbFreeCHS                                                                                      0.002967 
+CalcProbFreeCHS                                                                                      0.002919 
+CalcProbFreeCHS                                                                                      0.003300 
+CalcProbFreeCHS                                                                                      0.003328 
+CalcProbFreeCHS                                                                                      0.003105 
+CalcProbFreeCHS                                                                                      0.006002 
+CalcProbFreeCHS                                                                                      0.003267 
+CalcProbFreeCHS                                                                                      0.003125 
+CalcProbFreeCHS                                                                                      0.003168 
+CalcProbFreeCHS                                                                                      0.003232 
+CalcProbFreeCHS                                                                                      0.002904 
+CalcProbFreeCHS                                                                                      0.002900 
+CalcProbFreeCHS                                                                                      0.002989 
+CalcProbFreeCHS                                                                                      0.005408 
+CalcProbFreeCHS                                                                                      0.002896 
+CalcProbFreeCHS                                                                                      0.002931 
+CalcProbFreeCHS                                                                                      0.003325 
+CalcProbFreeCHS                                                                                      0.003179 
+CalcProbFreeCHS                                                                                      0.003082 
+CalcProbFreeCHS                                                                                      0.006146 
+ComputeSweptVolume                                                                                   0.068512 
+ComputeSweptVolume                                                                                   0.042894 
+ComputeSweptVolume                                                                                   0.065712 
+ComputeSweptVolume                                                                                   0.064335 
+ComputeSweptVolume                                                                                   0.061457 
+ComputeSweptVolume                                                                                   0.067728 
+ComputeSweptVolume                                                                                   0.082360 
+ComputeSweptVolume                                                                                   0.062918 
+ComputeSweptVolume                                                                                   0.091678 
+ComputeSweptVolume                                                                                   0.067515 
+ComputeSweptVolume                                                                                   0.084510 
+ComputeSweptVolume                                                                                   0.089966 
+ComputeSweptVolume                                                                                   0.068844 
+ComputeSweptVolume                                                                                   0.066334 
+ComputeSweptVolume                                                                                   0.090210 
+ComputeSweptVolume                                                                                   0.073506 
+ComputeSweptVolume                                                                                   0.087876 
+ComputeSweptVolume                                                                                   0.071204 
+ComputeSweptVolume                                                                                   0.087208 
+ComputeSweptVolume                                                                                   0.082242 
+ComputeSweptVolume                                                                                   0.076712 
+ComputeSweptVolume                                                                                   0.089314 
+ComputeSweptVolume                                                                                   0.074852 
+ComputeSweptVolume                                                                                   0.078270 
+ComputeSweptVolume                                                                                   0.086981 
+ComputeSweptVolume                                                                                   0.090779 
+ComputeSweptVolume                                                                                   0.082779 
+ComputeSweptVolume                                                                                   0.088994 
+ComputeSweptVolume                                                                                   0.092387 
+ComputeSweptVolume                                                                                   0.072887 
+ComputeSweptVolume                                                                                   0.080181 
+ComputeSweptVolume                                                                                   0.080669 
+ComputeSweptVolume                                                                                   0.076531 
+ComputeSweptVolume                                                                                   0.066398 
+ComputeSweptVolume                                                                                   0.069922 
+ComputeSweptVolume                                                                                   0.076010 
+ComputeSweptVolume                                                                                   0.082449 
+ComputeSweptVolume                                                                                   0.087180 
+ComputeSweptVolume                                                                                   0.083031 
+ComputeSweptVolume                                                                                   0.083210 
+ComputeSweptVolume                                                                                   0.089917 
+ComputeSweptVolume                                                                                   0.087534 
+ComputeSweptVolume                                                                                   0.086696 
+ComputeSweptVolume                                                                                   0.091815 
+ComputeSweptVolume                                                                                   0.090702 
+ComputeSweptVolume                                                                                   0.081534 
+ComputeSweptVolume                                                                                   0.089869 
+ComputeSweptVolume                                                                                   0.089265 
+ComputeSweptVolume                                                                                   0.080796 
+ComputeSweptVolume                                                                                   0.081371 
+ComputeSweptVolume                                                                                   0.089133 
+ComputeSweptVolume                                                                                   0.083374 
+ComputeSweptVolume                                                                                   0.082567 
+ComputeSweptVolume                                                                                   0.089259 
+Obstacle_belief_update_collision                                                                     0.457500 
+Obstacle_belief_update_collision                                                                     0.463683 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                            0.000000        0.000000 
+Strategy: ParetoCosta1                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Motion Time            3.280321 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Motion Time            1.328032 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Motion Time            1.791821 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Motion Time            2.492842 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Motion Time            1.713140 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Motion Time            1.800466 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Motion Time            1.918493 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Motion Time            1.828267 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Planning Time          0.151559 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Planning Time          0.000106 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Planning Time          4.797269 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Planning Time          0.199933 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Planning Time          0.000137 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Planning Time          3.251199 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Planning Time          0.426249 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ParetoCosta1 Planning Time          0.088326 
+accumulated_cost                                                                                     0.000000       11.596365 
+lazySP path cost                                                                                     0.000000        1.646751 
+lazySP path cost                                                                                     0.000000        4.879050 
+lazySP path cost                                                                                     0.000000        3.292355 
+lazySP path cost                                                                                     0.000000        5.405342 
+lazySP path cost                                                                                     0.000000        3.875295 
+lazySP path cost                                                                                     0.000000        2.240969 
+lazysp astar iters                                                                                   0.000000        3.000000 
+lazysp astar iters                                                                                   0.000000       48.000000 
+lazysp astar iters                                                                                   0.000000        5.000000 
+lazysp astar iters                                                                                   0.000000       50.000000 
+lazysp astar iters                                                                                   0.000000        8.000000 
+lazysp astar iters                                                                                   0.000000        3.000000 
+lazysp_successful                                                                                    0.147041 
+lazysp_successful                                                                                    4.797112 
+lazysp_successful                                                                                    0.199768 
+lazysp_successful                                                                                    3.251042 
+lazysp_successful                                                                                    0.426086 
+lazysp_successful                                                                                    0.088150 
+

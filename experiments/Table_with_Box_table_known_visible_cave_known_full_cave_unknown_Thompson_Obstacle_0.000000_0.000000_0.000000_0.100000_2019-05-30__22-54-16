@@ -1,0 +1,471 @@
+2019-05-30 22:54:16
+
+Label                                                                                        tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000                                             0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                                                               3.188624              43        0.074154
+EdgeCheck                                                                                        3.549049              91        0.039001
+GetSweptVolume                                                                                   3.402217             117        0.029079
+Obstacle_belief_update_free                                                                     10.055439             252        0.039903
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                        0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                                 3.366035            3835        0.000878
+Strategy: Thompson                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time           65.964598               3       21.988199
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          4.004688               3        1.334896
+Update belief from free obs                                                                     10.057036             252        0.039909
+Viz_sample                                                                                       0.014755               4        0.003689
+Viz_sample_ee_path                                                                               0.000647               3        0.000216
+Viz_scenario                                                                                    55.280173             252        0.219366
+accumulated_cost                                                                                 0.000000               1        0.000000        4.962851        4.962851
+astar_add_neighbors                                                                              0.176563            1220        0.000145
+astar_cost_to_come                                                                               0.029919           61441        0.000000
+astar_edge_validity_check                                                                        0.015034           62211        0.000000
+astar_expansion_in_closed_list                                                                   0.001226            5981        0.000000
+astar_heuristic                                                                                  0.043070           55460        0.000001
+astar_num_edge_expansions                                                                        0.000000              68        0.000000    62211.000000      914.867647
+astar_num_lower_cost_edge_expansions                                                             0.000000              68        0.000000    55460.000000      815.588235
+astar_num_node_expansions                                                                        0.000000              68        0.000000     1507.000000       22.161765
+astar_push_to_queue                                                                              0.021266           55460        0.000000
+astar_queue_reduction                                                                            0.000522            1439        0.000000
+lazySP path cost                                                                                 0.000000               3        0.000000       10.231147        3.410382
+lazy_sp a_star                                                                                   0.183520              68        0.002699
+lazysp astar iters                                                                               0.000000               3        0.000000       68.000000       22.666667
+lazysp_successful                                                                                3.780281               3        1.260094
+simulation_state_move                                                                           10.413895             252        0.041325
+
+2019-05-30 22:54:16
+
+Label                                                                                                time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000                                             0.000000        0.000000 
+ComputeSweptVolume                                                                               0.081370 
+ComputeSweptVolume                                                                               0.041363 
+ComputeSweptVolume                                                                               0.068657 
+ComputeSweptVolume                                                                               0.065699 
+ComputeSweptVolume                                                                               0.058171 
+ComputeSweptVolume                                                                               0.066620 
+ComputeSweptVolume                                                                               0.080453 
+ComputeSweptVolume                                                                               0.060446 
+ComputeSweptVolume                                                                               0.089589 
+ComputeSweptVolume                                                                               0.064647 
+ComputeSweptVolume                                                                               0.084433 
+ComputeSweptVolume                                                                               0.089520 
+ComputeSweptVolume                                                                               0.063757 
+ComputeSweptVolume                                                                               0.069435 
+ComputeSweptVolume                                                                               0.082108 
+ComputeSweptVolume                                                                               0.069953 
+ComputeSweptVolume                                                                               0.082630 
+ComputeSweptVolume                                                                               0.072458 
+ComputeSweptVolume                                                                               0.081977 
+ComputeSweptVolume                                                                               0.078668 
+ComputeSweptVolume                                                                               0.078292 
+ComputeSweptVolume                                                                               0.087528 
+ComputeSweptVolume                                                                               0.072873 
+ComputeSweptVolume                                                                               0.076102 
+ComputeSweptVolume                                                                               0.086441 
+ComputeSweptVolume                                                                               0.092383 
+ComputeSweptVolume                                                                               0.082558 
+ComputeSweptVolume                                                                               0.087775 
+ComputeSweptVolume                                                                               0.088498 
+ComputeSweptVolume                                                                               0.070165 
+ComputeSweptVolume                                                                               0.083803 
+ComputeSweptVolume                                                                               0.081026 
+ComputeSweptVolume                                                                               0.074702 
+ComputeSweptVolume                                                                               0.053500 
+ComputeSweptVolume                                                                               0.065718 
+ComputeSweptVolume                                                                               0.058296 
+ComputeSweptVolume                                                                               0.067029 
+ComputeSweptVolume                                                                               0.036841 
+ComputeSweptVolume                                                                               0.072467 
+ComputeSweptVolume                                                                               0.085244 
+ComputeSweptVolume                                                                               0.074999 
+ComputeSweptVolume                                                                               0.077225 
+ComputeSweptVolume                                                                               0.083207 
+EdgeCheck                                                                                        0.087627 
+EdgeCheck                                                                                        0.001533 
+EdgeCheck                                                                                        0.050183 
+EdgeCheck                                                                                        0.074207 
+EdgeCheck                                                                                        0.001181 
+EdgeCheck                                                                                        0.074332 
+EdgeCheck                                                                                        0.068627 
+EdgeCheck                                                                                        0.001376 
+EdgeCheck                                                                                        0.073166 
+EdgeCheck                                                                                        0.086293 
+EdgeCheck                                                                                        0.001085 
+EdgeCheck                                                                                        0.065973 
+EdgeCheck                                                                                        0.094965 
+EdgeCheck                                                                                        0.001110 
+EdgeCheck                                                                                        0.070191 
+EdgeCheck                                                                                        0.090378 
+EdgeCheck                                                                                        0.096149 
+EdgeCheck                                                                                        0.069634 
+EdgeCheck                                                                                        0.075014 
+EdgeCheck                                                                                        0.091144 
+EdgeCheck                                                                                        0.001193 
+EdgeCheck                                                                                        0.075420 
+EdgeCheck                                                                                        0.088421 
+EdgeCheck                                                                                        0.001155 
+EdgeCheck                                                                                        0.082787 
+EdgeCheck                                                                                        0.087811 
+EdgeCheck                                                                                        0.003975 
+EdgeCheck                                                                                        0.084428 
+EdgeCheck                                                                                        0.083732 
+EdgeCheck                                                                                        0.001084 
+EdgeCheck                                                                                        0.092889 
+EdgeCheck                                                                                        0.078424 
+EdgeCheck                                                                                        0.082965 
+EdgeCheck                                                                                        0.092061 
+EdgeCheck                                                                                        0.001242 
+EdgeCheck                                                                                        0.098069 
+EdgeCheck                                                                                        0.088016 
+EdgeCheck                                                                                        0.001753 
+EdgeCheck                                                                                        0.001625 
+EdgeCheck                                                                                        0.093336 
+EdgeCheck                                                                                        0.094076 
+EdgeCheck                                                                                        0.001588 
+EdgeCheck                                                                                        0.075688 
+EdgeCheck                                                                                        0.001398 
+EdgeCheck                                                                                        0.090164 
+EdgeCheck                                                                                        0.001554 
+EdgeCheck                                                                                        0.086680 
+EdgeCheck                                                                                        0.004740 
+EdgeCheck                                                                                        0.080442 
+EdgeCheck                                                                                        0.059229 
+EdgeCheck                                                                                        0.001309 
+EdgeCheck                                                                                        0.071891 
+EdgeCheck                                                                                        0.063844 
+EdgeCheck                                                                                        0.001338 
+EdgeCheck                                                                                        0.076758 
+EdgeCheck                                                                                        0.043919 
+EdgeCheck                                                                                        0.001269 
+EdgeCheck                                                                                        0.078006 
+EdgeCheck                                                                                        0.001247 
+EdgeCheck                                                                                        0.001535 
+EdgeCheck                                                                                        0.091041 
+EdgeCheck                                                                                        0.080986 
+EdgeCheck                                                                                        0.001267 
+EdgeCheck                                                                                        0.082640 
+EdgeCheck                                                                                        0.001631 
+EdgeCheck                                                                                        0.004296 
+EdgeCheck                                                                                        0.001551 
+EdgeCheck                                                                                        0.090223 
+EdgeCheck                                                                                        0.001735 
+EdgeCheck                                                                                        0.001274 
+EdgeCheck                                                                                        0.004839 
+EdgeCheck                                                                                        0.001280 
+EdgeCheck                                                                                        0.001485 
+EdgeCheck                                                                                        0.001252 
+EdgeCheck                                                                                        0.001267 
+EdgeCheck                                                                                        0.001340 
+EdgeCheck                                                                                        0.001714 
+EdgeCheck                                                                                        0.007354 
+EdgeCheck                                                                                        0.001314 
+EdgeCheck                                                                                        0.001201 
+EdgeCheck                                                                                        0.001108 
+EdgeCheck                                                                                        0.001286 
+EdgeCheck                                                                                        0.001138 
+EdgeCheck                                                                                        0.001675 
+EdgeCheck                                                                                        0.001338 
+EdgeCheck                                                                                        0.001426 
+EdgeCheck                                                                                        0.001340 
+EdgeCheck                                                                                        0.004542 
+EdgeCheck                                                                                        0.001554 
+EdgeCheck                                                                                        0.001307 
+EdgeCheck                                                                                        0.001418 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                        0.000000        0.000000 
+Strategy: Thompson                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time           17.762006 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time           26.536185 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Motion Time           21.666407 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          3.785955 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.161739 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, Thompson Planning Time          0.056994 
+Viz_sample                                                                                       0.003625 
+Viz_sample                                                                                       0.004164 
+Viz_sample                                                                                       0.003387 
+Viz_sample                                                                                       0.003579 
+Viz_sample_ee_path                                                                               0.000201 
+Viz_sample_ee_path                                                                               0.000236 
+Viz_sample_ee_path                                                                               0.000210 
+accumulated_cost                                                                                 0.000000        4.962851 
+astar_num_edge_expansions                                                                        0.000000       65.000000 
+astar_num_edge_expansions                                                                        0.000000       66.000000 
+astar_num_edge_expansions                                                                        0.000000      119.000000 
+astar_num_edge_expansions                                                                        0.000000      120.000000 
+astar_num_edge_expansions                                                                        0.000000      178.000000 
+astar_num_edge_expansions                                                                        0.000000      125.000000 
+astar_num_edge_expansions                                                                        0.000000      301.000000 
+astar_num_edge_expansions                                                                        0.000000      124.000000 
+astar_num_edge_expansions                                                                        0.000000      360.000000 
+astar_num_edge_expansions                                                                        0.000000      125.000000 
+astar_num_edge_expansions                                                                        0.000000      417.000000 
+astar_num_edge_expansions                                                                        0.000000      123.000000 
+astar_num_edge_expansions                                                                        0.000000      408.000000 
+astar_num_edge_expansions                                                                        0.000000      114.000000 
+astar_num_edge_expansions                                                                        0.000000      421.000000 
+astar_num_edge_expansions                                                                        0.000000      127.000000 
+astar_num_edge_expansions                                                                        0.000000      598.000000 
+astar_num_edge_expansions                                                                        0.000000      117.000000 
+astar_num_edge_expansions                                                                        0.000000      714.000000 
+astar_num_edge_expansions                                                                        0.000000      123.000000 
+astar_num_edge_expansions                                                                        0.000000      772.000000 
+astar_num_edge_expansions                                                                        0.000000      124.000000 
+astar_num_edge_expansions                                                                        0.000000      880.000000 
+astar_num_edge_expansions                                                                        0.000000      167.000000 
+astar_num_edge_expansions                                                                        0.000000      879.000000 
+astar_num_edge_expansions                                                                        0.000000      166.000000 
+astar_num_edge_expansions                                                                        0.000000      990.000000 
+astar_num_edge_expansions                                                                        0.000000      319.000000 
+astar_num_edge_expansions                                                                        0.000000     1159.000000 
+astar_num_edge_expansions                                                                        0.000000      385.000000 
+astar_num_edge_expansions                                                                        0.000000     1173.000000 
+astar_num_edge_expansions                                                                        0.000000      996.000000 
+astar_num_edge_expansions                                                                        0.000000     2026.000000 
+astar_num_edge_expansions                                                                        0.000000     1573.000000 
+astar_num_edge_expansions                                                                        0.000000     2142.000000 
+astar_num_edge_expansions                                                                        0.000000     1516.000000 
+astar_num_edge_expansions                                                                        0.000000     2485.000000 
+astar_num_edge_expansions                                                                        0.000000     1797.000000 
+astar_num_edge_expansions                                                                        0.000000     2548.000000 
+astar_num_edge_expansions                                                                        0.000000     1754.000000 
+astar_num_edge_expansions                                                                        0.000000     2653.000000 
+astar_num_edge_expansions                                                                        0.000000     1740.000000 
+astar_num_edge_expansions                                                                        0.000000     2653.000000 
+astar_num_edge_expansions                                                                        0.000000     1771.000000 
+astar_num_edge_expansions                                                                        0.000000     2644.000000 
+astar_num_edge_expansions                                                                        0.000000     1767.000000 
+astar_num_edge_expansions                                                                        0.000000     2644.000000 
+astar_num_edge_expansions                                                                        0.000000     1718.000000 
+astar_num_edge_expansions                                                                        0.000000     2643.000000 
+astar_num_edge_expansions                                                                        0.000000     1671.000000 
+astar_num_edge_expansions                                                                        0.000000     2752.000000 
+astar_num_edge_expansions                                                                        0.000000     1714.000000 
+astar_num_edge_expansions                                                                        0.000000     2893.000000 
+astar_num_edge_expansions                                                                        0.000000     1713.000000 
+astar_num_edge_expansions                                                                        0.000000       59.000000 
+astar_num_edge_expansions                                                                        0.000000       66.000000 
+astar_num_edge_expansions                                                                        0.000000      124.000000 
+astar_num_edge_expansions                                                                        0.000000      131.000000 
+astar_num_edge_expansions                                                                        0.000000      183.000000 
+astar_num_edge_expansions                                                                        0.000000      125.000000 
+astar_num_edge_expansions                                                                        0.000000      289.000000 
+astar_num_edge_expansions                                                                        0.000000      114.000000 
+astar_num_edge_expansions                                                                        0.000000      299.000000 
+astar_num_edge_expansions                                                                        0.000000      124.000000 
+astar_num_edge_expansions                                                                        0.000000      353.000000 
+astar_num_edge_expansions                                                                        0.000000      120.000000 
+astar_num_edge_expansions                                                                        0.000000      615.000000 
+astar_num_edge_expansions                                                                        0.000000       37.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000       65.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000       66.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      117.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      118.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      173.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      122.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      289.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      120.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      343.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      120.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      395.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      117.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      386.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      107.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      397.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      119.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      556.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      108.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      659.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      113.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      711.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      113.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      807.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      154.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      802.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      152.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      899.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      298.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1048.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      361.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1061.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      922.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1797.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1423.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1898.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1374.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     2177.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1584.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     2231.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1553.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     2313.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1546.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     2312.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1553.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     2311.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1557.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     2310.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1504.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     2307.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1470.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     2395.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1490.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     2517.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000     1496.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000       59.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000       66.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      122.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      129.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      178.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      122.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      276.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      110.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      285.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      119.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      334.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      114.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000      573.000000 
+astar_num_lower_cost_edge_expansions                                                             0.000000       37.000000 
+astar_num_node_expansions                                                                        0.000000        2.000000 
+astar_num_node_expansions                                                                        0.000000        2.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        4.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        6.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        7.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        8.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        8.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        8.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000       11.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000       13.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000       14.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000       16.000000 
+astar_num_node_expansions                                                                        0.000000        4.000000 
+astar_num_node_expansions                                                                        0.000000       16.000000 
+astar_num_node_expansions                                                                        0.000000        4.000000 
+astar_num_node_expansions                                                                        0.000000       19.000000 
+astar_num_node_expansions                                                                        0.000000        7.000000 
+astar_num_node_expansions                                                                        0.000000       24.000000 
+astar_num_node_expansions                                                                        0.000000        8.000000 
+astar_num_node_expansions                                                                        0.000000       24.000000 
+astar_num_node_expansions                                                                        0.000000       21.000000 
+astar_num_node_expansions                                                                        0.000000       43.000000 
+astar_num_node_expansions                                                                        0.000000       36.000000 
+astar_num_node_expansions                                                                        0.000000       46.000000 
+astar_num_node_expansions                                                                        0.000000       35.000000 
+astar_num_node_expansions                                                                        0.000000       64.000000 
+astar_num_node_expansions                                                                        0.000000       44.000000 
+astar_num_node_expansions                                                                        0.000000       65.000000 
+astar_num_node_expansions                                                                        0.000000       43.000000 
+astar_num_node_expansions                                                                        0.000000       69.000000 
+astar_num_node_expansions                                                                        0.000000       43.000000 
+astar_num_node_expansions                                                                        0.000000       69.000000 
+astar_num_node_expansions                                                                        0.000000       45.000000 
+astar_num_node_expansions                                                                        0.000000       69.000000 
+astar_num_node_expansions                                                                        0.000000       45.000000 
+astar_num_node_expansions                                                                        0.000000       70.000000 
+astar_num_node_expansions                                                                        0.000000       44.000000 
+astar_num_node_expansions                                                                        0.000000       72.000000 
+astar_num_node_expansions                                                                        0.000000       43.000000 
+astar_num_node_expansions                                                                        0.000000       74.000000 
+astar_num_node_expansions                                                                        0.000000       45.000000 
+astar_num_node_expansions                                                                        0.000000       80.000000 
+astar_num_node_expansions                                                                        0.000000       45.000000 
+astar_num_node_expansions                                                                        0.000000        2.000000 
+astar_num_node_expansions                                                                        0.000000        2.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        4.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        6.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        6.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000        7.000000 
+astar_num_node_expansions                                                                        0.000000        3.000000 
+astar_num_node_expansions                                                                        0.000000       12.000000 
+astar_num_node_expansions                                                                        0.000000        2.000000 
+lazySP path cost                                                                                 0.000000        4.962851 
+lazySP path cost                                                                                 0.000000        3.629652 
+lazySP path cost                                                                                 0.000000        1.638643 
+lazy_sp a_star                                                                                   0.000294 
+lazy_sp a_star                                                                                   0.000318 
+lazy_sp a_star                                                                                   0.000511 
+lazy_sp a_star                                                                                   0.000406 
+lazy_sp a_star                                                                                   0.000533 
+lazy_sp a_star                                                                                   0.000583 
+lazy_sp a_star                                                                                   0.000908 
+lazy_sp a_star                                                                                   0.000400 
+lazy_sp a_star                                                                                   0.001021 
+lazy_sp a_star                                                                                   0.000386 
+lazy_sp a_star                                                                                   0.001178 
+lazy_sp a_star                                                                                   0.000385 
+lazy_sp a_star                                                                                   0.001200 
+lazy_sp a_star                                                                                   0.000358 
+lazy_sp a_star                                                                                   0.001271 
+lazy_sp a_star                                                                                   0.000389 
+lazy_sp a_star                                                                                   0.001667 
+lazy_sp a_star                                                                                   0.000365 
+lazy_sp a_star                                                                                   0.001984 
+lazy_sp a_star                                                                                   0.000394 
+lazy_sp a_star                                                                                   0.002286 
+lazy_sp a_star                                                                                   0.000407 
+lazy_sp a_star                                                                                   0.002358 
+lazy_sp a_star                                                                                   0.000512 
+lazy_sp a_star                                                                                   0.002520 
+lazy_sp a_star                                                                                   0.000497 
+lazy_sp a_star                                                                                   0.003139 
+lazy_sp a_star                                                                                   0.000932 
+lazy_sp a_star                                                                                   0.003297 
+lazy_sp a_star                                                                                   0.001193 
+lazy_sp a_star                                                                                   0.003315 
+lazy_sp a_star                                                                                   0.002936 
+lazy_sp a_star                                                                                   0.005494 
+lazy_sp a_star                                                                                   0.005075 
+lazy_sp a_star                                                                                   0.005851 
+lazy_sp a_star                                                                                   0.004458 
+lazy_sp a_star                                                                                   0.006867 
+lazy_sp a_star                                                                                   0.005075 
+lazy_sp a_star                                                                                   0.007797 
+lazy_sp a_star                                                                                   0.005385 
+lazy_sp a_star                                                                                   0.007768 
+lazy_sp a_star                                                                                   0.005103 
+lazy_sp a_star                                                                                   0.007631 
+lazy_sp a_star                                                                                   0.005183 
+lazy_sp a_star                                                                                   0.007201 
+lazy_sp a_star                                                                                   0.005202 
+lazy_sp a_star                                                                                   0.007868 
+lazy_sp a_star                                                                                   0.005092 
+lazy_sp a_star                                                                                   0.007718 
+lazy_sp a_star                                                                                   0.005034 
+lazy_sp a_star                                                                                   0.008322 
+lazy_sp a_star                                                                                   0.004756 
+lazy_sp a_star                                                                                   0.007990 
+lazy_sp a_star                                                                                   0.005579 
+lazy_sp a_star                                                                                   0.000254 
+lazy_sp a_star                                                                                   0.000264 
+lazy_sp a_star                                                                                   0.000431 
+lazy_sp a_star                                                                                   0.000479 
+lazy_sp a_star                                                                                   0.000642 
+lazy_sp a_star                                                                                   0.000471 
+lazy_sp a_star                                                                                   0.000930 
+lazy_sp a_star                                                                                   0.000372 
+lazy_sp a_star                                                                                   0.000881 
+lazy_sp a_star                                                                                   0.000425 
+lazy_sp a_star                                                                                   0.001152 
+lazy_sp a_star                                                                                   0.000448 
+lazy_sp a_star                                                                                   0.002143 
+lazy_sp a_star                                                                                   0.000236 
+lazysp astar iters                                                                               0.000000       54.000000 
+lazysp astar iters                                                                               0.000000       13.000000 
+lazysp astar iters                                                                               0.000000        1.000000 
+lazysp_successful                                                                                3.723267 
+lazysp_successful                                                                                0.053652 
+lazysp_successful                                                                                0.003361 
+

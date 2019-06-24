@@ -1,0 +1,58 @@
+2019-05-31 03:03:52
+
+Label                                                    tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Bonkers_0.000000_0.000000_0.000000_0.050000          0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                          13.732146             105        0.130782
+EdgeCheck                                                   15.040745             134        0.112244
+Fridge, ParetoCosta1 Motion Time                             4.960190               2        2.480095
+Fridge, ParetoCosta1 Planning Time                           0.128798               2        0.064399
+GetSweptVolume                                              14.612958             268        0.054526
+Obstacle_belief_update_collision                             1.066736               1        1.066736
+Obstacle_belief_update_free                                  0.152812               2        0.076406
+Scenario: Fridge                                             0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                            13.404078            8943        0.001499
+Strategy: ParetoCosta1                                       0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                                  0.070563               1        0.070563
+Viz_scenario                                                 0.707930               2        0.353965
+astar_add_neighbors                                          0.249157            1870        0.000133
+astar_cost_to_come                                           0.043007           87199        0.000000
+astar_edge_validity_check                                    0.019766           89553        0.000000
+astar_expansion_in_closed_list                               0.001526            7500        0.000000
+astar_heuristic                                              0.060845           78810        0.000001
+astar_num_edge_expansions                                    0.000000             113        0.000000    89553.000000      792.504425
+astar_num_lower_cost_edge_expansions                         0.000000             113        0.000000    78810.000000      697.433628
+astar_num_node_expansions                                    0.000000             113        0.000000     2341.000000       20.716814
+astar_push_to_queue                                          0.028669           78810        0.000000
+astar_queue_reduction                                        0.000822            2229        0.000000
+lazySP path cost                                             0.000000               2        0.000000             inf             inf
+lazy_sp a_star                                               0.259962             113        0.002301
+lazysp astar iters                                           0.000000               2        0.000000      113.000000       56.500000
+lazysp_no_path_found                                        17.312373               1       17.312373
+lazysp_successful                                            0.124754               1        0.124754
+real_state_move                                              1.299714               1        1.299714
+
+2019-05-31 03:03:52
+
+Label                                                            time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Bonkers_0.000000_0.000000_0.000000_0.050000          0.000000        0.000000 
+Fridge, ParetoCosta1 Motion Time                             3.307573 
+Fridge, ParetoCosta1 Motion Time                             1.652617 
+Fridge, ParetoCosta1 Planning Time                           0.128759 
+Fridge, ParetoCosta1 Planning Time                           0.000038 
+Obstacle_belief_update_collision                             1.066736 
+Obstacle_belief_update_free                                  0.083767 
+Obstacle_belief_update_free                                  0.069045 
+Scenario: Fridge                                             0.000000        0.000000 
+Strategy: ParetoCosta1                                       0.000000        0.000000 
+Update belief from free obs                                  0.070563 
+Viz_scenario                                                 0.355350 
+Viz_scenario                                                 0.352580 
+lazySP path cost                                             0.000000        0.838143 
+lazySP path cost                                             0.000000             inf 
+lazysp astar iters                                           0.000000        1.000000 
+lazysp astar iters                                           0.000000      112.000000 
+lazysp_no_path_found                                        17.312373 
+lazysp_successful                                            0.124754 
+real_state_move                                              1.299714 
+

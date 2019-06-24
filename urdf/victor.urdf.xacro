@@ -65,5 +65,12 @@
         <origin xyz="0 0 0.02705" rpy="0 0 ${PI/4}"/> <!-- Offset measured with a tape measure; please confirm/fix this value -->
     </xacro:robotiq_3finger>
 
+    <link name="gpu_voxel_world"/>
+    <joint name="gpu_voxel_world_joint" type="fixed">
+      <parent link="gpu_voxel_world"/>
+      <child link="victor_root"/>
+      <origin rpy="0.0 0.0 0.0" xyz="1.0 2.0 0.0"/>
+    </joint>
+
 
 </robot>

@@ -1,0 +1,92 @@
+2019-05-24 23:09:38
+
+Label                                                                                   tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000                                        0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                                                         10.775617             135        0.079819
+GetSweptVolume                                                                             11.985925           55792        0.000215
+ORO_plan                                                                                 2524.555231               3      841.518410
+Obstacle_belief_update_collision                                                          270.983460             910        0.297784
+Obstacle_belief_update_free                                                              1242.816866           51906        0.023944
+Rollout                                                                                  2366.885506             777        3.046185
+Rollout viz sv                                                                             23.524984            3530        0.006664
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                           48.700908           61598        0.000791
+Simulate transition first                                                                  49.046296             777        0.063123
+Simulate transition in rollout                                                           1789.137310            3530        0.506838
+Strategy: ORO                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ORO Motion Time           42.339413               3       14.113138
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ORO Planning Time       2524.560645               3      841.520215
+Update belief from free obs                                                                 5.731570             252        0.022744
+Viz_sample                                                                                  0.138827              30        0.004628
+Viz_scenario                                                                               35.924720             252        0.142558
+accumulated_cost                                                                            0.000000               1        0.000000        4.962851        4.962851
+astar_add_neighbors                                                                        31.487653          219477        0.000143
+astar_cost_to_come                                                                          5.636000        11298769        0.000000
+astar_edge_validity_check                                                                   2.963412        11298769        0.000000
+astar_expansion_in_closed_list                                                              0.159933          811723        0.000000
+astar_heuristic                                                                             4.694821        10331861        0.000000
+astar_num_edge_expansions                                                                   0.000000           25536        0.000000 11298769.000000      442.464325
+astar_num_lower_cost_edge_expansions                                                        0.000000           25536        0.000000 10331861.000000      404.599820
+astar_num_node_expansions                                                                   0.000000           25536        0.000000   269514.000000       10.554276
+astar_push_to_queue                                                                         4.442884        10331861        0.000000
+astar_queue_reduction                                                                       0.121619          243979        0.000000
+lazySP path cost                                                                            0.000000            3550        0.000000             inf             inf
+lazy_sp a_star                                                                             33.176878           25536        0.001299
+lazysp astar iters                                                                          0.000000            3550        0.000000    25536.000000        7.193239
+lazysp_no_path_found                                                                        5.190028               1        5.190028
+lazysp_successful                                                                         558.395879            3549        0.157339
+rollout lazysp                                                                            552.289564            3530        0.156456
+simulate_belief_update_collision                                                          346.494464             910        0.380763
+simulate_belief_update_free                                                                91.330502            3397        0.026886
+simulate_belief_update_free_before_collision                                             1153.754236           48257        0.023909
+simulation_state_move                                                                       6.143953             252        0.024381
+
+2019-05-24 23:09:39
+
+Label                                                                                           time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000                                        0.000000        0.000000 
+ORO_plan                                                                                 1529.657688 
+ORO_plan                                                                                  854.799034 
+ORO_plan                                                                                  140.098509 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000        0.000000 
+Strategy: ORO                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ORO Motion Time           12.108958 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ORO Motion Time           16.813570 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ORO Motion Time           13.416885 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ORO Planning Time       1529.662580 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ORO Planning Time        854.799312 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, ORO Planning Time        140.098753 
+Viz_sample                                                                                  0.004929 
+Viz_sample                                                                                  0.004652 
+Viz_sample                                                                                  0.004527 
+Viz_sample                                                                                  0.007076 
+Viz_sample                                                                                  0.004835 
+Viz_sample                                                                                  0.004519 
+Viz_sample                                                                                  0.004313 
+Viz_sample                                                                                  0.006355 
+Viz_sample                                                                                  0.004443 
+Viz_sample                                                                                  0.004830 
+Viz_sample                                                                                  0.005262 
+Viz_sample                                                                                  0.004107 
+Viz_sample                                                                                  0.007610 
+Viz_sample                                                                                  0.004237 
+Viz_sample                                                                                  0.004660 
+Viz_sample                                                                                  0.004368 
+Viz_sample                                                                                  0.006910 
+Viz_sample                                                                                  0.005152 
+Viz_sample                                                                                  0.004141 
+Viz_sample                                                                                  0.003465 
+Viz_sample                                                                                  0.003587 
+Viz_sample                                                                                  0.003474 
+Viz_sample                                                                                  0.003419 
+Viz_sample                                                                                  0.003485 
+Viz_sample                                                                                  0.003739 
+Viz_sample                                                                                  0.003464 
+Viz_sample                                                                                  0.003576 
+Viz_sample                                                                                  0.003863 
+Viz_sample                                                                                  0.006305 
+Viz_sample                                                                                  0.003524 
+accumulated_cost                                                                            0.000000        4.962851 
+lazysp_no_path_found                                                                        5.190028 
+

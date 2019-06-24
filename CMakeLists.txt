@@ -3,14 +3,19 @@ project(gpu_voxel_planning)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 set(CATKIN_PACKAGES
   roscpp
   victor_hardware_interface
-  or_victor
+  arm_or_robots
   trajectory_msgs
   arc_utilities
   arm_pointcloud_utilities
+  arm_video_recorder
+  graph_planner
+  moveit_core
+  moveit_visual_tools
   )
 
 ## Find catkin macros and libraries
@@ -100,6 +105,7 @@ set(EXTERN_LIBS
 include_directories(
   include
   include/${PROJECT_NAME}
+  include/${PROJECT_NAME}/old
   ${catkin_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${gpu_voxels_INCLUDE_DIRS}
@@ -107,6 +113,7 @@ include_directories(
   ${OMPL_INCLUDE_DIRS}
   ${orocos_kdl_INCLUDE_DIRS} # this should be removed in upcoming versions.
   )
+
 
 add_library(path_smoothing src/ompl_modifications/path_smoothing.cpp
   ${OMPL_LIBRARIES}
@@ -164,9 +171,11 @@ target_link_libraries(costrrtc
 #   box_world_lib
 #   )
 
+
 add_library(victor_model
-  src/gpu_voxels_victor.cpp
-  src/worlds.cpp)
+  src/old/gpu_voxels_victor.cpp
+  src/old/worlds.cpp
+  src/path_utils.cpp)
 add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
 target_link_libraries(victor_model
   ${catkin_LIBRARIES}
@@ -187,11 +196,11 @@ target_link_libraries(victor_model
 #   )
 
 
-add_library(victor_validator src/victor_validator.cpp)
+add_library(victor_validator src/old/victor_validator.cpp)
 target_link_libraries(victor_validator
   victor_model)
 
-add_library(victor_planning src/victor_planning.cpp)
+add_library(victor_planning src/old/victor_planning.cpp)
 target_link_libraries(victor_planning
   victor_validator
   victor_model
@@ -202,16 +211,129 @@ target_link_libraries(victor_planning
   custom_rrtstar
   )
 
-add_executable(wip_victor_sim src/wip_victor_sim.cpp)
+
+add_library(victor_local_controller src/old/victor_local_controller.cpp)
+target_link_libraries(victor_local_controller
+  # victor_validator
+  victor_model                 
+  ${EXTERN_LIBS}
+  )
+
+add_executable(wip_victor_sim src/old/wip_victor_sim.cpp)
 target_link_libraries(wip_victor_sim
   ${EXTERN_LIBS}
   lazyrrtf
   victor_model
   victor_planning
+  victor_local_controller
   victor_validator
   )
 
-add_executable(victor_sim_timings src/victor_sim_timings.cpp)
+
+add_library(victor_halton_roadmap
+  src/strategies/victor_halton_roadmap.cpp)
+
+
+add_library(voxelgrid_library
+  src/maps/prob_map.cpp
+  src/maps/distance_map.cpp
+  )
+target_link_libraries(voxelgrid_library
+  ${EXTERN_LIBS}
+  )
+
+add_library(gpu_voxels_viz
+  src/gpu_voxel_rviz_visualization.cpp)
+target_link_libraries(gpu_voxels_viz
+  voxelgrid_library
+  )
+
+
+set(Planning_SOURCES
+  src/scenarios/simulation_scenarios.cpp
+  src/scenarios/real_scenario.cpp
+  src/strategies/graph_search_strategies.cpp
+  src/scenario_tester.cpp
+  # src/strategies/victor_selective_densification.cpp      #Removed due to long compilation time
+  # src/strategies/selective_densification_strategies.cpp  #Removed due to long compilation time
+  # src/strategies/ompl_strategies.cpp                     #Removed due to long compilation time
+  # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
+  src/path_utils.cpp
+  )
+
+add_library(planning_library
+  ${Planning_SOURCES}
+  )
+target_link_libraries(planning_library
+  ${EXTERN_LIBS}
+  voxelgrid_library
+  victor_halton_roadmap
+  gpu_voxels_viz
+  )
+
+add_executable(wip_prob_map
+  src/wip/wip_prob_map.cpp
+  )
+target_link_libraries(wip_prob_map
+  # ${EXTERN_LIBS}
+  planning_library
+  )
+
+
+add_executable(simulation_timings
+  src/simulation_timings.cpp
+  )
+target_link_libraries(simulation_timings
+  ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
+
+
+#Commented out for speed
+# add_executable(wip_roadmap
+#   src/wip_roadmap.cpp)
+# target_link_libraries(wip_roadmap
+#   ${EXTERN_LIBS}
+#   planning_library
+#   victor_halton_roadmap
+#   )
+
+add_executable(wip_BTP
+  src/wip_BTP.cpp)
+target_link_libraries(wip_BTP
+  # ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
+
+add_executable(wip_real_trials
+  src/wip_real_trials.cpp)
+target_link_libraries(wip_real_trials
+  # ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
+
+# Commented out due to long compilation time
+# add_executable(selective_densification_experiments
+#   src/selective_densification_experiments.cpp
+#   )
+# target_link_libraries(selective_densification_experiments
+#   ${EXTERN_LIBS}
+#   planning_library
+#   victor_halton_roadmap
+#   )
+
+
+# add_dependencies(wip_prob_map
+#   planning_library
+#   ${EXTERN_LIBS}
+#   ${catkin_EXPORTED_TARGETS}
+#   )
+
+
+add_executable(victor_sim_timings src/old/victor_sim_timings.cpp)
 target_link_libraries(victor_sim_timings
   ${EXTERN_LIBS}
   lazyrrtf
@@ -222,7 +344,7 @@ target_link_libraries(victor_sim_timings
 
 
 
-# add_library(wip_optimization_objective src/wip_optimization_objective.cpp)
+# add_library(wip_optimization_objective src/old/wip_optimization_objective.cpp)
 # target_link_libraries(wip_optimization_objective
 #   victor_model
 #   # victor_planning_base
@@ -230,7 +352,7 @@ target_link_libraries(victor_sim_timings
 
 
 
-# add_executable(ros_planning_node src/ros_planner.cpp)
+# add_executable(ros_planning_node src/old/ros_planner.cpp)
 # target_link_libraries (ros_planning_node
 #   victor_lbkpiece
 #   victor_trrt
@@ -242,7 +364,7 @@ target_link_libraries(victor_sim_timings
 #   ${gpu_voxels_LIBRARIES}
 #   )
 
-# add_executable(validator_timing src/validator_timing.cpp)
+# add_executable(validator_timing src/old/validator_timing.cpp)
 # target_link_libraries (validator_timing
 #   victor_planning_lbkpiece
 #   ${catkin_LIBRARIES}
@@ -258,28 +380,28 @@ target_link_libraries(victor_sim_timings
 #   )
 
 
-add_executable(collision_link_node src/wip/collision_link_node.cpp)
-target_link_libraries(collision_link_node
-  ${catkin_LIBRARIES}
-  )
+# add_executable(collision_link_node src/wip/collision_link_node.cpp)
+# target_link_libraries(collision_link_node
+#   ${catkin_LIBRARIES}
+#   )
 
-add_executable(wip_victor_real src/wip_victor_real.cpp)
-target_link_libraries(wip_victor_real
-  ${EXTERN_LIBS}
-  lazyrrtf
-  victor_model
-  victor_planning
-  victor_validator
-  )
+# add_executable(wip_victor_real src/old/wip_victor_real.cpp)
+# target_link_libraries(wip_victor_real
+#   ${EXTERN_LIBS}
+#   lazyrrtf
+#   victor_model
+#   victor_planning
+#   victor_validator
+#   )
 
-add_executable(victor_real_timings src/victor_real_timings.cpp)
-target_link_libraries(victor_real_timings
-  ${EXTERN_LIBS}
-  lazyrrtf
-  victor_model
-  victor_planning
-  victor_validator
-  )
+# add_executable(victor_real_timings src/old/victor_real_timings.cpp)
+# target_link_libraries(victor_real_timings
+#   ${EXTERN_LIBS}
+#   lazyrrtf
+#   victor_model
+#   victor_planning
+#   victor_validator
+#   )
 
 
 
@@ -290,30 +412,56 @@ target_link_libraries(victor_real_timings
 # To build tests, install google's testing framework
 # https://github.com/google/googletest/
 
-IF(GTEST_FOUND)
-  include_directories(${GTEST_INCLUDE_DIRS})
-  add_executable(test_gpu_voxels_victor tests/gpu_voxels_victor_test.cpp)
-  target_link_libraries(test_gpu_voxels_victor
-    victor_model
-    ${EXTERN_LIBS}
-    ${GTEST_LIBRARIES}
-    )
 
-  add_executable(test_validators tests/validators_test.cpp)
-  target_link_libraries(test_validators
-    victor_model
-    victor_validator
-    ${EXTERN_LIBS}
-    ${GTEST_LIBRARIES}
-    )
+# catkin_add_gtest(test_gpu_voxels_victor tests/gpu_voxels_victor_test.cpp)
+# target_link_libraries(test_gpu_voxels_victor
+#   victor_model
+#   ${EXTERN_LIBS}
+#   ${GTEST_LIBRARIES}
+#   )
 
-  
-  add_executable(test_planners tests/planners_test.cpp)
-  target_link_libraries(test_planners
-    victor_model
-    victor_validator
-    victor_planning
-    ${EXTERN_LIBS}
-    ${GTEST_LIBRARIES}
-    )
-ENDIF(GTEST_FOUND)
+# catkin_add_gtest(test_validators tests/validators_test.cpp)
+# target_link_libraries(test_validators
+#   victor_model
+#   victor_validator
+#   ${EXTERN_LIBS}
+#   ${GTEST_LIBRARIES}
+#   )
+
+# catkin_add_gtest(test_planners tests/planners_test.cpp)
+# target_link_libraries(test_planners
+#   victor_model
+#   victor_validator
+#   victor_planning
+#   ${EXTERN_LIBS}
+#   ${GTEST_LIBRARIES}
+#   )
+
+catkin_add_gtest(test_path_utils tests/test_path_utils.cpp)
+target_link_libraries(test_path_utils
+  # victor_model
+  # victor_validator
+  # victor_planning
+  ${EXTERN_LIBS}
+  ${GTEST_LIBRARIES}
+  planning_library
+  victor_halton_roadmap
+  )
+
+
+catkin_add_gtest(test_GVP
+  tests/GVP_test.cpp)
+target_link_libraries(test_GVP
+  ${EXTERN_LIBS}
+  voxelgrid_library
+  planning_library
+)
+
+catkin_add_gtest(test_graph_search
+  tests/graph_search_strategies_test.cpp)
+target_link_libraries(test_graph_search
+  ${EXTERN_LIBS}
+  voxelgrid_library
+  planning_library
+  victor_halton_roadmap
+)

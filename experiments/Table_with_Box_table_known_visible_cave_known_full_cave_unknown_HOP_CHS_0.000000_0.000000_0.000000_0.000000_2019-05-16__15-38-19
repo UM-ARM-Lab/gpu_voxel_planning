@@ -1,0 +1,140 @@
+2019-05-16 15:38:19
+
+Label                                                                                   tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: CHS_0.000000_0.000000_0.000000_0.000000                                             0.000000               1        0.000000        0.000000        0.000000
+Bump                                                                                        0.000000               2        0.000000        0.000000        0.000000
+ComputeSweptVolume                                                                          9.223013             130        0.070946
+Copy_graph                                                                                  3.992385             700        0.005703
+EdgeCheck                                                                                  65.421589           26454        0.002473
+GetSweptVolume                                                                             10.057948           27088        0.000371
+HOP_plan                                                                                  173.490591               7       24.784370
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                            9.974649           12685        0.000786
+Strategy: HOP                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            1.921100               9        0.213456
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time        173.520333               9       19.280037
+Update belief from free obs                                                                 0.008048             620        0.000013
+Viz sample sv                                                                               3.393773             634        0.005353
+Viz_sample                                                                                  2.576900             700        0.003681
+Viz_sample_ee_path                                                                          0.123571             634        0.000195
+Viz_scenario                                                                                0.059433             622        0.000096
+accumulated_cost                                                                            0.000000               1        0.000000       12.205217       12.205217
+astar_add_neighbors                                                                        87.807050          633982        0.000139
+astar_cost_to_come                                                                         14.287138        30464112        0.000000
+astar_edge_validity_check                                                                   7.347589        30969695        0.000000
+astar_expansion_in_closed_list                                                              0.683437         3454070        0.000000
+astar_heuristic                                                                            20.416981        27010042        0.000001
+astar_num_edge_expansions                                                                   0.000000           20205        0.000000 30969695.000000     1532.773818
+astar_num_lower_cost_edge_expansions                                                        0.000000           20205        0.000000 27010042.000000     1336.799901
+astar_num_node_expansions                                                                   0.000000           20205        0.000000   964504.000000       47.735907
+astar_push_to_queue                                                                        10.795832        27010042        0.000000
+astar_queue_reduction                                                                       0.293057          944365        0.000000
+lazySP path cost                                                                            0.000000             700        0.000000             inf             inf
+lazy_sp a_star                                                                             90.850097           20205        0.004496
+lazysp astar iters                                                                          0.000000             700        0.000000    20205.000000       28.864286
+lazysp_no_path_found                                                                       78.831300              66        1.194414
+lazysp_successful                                                                          78.031942             634        0.123079
+simulation_state_move                                                                       0.867050             620        0.001398
+
+2019-05-16 15:38:19
+
+Label                                                                                           time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: CHS_0.000000_0.000000_0.000000_0.000000                                             0.000000        0.000000 
+Bump                                                                                        0.000000        0.000000 
+Bump                                                                                        0.000000        0.000000 
+HOP_plan                                                                                    2.661242 
+HOP_plan                                                                                   22.298911 
+HOP_plan                                                                                   25.604807 
+HOP_plan                                                                                   64.030187 
+HOP_plan                                                                                   28.398875 
+HOP_plan                                                                                   19.171024 
+HOP_plan                                                                                   11.325544 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000        0.000000 
+Strategy: HOP                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            0.307115 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            0.139009 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            0.180937 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            0.368711 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            0.130617 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            0.146138 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            0.215447 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            0.214170 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            0.218955 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          2.668843 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          0.000101 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         22.302374 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         25.608329 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          0.000105 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         64.033671 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         28.402580 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         19.174567 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time         11.329763 
+accumulated_cost                                                                            0.000000       12.205217 
+lazysp_no_path_found                                                                        5.250185 
+lazysp_no_path_found                                                                        1.337276 
+lazysp_no_path_found                                                                        1.380362 
+lazysp_no_path_found                                                                        1.355313 
+lazysp_no_path_found                                                                        1.376929 
+lazysp_no_path_found                                                                        2.061672 
+lazysp_no_path_found                                                                        1.208434 
+lazysp_no_path_found                                                                        1.230962 
+lazysp_no_path_found                                                                        1.258057 
+lazysp_no_path_found                                                                        1.224030 
+lazysp_no_path_found                                                                        1.268458 
+lazysp_no_path_found                                                                        1.229402 
+lazysp_no_path_found                                                                        1.352761 
+lazysp_no_path_found                                                                        1.207818 
+lazysp_no_path_found                                                                        1.212162 
+lazysp_no_path_found                                                                        1.253399 
+lazysp_no_path_found                                                                        1.219594 
+lazysp_no_path_found                                                                        1.305039 
+lazysp_no_path_found                                                                        1.209277 
+lazysp_no_path_found                                                                        1.231954 
+lazysp_no_path_found                                                                        1.223916 
+lazysp_no_path_found                                                                        1.192724 
+lazysp_no_path_found                                                                        1.210711 
+lazysp_no_path_found                                                                        1.205157 
+lazysp_no_path_found                                                                        1.231741 
+lazysp_no_path_found                                                                        1.187553 
+lazysp_no_path_found                                                                        1.205507 
+lazysp_no_path_found                                                                        1.212299 
+lazysp_no_path_found                                                                        1.208808 
+lazysp_no_path_found                                                                        2.794939 
+lazysp_no_path_found                                                                        1.327707 
+lazysp_no_path_found                                                                        1.321246 
+lazysp_no_path_found                                                                        1.314491 
+lazysp_no_path_found                                                                        1.329735 
+lazysp_no_path_found                                                                        1.327890 
+lazysp_no_path_found                                                                        1.311386 
+lazysp_no_path_found                                                                        1.331005 
+lazysp_no_path_found                                                                        1.339314 
+lazysp_no_path_found                                                                        1.336969 
+lazysp_no_path_found                                                                        1.586862 
+lazysp_no_path_found                                                                        0.898687 
+lazysp_no_path_found                                                                        0.923017 
+lazysp_no_path_found                                                                        0.899244 
+lazysp_no_path_found                                                                        0.918357 
+lazysp_no_path_found                                                                        0.962198 
+lazysp_no_path_found                                                                        0.935204 
+lazysp_no_path_found                                                                        0.900709 
+lazysp_no_path_found                                                                        0.922251 
+lazysp_no_path_found                                                                        0.919162 
+lazysp_no_path_found                                                                        0.903092 
+lazysp_no_path_found                                                                        0.913859 
+lazysp_no_path_found                                                                        0.923900 
+lazysp_no_path_found                                                                        0.914883 
+lazysp_no_path_found                                                                        0.934854 
+lazysp_no_path_found                                                                        0.686465 
+lazysp_no_path_found                                                                        0.681369 
+lazysp_no_path_found                                                                        0.710381 
+lazysp_no_path_found                                                                        0.681315 
+lazysp_no_path_found                                                                        0.692505 
+lazysp_no_path_found                                                                        0.690957 
+lazysp_no_path_found                                                                        0.682807 
+lazysp_no_path_found                                                                        0.693099 
+lazysp_no_path_found                                                                        0.711271 
+lazysp_no_path_found                                                                        0.759627 
+lazysp_no_path_found                                                                        0.697499 
+lazysp_no_path_found                                                                        0.901548 
+

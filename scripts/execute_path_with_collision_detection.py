@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 from openravepy import *
-import or_victor.motion
+import arm_or_robots.motion_victor
 # import victor_hardware_interface.msg as vhimsg
 import gpu_voxel_planning.srv as gvpsrv
 from victor_hardware_interface import victor_utils as vu
@@ -29,8 +29,7 @@ last_collision_info = CollisionInformation()
 ros_path = []
 path_in_progress = False
 
-
-ext_torque_limits = [20, 20, 15, 5, 4, 3, .9]
+ext_torque_limits = [10, 5, 4, 5, 4, 3, .9]
 
 right_arm_listener = None
 vm = None
@@ -44,7 +43,9 @@ def check_collision(motion_status_msg):
         g_links_in_contact = []
         jt = vu.jvq_to_list(motion_status_msg.estimated_external_torque)
 
-        col_indicies = [idx for idx in range(len(jt)) if abs(jt[idx]) > ext_torque_limits[idx]]
+        col_indicies = [idx for idx in range(len(jt))
+                        if abs(jt[idx]) > ext_torque_limits[idx]
+                        if idx > 0]
 
         if(col_indicies):
             print jt
@@ -193,12 +194,20 @@ def execute_path(path):
     
     cur_pos = vu.jvq_to_list(right_arm_listener.get().measured_joint_position)
 
+    _, cur_ind, _ = pu.closest_point(path, cur_pos);
+    free_poses = path[0:cur_ind];
     next_poses = pu.densify(pu.travel_along(path, .15, cur_pos), .03)
 
+    for pos in free_poses:
+        jtp_msg = JointTrajectoryPoint()
+        jtp_msg.positions = pos
+        msg.free_path.points.append(jtp_msg)
+        
     for pos in next_poses:
         jtp_msg = JointTrajectoryPoint()
         jtp_msg.positions = pos
         msg.collision_path.points.append(jtp_msg)
+
     
     backup_path = pu.travel_along(path, -0.1, cur_pos)
 
@@ -225,14 +234,14 @@ def speak_collision_link():
                 rospy.sleep(1)
 
 
-
-
 if __name__ == "__main__":
     
     rospy.init_node("execute_path_with_collision_detection")
     voice = rospy.Publisher("polly", String, queue_size=10)
 
-    vm = or_victor.motion.MotionEnabledVictor(viewer=False)
+    vm = arm_or_robots.motion_victor.MotionEnabledVictor(viewer=False, world_frame="gpu_voxel_world")
+    vm.set_manipulator("left_arm")
+    vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
     vm.set_manipulator("right_arm")
     vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
 

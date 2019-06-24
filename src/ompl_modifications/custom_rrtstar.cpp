@@ -1126,7 +1126,8 @@ void ompl::geometric::cRRTstar::allocSampler()
     // Wrap into a sorted sampler
     if (useOrderedSampling_ == true)
     {
-        infSampler_ = std::make_shared<base::OrderedInfSampler>(infSampler_, batchSize_);
+        //Not used, and not happy with some change in OMPL
+        // infSampler_ = std::make_shared<base::OrderedInfSampler>(infSampler_, batchSize_);
     }
     // No else
 }

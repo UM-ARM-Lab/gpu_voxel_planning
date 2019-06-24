@@ -1,0 +1,91 @@
+2019-05-26 12:00:13
+
+Label                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Strategy: Thompson   0.0000 1 0 0.0000 0.0000 0.0000
+Scenario: RealEmpty   0.0000 1 0 0.0000 0.0000 0.0000
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000   0.0000 1 0 0.0000 0.0000 0.0000
+ComputeSweptVolume                           16.757302             208        0.080564
+EdgeCheck                                    18.877138             282        0.066940
+GetSweptVolume                               18.217714             381        0.047816
+Obstacle_belief_update_free                   0.085939               4        0.021485
+RealEmpty, Thompson Motion Time              24.294306               4        6.073576
+RealEmpty, Thompson Planning Time            22.015842               4        5.503960
+Set robot config                             16.453952           18012        0.000913
+Update belief from free obs                   0.395100               4        0.098775
+Viz_sample                                    0.036665              11        0.003333
+Viz_sample_ee_path                            0.000930               4        0.000233
+Viz_scenario                                  0.649689               4        0.162422
+accumulated_cost                              0.000000               1        0.000000        5.929171        5.929171
+astar_add_neighbors                           2.199552           21067        0.000104
+astar_cost_to_come                            0.403134          816022        0.000000
+astar_edge_validity_check                     0.184855          827944        0.000000
+astar_expansion_in_closed_list                0.028281          144389        0.000000
+astar_heuristic                               0.489179          670277        0.000001
+astar_num_edge_expansions                     0.000000             214        0.000000   827944.000000     3868.897196
+astar_num_lower_cost_edge_expansions          0.000000             214        0.000000   670277.000000     3132.135514
+astar_num_node_expansions                     0.000000             214        0.000000    44279.000000      206.911215
+astar_push_to_queue                           0.245186          670277        0.000000
+astar_queue_reduction                         0.010625           44065        0.000000
+lazySP path cost                              0.000000               4        0.000000       16.789465        4.197366
+lazy_sp a_star                                2.295683             214        0.010727
+lazysp astar iters                            0.000000               4        0.000000      214.000000       53.500000
+lazysp_successful                            21.460661               4        5.365165
+real_state_move                              23.641285               4        5.910321
+
+2019-05-26 12:00:13
+
+Label                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Obstacle_belief_update_free                   0.034267 
+Obstacle_belief_update_free                   0.025709 
+Obstacle_belief_update_free                   0.018624 
+Obstacle_belief_update_free                   0.007338 
+RealEmpty, Thompson Motion Time               3.579527 
+RealEmpty, Thompson Motion Time               4.041989 
+RealEmpty, Thompson Motion Time               9.031396 
+RealEmpty, Thompson Motion Time               7.641394 
+RealEmpty, Thompson Planning Time            21.460593 
+RealEmpty, Thompson Planning Time             0.244978 
+RealEmpty, Thompson Planning Time             0.254452 
+RealEmpty, Thompson Planning Time             0.055819 
+Update belief from free obs                   0.104542 
+Update belief from free obs                   0.089391 
+Update belief from free obs                   0.104174 
+Update belief from free obs                   0.096993 
+Viz_sample                                    0.003401 
+Viz_sample                                    0.003237 
+Viz_sample                                    0.002998 
+Viz_sample                                    0.002933 
+Viz_sample                                    0.003303 
+Viz_sample                                    0.003280 
+Viz_sample                                    0.003021 
+Viz_sample                                    0.003552 
+Viz_sample                                    0.003630 
+Viz_sample                                    0.003560 
+Viz_sample                                    0.003749 
+Viz_sample_ee_path                            0.000356 
+Viz_sample_ee_path                            0.000169 
+Viz_sample_ee_path                            0.000210 
+Viz_sample_ee_path                            0.000196 
+Viz_scenario                                  0.175968 
+Viz_scenario                                  0.165133 
+Viz_scenario                                  0.153551 
+Viz_scenario                                  0.155038 
+accumulated_cost                              0.000000        5.929171 
+lazySP path cost                              0.000000        6.778387 
+lazySP path cost                              0.000000        4.692398 
+lazySP path cost                              0.000000        3.523060 
+lazySP path cost                              0.000000        1.795619 
+lazysp astar iters                            0.000000      207.000000 
+lazysp astar iters                            0.000000        5.000000 
+lazysp astar iters                            0.000000        1.000000 
+lazysp astar iters                            0.000000        1.000000 
+lazysp_successful                            21.398317 
+lazysp_successful                             0.048542 
+lazysp_successful                             0.009179 
+lazysp_successful                             0.004623 
+real_state_move                               3.402686 
+real_state_move                               3.876030 
+real_state_move                               8.877047 
+real_state_move                               7.485523 
+

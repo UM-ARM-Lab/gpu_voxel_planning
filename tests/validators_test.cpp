@@ -10,13 +10,13 @@
 
 
 #define PROB_OCCUPIED eBVM_OCCUPIED
-#define COLLISION_SET "seen_obstacles_0"
+#define COLLISION_SET "chs_0"
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 
 
-TEST(GpuVoxelVictor, collisions)
+TEST(Validators, collisions)
 {
 
     std::shared_ptr<ompl::base::RealVectorStateSpace> space =
@@ -40,7 +40,7 @@ TEST(GpuVoxelVictor, collisions)
 
     victor_model.gvl->insertBoxIntoMap(Vector3f(1.0,0.8,1.0), Vector3f(2.0,1.0,1.2),
                                        COLLISION_SET, PROB_OCCUPIED, 2);
-    victor_model.num_observed_sets = 1;
+    victor_model.num_observed_chs = 1;
 
 
     // is_valid = victor_model.queryFreeConfiguration(config);

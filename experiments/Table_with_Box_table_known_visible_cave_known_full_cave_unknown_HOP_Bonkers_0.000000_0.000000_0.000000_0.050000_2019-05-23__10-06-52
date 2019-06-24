@@ -1,0 +1,60 @@
+2019-05-23 10:06:52
+
+Label                                                                                   tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Bonkers_0.000000_0.000000_0.000000_0.050000                                         0.000000               1        0.000000        0.000000        0.000000
+Bump                                                                                        0.000000               2        0.000000        0.000000        0.000000
+ComputeSweptVolume                                                                          0.069668               1        0.069668
+Copy_graph                                                                                  0.558646             100        0.005586
+EdgeCheck                                                                                   0.366893             100        0.003669
+Failed                                                                                      0.000000               1        0.000000        0.000000        0.000000
+GetSweptVolume                                                                              0.075879             200        0.000379
+HOP_plan                                                                                    4.115232               2        2.057616
+Obstacle_belief_update_collision                                                            1.591428               2        0.795714
+Obstacle_belief_update_free                                                                13.396986             337        0.039754
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                                            0.603106             620        0.000973
+Strategy: HOP                                                                               0.000000               1        0.000000        0.000000        0.000000
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time           16.700481               3        5.566827
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          4.126635               3        1.375545
+Update belief from free obs                                                                13.398924             337        0.039759
+Viz sample sv                                                                               0.721629             100        0.007216
+Viz_sample                                                                                  0.922643             200        0.004613
+Viz_sample_ee_path                                                                          0.018552             100        0.000186
+Viz_scenario                                                                                0.488369             339        0.001441
+astar_add_neighbors                                                                         0.019172             100        0.000192
+astar_cost_to_come                                                                          0.002030            6500        0.000000
+astar_edge_validity_check                                                                   0.001594            6500        0.000000
+astar_heuristic                                                                             0.005676            6500        0.000001
+astar_num_edge_expansions                                                                   0.000000             100        0.000000     6500.000000       65.000000
+astar_num_lower_cost_edge_expansions                                                        0.000000             100        0.000000     6500.000000       65.000000
+astar_num_node_expansions                                                                   0.000000             100        0.000000      200.000000        2.000000
+astar_push_to_queue                                                                         0.002899            6500        0.000000
+astar_queue_reduction                                                                       0.000195             100        0.000002
+lazySP path cost                                                                            0.000000             100        0.000000      150.748134        1.507481
+lazy_sp a_star                                                                              0.023566             100        0.000236
+lazysp astar iters                                                                          0.000000             100        0.000000      100.000000        1.000000
+lazysp_successful                                                                           0.395586             100        0.003956
+simulation_state_move                                                                      14.113596             337        0.041880
+
+2019-05-23 10:06:52
+
+Label                                                                                           time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Bonkers_0.000000_0.000000_0.000000_0.050000                                         0.000000        0.000000 
+Bump                                                                                        0.000000        0.000000 
+Bump                                                                                        0.000000        0.000000 
+ComputeSweptVolume                                                                          0.069668 
+Failed                                                                                      0.000000        0.000000 
+HOP_plan                                                                                    2.968562 
+HOP_plan                                                                                    1.146670 
+Obstacle_belief_update_collision                                                            0.794065 
+Obstacle_belief_update_collision                                                            0.797363 
+Scenario: Table_with_Box_table_known_visible_cave_known_full_cave_unknown                   0.000000        0.000000 
+Strategy: HOP                                                                               0.000000        0.000000 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            3.698607 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time            2.530513 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Motion Time           10.471361 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          2.976167 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          0.000108 
+Table_with_Box_table_known_visible_cave_known_full_cave_unknown, HOP Planning Time          1.150361 
+

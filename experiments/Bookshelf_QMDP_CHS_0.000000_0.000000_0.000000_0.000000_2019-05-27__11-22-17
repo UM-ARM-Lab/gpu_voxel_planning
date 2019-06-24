@@ -1,0 +1,96 @@
+2019-05-27 11:22:17
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000               1        0.000000        0.000000        0.000000
+Bookshelf, QMDP Motion Time                             45.122603              15        3.008174
+Bookshelf, QMDP Planning Time                          642.398191              15       42.826546
+Bump                                                     0.000000               5        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                        133.387333           18504        0.007209
+ComputeSweptVolume                                      10.612434             111        0.095608
+GetSweptVolume                                          11.739125           69811        0.000168
+QMDP_plan                                              642.391375              10       64.239138
+Rollout                                                459.140622            2180        0.210615
+Rollout viz sv                                          47.426908            6194        0.007657
+Scenario: Bookshelf                                      0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                        36.668969           23791        0.001541
+Simulate transition first                              130.737074            2190        0.059697
+Simulate transition in rollout                          75.724304            6194        0.012225
+Strategy: QMDP                                           0.000000               1        0.000000        0.000000        0.000000
+Update belief from free obs                              0.015611             708        0.000022
+Viz_sample                                               0.801791             100        0.008018
+Viz_scenario                                            41.495766             713        0.058199
+accumulated_cost                                         0.000000               1        0.000000       13.897004       13.897004
+astar_add_neighbors                                     76.977539          762518        0.000101
+astar_cost_to_come                                      13.881375        31275297        0.000000
+astar_edge_validity_check                                7.302872        31346927        0.000000
+astar_expansion_in_closed_list                           0.648317         3405148        0.000000
+astar_heuristic                                         10.678518        27511807        0.000000
+astar_num_edge_expansions                                0.000000           38605        0.000000 31346927.000000      811.991374
+astar_num_lower_cost_edge_expansions                     0.000000           38605        0.000000 27511807.000000      712.648802
+astar_num_node_expansions                                0.000000           38605        0.000000  1034240.000000       26.790312
+astar_push_to_queue                                     10.555984        27511807        0.000000
+astar_queue_reduction                                    0.306123          995635        0.000000
+lazySP path cost                                         0.000000            2280        0.000000    10353.436894        4.540981
+lazy_sp a_star                                          80.473275           38605        0.002085
+lazysp astar iters                                       0.000000            2280        0.000000    38605.000000       16.932018
+lazysp_successful                                      348.807692            2280        0.152986
+rollout lazysp                                         332.460611            2180        0.152505
+simulate_belief_update_collision                        67.777732             399        0.169869
+simulate_belief_update_free                             21.572940            7985        0.002702
+simulate_belief_update_free_before_collision             0.174166           12801        0.000014
+simulation_state_move                                    1.868803             708        0.002640
+
+2019-05-27 11:22:17
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000        0.000000 
+Bookshelf, QMDP Motion Time                              1.590559 
+Bookshelf, QMDP Motion Time                              1.019147 
+Bookshelf, QMDP Motion Time                              0.842737 
+Bookshelf, QMDP Motion Time                              4.489311 
+Bookshelf, QMDP Motion Time                              4.431089 
+Bookshelf, QMDP Motion Time                              2.313090 
+Bookshelf, QMDP Motion Time                              2.363107 
+Bookshelf, QMDP Motion Time                              5.539660 
+Bookshelf, QMDP Motion Time                              1.112187 
+Bookshelf, QMDP Motion Time                              0.955128 
+Bookshelf, QMDP Motion Time                              1.246202 
+Bookshelf, QMDP Motion Time                              1.074387 
+Bookshelf, QMDP Motion Time                              4.534378 
+Bookshelf, QMDP Motion Time                              5.933150 
+Bookshelf, QMDP Motion Time                              7.678471 
+Bookshelf, QMDP Planning Time                           56.927297 
+Bookshelf, QMDP Planning Time                           44.837098 
+Bookshelf, QMDP Planning Time                            0.000090 
+Bookshelf, QMDP Planning Time                           87.806837 
+Bookshelf, QMDP Planning Time                            0.000155 
+Bookshelf, QMDP Planning Time                           93.330262 
+Bookshelf, QMDP Planning Time                            0.000087 
+Bookshelf, QMDP Planning Time                          130.690466 
+Bookshelf, QMDP Planning Time                           34.403319 
+Bookshelf, QMDP Planning Time                            0.000066 
+Bookshelf, QMDP Planning Time                           58.855362 
+Bookshelf, QMDP Planning Time                            0.000065 
+Bookshelf, QMDP Planning Time                           75.588976 
+Bookshelf, QMDP Planning Time                           40.881625 
+Bookshelf, QMDP Planning Time                           19.076486 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+QMDP_plan                                               56.923104 
+QMDP_plan                                               44.836874 
+QMDP_plan                                               87.806609 
+QMDP_plan                                               93.330063 
+QMDP_plan                                              130.690244 
+QMDP_plan                                               34.403083 
+QMDP_plan                                               58.855032 
+QMDP_plan                                               75.588765 
+QMDP_plan                                               40.881374 
+QMDP_plan                                               19.076227 
+Scenario: Bookshelf                                      0.000000        0.000000 
+Strategy: QMDP                                           0.000000        0.000000 
+accumulated_cost                                         0.000000       13.897004 
+
