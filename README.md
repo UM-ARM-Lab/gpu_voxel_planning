@@ -15,4 +15,4 @@
 2. Install armlab dependencies: 
 
   * arc_utilities, branch CleanUpDijkstras
-  * graph_planner
+  * [unknown_graph_planner](https://github.com/UM-ARM-Lab/unknown_graph_planner)
