@@ -6,7 +6,7 @@
 
 #include <ros/ros.h>
 #include "ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include "robot_model.hpp"
+#include "robot/robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
 #include "strategies/graph_search_strategies.hpp"
@@ -29,10 +29,11 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, Strategy &strategy)
 
 std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenarioFactories()
 {
+    BeliefParams bp(BeliefType::Deterministic);
     std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
-    factories.push_back([](){ return std::make_shared<TableWithBox>(true, true, true);});
-    factories.push_back([](){ return std::make_shared<Bookshelf>(true);});
-    factories.push_back([](){ return std::make_shared<SlottedWall>(true);});
+    factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
+    factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
+    factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
     return factories;
 }
 

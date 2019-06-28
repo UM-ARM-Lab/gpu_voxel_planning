@@ -1,5 +1,5 @@
 #include "strategies/selective_densification_strategies.hpp"
-#include "path_smoothing.hpp"
+#include "path_utils_addons.hpp"
 #include <algorithm>
 #include <random>
 

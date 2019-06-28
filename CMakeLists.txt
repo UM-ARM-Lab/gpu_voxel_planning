@@ -254,11 +254,12 @@ set(Planning_SOURCES
   src/scenarios/real_scenario.cpp
   src/strategies/graph_search_strategies.cpp
   src/scenario_tester.cpp
-  # src/strategies/victor_selective_densification.cpp      #Removed due to long compilation time
-  # src/strategies/selective_densification_strategies.cpp  #Removed due to long compilation time
-  # src/strategies/ompl_strategies.cpp                     #Removed due to long compilation time
+  src/strategies/victor_selective_densification.cpp      #Removed due to long compilation time
+  src/strategies/selective_densification_strategies.cpp  #Removed due to long compilation time
+  src/strategies/ompl_strategies.cpp                     #Removed due to long compilation time
   # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
   src/path_utils.cpp
+  src/path_utils_addons.cpp
   )
 
 add_library(planning_library
@@ -316,14 +317,14 @@ target_link_libraries(wip_real_trials
   )
 
 # Commented out due to long compilation time
-# add_executable(selective_densification_experiments
-#   src/selective_densification_experiments.cpp
-#   )
-# target_link_libraries(selective_densification_experiments
-#   ${EXTERN_LIBS}
-#   planning_library
-#   victor_halton_roadmap
-#   )
+add_executable(selective_densification_experiments
+  src/selective_densification_experiments.cpp
+  )
+target_link_libraries(selective_densification_experiments
+  ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
 
 
 # add_dependencies(wip_prob_map

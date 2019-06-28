@@ -3,6 +3,7 @@
 
 #include "path_utils.hpp"
 #include "robot/robot_model.hpp"
+#include "state.hpp"
 
 
 namespace GVP
@@ -39,6 +40,8 @@ namespace GVP
         Path p{p1, p2};
         return densify(p, max_dist);
     }
+
+    Path smooth(GVP::Path path, State &s, double discretization, std::mt19937 &rng);
 }
 
 

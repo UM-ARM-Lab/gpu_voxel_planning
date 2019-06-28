@@ -8,7 +8,7 @@
 
 namespace GVP
 {
-    enum BeliefType{CHS, IID, Obstacle, Bonkers, MoEObstacle, MoEBonkers};
+    enum BeliefType{CHS, IID, Obstacle, Bonkers, MoEObstacle, MoEBonkers, Deterministic};
     
     struct BeliefParams
     {
@@ -30,7 +30,8 @@ namespace GVP
                 {BeliefType::Obstacle, "Obstacle"},
                 {BeliefType::Bonkers, "Bonkers"},
                 {BeliefType::MoEObstacle, "MoE"},
-                {BeliefType::MoEBonkers, "MoEBonkers"}
+                {BeliefType::MoEBonkers, "MoEBonkers"},
+                {BeliefType::Deterministic, "Deterministic"}
             };
 
                 
