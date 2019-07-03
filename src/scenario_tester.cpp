@@ -44,6 +44,13 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
     PROFILE_RECORD_DOUBLE("Scenario: " + scenario.getName(), 0);
     PROFILE_RECORD_DOUBLE("Strategy: " + strategy.getName(), 0);
     PROFILE_RECORD_DOUBLE("Belief: " + scenario.belief_name, 0);
+
+    std::cout << "Testing simulation scenario: "
+              << scenario.getName() << ", "
+              << strategy.getName() << ", "
+              << scenario.belief_name
+              << "\n";
+    
     scenario.viz(ri.viz);
     scenario.initFakeVictor(ri);
     try{

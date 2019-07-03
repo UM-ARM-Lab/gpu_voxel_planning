@@ -65,7 +65,7 @@ void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles, Beli
         break;
     case BeliefType::Deterministic:
         std::cout << "Using Deterministic\n";
-        //TODO: set belief
+        s.bel = std::make_unique<EmptyBelief>();
         break;
     default:
         std::cout << "Invalid belief type " << bp.belief_type << "\n";

@@ -318,7 +318,7 @@ target_link_libraries(wip_real_trials
 
 # Commented out due to long compilation time
 add_executable(selective_densification_experiments
-  src/selective_densification_experiments.cpp
+  src/selective_densification/selective_densification_experiments.cpp
   )
 target_link_libraries(selective_densification_experiments
   ${EXTERN_LIBS}

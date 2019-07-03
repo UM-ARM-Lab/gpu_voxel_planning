@@ -64,6 +64,35 @@ namespace GVP
     };
 
 
+    class EmptyBelief : public Belief
+    {
+    public:
+
+
+    public:
+        EmptyBelief(){}
+        virtual void viz(const GpuVoxelRvizVisualizer& viz) override
+        {}
+
+        virtual double calcProbFree(const DenseGrid &volume) override
+        {return 1.0;}
+
+        virtual void updateFreeSpace(const DenseGrid &new_free) override
+        {}
+
+        virtual void updateCollisionSpace(Robot& robot, const size_t first_link_in_collision) override
+        {}
+
+        virtual DenseGrid sampleState() const override
+        {return DenseGrid();}
+
+        // virtual std::string getName() const = 0;
+
+        virtual std::unique_ptr<Belief> clone() const override
+        {return std::make_unique<EmptyBelief>();}
+
+    };
+
 
     class ObstacleBelief : public Belief
     {

@@ -23,7 +23,9 @@ std::vector<double> c_ps{100.0, 10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.
 void test(ros::NodeHandle &n, SimulationScenario &scenario, Strategy &strategy)
 {
     SimulationScenarioTester tester(scenario, n);
+    std::cout << "Testing strat\n";
     tester.attemptStrategy(strategy);
+    std::cout << "Finished test\n";
 }
 
 
@@ -107,7 +109,7 @@ void preparePrecomputed(ros::NodeHandle &n)
 int main(int argc, char* argv[])
 {
     icl_core::logging::initialize(argc, argv);
-    ros::init(argc, argv, "graph_publisher");
+    ros::init(argc, argv, "selective_densification_experiments");
     ros::NodeHandle n;
 
     ros::Duration(1.0).sleep();
