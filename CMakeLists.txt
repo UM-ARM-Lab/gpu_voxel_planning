@@ -292,13 +292,13 @@ target_link_libraries(simulation_timings
 
 
 #Commented out for speed
-# add_executable(wip_roadmap
-#   src/wip_roadmap.cpp)
-# target_link_libraries(wip_roadmap
-#   ${EXTERN_LIBS}
-#   planning_library
-#   victor_halton_roadmap
-#   )
+add_executable(wip_sd
+  src/selective_densification/wip_sd.cpp)
+target_link_libraries(wip_sd
+  ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
 
 add_executable(wip_BTP
   src/wip_BTP.cpp)

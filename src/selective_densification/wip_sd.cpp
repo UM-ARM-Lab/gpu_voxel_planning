@@ -5,7 +5,7 @@
 #include <arc_utilities/arc_helpers.hpp>
 
 #include <ros/ros.h>
-#include "gpu_voxel_rviz_visualization.hpp"
+#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
 #include "strategies/graph_search_strategies.hpp"
@@ -21,7 +21,8 @@ void precomputeEdges()
 {
     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
     OmniscientSDGraphSearch strat;
-    Bookshelf scenario(true);
+    BeliefParams bp(BeliefType::Deterministic);
+    Bookshelf scenario(bp);
 
     int i=0;
     for(auto &node: strat.sd_graph.getNodes())
@@ -60,6 +61,7 @@ int main(int argc, char* argv[])
     // return 1;
     
     GpuVoxelRvizVisualizer viz(n);
+    BeliefParams bp(BeliefType::Deterministic);
 
     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
 
@@ -74,7 +76,7 @@ int main(int argc, char* argv[])
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
     // TableWithBox scenario(true, true, true);
-    SlottedWall scenario(true);
+    SlottedWall scenario(bp);
     // Bookshelf scenario(true);
 
     // AStarGraphSearch strat;

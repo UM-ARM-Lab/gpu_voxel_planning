@@ -224,8 +224,18 @@ SlottedWall::SlottedWall(BeliefParams bp):
 {
     addLeftArm();
 
+    bool all_known = (bp.belief_type == BeliefType::Deterministic);
+
     known_obstacles.add(getFrontWall());
-    unknown_obstacles.add(getSlottedWall());
+
+    if(all_known)
+    {
+        known_obstacles.add(getSlottedWall());
+    }
+    else
+    {
+        unknown_obstacles.add(getSlottedWall());
+    }
 
     combineObstacles();
     setPrior(unknown_obstacles, bp);
@@ -307,7 +317,16 @@ Bookshelf::Bookshelf(BeliefParams bp):
     Object table = getTable();
 
     known_obstacles.add(bookshelf);
-    unknown_obstacles.add(table);
+
+    bool table_known = (bp.belief_type == BeliefType::Deterministic);
+    if(table_known)
+    {
+        known_obstacles.add(table);
+    }
+    else
+    {
+        unknown_obstacles.add(table);
+    }
 
 
     combineObstacles();

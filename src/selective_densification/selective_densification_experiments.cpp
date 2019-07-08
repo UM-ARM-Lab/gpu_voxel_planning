@@ -17,7 +17,8 @@
 
 using namespace GVP;
 
-std::vector<double> c_ps{100.0, 10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.0};
+// std::vector<double> c_ps{100.0, 10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.0};
+std::vector<double> c_ps{1.0};
 
 
 void test(ros::NodeHandle &n, SimulationScenario &scenario, Strategy &strategy)
@@ -115,7 +116,7 @@ int main(int argc, char* argv[])
     ros::Duration(1.0).sleep();
 
     preparePrecomputed(n);
-    testAll(n);
+    // testAll(n);
 
     
     // std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
