@@ -74,7 +74,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         }
         catch(std::logic_error &e)
         {
-            std::cout << "No path found\n";
+            std::cout << "No path found: " << e.what() << "\n";
             PROFILE_RECORD_DOUBLE("Failed", 0);
             return false;
         }
