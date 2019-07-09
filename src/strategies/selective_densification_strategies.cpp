@@ -80,8 +80,10 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVis
         initialize(scenario);
     }
 
+    PROFILE_START("Plan");
     Path path;
     std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState());
+    PROFILE_RECORD("Plan");
 
     if(node_path.size() <= 1)
     {
@@ -106,10 +108,14 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVis
     std::mt19937 rng;
     rng.seed(42);
 
+
     for(int i=0; i<30; i++)
     {
+        PROFILE_START("Smooth");
+        PROFILE_START("PathLength");
         path = smooth(path, scenario.getState(), discretization, rng);
         PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
+        PROFILE_RECORD("Smooth");
     }
 
     std::cout << "Smoothed path cost " << PathUtils::length(toPathUtilsPath(path)) << "\n\n";
@@ -271,6 +277,7 @@ bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, Stat
         return valid;
     }
 
+    PROFILE_START("CheckEdge From Scratch");
     bool valid = false;
     
     if(mode == EdgeCheckMode::STORE)
@@ -285,7 +292,7 @@ bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, Stat
     {
         assert(false && "invalid mode");
     }
-
+    PROFILE_RECORD("CheckEdge From Scratch");
     PROFILE_RECORD("CheckEdge");
     return valid;
 }
@@ -359,7 +366,7 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::astar(NodeIndex start, No
     const auto heuristic_fn = [&] (const std::vector<double> &n1,
                                    const std::vector<double> &n2)
         {
-            return sd_graph.distanceHeuristic(n1, n2);
+            return distanceHeuristic(n1, n2);
         };
 
     const auto dist_fn = [&] (const arc_dijkstras::Graph<std::vector<double>> &g,
