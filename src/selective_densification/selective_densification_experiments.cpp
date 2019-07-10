@@ -86,6 +86,7 @@ void testAll(ros::NodeHandle &n)
 
 void preparePrecomputed(ros::NodeHandle &n)
 {
+    std::cout << "Precomputing swept volumes\n";
     for(auto scenario_factory:getScenarioFactories())
     {
         for(double c_p: c_ps){

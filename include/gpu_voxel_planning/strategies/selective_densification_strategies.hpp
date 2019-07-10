@@ -30,6 +30,8 @@ namespace GVP
         NodeIndex cur_node;
         NodeIndex goal_node;
 
+        Path start_to_graph, graph_to_goal;
+
 
         enum EdgeCheckMode {FAST, STORE};
 
@@ -44,6 +46,18 @@ namespace GVP
         SelectiveDensificationStrategy();
 
         void initialize(const Scenario &scenario);
+
+        /*
+         *  Adds nodes and edges to the graph corresponding to the start and goal of the scenario
+         */
+        void addStartAndGoalToGraph(const Scenario &scenario);
+
+        /*
+         *  Finds paths from the scenario start and goal to the graph (but does not add new nodes or edges)
+         */
+        void connectStartAndGoalToGraph(const Scenario &scenario);
+
+        Path connectToGraph(const Scenario &scenario, const VictorRightArmConfig &q);
 
         void setMode(EdgeCheckMode mode_);
 
@@ -71,6 +85,8 @@ namespace GVP
          * Note: This returns early if there is a collision and does not store the swept volume
          */
         bool checkEdgeFast(arc_dijkstras::GraphEdge &e, State &s);
+
+        bool checkPathFast(VictorRightArmConfig q_start, VictorRightArmConfig q_end, State &s);
 
         double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
 

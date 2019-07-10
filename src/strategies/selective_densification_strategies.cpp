@@ -50,6 +50,13 @@ void SelectiveDensificationStrategy::setMode(EdgeCheckMode mode_)
 
 void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
 {
+    addStartAndGoalToGraph(scenario);
+    // connectStartAndGoalToGraph(scenario);
+    initialized = true;
+}
+
+void SelectiveDensificationStrategy::addStartAndGoalToGraph(const Scenario &scenario)
+{
     for(int depth = 3; depth <= sd_graph.depth; depth++)
     {
         // int depth = sd_graph.depth;
@@ -66,10 +73,27 @@ void SelectiveDensificationStrategy::initialize(const Scenario &scenario)
             std::cout << "This is the start and goal\n";
         }
     }
-
-    initialized = true;
 }
 
+Path SelectiveDensificationStrategy::connectToGraph(const Scenario &scenario, const VictorRightArmConfig &q)
+{
+    DepthNode d(sd_graph.depth, q.asVector());
+    std::cout << "radius is: " << sd_graph.r_disc << "\n";
+    std::vector<int> v = sd_graph.getVerticesWithinRadius(d.toRaw(), sd_graph.r_disc);
+    std::cout << "Vertices within radius: " << PrettyPrint::PrettyPrint(v) << "\n";
+    //TODO: check straight line path from q to every node within radius in increasing order of distance. Return as soon as a valid path is found 
+    assert(false && "Not implemented yet");
+}
+
+void SelectiveDensificationStrategy::connectStartAndGoalToGraph(const Scenario &scenario)
+{
+    // std::vector<int> v = sd_graph.getVerticesWithinRadius(scenario.getState().getCurConfig().asVector(), sd_graph.r_disc);
+    // std::cout << "Vertices within radius: " << PrettyPrint::PrettyPrint(v) << "\n";
+    connectToGraph(scenario, scenario.getState().getCurConfig());
+
+    //TODO: set start_to_graph, graph_to_goal using connectToGraph
+    assert(false && "Not implemented yet");
+}
 
 
 Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
@@ -81,7 +105,7 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVis
     }
 
     PROFILE_START("Plan");
-    Path path;
+
     std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState());
     PROFILE_RECORD("Plan");
 
@@ -90,7 +114,8 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVis
         std::cerr << "Path of less than 2 nodes found\n";
         assert(false);
     }
-        
+
+    Path path = start_to_graph;
     for(size_t i=0; i<node_path.size()-1; i++)
     {
         Path segment = interpolate(sd_graph.getNodeValue(node_path[i]).q,
@@ -99,6 +124,7 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVis
                                        
         path.insert(path.end(), segment.begin(), segment.end());
     }
+    path.insert(path.end(), graph_to_goal.begin(), graph_to_goal.end());
 
     PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
 
@@ -186,13 +212,37 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
     VictorRightArmConfig q_start(sd_graph.getNodeValue(e.getFromIndex()).q);
     VictorRightArmConfig q_end(sd_graph.getNodeValue(e.getToIndex()).q);
 
+
+    bool edge_valid = checkPathFast(q_start, q_end, s);
+
     
+    PROFILE_RECORD(depth_logging_name);
+
+    if(!edge_valid)
+    {
+        PROFILE_RECORD("CheckEdgeFast Invalid");
+        e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+        
+        // For some reason, adding this makes planning take much longer
+        // sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+        return false;
+    }
+    
+    e.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
+    sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
+    PROFILE_RECORD("CheckEdgeFast Valid");
+
+    return true;
+
+}
+
+bool SelectiveDensificationStrategy::checkPathFast(VictorRightArmConfig q_start, VictorRightArmConfig q_end,
+    State &s)
+{
     GVP::Path path = interpolate(q_start, q_end, discretization);
 
     auto rng = std::default_random_engine{};
     std::shuffle(std::begin(path), std::end(path), rng);
-
-
 
     for(const auto &config: path)
     {
@@ -200,40 +250,13 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
         s.robot.set(config.asMap());
         if(s.robot.occupied_space.overlapsWith(&s.known_obstacles) ||
            s.robot.occupied_space.overlapsWith(&s.robot_self_collide_obstacles))
-        // if(s.robot.occupied_space.overlapsWith(&s.known_obstacles))
-        // if(!s.isPossiblyValid(config))
+            // if(s.robot.occupied_space.overlapsWith(&s.known_obstacles))
+            // if(!s.isPossiblyValid(config))
         {
-            e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
-            // sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
-            PROFILE_RECORD("CheckEdgeFast Invalid");
-            PROFILE_RECORD(depth_logging_name);
-            // std::cout << "CheckEdgeFast Invalid (" << e.getFromIndex() << ", " << e.getToIndex() << ")\n";
             return false;
         }
     }
-    // std::cout << "CheckEdgeFast Valid (" << e.getFromIndex() << ", " << e.getToIndex() << ")";
-    // std::string validity = "unknown";
-    // if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::VALID)
-    // {
-    //     validity = "valid";
-    // }
-    // else if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::INVALID)
-    // {
-    //     validity = "invalid";
-    // }
-    // std::cout << " was " << validity << ": ";
-
-    // std::cout << "(" << q_start.asVector()[0] << ", " << q_end.asVector()[0] << ")";
-
-    // std::cout << "\n";
-    
-    e.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
-    sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
-    PROFILE_RECORD(depth_logging_name);
-    PROFILE_RECORD("CheckEdgeFast Valid");
-
     return true;
-
 }
 
 
