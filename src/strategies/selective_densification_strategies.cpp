@@ -336,6 +336,44 @@ double SelectiveDensificationStrategy::evaluateEdge(arc_dijkstras::GraphEdge &e,
     return calculateEdgeWeight(s, e);
 }
 
+std::vector<int> SelectiveDensificationStrategy::forwardPrecomputedSelector(
+    std::vector<int64_t> path,
+    arc_dijkstras::Graph<std::vector<double>>& g,
+    const arc_dijkstras::EvaluatedEdges &evaluatedEdges)
+{
+    using namespace arc_dijkstras;
+    for(int i=0; i<(int)path.size()-1; i++)
+    {
+        GraphEdge &e = g.getNode(path[i]).getEdgeTo(path[i+1]);
+        if(e.getValidity() == EDGE_VALIDITY::INVALID)
+        {
+            std::cout << "Forward selector encountered edge alredy known to be invalid: ( " <<
+                e.getFromIndex() << ", " << e.getToIndex() << ")\n";
+            assert(false);
+        }
+        if(precomputed_swept_volumes.count(getSortedHashable(e)) &&
+           evaluatedEdges.count(getHashable(e)) == 0)
+        {
+            return std::vector<int>{i};
+        }
+    }
+    for(int i=0; i<(int)path.size()-1; i++)
+    {
+        GraphEdge &e = g.getNode(path[i]).getEdgeTo(path[i+1]);
+        if(e.getValidity() == EDGE_VALIDITY::INVALID)
+        {
+            std::cout << "Forward selector encountered edge alredy known to be invalid: ( " <<
+                e.getFromIndex() << ", " << e.getToIndex() << ")\n";
+            assert(false);
+        }
+        if(evaluatedEdges.count(getHashable(e)) == 0)
+        {
+            return std::vector<int>{i};
+        }
+    }
+    return std::vector<int>();
+}
+
 std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, NodeIndex goal, State &s)
 {
     const auto eval_fn =
@@ -355,12 +393,21 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
     //         return EigenHelpers::Distance(n1, n2);
     //     };
 
+    auto selector =
+        [&] (std::vector<int64_t> path,
+             arc_dijkstras::Graph<std::vector<double>>& g,
+             const arc_dijkstras::EvaluatedEdges &evaluatedEdges)
+        {
+            return forwardPrecomputedSelector(path, g, evaluatedEdges);
+        };
+        
     
     std::cout << "Performing lazysp\n";
     // auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
-    //     sd_graph, start, goal, heuristic_fn, heuristic_cons_fn, eval_fn);
+    //     sd_graph, start, goal, heuristic_fn, eval_fn,
+    //     &arc_dijkstras::LazySP<std::vector<double>>::ForwardSelector);
     auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
-        sd_graph, start, goal, heuristic_fn, eval_fn);
+        sd_graph, start, goal, heuristic_fn, eval_fn, selector);
 
     std::cout << "LazySP finished\n";
     
