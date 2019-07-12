@@ -29,8 +29,11 @@ namespace GVP
         const std::string swept_volumes_filepath;
         NodeIndex cur_node;
         NodeIndex goal_node;
+        GpuVoxelRvizVisualizer* viz;
+        int vized_id = 0;
 
         Path start_to_graph, graph_to_goal;
+
 
 
         enum EdgeCheckMode {FAST, STORE};
@@ -66,6 +69,8 @@ namespace GVP
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s);
 
         virtual DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
+
+        void vizEdge(arc_dijkstras::GraphEdge &e);
 
         /* Checks the swept volume an edge against known obstacles to see if there is a collision.
          *  Depending on the mode, this may check the full edge and memorize the swept volume, 

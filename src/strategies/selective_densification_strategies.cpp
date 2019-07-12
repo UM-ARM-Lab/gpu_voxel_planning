@@ -77,8 +77,10 @@ void SelectiveDensificationStrategy::addStartAndGoalToGraph(const Scenario &scen
 
 NodeIndex SelectiveDensificationStrategy::connectToGraph(Scenario &scenario, const VictorRightArmConfig &q)
 {
-    DepthNode d(sd_graph.depth, q.asVector());
-    double r = sd_graph.radiusAtDepth(sd_graph.depth);
+    // int depth = sd_graph.depth;
+    int depth = 3;
+    DepthNode d(depth, q.asVector());
+    double r = sd_graph.radiusAtDepth(depth);
     std::cout << "radius is: " << r << "\n";
     std::vector<int> vs = sd_graph.getVerticesWithinRadius(d.toRaw(), r);
     std::cout << "Vertices within radius: " << PrettyPrint::PrettyPrint(vs) << "\n";
@@ -86,6 +88,10 @@ NodeIndex SelectiveDensificationStrategy::connectToGraph(Scenario &scenario, con
 
     for(int v: vs)
     {
+        if(sd_graph.getNodeValue(v).depth != depth)
+        {
+            continue;
+        }
         std::vector<double> q_near = sd_graph.getNodeValue(v).q;
         // std::cout << PrettyPrint::PrettyPrint(q_near) << "\n";
         // std::cout << PrettyPrint::PrettyPrint(q.asVector()) << "\n";
@@ -123,8 +129,9 @@ void SelectiveDensificationStrategy::connectStartAndGoalToGraph(Scenario &scenar
 }
 
 
-Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
+Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz_)
 {
+    viz = &viz_;
     PROFILE_START("PathLength");
     if(!initialized)
     {
@@ -313,10 +320,22 @@ bool SelectiveDensificationStrategy::checkEdgeAndStore(arc_dijkstras::GraphEdge 
     return valid;
 }
 
+
+void SelectiveDensificationStrategy::vizEdge(arc_dijkstras::GraphEdge &e)
+{
+
+    VictorRightArmConfig q_start(sd_graph.getNodeValue(e.getFromIndex()).q);
+    VictorRightArmConfig q_end(sd_graph.getNodeValue(e.getToIndex()).q);
+    std::vector<VictorRightArmConfig> dense_edge = interpolate(q_start, q_end, discretization);
+    viz->vizEEPath(dense_edge,
+                   "checked_edge", vized_id++, makeColor(0,1,1));
+}
+
 bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s)
 {
     PROFILE_START("CheckEdge");
     arc_dijkstras::HashableEdge e_hashed = arc_dijkstras::getSortedHashable(e);
+    vizEdge(e);
     if(precomputed_swept_volumes.count(e_hashed))
     {
         bool valid = checkEdgeAndStore(e, s); //This will run fast, since there is already a swept volume
