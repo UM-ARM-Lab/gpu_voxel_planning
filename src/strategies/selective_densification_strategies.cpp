@@ -201,40 +201,6 @@ DenseGrid SelectiveDensificationStrategy::getSweptVolume(State &s, arc_dijkstras
 
 
 
-bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, State &s)
-{
-    PROFILE_START("CheckEdgeFast Valid");
-    PROFILE_START("CheckEdgeFast Invalid");
-    std::string depth_logging_name = "CheckEdgeFast depth=" +
-        std::to_string(sd_graph.getNodeValue(e.getFromIndex()).depth);
-    PROFILE_START(depth_logging_name);
-
-    VictorRightArmConfig q_start(sd_graph.getNodeValue(e.getFromIndex()).q);
-    VictorRightArmConfig q_end(sd_graph.getNodeValue(e.getToIndex()).q);
-
-
-    bool edge_valid = checkPathFast(q_start, q_end, s);
-
-    
-    PROFILE_RECORD(depth_logging_name);
-
-    if(!edge_valid)
-    {
-        PROFILE_RECORD("CheckEdgeFast Invalid");
-        e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
-        
-        // For some reason, adding this makes planning take much longer
-        // sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
-        return false;
-    }
-    
-    e.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
-    sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
-    PROFILE_RECORD("CheckEdgeFast Valid");
-
-    return true;
-
-}
 
 bool SelectiveDensificationStrategy::checkPathFast(VictorRightArmConfig q_start, VictorRightArmConfig q_end,
     State &s)
@@ -256,6 +222,38 @@ bool SelectiveDensificationStrategy::checkPathFast(VictorRightArmConfig q_start,
             return false;
         }
     }
+    return true;
+}
+
+bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, State &s)
+{
+    PROFILE_START("CheckEdgeFast Valid");
+    PROFILE_START("CheckEdgeFast Invalid");
+    std::string depth_logging_name = "CheckEdgeFast depth=" +
+        std::to_string(sd_graph.getNodeValue(e.getFromIndex()).depth);
+    PROFILE_START(depth_logging_name);
+
+    VictorRightArmConfig q_start(sd_graph.getNodeValue(e.getFromIndex()).q);
+    VictorRightArmConfig q_end(sd_graph.getNodeValue(e.getToIndex()).q);
+
+    bool edge_valid = checkPathFast(q_start, q_end, s);
+    
+    PROFILE_RECORD(depth_logging_name);
+
+    if(!edge_valid)
+    {
+        PROFILE_RECORD("CheckEdgeFast Invalid");
+        e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+        
+        // For some reason, adding this makes planning take much longer
+        // sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+        return false;
+    }
+    
+    e.setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
+    sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
+    PROFILE_RECORD("CheckEdgeFast Valid");
+
     return true;
 }
 
@@ -283,14 +281,7 @@ bool SelectiveDensificationStrategy::checkEdgeAndStore(arc_dijkstras::GraphEdge 
 
     // sd_graph.getReverseEdge(e).setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
     //                                        arc_dijkstras::EDGE_VALIDITY::INVALID);
-    // arc_dijkstras::GraphEdge& r = sd_graph.getReverseEdge(e);
-
-    // std::cout << "CheckEdgeStore : " << (valid ? "valid":"invalid")  << "(" << e.getFromIndex() << ", " << e.getToIndex() << ")\n";
-
-    // std::cout << "        Edge : (" << e.getFromIndex() << ", " << e.getToIndex() << ")\n";
-    // std::cout << "Reverse Edge : (" << r.getFromIndex() << ", " << r.getToIndex() << ")\n";
     
-    // PROFILE_RECORD("CheckEdgeAndStore grid overlap");
     PROFILE_RECORD("CheckEdgeAndStore");
     return valid;
 }
@@ -399,6 +390,7 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
              const arc_dijkstras::EvaluatedEdges &evaluatedEdges)
         {
             return forwardPrecomputedSelector(path, g, evaluatedEdges);
+            // return arc_dijkstras::LazySP<std::vector<double>>::ForwardSelector(path, g, evaluatedEdges);
         };
         
     
