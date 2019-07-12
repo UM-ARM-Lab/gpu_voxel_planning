@@ -27,6 +27,7 @@ public:
     
     virtual int64_t addVertexAndEdges(DepthNode dn) override;
 
+    double radiusAtDepth(int depth);
 };
 
 #endif

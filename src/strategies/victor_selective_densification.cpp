@@ -8,13 +8,6 @@ static int numNodesAtDepth(int depth, int dim)
     return num_vert;
 }
 
-static double radiusAtDepth(int depth, int dim)
-{
-    int num_vert = numNodesAtDepth(depth, dim);
-    double pow = -1.0 / (double)dim;
-    double multiplier = 7;
-    return multiplier * std::pow((double)num_vert, pow);
-}
 
 
 
@@ -30,10 +23,18 @@ SDRoadmap::SDRoadmap(std::string filename) : depth(5), dim(7)
     std::cout << "Loaded graph with " << nodes_.size() << " vertices and " << countEdges() << " edges\n";
 }
 
+double SDRoadmap::radiusAtDepth(int depth)
+{
+    int num_vert = numNodesAtDepth(depth, dim);
+    double pow = -1.0 / (double)dim;
+    double multiplier = 7;
+    return multiplier * std::pow((double)num_vert, pow);
+}
+
+
 
 void SDRoadmap::generateGraph(int max_depth)
 {
-    int dim=7;
     std::cout << "generating...";
     std::cout << max_depth << ", " << dim << "\n";
     int num_vert = numNodesAtDepth(max_depth, dim);
@@ -44,7 +45,7 @@ void SDRoadmap::generateGraph(int max_depth)
 
     for(int depth=0; depth <= max_depth; depth++)
     {
-        double radius = radiusAtDepth(depth, dim);
+        double radius = radiusAtDepth(depth);
         std::cout << "Adding nodes at depth " << depth << " with connection radius " << radius << "\n";
         for(int i=0; i<numNodesAtDepth(depth, dim); i++)
         {
@@ -123,7 +124,7 @@ int64_t SDRoadmap::addVertexAndEdges(int depth, std::vector<double> q)
 
     }
 
-    double edge_radius = radiusAtDepth(depth, dim);
+    double edge_radius = radiusAtDepth(depth);
     auto inds_within_radius = getVerticesWithinRadius(new_node.toRaw(), edge_radius);
 
     for(const auto &near_ind:inds_within_radius)

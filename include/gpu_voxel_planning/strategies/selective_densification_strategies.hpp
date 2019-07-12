@@ -45,7 +45,7 @@ namespace GVP
         // SelectiveDensificationStrategy(const std::string &graph_filepath);
         SelectiveDensificationStrategy();
 
-        void initialize(const Scenario &scenario);
+        void initialize(Scenario &scenario);
 
         /*
          *  Adds nodes and edges to the graph corresponding to the start and goal of the scenario
@@ -55,9 +55,9 @@ namespace GVP
         /*
          *  Finds paths from the scenario start and goal to the graph (but does not add new nodes or edges)
          */
-        void connectStartAndGoalToGraph(const Scenario &scenario);
+        void connectStartAndGoalToGraph(Scenario &scenario);
 
-        Path connectToGraph(const Scenario &scenario, const VictorRightArmConfig &q);
+        NodeIndex connectToGraph(Scenario &scenario, const VictorRightArmConfig &q);
 
         void setMode(EdgeCheckMode mode_);
 
