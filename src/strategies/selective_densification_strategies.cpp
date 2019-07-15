@@ -77,8 +77,8 @@ void SelectiveDensificationStrategy::addStartAndGoalToGraph(const Scenario &scen
 
 NodeIndex SelectiveDensificationStrategy::connectToGraph(Scenario &scenario, const VictorRightArmConfig &q)
 {
-    // int depth = sd_graph.depth;
-    int depth = 3;
+    int depth = sd_graph.depth;
+    // int depth = 3;
     DepthNode d(depth, q.asVector());
     double r = sd_graph.radiusAtDepth(depth);
     std::cout << "radius is: " << r << "\n";
@@ -437,15 +437,15 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
         {
             // return forwardPrecomputedSelector(path, g, evaluatedEdges);
             return arc_dijkstras::LazySP<std::vector<double>>::ForwardSelector(path, g, evaluatedEdges);
+            // return arc_dijkstras::LazySP<std::vector<double>>::BisectionSelector(path, g, evaluatedEdges);
         };
         
     
     std::cout << "Performing lazysp\n";
-    // auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
-    //     sd_graph, start, goal, heuristic_fn, eval_fn,
-    //     &arc_dijkstras::LazySP<std::vector<double>>::ForwardSelector);
     auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
         sd_graph, start, goal, heuristic_fn, eval_fn, selector);
+    // auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformLazySP(
+    //     sd_graph, start, goal, heuristic_fn, eval_fn, selector);
 
     std::cout << "LazySP finished\n";
     
