@@ -19,8 +19,16 @@ SDRoadmap::SDRoadmap() : depth(5), dim(7)
 
 SDRoadmap::SDRoadmap(std::string filename) : depth(5), dim(7)
 {
-    loadFromFile(filename);
-    std::cout << "Loaded graph with " << nodes_.size() << " vertices and " << countEdges() << " edges\n";
+    if(loadFromFile(filename))
+    {
+        std::cout << "Loaded graph with " << nodes_.size() << " vertices and " << countEdges() << " edges\n";
+        return;
+    }
+
+    std::cout << "Failed to load graph. Generating from scratch\n";
+    generateGraph(depth);
+    std::cout << "Saving graph to " << filename << "\n";
+    saveToFile(filename);
 }
 
 double SDRoadmap::radiusAtDepth(int depth)
@@ -87,17 +95,6 @@ double SDRoadmap::distanceHeuristic(const std::vector<double> &raw1,
                                    const std::vector<double> &raw2) const
 {
     throw std::logic_error("This version of distance Heuristic should not be used");
-    DepthNode d1(raw1);
-    DepthNode d2(raw2);
-    // std::cout << "Calling dist heuristic with depth " << d1.depth << "\n";
-     // std::pow(2, d1.depth);
-    std::string depth_logging_name = "EdgeHeuristic depth=" +
-        std::to_string(d1.depth);
-    PROFILE_START(depth_logging_name);
-    PROFILE_RECORD(depth_logging_name);
-
-    return EigenHelpers::Distance(d1.q, d2.q)*(1+0.0001*std::pow(10, d1.depth));
-    // return EigenHelpers::Distance(d1.q, d2.q);
 }
 
 
@@ -131,12 +128,28 @@ int64_t SDRoadmap::addVertexAndEdges(int depth, std::vector<double> q)
     {
         if(new_node_ind == near_ind)
         {
+            //Skip self-conenction edge
             continue;
         }
         if(new_node.depth != DepthNode(getNode(near_ind).getValue()).depth)
         {
+            //Skip edges connecting nodes at different depths
             continue;
         }
+
+        if(above_ind >= 0)
+        {
+            //Skip edges already accounted for in higher levels
+            int64_t new_above_ind = getNodeAt(depth - 1, getNodeValue(near_ind).q);
+            if(new_above_ind >= 0)
+            {
+                std::cout << "New node (" << new_node_ind << ") and (" << near_ind
+                          << ") already connected by edge at higher level\n";
+                          // << getEdge(above_ind, new_above_ind) << "\n";
+                continue;
+            }
+        }
+        
         addEdgesBetweenNodes(new_node_ind, (int64_t)near_ind, edgeCost(new_node, getNodeValue(near_ind)));
     }
     return new_node_ind;
