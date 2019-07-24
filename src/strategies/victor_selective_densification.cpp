@@ -4,7 +4,7 @@
 
 static int numNodesAtDepth(int depth, int dim)
 {
-    int num_vert = std::pow(10, depth);
+    int num_vert = std::pow(2, depth);
     return num_vert;
 }
 

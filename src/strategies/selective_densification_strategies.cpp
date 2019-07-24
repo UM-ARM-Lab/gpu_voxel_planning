@@ -38,9 +38,12 @@ SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string
 // }
 
 
+// SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
+//     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
+//                                    "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map"){}
 SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
-    SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
-                                   "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map"){}
+    SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_2_16.graph",
+                                   "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_2_16.map"){}
 
 
 void SelectiveDensificationStrategy::setMode(EdgeCheckMode mode_)
@@ -278,7 +281,7 @@ bool SelectiveDensificationStrategy::checkEdgeFast(arc_dijkstras::GraphEdge &e, 
         e.setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
         
         // For some reason, adding this makes planning take much longer
-        // sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
+        sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
         return false;
     }
     
@@ -311,8 +314,8 @@ bool SelectiveDensificationStrategy::checkEdgeAndStore(arc_dijkstras::GraphEdge 
         sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
     }
 
-    // sd_graph.getReverseEdge(e).setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
-    //                                        arc_dijkstras::EDGE_VALIDITY::INVALID);
+    sd_graph.getReverseEdge(e).setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
+                                           arc_dijkstras::EDGE_VALIDITY::INVALID);
     
     PROFILE_RECORD("CheckEdgeAndStore");
     return valid;
@@ -518,8 +521,8 @@ void SelectiveDensificationStrategy::saveToFile(std::string filename)
  **  Omniscient Graph Search
  ********************************/
 OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed, double c_p) :
-    SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
-                                   use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map" : ""),
+    SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_2_16.graph",
+                                   use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_2_16.map" : ""),
     use_precomputed(use_precomputed),
     c_p(c_p)
 {
