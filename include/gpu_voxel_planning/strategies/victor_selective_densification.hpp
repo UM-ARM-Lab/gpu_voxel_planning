@@ -11,6 +11,7 @@ class SDRoadmap : public SelectiveDensificationGraph
 public:
     int depth;
     int dim;
+    double num_neighbors_desired;
     
     SDRoadmap();
     SDRoadmap(std::string filename);
@@ -31,4 +32,3 @@ public:
 };
 
 #endif
-

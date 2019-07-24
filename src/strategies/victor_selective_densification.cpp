@@ -11,13 +11,13 @@ static int numNodesAtDepth(int depth, int dim)
 
 
 
-SDRoadmap::SDRoadmap() : depth(5), dim(7)
+SDRoadmap::SDRoadmap() : depth(5), dim(7), num_neighbors_desired(30.0)
 {
     std::cout << "Generating SD roadmap\n";
     generateGraph(depth);
 }
 
-SDRoadmap::SDRoadmap(std::string filename) : depth(5), dim(7)
+SDRoadmap::SDRoadmap(std::string filename) : depth(16), dim(7), num_neighbors_desired(30.0)
 {
     if(loadFromFile(filename))
     {
@@ -31,12 +31,33 @@ SDRoadmap::SDRoadmap(std::string filename) : depth(5), dim(7)
     saveToFile(filename);
 }
 
+// double SDRoadmap::radiusAtDepth(int depth)
+// {
+//     int num_vert = numNodesAtDepth(depth, dim);
+//     double pow = -1.0 / (double)dim;
+//     double multiplier = 7;
+//     return multiplier * std::pow((double)num_vert, pow);
+// }
 double SDRoadmap::radiusAtDepth(int depth)
 {
-    int num_vert = numNodesAtDepth(depth, dim);
-    double pow = -1.0 / (double)dim;
-    double multiplier = 7;
-    return multiplier * std::pow((double)num_vert, pow);
+    if(dim != 7)
+    {
+        throw std::invalid_argument("radiusAtDepth only writted to accomodate dimension 7");
+    }
+    
+    double num_points = (double)numNodesAtDepth(depth, dim);
+    double space_volume = 1.0;
+
+    for(int i=0; i<right_joint_lower_deg.size(); i++)
+    {
+        space_volume *= (right_joint_upper_deg[i] - right_joint_lower_deg[i])*torad;
+    }
+
+    double connection_ball_volume = (double)num_neighbors_desired * space_volume / num_points;
+    double connection_radius = 0.8 * std::pow(connection_ball_volume, 1.0/dim);
+    // https://en.wikipedia.org/wiki/Volume_of_an_n-ball
+
+    return connection_radius;
 }
 
 
