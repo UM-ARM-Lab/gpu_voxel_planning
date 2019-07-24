@@ -17,8 +17,8 @@
 
 using namespace GVP;
 
-// std::vector<double> c_ps{100.0, 10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.0};
-std::vector<double> c_ps{1.0};
+std::vector<double> c_ps{100.0, 10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.0};
+// std::vector<double> c_ps{1.0};
 
 
 void test(ros::NodeHandle &n, SimulationScenario &scenario, Strategy &strategy)
@@ -55,7 +55,7 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
             return std::make_shared<DenseGraphSearch>(false);}); //using precomputed
     factories.push_back([](){
             return std::make_shared<DenseGraphSearch>(true);}); //not precomputed
-    for(int i=0; i<100; i++)
+    for(int i=0; i<10; i++)
     {
         factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
         factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     ros::Duration(1.0).sleep();
 
     preparePrecomputed(n);
-    // testAll(n);
+    testAll(n);
 
     
     // std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();

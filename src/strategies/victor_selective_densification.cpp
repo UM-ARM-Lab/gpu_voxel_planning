@@ -145,6 +145,9 @@ int64_t SDRoadmap::addVertexAndEdges(int depth, std::vector<double> q)
     double edge_radius = radiusAtDepth(depth);
     auto inds_within_radius = getVerticesWithinRadius(new_node.toRaw(), edge_radius);
 
+
+    int num_edges_added = 0;
+
     for(const auto &near_ind:inds_within_radius)
     {
         if(new_node_ind == near_ind)
@@ -158,21 +161,27 @@ int64_t SDRoadmap::addVertexAndEdges(int depth, std::vector<double> q)
             continue;
         }
 
+
+
         if(above_ind >= 0)
         {
             //Skip edges already accounted for in higher levels
             int64_t new_above_ind = getNodeAt(depth - 1, getNodeValue(near_ind).q);
             if(new_above_ind >= 0)
             {
-                std::cout << "New node (" << new_node_ind << ") and (" << near_ind
-                          << ") already connected by edge at higher level\n";
+                // std::cout << "New node (" << new_node_ind << ") and (" << near_ind
+                //           << ") already connected by edge at higher level\n";
                           // << getEdge(above_ind, new_above_ind) << "\n";
                 continue;
             }
         }
-        
+
+
+        num_edges_added++;        
         addEdgesBetweenNodes(new_node_ind, (int64_t)near_ind, edgeCost(new_node, getNodeValue(near_ind)));
     }
+    std::cout << "Depth " << depth << ": num edges added with radius (" << edge_radius << ") is " << num_edges_added << "\n";
+
     return new_node_ind;
 }
 

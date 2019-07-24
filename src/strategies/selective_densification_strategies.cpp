@@ -61,7 +61,9 @@ void SelectiveDensificationStrategy::initialize(Scenario &scenario)
 
 void SelectiveDensificationStrategy::addStartAndGoalToGraph(const Scenario &scenario)
 {
+    int orig_edge_count = sd_graph.countEdges();
     for(int depth = 3; depth <= sd_graph.depth; depth++)
+    // for(int depth = 13; depth <= 14; depth++)
     {
         // int depth = sd_graph.depth;
         DepthNode start(depth, scenario.getState().getCurConfig().asVector());
@@ -77,6 +79,8 @@ void SelectiveDensificationStrategy::addStartAndGoalToGraph(const Scenario &scen
             std::cout << "This is the start and goal\n";
         }
     }
+
+    std::cout << "Start and goal added " << sd_graph.countEdges() - orig_edge_count << " edges\n";
 }
 
 NodeIndex SelectiveDensificationStrategy::connectToGraph(Scenario &scenario, const VictorRightArmConfig &q)
@@ -328,24 +332,33 @@ void SelectiveDensificationStrategy::vizEdge(arc_dijkstras::GraphEdge &e)
     VictorRightArmConfig q_start(sd_graph.getNodeValue(e.getFromIndex()).q);
     VictorRightArmConfig q_end(sd_graph.getNodeValue(e.getToIndex()).q);
     std::vector<VictorRightArmConfig> dense_edge = interpolate(q_start, q_end, discretization);
+
+    auto color = makeColor(0,1,1);
+    if(e.isInvalid())
+    {
+        color = makeColor(1,0,0);
+    }
     viz->vizEEPath(dense_edge,
-                   "checked_edge", vized_id++, makeColor(0,1,1));
+                   "checked_edge", vized_id++, color);
 }
 
 bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s)
 {
     PROFILE_START("CheckEdge");
     arc_dijkstras::HashableEdge e_hashed = arc_dijkstras::getSortedHashable(e);
-    vizEdge(e);
+
     if(precomputed_swept_volumes.count(e_hashed))
     {
         bool valid = checkEdgeAndStore(e, s); //This will run fast, since there is already a swept volume
         PROFILE_RECORD("CheckEdge");
+        // vizEdge(e);
         return valid;
     }
 
     PROFILE_START("CheckEdge From Scratch");
     bool valid = false;
+
+    std::cout << "Checking edge from scratch: " << e << "\n";
     
     if(mode == EdgeCheckMode::STORE)
     {
@@ -361,6 +374,7 @@ bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, Stat
     }
     PROFILE_RECORD("CheckEdge From Scratch");
     PROFILE_RECORD("CheckEdge");
+    // vizEdge(e);
     return valid;
 }
 
@@ -446,7 +460,8 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
     auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
         sd_graph, start, goal, heuristic_fn, eval_fn, selector);
     // auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformLazySP(
-    //     sd_graph, start, goal, heuristic_fn, eval_fn, selector);
+    //     sd_graph, goal, start, heuristic_fn, eval_fn, selector);
+    // std::reverse(result.first.begin(), result.first.end());
 
     std::cout << "LazySP finished\n";
     
