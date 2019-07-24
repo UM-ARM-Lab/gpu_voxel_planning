@@ -2,6 +2,7 @@
 #include "path_utils_addons.hpp"
 #include <algorithm>
 #include <random>
+#include "gvp_exceptions.hpp"
 
 
 using namespace GVP;
@@ -102,7 +103,7 @@ NodeIndex SelectiveDensificationStrategy::connectToGraph(Scenario &scenario, con
         }
     }
 
-    throw std::runtime_error("No path found to graph");
+    throw SearchError("No path found to graph");
     
     //TODO: check straight line path from q to every node within radius in increasing order of distance. Return as soon as a valid path is found 
     assert(false && "Not implemented yet");
@@ -188,9 +189,6 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::plan(NodeIndex start, Nod
 {
     return lazySp(start, goal, s);
     // return astar(start, goal, s);
-    // auto a = lazySp(goal, start, s);
-    // std::reverse(a.begin(), a.end());
-    // return a;
 }
 
 

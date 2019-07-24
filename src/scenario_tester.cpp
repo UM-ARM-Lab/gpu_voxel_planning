@@ -1,6 +1,5 @@
 #include "scenario_tester.hpp"
-
-
+#include "gvp_exceptions.hpp"
 
 using namespace GVP;
 
@@ -72,7 +71,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         {
             path = strategy.applyTo(scenario, ri.viz);
         }
-        catch(std::logic_error &e)
+        catch(SearchError &e)
         {
             std::cout << "No path found: " << e.what() << "\n";
             PROFILE_RECORD_DOUBLE("Failed", 0);

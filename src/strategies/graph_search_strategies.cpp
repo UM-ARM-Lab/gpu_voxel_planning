@@ -1,6 +1,6 @@
 #include "strategies/graph_search_strategies.hpp"
 #include "robot/robot_helpers.hpp"
-
+#include "gvp_exceptions.hpp"
 
 
 // using namespace GVP;
@@ -84,7 +84,7 @@ namespace GVP
         auto path = lazySp(start, goal, s, graph);
         if(path.size() < 2)
         {
-            throw std::logic_error("No plan found");
+            throw SearchError("No plan found");
         }
         return path;
     }
@@ -419,7 +419,7 @@ namespace GVP
             return result;
         }
         std::cout << "Thompson sampling limit exceeded\n";
-        throw std::logic_error("Thompson sampling limit exceeded");
+        throw SearchError("Thompson sampling limit exceeded");
     }
 
     std::string ThompsonGraphSearch::getName() const

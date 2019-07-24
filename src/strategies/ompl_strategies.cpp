@@ -3,6 +3,7 @@
 #include "hacky_functions.hpp"
 #include "path_utils_addons.hpp"
 #include "ompl_modifications/custom_bitstar.h"
+#include "gvp_exceptions.hpp"
 
 using namespace GVP;
 namespace ob = ompl::base;
@@ -54,7 +55,7 @@ Path OMPL_Strategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
     if (!solved)
     {
         PROFILE_RECORD_DOUBLE("PathLength", std::numeric_limits<double>::max());
-        throw std::runtime_error("Path not found");
+        throw SearchError("Path not found");
     }
     
     PROFILE_RECORD_DOUBLE("SetRobotConfig before smoothing",
