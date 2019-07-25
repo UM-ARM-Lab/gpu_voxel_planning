@@ -118,8 +118,4 @@ int main(int argc, char* argv[])
 
     preparePrecomputed(n);
     testAll(n);
-
-    
-    // std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
-
 }
