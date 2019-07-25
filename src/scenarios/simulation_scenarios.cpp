@@ -282,17 +282,18 @@ Object SlottedWall::getSlottedWall() const
     Vector3f lswc(1.5, 1.6, 0.0);  // lower side wall corner
     Vector3f lswd(.75, 0.04, lower_wall_height); //lower side wall dims
     Vector3f cswc(1.5, 1.6, lower_wall_height + gap_height); //close side wall corner
-    Vector3f cswd(0.2, 0.04, 0.3);
+    // Vector3f cswd(0.2, 0.04, 0.3);
+    Vector3f cswd(0.5, 0.04, 0.3);
     Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
     Vector3f fswd(0.3, 0.04, 0.6);
-    Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
+    Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //
     Vector3f mswd(0.3, 0.04, 0.2);
 
             
-    slotted_wall.add(AABB(lswc, lswc+lswd));
-    slotted_wall.add(AABB(cswc, cswc+cswd));
-    slotted_wall.add(AABB(fswc, fswc+fswd));
-    slotted_wall.add(AABB(mswc, mswc+mswd));
+    slotted_wall.add(AABB(lswc, lswc+lswd));  // lower side wall
+    slotted_wall.add(AABB(cswc, cswc+cswd));  // close side wall
+    slotted_wall.add(AABB(fswc, fswc+fswd));  // far side wall
+    slotted_wall.add(AABB(mswc, mswc+mswd));  // middle side wall
     return slotted_wall;
 }
 
