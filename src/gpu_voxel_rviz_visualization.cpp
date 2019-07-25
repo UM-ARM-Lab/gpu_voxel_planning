@@ -33,16 +33,18 @@ visualization_msgs::Marker GVP::visualizeDenseGrid(const DenseGrid &grid,
 visualization_msgs::MarkerArray GVP::visualizePoint(const Eigen::Vector3d pos,
                                                     const std::string& frame,
                                                     const std::string& ns,
+                                                    const int id,
                                                     const std_msgs::ColorRGBA& color)
 {
     visualization_msgs::Marker point_marker;
+    point_marker.id = id;
     point_marker.ns = ns;
     point_marker.header.frame_id = frame;
     point_marker.type = visualization_msgs::Marker::CUBE;
     point_marker.color = color;
-    point_marker.scale.x = 0.1;
-    point_marker.scale.y = 0.1;
-    point_marker.scale.z = 0.1;
+    point_marker.scale.x = 0.01;
+    point_marker.scale.y = 0.01;
+    point_marker.scale.z = 0.01;
 
     geometry_msgs::Point p;
     point_marker.pose.position.x = pos.x();
@@ -94,10 +96,13 @@ GVP::GpuVoxelRvizVisualizer::GpuVoxelRvizVisualizer(ros::NodeHandle &n)
     ee_path_pub = n.advertise<visualization_msgs::MarkerArray>("ee_path", 10);
 }
 
-void GVP::GpuVoxelRvizVisualizer::vizEEPosition(const std::vector<double> config)
+void GVP::GpuVoxelRvizVisualizer::vizEEPosition(const std::vector<double> config,
+                                                const std_msgs::ColorRGBA& color,
+                                                const int id)
 {
     ee_path_pub.publish(visualizePoint(urdf.getEEPosition(config), global_frame, "position",
-                                       makeColor(0.0, 0.0, 1.0)));
+                                       id, 
+                                       color));
 }
 
 void GVP::GpuVoxelRvizVisualizer::vizGrid(const DenseGrid& grid, const std::string& name,

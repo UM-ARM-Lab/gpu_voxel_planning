@@ -180,7 +180,6 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVis
     for(int i=0; i<30; i++)
     {
         PROFILE_START("Smooth");
-        PROFILE_START("PathLength");
         path = smooth(path, scenario.getState(), discretization, rng);
         PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
         PROFILE_RECORD("Smooth");

@@ -13,6 +13,8 @@ namespace GVP
     {
     public:
         double discretization;
+        GpuVoxelRvizVisualizer* viz;
+        int viz_id=0;
         
     public:
         OMPL_Strategy() : discretization(0.02) {}
@@ -26,9 +28,13 @@ namespace GVP
             
         bool isOmplStateValid(const ompl::base::State *ompl_state,
                               GVP::State &gvp_state);
+        void vizPoint(VictorRightArmConfig& config, bool valid);
+        
 
         virtual Path smooth(Path gvp_path, State &state) = 0;
 
+    private:
+        std::vector<double> previously_sampled_point;
 
     };
 

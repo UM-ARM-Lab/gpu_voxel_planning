@@ -20,6 +20,7 @@ namespace GVP{
     visualization_msgs::MarkerArray visualizePoint(const Eigen::Vector3d pos,
                                                    const std::string& frame,
                                                    const std::string& ns,
+                                                   const int id,
                                                    const std_msgs::ColorRGBA& color);
 
     visualization_msgs::MarkerArray visualize3DPath(const std::vector<Eigen::Vector3d> path,
@@ -60,7 +61,8 @@ namespace GVP{
         GpuVoxelRvizVisualizer(ros::NodeHandle &n);
 
         virtual
-        void vizEEPosition(const std::vector<double> config);
+        void vizEEPosition(const std::vector<double> config,
+                           const std_msgs::ColorRGBA& color, int id=0);
 
         virtual
         void vizEEPath(const std::vector<GVP::VictorRightArmConfig> path_config,

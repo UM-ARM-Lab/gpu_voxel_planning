@@ -105,7 +105,7 @@ void testAngles(Scenario& scenario, GpuVoxelRvizVisualizer &viz)
         VictorRightArmConfig c(joint_angles);
         scenario.getState().robot.set(c.asMap());
         scenario.viz(viz);
-        viz.vizEEPosition(c.asVector());
+        viz.vizEEPosition(c.asVector(), makeColor(0,1,0));
         bool valid = scenario.getState().isPossiblyValid(c);
         std::cout << "EE position: " << urdf.getEEPosition(c.asVector()) << "\n";
         std::cout << "config is " << (valid ? "" : "NOT ") << "possibly valid\n";

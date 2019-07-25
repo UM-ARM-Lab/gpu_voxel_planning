@@ -21,8 +21,10 @@ std::shared_ptr<ob::RealVectorStateSpace> OMPL_Strategy::makeSpace()
     return space;
 }
 
-Path OMPL_Strategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
+Path OMPL_Strategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz_)
 {
+    viz = &viz_;
+    
     auto state_validity_fn = [&](const ob::State *ompl_state)
         {
             return isOmplStateValid(ompl_state, scenario.getState());
@@ -31,7 +33,12 @@ Path OMPL_Strategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
 
     auto space = makeSpace();
 
-    space->setLongestValidSegmentFraction(discretization/space->getMaximumExtent());
+    // std::cout << "max extent: " << space->getMaximumExtent() << "\n";
+
+    //Need to divide by 2, due to the way the edge checking works.
+    //Any segment shorter than the LongestSegment length is not checked
+    space->setLongestValidSegmentFraction(discretization/space->getMaximumExtent()/2);
+    
     
     og::SimpleSetup ss(space);
 
@@ -66,6 +73,18 @@ Path OMPL_Strategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz)
     return smooth(GVP::toPath(pu_path), scenario.getState());
 }
 
+void OMPL_Strategy::vizPoint(VictorRightArmConfig& config, bool valid)
+{
+    if(valid)
+    {
+        viz->vizEEPosition(config.asVector(), makeColor(0,1,1), viz_id++);
+    }
+    else
+    {
+        viz->vizEEPosition(config.asVector(), makeColor(1,0,0), viz_id++);
+    }
+}
+
 bool OMPL_Strategy::isOmplStateValid(const ompl::base::State *ompl_state,
                                      GVP::State &gvp_state)
 {
@@ -73,8 +92,27 @@ bool OMPL_Strategy::isOmplStateValid(const ompl::base::State *ompl_state,
     VictorRightArmConfig config(ompl_state->as<ob::RealVectorStateSpace::StateType>()->values);
     // gvp_state.robot.set(config.asMap());
     // bool valid = !gvp_state.robot.occupied_space.overlapsWith(&gvp_state.known_obstacles);
+
+    // double d = EigenHelpers::Distance(config.asVector(), previously_sampled_point);
+    // std::cout << "Checking config: " << PrettyPrint::PrettyPrint(config.asVector()) << "\n";
+
+    previously_sampled_point = config.asVector();
     bool valid = gvp_state.isPossiblyValid(config);
     PROFILE_RECORD("OMPL Configuration Check");
+
+    // vizPoint(config, valid);
+
+    // std::cout << "Distance between samples: " << d << "";
+    // if(!valid)
+    // {
+    //     std::cout << "  invalid\n";
+    // }
+    // else
+    // {
+    //     std::cout << "\n";
+    // }
+    
+    
     return valid;
 }
 
@@ -85,7 +123,10 @@ bool OMPL_Strategy::isOmplStateValid(const ompl::base::State *ompl_state,
  ***********************/
 ompl::base::PlannerPtr RRT_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
 {
-    return std::make_shared<og::RRTConnect>(si);
+    std::shared_ptr<og::RRTConnect> pp = std::make_shared<og::RRTConnect>(si);
+    pp->setRange(discretization*50);
+    std::cout << "Range: " << pp->getRange() << "\n";
+    return pp;
 }
 
 std::string RRT_Strategy::getName() const
