@@ -85,6 +85,9 @@ def extract_timing_data(dirname, filename):
                 continue
 
             if line.startswith("lazy_sp a_star") and len(data) > 2:
+                if(data[2] == "forward" or
+                   data[2] == "reverse"):
+                    continue
                 a_star = float(data[2])
             
             if not line.startswith("PathLength"):

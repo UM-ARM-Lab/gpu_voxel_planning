@@ -312,11 +312,6 @@ bool SelectiveDensificationStrategy::checkEdgeAndStore(arc_dijkstras::GraphEdge 
     e.setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
                   arc_dijkstras::EDGE_VALIDITY::INVALID);
 
-    if(valid)
-    {
-        sd_graph.getReverseEdge(e).setValidity(arc_dijkstras::EDGE_VALIDITY::VALID);
-    }
-
     sd_graph.getReverseEdge(e).setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID :
                                            arc_dijkstras::EDGE_VALIDITY::INVALID);
     
