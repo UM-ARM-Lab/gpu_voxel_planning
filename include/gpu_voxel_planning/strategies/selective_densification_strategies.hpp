@@ -5,6 +5,7 @@
 #include "strategies/strategies.hpp"
 #include "strategies/memorized_swept_volumes.hpp"
 #include <arc_utilities/timing.hpp>
+#include "sd_params.hpp"
 
 
 
@@ -24,7 +25,7 @@ namespace GVP
         SDRoadmap sd_graph;
         MemorizedSweptVolume precomputed_swept_volumes;
         bool initialized;
-        double discretization = 0.02;
+        double discretization = SD_EDGE_DISCRETIZATION;
         const std::string graph_filepath;
         const std::string swept_volumes_filepath;
         NodeIndex cur_node;

@@ -5,6 +5,7 @@
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
+#include "sd_params.hpp"
 
 
 namespace GVP
@@ -17,10 +18,10 @@ namespace GVP
         int viz_id=0;
         
     public:
-        OMPL_Strategy() : discretization(0.02) {}
+        OMPL_Strategy() : discretization(SD_EDGE_DISCRETIZATION) {}
         
         Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
-        
+
     protected:
         std::shared_ptr<ompl::base::RealVectorStateSpace> makeSpace();
 
