@@ -61,7 +61,6 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
         factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
     }
 
-    // factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
     return factories;
 }
 
@@ -117,6 +116,11 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
 
     ros::Duration(1.0).sleep();
+
+    if(VISUALIZE)
+    {
+        std::cout << "\n!! WARNING !!\n\n Visualiziation on, which means timings are not accurate\n";
+    }
 
     preparePrecomputed(n);
     testAll(n);
