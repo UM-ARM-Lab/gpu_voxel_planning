@@ -345,7 +345,10 @@ bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, Stat
     {
         bool valid = checkEdgeAndStore(e, s); //This will run fast, since there is already a swept volume
         PROFILE_RECORD("CheckEdge");
-        // vizEdge(e);
+        if(VISUALIZE)
+        {
+            vizEdge(e);
+        }
         return valid;
     }
 
@@ -368,7 +371,10 @@ bool SelectiveDensificationStrategy::checkEdge(arc_dijkstras::GraphEdge &e, Stat
     }
     PROFILE_RECORD("CheckEdge From Scratch");
     PROFILE_RECORD("CheckEdge");
-    // vizEdge(e);
+    if(VISUALIZE)
+    {
+        vizEdge(e);
+    }
     return valid;
 }
 

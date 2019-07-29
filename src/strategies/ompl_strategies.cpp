@@ -100,7 +100,10 @@ bool OMPL_Strategy::isOmplStateValid(const ompl::base::State *ompl_state,
     bool valid = gvp_state.isPossiblyValid(config);
     PROFILE_RECORD("OMPL Configuration Check");
 
-    // vizPoint(config, valid);
+    if(VISUALIZE)
+    {
+        vizPoint(config, valid);
+    }
 
     // std::cout << "Distance between samples: " << d << "";
     // if(!valid)
