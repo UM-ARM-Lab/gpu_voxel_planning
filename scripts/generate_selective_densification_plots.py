@@ -317,6 +317,22 @@ def format_double(num):
         return '{0:g}'.format(float('{:.2g}'.format(num)))
     return number_format.format(num)
 
+def format_int(num):
+    return str(int(num))
+
+def compute_or_dash(l, format_func=format_double):
+    """
+    returns the minimum value if greater than 0, or a "-" if the list is empty or contains a negative element
+    """
+    if len(l) == 0:
+        return "-"
+
+    if min(l) < 0:
+        return "-"
+    
+    return format_func(l)
+    
+
 def print_best_scene_strat_stats(exps, f):
     """
     Takes in experiments all from the same scene/strat and a file f
@@ -324,15 +340,14 @@ def print_best_scene_strat_stats(exps, f):
     """
     r = get_min_times(exps)
 
-    a_star = "-"
-    if min(r["a_star"]) > 0:
-        a_star = format_double(min(r["a_star"]))
-    
-    f.write("    & " + format_double(min(r["min_times"]))
-            + " & "  + format_double(min(r["min_lengths"]))
-            + " & "  + format_double(min(r["min_utils"]))
-            + " & "  + str(int(min(r["col_checks"])))
-            + " & "  + a_star)
+    fd = lambda l: format_double(min(l))
+    fi = lambda l: format_int(min(l))
+
+    f.write("    & " + compute_or_dash(r["min_times"], fd)
+            + " & "  + compute_or_dash(r["min_lengths"], fd)
+            + " & "  + compute_or_dash(r["min_utils"], fd)
+            + " & "  + compute_or_dash(r["col_checks"], fi)
+            + " & "  + compute_or_dash(r["a_star"], fd))
     f.write("\n")
 
 def print_avg_scene_strat_stats(exps, f):
@@ -342,17 +357,15 @@ def print_avg_scene_strat_stats(exps, f):
     """
     r = get_min_times(exps)
 
-    a_star = "-"
-    if min(r["a_star"]) > 0:
-        a_star = format_double(min(r["a_star"]))
-
-    
+    fd = lambda l: format_double(np.mean(l))
+    fi = lambda l: format_int(np.mean(l))
         
-    f.write("    & "  + format_double(np.mean(r["min_times"]))
-            + " & "  + format_double(np.mean(r["min_lengths"]))
-            + " & "  + format_double(np.mean(r["min_utils"]))
-            + " & "  + str(int(np.mean(r["col_checks"])))
-            + " & "  + a_star)
+    f.write("    & "  + compute_or_dash(r["min_times"], fd)
+            + " & "  + compute_or_dash(r["min_lengths"], fd)
+            + " & "  + compute_or_dash(r["min_utils"], fd)
+            + " & "  + compute_or_dash(r["col_checks"], fi)
+            + " & "  + compute_or_dash(r["a_star"], fd)
+    )
     f.write("\n")
 
 
@@ -417,7 +430,7 @@ if __name__ == "__main__":
     
     print("hi")
     exps = load_experiment_files()
-    plot_all(exps)
+    # plot_all(exps)
     print_stats(exps)
     print_better_fraction(exps)
 
