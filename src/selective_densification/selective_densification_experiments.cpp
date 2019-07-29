@@ -60,6 +60,8 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
         factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
         factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
     }
+
+    // factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
     return factories;
 }
 

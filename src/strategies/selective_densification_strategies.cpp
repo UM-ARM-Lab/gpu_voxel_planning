@@ -535,6 +535,9 @@ void SelectiveDensificationStrategy::saveToFile(std::string filename)
 /**********************************
  **  Omniscient Graph Search
  ********************************/
+// OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed, double c_p) :
+//     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
+//                                    use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map" : ""),
 OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed, double c_p) :
     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_2_16.graph",
                                    use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_2_16.map" : ""),
