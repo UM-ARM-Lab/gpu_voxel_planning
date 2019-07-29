@@ -161,7 +161,7 @@ def plot_all_strategies(exps, variant):
             y = data["utility"]
             y_axis_label = "Planning + Execution (s)"
             # ax.set_ylim([0, 50])
-            ax.set_xlim([0, 50])
+            ax.set_xlim([0, 100])
 
         if(len(data["time"]) > 0 and data["time"][0] > 100):
             continue
