@@ -130,7 +130,25 @@ def load_experiment_files():
         exps.append(extract_experiment_info(logged_filepath, name))
     return exps
 
+def get_all_strategies(exps):
+    """
+    return a list of all strategies in all experients
+    """
+    strats = []
+    for exp in exps:
+        strat = exp["strategy"]
+        if not strat in strats:
+            strats.append(strat)
 
+    return strats
+
+def filter_strat(exps, strat):
+    """
+    Returns the subset of exps that use the given strategy
+    """
+    return [e for e in exps if e["strategy"] == strat]
+
+    
 
 def plot_all_strategies(exps, variant):
     """plots strategies on the same plot
@@ -258,16 +276,84 @@ def plot_without_smoothing(exps):
     # plt.title(scenario)
     plt.savefig(save_path + scenario + "_cp_sweep")
     plt.show()
-        
+
+
+def get_success_fraction(exps, ts):
+    """
+    returns data for the fraction trials that succeeded over time
+    All exps should use the same strategy and be from the same scenario
+    """
+    denom = len(exps)
+    data = []
+
+    for t in ts:
+        num = 0
+        for exp in exps:
+            solution_times = exp["data"]["time"]
+            if(len(solution_times) == 0):
+                continue
+            
+            if(solution_times[0] < t):
+                num += 1
+        data.append(float(num)/denom)
+
+    IPython.embed()
+    return data
+
+def get_all_success_fraction(exps):
+    """
+    Returns data for the fraction of trials that succeeded over time
+    All exps should be from the same scenario but this function will filter into different strategies 
+    """
+    data = {}
+    ts = np.arange(0, 100, 0.1)
+
+    
+    all_strats = get_all_strategies(exps)
+    for strat in all_strats:
+        data[strat] = get_success_fraction(filter_strat(exps, strat), ts)
+    return data, ts
+
+
+def plot_percentage_success(exps):
+    """
+    Plots success percentages for a set of experiments all belonging to the same scenario
+    """
+    exps.sort(key=lambda exp: ordering[exp["strategy"]])
+    scenario = exps[0]["scenario"];
+    
+    successes, ts = get_all_success_fraction(exps)
+
+    fig = plt.figure()
+    ax = plt.subplot(111)
+
+    for strat in successes.keys():
+        ax.plot(ts, successes[strat], label=strat, **linestyles[strat])
+    
+    ax.set_xlabel("Planning Time (s)", fontsize=22)
+    ax.set_ylabel("Success Fraction", fontsize=22)
+    plt.show()
+
+    IPython.embed()
+
+
+
 
 def plot_group(exps):
-    plot_all_strategies(exps, "length")
-    plot_all_strategies(exps, "utility")
-    plot_without_smoothing(exps)
+    """
+    Plots all plots of interest from a group of experiments all belonging to the same scenario
+    """
+    # plot_all_strategies(exps, "length")
+    # plot_all_strategies(exps, "utility")
+    # plot_without_smoothing(exps)
+    plot_percentage_success(exps)
     
 
 
 def plot_all(exps):
+    """
+    Plots everything of interest from a list of all experiments
+    """
     scenarios = {x["scenario"] for x in exps}
     for scenario in scenarios:
         scen_exps = []
@@ -430,7 +516,7 @@ if __name__ == "__main__":
     
     print("hi")
     exps = load_experiment_files()
-    # plot_all(exps)
+    plot_all(exps)
     print_stats(exps)
     print_better_fraction(exps)
 
