@@ -6,7 +6,7 @@ import IPython
 
 
 logged_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/selective_densification_timings/"
-save_path = logged_filepath
+save_path = logged_filepath + "figures/"
 
 plotted_cp = 1.0
 
@@ -126,6 +126,9 @@ def load_experiment_files():
             continue
         if name.endswith(".txt"):
             continue
+        if os.path.isdir(os.path.join(logged_filepath, name)):
+            continue
+
         # extract_timing_data(logged_filepath, name)
         exps.append(extract_experiment_info(logged_filepath, name))
     return exps
@@ -183,17 +186,19 @@ def plot_all_strategies(exps, variant):
         if(variant == "length"):
             y = data["length"]
             y_axis_label = "Path Length (rad)"
+            ax.set_xlim([0.1, 1000])
         if(variant == "utility"):
             y = data["utility"]
             y_axis_label = "Planning + Execution (s)"
             # ax.set_ylim([0, 50])
-            ax.set_xlim([0, 100])
+            ax.set_xlim([0.1, 1000])
 
-        if(len(data["time"]) > 0 and data["time"][0] > 100):
-            continue
+        # if(len(data["time"]) > 0 and data["time"][0] > 100):
+        #     continue
             
         ax.plot(data["time"], y, label=exp["strategy"], **linestyles[exp["strategy"]])
     # plt.title(scenario)
+    plt.xscale("log")
 
     ax.set_xlabel("Planning Time (s)", fontsize=22)
     ax.set_ylabel(y_axis_label, fontsize=22)
@@ -227,7 +232,7 @@ def plot_all_strategies(exps, variant):
 
     
 
-def plot_without_smoothing(exps):
+def plot_cp_variation(exps):
     exps.sort(key=lambda exp: ordering[exp["strategy"]])
     scenario = exps[0]["scenario"];
 
@@ -343,6 +348,7 @@ def plot_percentage_success(exps):
     ax.set_xlabel("Planning Time (s)", fontsize=22)
     ax.set_ylabel("Success Fraction", fontsize=22)
     plt.xscale("log")
+    plt.savefig(save_path + scenario + "_success_rate")
     plt.show()
 
 
@@ -353,9 +359,9 @@ def plot_group(exps):
     """
     Plots all plots of interest from a group of experiments all belonging to the same scenario
     """
-    # plot_all_strategies(exps, "length")
+    plot_all_strategies(exps, "length")
     # plot_all_strategies(exps, "utility")
-    # plot_without_smoothing(exps)
+    # plot_cp_variation(exps)
     plot_percentage_success(exps)
     
 
@@ -520,11 +526,18 @@ def print_better_fraction(exps):
         
         
         # IPython.embed()
+
+def ensure_dir(file_path):
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     
 
 if __name__ == "__main__":
     
     print("hi")
+    ensure_dir(save_path)
+    
     exps = load_experiment_files()
     plot_all(exps)
     print_stats(exps)
