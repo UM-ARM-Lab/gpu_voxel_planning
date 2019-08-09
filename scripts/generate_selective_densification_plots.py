@@ -142,11 +142,19 @@ def get_all_strategies(exps):
 
     return strats
 
-def filter_strat(exps, strat):
+def filter_strat(exps, strat, c_p = None):
     """
     Returns the subset of exps that use the given strategy
     """
     return [e for e in exps if e["strategy"] == strat]
+
+def prune_extra_cp(exps, c_ps):
+    """
+    Removes SD and SD-pre strategies that do not use c_p desired in plotting
+    """
+    return [e for e in exps if e["data"]["c_p"] == -1 or e["data"]["c_p"] in c_ps]
+    
+
 
     
 
@@ -292,12 +300,12 @@ def get_success_fraction(exps, ts):
             solution_times = exp["data"]["time"]
             if(len(solution_times) == 0):
                 continue
-            
+
             if(solution_times[0] < t):
                 num += 1
         data.append(float(num)/denom)
 
-    IPython.embed()
+
     return data
 
 def get_all_success_fraction(exps):
@@ -306,7 +314,7 @@ def get_all_success_fraction(exps):
     All exps should be from the same scenario but this function will filter into different strategies 
     """
     data = {}
-    ts = np.arange(0, 100, 0.1)
+    ts = np.arange(0, 1000, 0.1)
 
     
     all_strats = get_all_strategies(exps)
@@ -319,7 +327,9 @@ def plot_percentage_success(exps):
     """
     Plots success percentages for a set of experiments all belonging to the same scenario
     """
+    exps = prune_extra_cp(exps, [plotted_cp])
     exps.sort(key=lambda exp: ordering[exp["strategy"]])
+    
     scenario = exps[0]["scenario"];
     
     successes, ts = get_all_success_fraction(exps)
@@ -332,9 +342,9 @@ def plot_percentage_success(exps):
     
     ax.set_xlabel("Planning Time (s)", fontsize=22)
     ax.set_ylabel("Success Fraction", fontsize=22)
+    plt.xscale("log")
     plt.show()
 
-    IPython.embed()
 
 
 
