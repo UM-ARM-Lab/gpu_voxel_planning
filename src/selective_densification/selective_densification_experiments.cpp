@@ -40,29 +40,51 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
     return factories;
 }
 
+
+std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>>
+getPrecomputedStrategyFactories()
+{
+    std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>> factories;
+    for(double c_p: c_ps)
+    {
+        factories.push_back([c_p](){
+                return std::make_shared<OmniscientSDGraphSearch>(true, c_p, 0);}); //using precomputed
+    }
+
+    factories.push_back([](){
+            return std::make_shared<OmniscientSDGraphSearch>(true, 1, 0);}); //using precomputed
+
+    return factories;
+}
+
 std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories()
 {
     std::vector<std::function<std::shared_ptr<Strategy>(void)>> factories;
+    for(auto f: getPrecomputedStrategyFactories())
+    {
+        factories.push_back(f);
+    }
 
     for(double c_p: c_ps)
     {
         factories.push_back([c_p](){
-                return std::make_shared<OmniscientSDGraphSearch>(false, c_p);}); //not using precomputed
-        factories.push_back([c_p](){
-                return std::make_shared<OmniscientSDGraphSearch>(true, c_p);}); //using precomputed
+                return std::make_shared<OmniscientSDGraphSearch>(false, c_p, 0);}); //not using precomputed
     }
     factories.push_back([](){
-            return std::make_shared<DenseGraphSearch>(false);}); //using precomputed
-    factories.push_back([](){
-            return std::make_shared<DenseGraphSearch>(true);}); //not precomputed
+            return std::make_shared<DenseGraphSearch>(false, 0);}); //not precomputed
+                
+
     for(int i=0; i<10; i++)
     {
         factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
         factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
     }
+    
+
 
     return factories;
 }
+
 
 
 void testAll(ros::NodeHandle &n)
@@ -85,27 +107,23 @@ void testAll(ros::NodeHandle &n)
 }
 
 
+
 void preparePrecomputed(ros::NodeHandle &n)
 {
     std::cout << "Precomputing swept volumes\n";
     for(auto scenario_factory:getScenarioFactories())
     {
-        for(double c_p: c_ps){
-            OmniscientSDGraphSearch strat(true, c_p);
-            strat.setMode(SelectiveDensificationStrategy::EdgeCheckMode::STORE);
-            test(n, *scenario_factory(), strat);
-            strat.saveToFile();
-        }
-
+        for(auto f: getPrecomputedStrategyFactories())
         {
-            DenseGraphSearch strat(true);
-            strat.setMode(SelectiveDensificationStrategy::EdgeCheckMode::STORE);
-            test(n, *scenario_factory(), strat);
-            strat.saveToFile();
+            auto strat_ptr = f();
+            strat_ptr->setMode(SelectiveDensificationStrategy::EdgeCheckMode::STORE);
+            test(n, *scenario_factory(), *strat_ptr);
+            strat_ptr->saveToFile();
         }
     }
-
 }
+
+
 
 
 

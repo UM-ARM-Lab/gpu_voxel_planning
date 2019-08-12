@@ -5,14 +5,16 @@
 #include "gvp_exceptions.hpp"
 
 
+const std::string basepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD/";
+
 using namespace GVP;
 
 SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string &graph_filepath,
                                                                const std::string& swept_volumes_filepath) :
+    initialized(false),
     graph_filepath(graph_filepath),
     swept_volumes_filepath(swept_volumes_filepath),
-    sd_graph(graph_filepath),
-    initialized(false)
+    sd_graph(graph_filepath)
 {
     try
     {
@@ -41,9 +43,9 @@ SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string
 // SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
 //     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
 //                                    "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map"){}
-SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
-    SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_2_16.graph",
-                                   "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_2_16.map"){}
+// SelectiveDensificationStrategy::SelectiveDensificationStrategy() :
+//     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_2_16.graph",
+//                                    "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_2_16.map"){}
 
 
 void SelectiveDensificationStrategy::setMode(EdgeCheckMode mode_)
@@ -535,12 +537,9 @@ void SelectiveDensificationStrategy::saveToFile(std::string filename)
 /**********************************
  **  Omniscient Graph Search
  ********************************/
-// OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed, double c_p) :
-//     SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph",
-//                                    use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_100k.map" : ""),
-OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed, double c_p) :
-    SelectiveDensificationStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_2_16.graph",
-                                   use_precomputed ? "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_SD_2_16.map" : ""),
+OmniscientSDGraphSearch::OmniscientSDGraphSearch(bool use_precomputed, double c_p, int graph_num) :
+    SelectiveDensificationStrategy(basepath + "seed" + std::to_string(graph_num) + ".graph",
+                                   use_precomputed ? basepath + "sv" + std::to_string(graph_num) + ".map" : ""),
     use_precomputed(use_precomputed),
     c_p(c_p)
 {
@@ -581,8 +580,8 @@ double OmniscientSDGraphSearch::distanceHeuristic(const std::vector<double> &raw
 /****************************
  **  Dense Graph Search   ***
  ***************************/
-DenseGraphSearch::DenseGraphSearch(bool use_precomputed) :
-    OmniscientSDGraphSearch(use_precomputed, 0.0)
+DenseGraphSearch::DenseGraphSearch(bool use_precomputed, int graph_num) :
+    OmniscientSDGraphSearch(use_precomputed, 0.0, graph_num)
 {
 }
 

@@ -124,9 +124,7 @@ namespace GVP
         double c_p;
         
     public:
-        // OmniscientSDGraphSearch(const std::string &filename) : SelectiveDensificationStrategy(filename) {}
-        OmniscientSDGraphSearch() {}
-        OmniscientSDGraphSearch(bool use_precomputed, double c_p);
+        OmniscientSDGraphSearch(bool use_precomputed, double c_p, int graph_num);
         virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) override;
         virtual std::string getName() const override;
         // virtual Path applyTo(Scenario &scenario) override;
@@ -141,9 +139,7 @@ namespace GVP
     private:
         
     public:
-        // OmniscientSDGraphSearch(const std::string &filename) : SelectiveDensificationStrategy(filename) {}
-        DenseGraphSearch() {}
-        DenseGraphSearch(bool use_precomputed);
+        DenseGraphSearch(bool use_precomputed, int graph_num);
         virtual std::string getName() const override;
         // virtual Path applyTo(Scenario &scenario) override;
         virtual double distanceHeuristic(const std::vector<double> &raw1,

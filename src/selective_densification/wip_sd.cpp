@@ -6,102 +6,137 @@
 
 #include <ros/ros.h>
 #include "ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "robot/robot_model.hpp"
 #include "state.hpp"
 #include "scenario_tester.hpp"
 #include "strategies/graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
-#include "strategies/victor_selective_densification.hpp"
 #include "strategies/selective_densification_strategies.hpp"
 #include "strategies/ompl_strategies.hpp"
 
+
 using namespace GVP;
 
+// std::vector<double> c_ps{100.0, 10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.0};
+std::vector<double> c_ps{1.0};
 
-void precomputeEdges()
+
+
+void test(ros::NodeHandle &n, SimulationScenario &scenario, Strategy &strategy)
 {
-    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
-    OmniscientSDGraphSearch strat;
+    SimulationScenarioTester tester(scenario, n);
+    std::cout << "Testing strat\n";
+    tester.attemptStrategy(strategy);
+    std::cout << "Finished test\n";
+}
+
+
+std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenarioFactories()
+{
     BeliefParams bp(BeliefType::Deterministic);
-    Bookshelf scenario(bp);
+    std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
+    // factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
+    // factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
+    factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
+    return factories;
+}
 
-    int i=0;
-    for(auto &node: strat.sd_graph.getNodes())
+std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>>
+getPrecomputedStrategyFactories()
+{
+    std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>> factories;
+    for(double c_p: c_ps)
     {
-        if(DepthNode(node.getValue()).depth >= 4)
-        {
-            continue;
-        }
-        for(auto &edge: node.getOutEdges())
-        {
-            if(edge.getValidity() != arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
-            {
-                continue;
-            }
-            strat.getSweptVolume(scenario.getState(), edge);
-            i++;
+        factories.push_back([c_p](){
+                return std::make_shared<OmniscientSDGraphSearch>(true, c_p, 0);}); //using precomputed
+    }
 
-            if(i%1000 == 0)
-            {
-                std::cout << "Computed SV for " << i << " edges\n";
-            }
+    factories.push_back([](){
+            return std::make_shared<OmniscientSDGraphSearch>(true, 1, 0);}); //using precomputed
+
+    return factories;
+}
+
+std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories()
+{
+    std::vector<std::function<std::shared_ptr<Strategy>(void)>> factories;
+    for(auto f: getPrecomputedStrategyFactories())
+    {
+        factories.push_back(f);
+    }
+
+    for(double c_p: c_ps)
+    {
+        factories.push_back([c_p](){
+                return std::make_shared<OmniscientSDGraphSearch>(false, c_p, 0);}); //not using precomputed
+    }
+    factories.push_back([](){
+            return std::make_shared<DenseGraphSearch>(false, 0);}); //not precomputed
+                
+
+    for(int i=0; i<10; i++)
+    {
+        factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
+        factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
+    }
+    
+
+
+    return factories;
+}
+
+
+void testAll(ros::NodeHandle &n)
+{
+    for(auto scenario_factory:getScenarioFactories())
+    {
+        for(auto strategy_factory: getStrategyFactories())
+        {
+            PROFILE_REINITIALIZE(0,0);
+            auto scenario_ptr = scenario_factory();
+            auto strategy_ptr = strategy_factory();
+            test(n, *scenario_ptr, *strategy_ptr);
+            
+            std::string filename = "wip_" + scenario_ptr->getName() + " " +
+                strategy_ptr->getName() + " "+ arc_helpers::GetCurrentTimeAsString();
+            PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
+            PROFILE_WRITE_ALL_FEWER_THAN(filename, 150);
+            PROFILE_PRINT_SUMMARY_FOR_ALL();
         }
     }
-    strat.saveToFile();
 }
+
+
+void preparePrecomputed(ros::NodeHandle &n)
+{
+    std::cout << "Precomputing swept volumes\n";
+    for(auto scenario_factory:getScenarioFactories())
+    {
+        for(auto f: getPrecomputedStrategyFactories())
+        {
+            auto strat_ptr = f();
+            strat_ptr->setMode(SelectiveDensificationStrategy::EdgeCheckMode::STORE);
+            test(n, *scenario_factory(), *strat_ptr);
+            strat_ptr->saveToFile();
+        }
+    }
+}
+
 
 
 int main(int argc, char* argv[])
 {
     icl_core::logging::initialize(argc, argv);
-    ros::init(argc, argv, "wip_roadmap");
+    ros::init(argc, argv, "selective_densification_experiments");
     ros::NodeHandle n;
 
-
-    // precomputeEdges();
-    // return 1;
-    
-    GpuVoxelRvizVisualizer viz(n);
-    BeliefParams bp(BeliefType::Deterministic);
-
-    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
-
-    // SDRoadmap rm;
-    // rm.saveToFile(graph_filepath);
-
-    // Roadmap rm;
-    // rm.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
-
-
     ros::Duration(1.0).sleep();
-    // GVP::VictorRightArm victor_right;
-    // GVP::VictorLeftArmAndBase victor_left;
-    // TableWithBox scenario(true, true, true);
-    SlottedWall scenario(bp);
-    // Bookshelf scenario(true);
 
-    // AStarGraphSearch strat;
-    // OmniscientGraphSearch strat;
-    // OmniscientGraphSearch strat("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_1M.graph");
-    OmniscientSDGraphSearch strat(true, 1.0);
-    // OmniscientSDGraphSearch strat(graph_filepath);
-    // RRT_Strategy strat;
-    // BIT_Strategy strat;
+    if(VISUALIZE)
+    {
+        std::cout << "\n!! WARNING !!\n\n Visualiziation on, which means timings are not accurate\n";
+    }
 
-    // testAngles(scenario, viz);
-    // return 1;
-    
-    
-    SimulationScenarioTester tester(scenario, n);
-    std::cout << "Attempting strategy\n";
-    tester.attemptStrategy(strat);
-    // strat.saveToFile();
-
-    // viz.vizEEGraph(strat.graph);
-    // viz.vizEESDGraph(strat.sd_graph);
-    
-    PROFILE_PRINT_SUMMARY_FOR_ALL();
-    std::string filename = "sim_timing_" + arc_helpers::GetCurrentTimeAsString();
-    PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
-    PROFILE_WRITE_ALL_FEWER_THAN(filename, 10000);
-
+    preparePrecomputed(n);
+    testAll(n);
 }
