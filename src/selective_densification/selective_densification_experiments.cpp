@@ -18,6 +18,7 @@
 using namespace GVP;
 
 std::vector<double> c_ps{100.0, 10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.0};
+static const double chosen_cp = 1;
 // std::vector<double> c_ps{1.0};
 
 
@@ -41,18 +42,24 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 }
 
 
+
 std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>>
 getPrecomputedStrategyFactories()
 {
     std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>> factories;
-    for(double c_p: c_ps)
-    {
-        factories.push_back([c_p](){
-                return std::make_shared<OmniscientSDGraphSearch>(true, c_p, 0);}); //using precomputed
-    }
+    // for(double c_p: c_ps)
+    // {
+    //     factories.push_back([c_p](){
+    //             return std::make_shared<OmniscientSDGraphSearch>(true, c_p, 0);}); //using precomputed
+    // }
 
-    factories.push_back([](){
-            return std::make_shared<OmniscientSDGraphSearch>(true, 1, 0);}); //using precomputed
+    for(int i=0; i<10; i++)
+    {
+        factories.push_back([i](){
+                return std::make_shared<OmniscientSDGraphSearch>(true, chosen_cp, i);}); //using precomputed
+        factories.push_back([i](){
+                return std::make_shared<DenseGraphSearch>(true, i);}); //not precomputed
+    }
 
     return factories;
 }
@@ -70,17 +77,22 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
         factories.push_back([c_p](){
                 return std::make_shared<OmniscientSDGraphSearch>(false, c_p, 0);}); //not using precomputed
     }
-    factories.push_back([](){
-            return std::make_shared<DenseGraphSearch>(false, 0);}); //not precomputed
-                
 
+    for(int i=0; i<10; i++)
+    {
+        factories.push_back([i](){
+                return std::make_shared<OmniscientSDGraphSearch>(false, chosen_cp, i);}); //using precomputed
+        factories.push_back([i](){
+                return std::make_shared<DenseGraphSearch>(false, i);}); //not precomputed
+    }
+                
+    
     for(int i=0; i<10; i++)
     {
         factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
         factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
     }
     
-
 
     return factories;
 }
