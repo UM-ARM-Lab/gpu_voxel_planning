@@ -37,7 +37,7 @@ Path OMPL_Strategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz_)
 
     //Need to divide by 2, due to the way the edge checking works.
     //Any segment shorter than the LongestSegment length is not checked
-    space->setLongestValidSegmentFraction(discretization/space->getMaximumExtent()/2);
+    space->setLongestValidSegmentFraction(discretization/space->getMaximumExtent());
     
     
     og::SimpleSetup ss(space);
@@ -127,7 +127,7 @@ bool OMPL_Strategy::isOmplStateValid(const ompl::base::State *ompl_state,
 ompl::base::PlannerPtr RRT_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
 {
     std::shared_ptr<og::RRTConnect> pp = std::make_shared<og::RRTConnect>(si);
-    pp->setRange(discretization*50);
+    pp->setRange(discretization*5);
     std::cout << "Range: " << pp->getRange() << "\n";
     return pp;
 }

@@ -300,6 +300,14 @@ target_link_libraries(wip_sd
   victor_halton_roadmap
   )
 
+add_executable(generate_graphs
+  src/selective_densification/generate_graphs.cpp)
+target_link_libraries(generate_graphs
+  ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
+
 add_executable(wip_BTP
   src/wip_BTP.cpp)
 target_link_libraries(wip_BTP

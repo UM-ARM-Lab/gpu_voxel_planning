@@ -14,10 +14,11 @@ static int numNodesAtDepth(int depth, int dim)
 SDRoadmap::SDRoadmap() : depth(5), dim(7), num_neighbors_desired(30.0)
 {
     std::cout << "Generating SD roadmap\n";
-    generateGraph(depth);
+    int seed = 0;
+    generateGraph(depth, seed);
 }
 
-SDRoadmap::SDRoadmap(std::string filename) : depth(16), dim(7), num_neighbors_desired(30.0)
+SDRoadmap::SDRoadmap(std::string filename, int seed) : depth(16), dim(7), num_neighbors_desired(30.0)
 {
     if(loadFromFile(filename))
     {
@@ -26,7 +27,7 @@ SDRoadmap::SDRoadmap(std::string filename) : depth(16), dim(7), num_neighbors_de
     }
 
     std::cout << "Failed to load graph. Generating from scratch\n";
-    generateGraph(depth);
+    generateGraph(depth, seed);
     std::cout << "Saving graph to " << filename << "\n";
     saveToFile(filename);
 }
@@ -60,9 +61,12 @@ double SDRoadmap::radiusAtDepth(int depth)
     return connection_radius;
 }
 
-
-
 void SDRoadmap::generateGraph(int max_depth)
+{
+    throw std::runtime_error("Not implemented, use generateGraph with seed");
+}
+
+void SDRoadmap::generateGraph(int max_depth, int seed)
 {
     std::cout << "generating...";
     std::cout << max_depth << ", " << dim << "\n";
@@ -70,7 +74,7 @@ void SDRoadmap::generateGraph(int max_depth)
     // int num_vert = 10;
 
 
-    auto qs = scaleToVictorDims(halton::haltonPoints(num_vert, dim));
+    auto qs = scaleToVictorDims(halton::haltonPoints(num_vert, dim, seed));
 
     for(int depth=0; depth <= max_depth; depth++)
     {

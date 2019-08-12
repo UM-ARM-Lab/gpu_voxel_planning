@@ -571,7 +571,7 @@ double OmniscientSDGraphSearch::distanceHeuristic(const std::vector<double> &raw
     PROFILE_START(depth_logging_name);
     PROFILE_RECORD(depth_logging_name);
 
-    return EigenHelpers::Distance(d1.q, d2.q)*(1+c_p*std::pow(10, d1.depth));
+    return EigenHelpers::Distance(d1.q, d2.q)*(1+c_p*std::pow(2, d1.depth));
     // return EigenHelpers::Distance(d1.q, d2.q);
 }
 

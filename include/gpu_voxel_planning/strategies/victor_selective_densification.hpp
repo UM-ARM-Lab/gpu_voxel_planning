@@ -14,9 +14,10 @@ public:
     double num_neighbors_desired;
     
     SDRoadmap();
-    SDRoadmap(std::string filename);
+    SDRoadmap(std::string filename, int seed=0);
     std::vector<std::vector<double>> scaleToVictorDims(std::vector<std::vector<double>> points);
     void generateGraph(int max_depth) override;
+    void generateGraph(int max_depth, int seed);
 
     double edgeCost(const DepthNode &n1, const DepthNode &n2) const override;
     // double distanceHeuristic(const std::vector<double> &raw1,
