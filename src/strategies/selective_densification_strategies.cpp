@@ -179,15 +179,18 @@ Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVis
     rng.seed(42);
 
 
-    for(int i=0; i<30; i++)
+    if(SMOOTH)
     {
-        PROFILE_START("Smooth");
-        path = smooth(path, scenario.getState(), discretization, rng);
-        PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
-        PROFILE_RECORD("Smooth");
+        for(int i=0; i<30; i++)
+        {
+            PROFILE_START("Smooth");
+            path = smooth(path, scenario.getState(), discretization, rng);
+            PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
+            PROFILE_RECORD("Smooth");
+        }
+        std::cout << "Smoothed path cost " << PathUtils::length(toPathUtilsPath(path)) << "\n\n";
     }
 
-    std::cout << "Smoothed path cost " << PathUtils::length(toPathUtilsPath(path)) << "\n\n";
 
     return GVP::densify(path, discretization);
 }

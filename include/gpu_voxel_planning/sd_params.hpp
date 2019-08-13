@@ -4,8 +4,9 @@
 
 namespace GVP
 {
-    static const double SD_EDGE_DISCRETIZATION = 0.02;
-    static const bool VISUALIZE = true;
+    const double SD_EDGE_DISCRETIZATION = 0.02;
+    const bool VISUALIZE = true;
+    const bool SMOOTH = true;
 }
 
 #endif // GVP_SD_PARAMS

@@ -36,8 +36,8 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 {
     BeliefParams bp(BeliefType::Deterministic);
     std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
-    // factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
-    // factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
+    factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
+    factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
     factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
     return factories;
 }
@@ -56,9 +56,16 @@ getPrecomputedStrategyFactories()
     {
         factories.push_back([i](){
                 return std::make_shared<OmniscientSDGraphSearch>(true, chosen_cp, i);}); //using precomputed
-        factories.push_back([i](){
-                return std::make_shared<DenseGraphSearch>(true, i);}); //not precomputed
+        // factories.push_back([i](){
+        //         return std::make_shared<DenseGraphSearch>(true, i);}); //not precomputed
     }
+
+
+    // factories.push_back([](){
+    //         return std::make_shared<OmniscientSDGraphSearch>(true, chosen_cp, 1);}); //using precomputed
+    // factories.push_back([i](){
+    //         return std::make_shared<DenseGraphSearch>(true, i);}); //not precomputed
+
 
     return factories;
 }
@@ -71,26 +78,26 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
         factories.push_back(f);
     }
 
-    for(double c_p: c_ps)
-    {
-        factories.push_back([c_p](){
-                return std::make_shared<OmniscientSDGraphSearch>(false, c_p, 0);}); //not using precomputed
-    }
+    // for(double c_p: c_ps)
+    // {
+    //     factories.push_back([c_p](){
+    //             return std::make_shared<OmniscientSDGraphSearch>(false, c_p, 0);}); //not using precomputed
+    // }
 
-    for(int i=0; i<10; i++)
-    {
-        factories.push_back([i](){
-                return std::make_shared<OmniscientSDGraphSearch>(false, chosen_cp, i);}); //using precomputed
-        factories.push_back([i](){
-                return std::make_shared<DenseGraphSearch>(false, i);}); //not precomputed
-    }
+    // for(int i=0; i<10; i++)
+    // {
+    //     factories.push_back([i](){
+    //             return std::make_shared<OmniscientSDGraphSearch>(false, chosen_cp, i);}); //using precomputed
+    //     factories.push_back([i](){
+    //             return std::make_shared<DenseGraphSearch>(false, i);}); //not precomputed
+    // }
                 
     
-    for(int i=0; i<10; i++)
-    {
-        factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
-        factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
-    }
+    // for(int i=0; i<10; i++)
+    // {
+    //     factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
+    //     factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
+    // }
     
 
     return factories;
@@ -141,13 +148,11 @@ int main(int argc, char* argv[])
     ros::init(argc, argv, "selective_densification_experiments");
     ros::NodeHandle n;
 
-    ros::Duration(1.0).sleep();
-
     if(VISUALIZE)
     {
         std::cout << "\n!! WARNING !!\n\n Visualiziation on, which means timings are not accurate\n";
     }
 
-    preparePrecomputed(n);
+    // preparePrecomputed(n);
     testAll(n);
 }

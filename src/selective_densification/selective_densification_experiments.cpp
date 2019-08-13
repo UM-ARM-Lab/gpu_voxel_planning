@@ -47,11 +47,11 @@ std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>
 getPrecomputedStrategyFactories()
 {
     std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>> factories;
-    // for(double c_p: c_ps)
-    // {
-    //     factories.push_back([c_p](){
-    //             return std::make_shared<OmniscientSDGraphSearch>(true, c_p, 0);}); //using precomputed
-    // }
+    for(double c_p: c_ps)
+    {
+        factories.push_back([c_p](){
+                return std::make_shared<OmniscientSDGraphSearch>(true, c_p, 0);}); //using precomputed
+    }
 
     for(int i=0; i<10; i++)
     {

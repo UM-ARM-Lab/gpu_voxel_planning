@@ -49,6 +49,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
               << strategy.getName() << ", "
               << scenario.belief_name
               << "\n";
+    ros::Duration(1.0).sleep();
     
     scenario.viz(ri.viz);
     scenario.initFakeVictor(ri);
