@@ -17,25 +17,12 @@ namespace GVP
 {
     //Currently only suitible for known omnicient environments
     //Duplicates some functions from "graph_search_strategies", but works with SDRoadmap instead of Roadmap
-    class SelectiveDensificationStrategy : public Strategy
+    class SelectiveDensificationStrategy : public LayeredGraphStrategy
     {
 
     public:
         SDRoadmap sd_graph;
-        MemorizedSweptVolume precomputed_swept_volumes;
-        bool initialized;
-        double discretization = SD_EDGE_DISCRETIZATION;
-        const std::string graph_filepath;
-        const std::string swept_volumes_filepath;
-        NodeIndex cur_node;
-        NodeIndex goal_node;
-        GpuVoxelRvizVisualizer* viz;
-        int vized_id = 0;
-
         Path start_to_graph, graph_to_goal;
-        enum EdgeCheckMode {FAST, STORE};
-
-        EdgeCheckMode mode;
 
     public:
 
@@ -43,9 +30,30 @@ namespace GVP
         SelectiveDensificationStrategy(const std::string &graph_filepath,
                                        const std::string& swept_volumes_filepath);
         // SelectiveDensificationStrategy(const std::string &graph_filepath);
-        SelectiveDensificationStrategy();
+        // SelectiveDensificationStrategy();
 
         void initialize(Scenario &scenario);
+
+        virtual arc_dijkstras::GraphEdge& getReverseEdge(arc_dijkstras::GraphEdge &e) override
+        {
+            return sd_graph.getReverseEdge(e);
+        }
+        
+        virtual VictorRightArmConfig getStart(arc_dijkstras::GraphEdge &e) override
+        {
+            return sd_graph.getNodeValue(e.getFromIndex()).q;
+        }
+        
+        virtual VictorRightArmConfig getEnd(arc_dijkstras::GraphEdge &e) override
+        {
+            return sd_graph.getNodeValue(e.getToIndex()).q;
+        }
+
+        virtual int getDepth(arc_dijkstras::GraphEdge &e) override
+        {
+            return sd_graph.getNodeValue(e.getFromIndex()).depth;
+        }
+
 
         /*
          *  Adds nodes and edges to the graph corresponding to the start and goal of the scenario
@@ -59,36 +67,9 @@ namespace GVP
 
         // NodeIndex connectToGraph(Scenario &scenario, const VictorRightArmConfig &q);
 
-        void setMode(EdgeCheckMode mode_);
-
         virtual Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
 
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s);
-
-        virtual DenseGrid getSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
-
-        void vizEdge(arc_dijkstras::GraphEdge &e);
-
-        /* Checks the swept volume an edge against known obstacles to see if there is a collision.
-         *  Depending on the mode, this may check the full edge and memorize the swept volume, 
-         *  or may terminate early if a collision is found
-         */
-        bool checkEdge(arc_dijkstras::GraphEdge &e, State &s);
-        
-        /* Checks the swept volume an edge against known obstacles to see if there is a collision.
-         * Changes the graph edge validity accordingly
-         * Note: This gets the entire swept volume of the edge first first
-         */
-        bool checkEdgeAndStore(arc_dijkstras::GraphEdge &e, State &s);
-
-        /* Checks the swept volume an edge one configuration at at time against 
-         *  known obstacles to see if there is a collision.
-         * Changes the graph edge validity accordingly
-         * Note: This returns early if there is a collision and does not store the swept volume
-         */
-        bool checkEdgeFast(arc_dijkstras::GraphEdge &e, State &s);
-
-        bool checkPathFast(VictorRightArmConfig q_start, VictorRightArmConfig q_end, State &s);
 
         double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
 
@@ -100,13 +81,6 @@ namespace GVP
 
         virtual double distanceHeuristic(const std::vector<double> &raw1,
                                          const std::vector<double> &raw2) const = 0;
-
-        void saveToFile(std::string filename);
-        void saveToFile() {saveToFile(swept_volumes_filepath);}
-
-        DenseGrid computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
-        
-        void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
         
         std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s);
         

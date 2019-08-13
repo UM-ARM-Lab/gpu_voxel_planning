@@ -256,6 +256,7 @@ set(Planning_SOURCES
   src/scenario_tester.cpp
   src/strategies/victor_selective_densification.cpp      #Removed due to long compilation time
   src/strategies/selective_densification_strategies.cpp  #Removed due to long compilation time
+  src/strategies/layered_graph_strategy.cpp  #Removed due to long compilation time
   src/strategies/ompl_strategies.cpp                     #Removed due to long compilation time
   # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
   src/path_utils.cpp
