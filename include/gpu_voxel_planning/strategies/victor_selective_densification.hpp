@@ -5,7 +5,6 @@
 
 
 
-
 class SDRoadmap : public SelectiveDensificationGraph
 {
 public:

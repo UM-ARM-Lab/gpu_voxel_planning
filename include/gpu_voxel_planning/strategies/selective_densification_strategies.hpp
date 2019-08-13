@@ -2,6 +2,7 @@
 #define SELECTIVE_DENSIFICATION_STRATEGIES_HPP
 
 #include "strategies/victor_selective_densification.hpp"
+#include "layered_graph_strategy.hpp"
 #include "strategies/strategies.hpp"
 #include "strategies/memorized_swept_volumes.hpp"
 #include <arc_utilities/timing.hpp>
@@ -14,8 +15,6 @@
  */
 namespace GVP
 {
-    typedef int64_t NodeIndex;
-    
     //Currently only suitible for known omnicient environments
     //Duplicates some functions from "graph_search_strategies", but works with SDRoadmap instead of Roadmap
     class SelectiveDensificationStrategy : public Strategy
@@ -34,9 +33,6 @@ namespace GVP
         int vized_id = 0;
 
         Path start_to_graph, graph_to_goal;
-
-
-
         enum EdgeCheckMode {FAST, STORE};
 
         EdgeCheckMode mode;
