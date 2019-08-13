@@ -31,6 +31,7 @@ namespace GVP
         NodeIndex cur_node;
         NodeIndex goal_node;
         
+        Path start_to_graph, graph_to_goal;
 
     public:
         LayeredGraphStrategy(const std::string &graph_filepath,
@@ -46,7 +47,10 @@ namespace GVP
         virtual arc_dijkstras::GraphEdge& getReverseEdge(arc_dijkstras::GraphEdge &e) = 0;
         virtual VictorRightArmConfig getStart(arc_dijkstras::GraphEdge &e) = 0;
         virtual VictorRightArmConfig getEnd(arc_dijkstras::GraphEdge &e) = 0;
+        virtual std::vector<double> getNodeValue(NodeIndex ind) = 0;
         virtual int getDepth(arc_dijkstras::GraphEdge &e) = 0;
+
+        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s) = 0;
 
         DenseGrid computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e);
         void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
@@ -74,7 +78,11 @@ namespace GVP
         bool checkEdgeFast(arc_dijkstras::GraphEdge &e, State &s);
 
 
+        /* Strategy Overrides */
+        virtual Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
 
+        /* Strategy Helpers */
+        virtual void initialize(Scenario &scenario) = 0;
     };
 
 

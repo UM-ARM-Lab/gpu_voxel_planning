@@ -134,61 +134,6 @@ void SelectiveDensificationStrategy::addStartAndGoalToGraph(const Scenario &scen
 // }
 
 
-Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz_)
-{
-    viz = &viz_;
-    PROFILE_START("PathLength");
-    if(!initialized)
-    {
-        initialize(scenario);
-    }
-
-    PROFILE_START("Plan");
-
-    std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState());
-    PROFILE_RECORD("Plan");
-
-    if(node_path.size() <= 1)
-    {
-        std::cerr << "Path of less than 2 nodes found\n";
-        assert(false);
-    }
-
-    Path path = start_to_graph;
-    for(size_t i=0; i<node_path.size()-1; i++)
-    {
-        Path segment = interpolate(sd_graph.getNodeValue(node_path[i]).q,
-                                   sd_graph.getNodeValue(node_path[i+1]).q,
-                                   discretization);
-                                       
-        path.insert(path.end(), segment.begin(), segment.end());
-    }
-    path.insert(path.end(), graph_to_goal.begin(), graph_to_goal.end());
-
-    PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
-
-    PROFILE_RECORD_DOUBLE("SetRobotConfig before smoothing",
-                           arc_utilities::Profiler::getData("Set robot config").size());
-
-    std::mt19937 rng;
-    rng.seed(42);
-
-
-    if(SMOOTH)
-    {
-        for(int i=0; i<30; i++)
-        {
-            PROFILE_START("Smooth");
-            path = smooth(path, scenario.getState(), discretization, rng);
-            PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(path)));
-            PROFILE_RECORD("Smooth");
-        }
-        std::cout << "Smoothed path cost " << PathUtils::length(toPathUtilsPath(path)) << "\n\n";
-    }
-
-
-    return GVP::densify(path, discretization);
-}
 
 
 std::vector<NodeIndex> SelectiveDensificationStrategy::plan(NodeIndex start, NodeIndex goal, State &s)

@@ -22,7 +22,6 @@ namespace GVP
 
     public:
         SDRoadmap sd_graph;
-        Path start_to_graph, graph_to_goal;
 
     public:
 
@@ -32,7 +31,7 @@ namespace GVP
         // SelectiveDensificationStrategy(const std::string &graph_filepath);
         // SelectiveDensificationStrategy();
 
-        void initialize(Scenario &scenario);
+        void initialize(Scenario &scenario) override;
 
         virtual arc_dijkstras::GraphEdge& getReverseEdge(arc_dijkstras::GraphEdge &e) override
         {
@@ -54,6 +53,11 @@ namespace GVP
             return sd_graph.getNodeValue(e.getFromIndex()).depth;
         }
 
+        virtual std::vector<double> getNodeValue(NodeIndex ind) override
+        {
+            return sd_graph.getNodeValue(ind).q;
+        }
+
 
         /*
          *  Adds nodes and edges to the graph corresponding to the start and goal of the scenario
@@ -67,9 +71,7 @@ namespace GVP
 
         // NodeIndex connectToGraph(Scenario &scenario, const VictorRightArmConfig &q);
 
-        virtual Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
-
-        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s);
+        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s) override;
 
         double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
 
