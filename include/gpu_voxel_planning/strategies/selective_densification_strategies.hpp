@@ -1,14 +1,7 @@
 #ifndef SELECTIVE_DENSIFICATION_STRATEGIES_HPP
 #define SELECTIVE_DENSIFICATION_STRATEGIES_HPP
 
-#include "strategies/victor_selective_densification.hpp"
 #include "layered_graph_strategy.hpp"
-#include "strategies/strategies.hpp"
-#include "strategies/memorized_swept_volumes.hpp"
-#include <arc_utilities/timing.hpp>
-#include "sd_params.hpp"
-
-
 
 /* 
  * 

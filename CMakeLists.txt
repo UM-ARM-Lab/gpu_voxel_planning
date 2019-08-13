@@ -254,10 +254,11 @@ set(Planning_SOURCES
   src/scenarios/real_scenario.cpp
   src/strategies/graph_search_strategies.cpp
   src/scenario_tester.cpp
-  src/strategies/victor_selective_densification.cpp      #Removed due to long compilation time
-  src/strategies/selective_densification_strategies.cpp  #Removed due to long compilation time
-  src/strategies/layered_graph_strategy.cpp  #Removed due to long compilation time
-  src/strategies/ompl_strategies.cpp                     #Removed due to long compilation time
+  src/strategies/victor_selective_densification.cpp
+  src/strategies/layered_graph_strategy.cpp
+  src/strategies/selective_densification_strategies.cpp
+  src/strategies/iterative_deepening_strategy.cpp
+  src/strategies/ompl_strategies.cpp
   # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
   src/path_utils.cpp
   src/path_utils_addons.cpp

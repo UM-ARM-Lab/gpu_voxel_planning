@@ -12,8 +12,6 @@ using namespace GVP;
 SelectiveDensificationStrategy::SelectiveDensificationStrategy(const std::string &graph_filepath,
                                                                const std::string& swept_volumes_filepath) :
     
-    // graph_filepath(graph_filepath),
-    // swept_volumes_filepath(swept_volumes_filepath),
     LayeredGraphStrategy(graph_filepath, swept_volumes_filepath),
     sd_graph(graph_filepath)
 {
