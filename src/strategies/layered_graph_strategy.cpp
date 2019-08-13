@@ -200,6 +200,16 @@ bool LayeredGraphStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s)
 }
 
 
+double LayeredGraphStrategy::evaluateEdge(arc_dijkstras::GraphEdge &e, State &s)
+{
+    if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
+    {
+        checkEdge(e, s);
+    }
+    return calculateEdgeWeight(s, e);
+}
+
+
 
 Path LayeredGraphStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz_)
 {
@@ -255,3 +265,4 @@ Path LayeredGraphStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& v
 
     return GVP::densify(path, discretization);
 }
+

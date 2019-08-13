@@ -73,13 +73,9 @@ namespace GVP
 
         virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s) override;
 
-        double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
-
         std::vector<int> forwardPrecomputedSelector(std::vector<int64_t> path,
                                                     arc_dijkstras::Graph<std::vector<double>>& g,
                                                     const arc_dijkstras::EvaluatedEdges &evaluatedEdges);
-
-        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) = 0;
 
         virtual double distanceHeuristic(const std::vector<double> &raw1,
                                          const std::vector<double> &raw2) const = 0;

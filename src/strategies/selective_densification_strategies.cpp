@@ -143,15 +143,6 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::plan(NodeIndex start, Nod
 }
 
 
-double SelectiveDensificationStrategy::evaluateEdge(arc_dijkstras::GraphEdge &e, State &s)
-{
-    // std::cout << "evaluating edge " << e.getFromIndex() << "->" << e.getToIndex() << "\n";
-    if(e.getValidity() == arc_dijkstras::EDGE_VALIDITY::UNKNOWN)
-    {
-        checkEdge(e, s);
-    }
-    return calculateEdgeWeight(s, e);
-}
 
 std::vector<int> SelectiveDensificationStrategy::forwardPrecomputedSelector(
     std::vector<int64_t> path,
@@ -204,11 +195,6 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
         {
             return distanceHeuristic(n1, n2);
         };
-    // const auto heuristic_cons_fn = [&] (const std::vector<double> &n1,
-    //                                     const std::vector<double> &n2)
-    //     {
-    //         return EigenHelpers::Distance(n1, n2);
-    //     };
 
     auto selector =
         [&] (std::vector<int64_t> path,

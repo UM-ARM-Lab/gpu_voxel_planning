@@ -77,12 +77,15 @@ namespace GVP
          */
         bool checkEdgeFast(arc_dijkstras::GraphEdge &e, State &s);
 
+        virtual double calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e) = 0;
 
         /* Strategy Overrides */
         virtual Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
 
         /* Strategy Helpers */
         virtual void initialize(Scenario &scenario) = 0;
+
+        double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
     };
 
 
