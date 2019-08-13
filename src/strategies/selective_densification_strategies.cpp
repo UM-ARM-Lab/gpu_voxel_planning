@@ -85,58 +85,58 @@ void SelectiveDensificationStrategy::addStartAndGoalToGraph(const Scenario &scen
     std::cout << "Start and goal added " << sd_graph.countEdges() - orig_edge_count << " edges\n";
 }
 
-NodeIndex SelectiveDensificationStrategy::connectToGraph(Scenario &scenario, const VictorRightArmConfig &q)
-{
-    int depth = sd_graph.depth;
-    // int depth = 3;
-    DepthNode d(depth, q.asVector());
-    double r = sd_graph.radiusAtDepth(depth);
-    std::cout << "radius is: " << r << "\n";
-    std::vector<int> vs = sd_graph.getVerticesWithinRadius(d.toRaw(), r);
-    std::cout << "Vertices within radius: " << PrettyPrint::PrettyPrint(vs) << "\n";
-    std::cout << "Size: " << vs.size() << "\n";
+// NodeIndex SelectiveDensificationStrategy::connectToGraph(Scenario &scenario, const VictorRightArmConfig &q)
+// {
+//     int depth = sd_graph.depth;
+//     // int depth = 3;
+//     DepthNode d(depth, q.asVector());
+//     double r = sd_graph.radiusAtDepth(depth);
+//     std::cout << "radius is: " << r << "\n";
+//     std::vector<int> vs = sd_graph.getVerticesWithinRadius(d.toRaw(), r);
+//     std::cout << "Vertices within radius: " << PrettyPrint::PrettyPrint(vs) << "\n";
+//     std::cout << "Size: " << vs.size() << "\n";
 
-    for(int v: vs)
-    {
-        if(sd_graph.getNodeValue(v).depth != depth)
-        {
-            continue;
-        }
-        std::vector<double> q_near = sd_graph.getNodeValue(v).q;
-        // std::cout << PrettyPrint::PrettyPrint(q_near) << "\n";
-        // std::cout << PrettyPrint::PrettyPrint(q.asVector()) << "\n";
-        std::cout << "Distance: " << EigenHelpers::Distance(q_near, q.asVector()) << "\n";
-        if(checkPathFast(q, VictorRightArmConfig(q_near), scenario.getState()))
-        {
-            return v;
-        }
-    }
+//     for(int v: vs)
+//     {
+//         if(sd_graph.getNodeValue(v).depth != depth)
+//         {
+//             continue;
+//         }
+//         std::vector<double> q_near = sd_graph.getNodeValue(v).q;
+//         // std::cout << PrettyPrint::PrettyPrint(q_near) << "\n";
+//         // std::cout << PrettyPrint::PrettyPrint(q.asVector()) << "\n";
+//         std::cout << "Distance: " << EigenHelpers::Distance(q_near, q.asVector()) << "\n";
+//         if(checkPathFast(q, VictorRightArmConfig(q_near), scenario.getState()))
+//         {
+//             return v;
+//         }
+//     }
 
-    throw SearchError("No path found to graph");
+//     throw SearchError("No path found to graph");
     
-    //TODO: check straight line path from q to every node within radius in increasing order of distance. Return as soon as a valid path is found 
-    assert(false && "Not implemented yet");
-}
+//     //TODO: check straight line path from q to every node within radius in increasing order of distance. Return as soon as a valid path is found 
+//     assert(false && "Not implemented yet");
+// }
 
-void SelectiveDensificationStrategy::connectStartAndGoalToGraph(Scenario &scenario)
-{
-    // std::vector<int> v = sd_graph.getVerticesWithinRadius(scenario.getState().getCurConfig().asVector(), sd_graph.r_disc);
-    // std::cout << "Vertices within radius: " << PrettyPrint::PrettyPrint(v) << "\n";
-    cur_node = connectToGraph(scenario, scenario.getState().getCurConfig());
-    goal_node = connectToGraph(scenario, VictorRightArmConfig(scenario.goal_config));
+// void SelectiveDensificationStrategy::connectStartAndGoalToGraph(Scenario &scenario)
+// {
+//     // std::vector<int> v = sd_graph.getVerticesWithinRadius(scenario.getState().getCurConfig().asVector(), sd_graph.r_disc);
+//     // std::cout << "Vertices within radius: " << PrettyPrint::PrettyPrint(v) << "\n";
+//     cur_node = connectToGraph(scenario, scenario.getState().getCurConfig());
+//     goal_node = connectToGraph(scenario, VictorRightArmConfig(scenario.goal_config));
 
-    start_to_graph = interpolate(scenario.getState().getCurConfig().asVector(),
-                                 sd_graph.getNodeValue(cur_node).q,
-                                 discretization);
+//     start_to_graph = interpolate(scenario.getState().getCurConfig().asVector(),
+//                                  sd_graph.getNodeValue(cur_node).q,
+//                                  discretization);
 
-    graph_to_goal = interpolate(sd_graph.getNodeValue(goal_node).q,
-                                scenario.goal_config,
-                                discretization);
-    return;
+//     graph_to_goal = interpolate(sd_graph.getNodeValue(goal_node).q,
+//                                 scenario.goal_config,
+//                                 discretization);
+//     return;
 
-    //TODO: set start_to_graph, graph_to_goal using connectToGraph
-    assert(false && "Not implemented yet");
-}
+//     //TODO: set start_to_graph, graph_to_goal using connectToGraph
+//     assert(false && "Not implemented yet");
+// }
 
 
 Path SelectiveDensificationStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz_)

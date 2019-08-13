@@ -56,12 +56,12 @@ namespace GVP
          */
         void addStartAndGoalToGraph(const Scenario &scenario);
 
-        /*
-         *  Finds paths from the scenario start and goal to the graph (but does not add new nodes or edges)
-         */
-        void connectStartAndGoalToGraph(Scenario &scenario);
+        // /*
+        //  *  Finds paths from the scenario start and goal to the graph (but does not add new nodes or edges)
+        //  */
+        // void connectStartAndGoalToGraph(Scenario &scenario);
 
-        NodeIndex connectToGraph(Scenario &scenario, const VictorRightArmConfig &q);
+        // NodeIndex connectToGraph(Scenario &scenario, const VictorRightArmConfig &q);
 
         void setMode(EdgeCheckMode mode_);
 
