@@ -10,7 +10,7 @@ const std::string basepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/g
 using namespace GVP;
 
 IterativeDeepeningStrategy::IterativeDeepeningStrategy(const std::string &graph_filepath,
-                                                               const std::string& swept_volumes_filepath) :
+                                                       const std::string& swept_volumes_filepath) :
     
     LayeredGraphStrategy(graph_filepath, swept_volumes_filepath),
     id_graph(graph_filepath)
@@ -25,6 +25,7 @@ IterativeDeepeningStrategy::IterativeDeepeningStrategy(const std::string &graph_
         std::cout << "Could not load precomputed swept volumes from file\n";
     }
 }
+
         
 void IterativeDeepeningStrategy::initialize(Scenario &scenario)
 {
@@ -125,3 +126,26 @@ double IterativeDeepeningStrategy::distanceHeuristic(const std::vector<double> &
 
     return EigenHelpers::Distance(d1.q, d2.q);
 }
+
+
+
+
+
+IDSearch::IDSearch(bool use_precomputed, int graph_num) :
+    IterativeDeepeningStrategy(basepath + "seed" + std::to_string(graph_num) + ".graph",
+                               use_precomputed ? basepath + "sv" + std::to_string(graph_num) + ".map" : ""),
+    use_precomputed(use_precomputed)
+{
+}
+
+std::string IDSearch::getName() const
+{
+    std::string type = (use_precomputed ? "_precomputed" : "");
+    return "Iterative_Deepening" + type;
+}
+
+double IDSearch::calculateEdgeWeight(State &s, arc_dijkstras::GraphEdge &e)
+{
+    return e.getWeight();
+}
+
