@@ -12,6 +12,7 @@
 #include "strategies/graph_search_strategies.hpp"
 #include "path_utils_addons.hpp"
 #include "strategies/selective_densification_strategies.hpp"
+#include "strategies/iterative_deepening_strategy.hpp"
 #include "strategies/ompl_strategies.hpp"
 
 
@@ -43,10 +44,10 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 
 
 
-std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>>
+std::vector<std::function<std::shared_ptr<LayeredGraphStrategy>(void)>>
 getPrecomputedStrategyFactories()
 {
-    std::vector<std::function<std::shared_ptr<SelectiveDensificationStrategy>(void)>> factories;
+    std::vector<std::function<std::shared_ptr<LayeredGraphStrategy>(void)>> factories;
     for(double c_p: c_ps)
     {
         factories.push_back([c_p](){
@@ -59,6 +60,9 @@ getPrecomputedStrategyFactories()
                 return std::make_shared<OmniscientSDGraphSearch>(true, chosen_cp, i);}); //using precomputed
         factories.push_back([i](){
                 return std::make_shared<DenseGraphSearch>(true, i);}); //not precomputed
+        factories.push_back([i](){
+                return std::make_shared<IDSearch>(true, i);}); //using precomputed
+
     }
 
     return factories;
@@ -84,6 +88,9 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
                 return std::make_shared<OmniscientSDGraphSearch>(false, chosen_cp, i);}); //using precomputed
         factories.push_back([i](){
                 return std::make_shared<DenseGraphSearch>(false, i);}); //not precomputed
+        factories.push_back([i](){
+                return std::make_shared<IDSearch>(false, i);}); //using precomputed
+
     }
                 
     
