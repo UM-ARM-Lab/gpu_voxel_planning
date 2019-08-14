@@ -36,31 +36,42 @@ void IterativeDeepeningStrategy::initialize(Scenario &scenario)
 void IterativeDeepeningStrategy::addStartAndGoalToGraph(const Scenario &scenario)
 {
     int orig_edge_count = id_graph.countEdges();
-    for(int depth = 3; depth <= id_graph.depth; depth++)
+    // for(int depth = 3; depth <= id_graph.depth; depth++)
     // for(int depth = 13; depth <= 14; depth++)
-    {
-        // int depth = id_graph.depth;
-        DepthNode start(depth, scenario.getState().getCurConfig().asVector());
-        DepthNode goal(depth, VictorRightArmConfig(scenario.goal_config).asVector());
-        NodeIndex start_id = id_graph.addVertexAndEdges(start);
-        NodeIndex goal_id = id_graph.addVertexAndEdges(goal);
+    int depth = 1;
+    DepthNode start(depth, scenario.getState().getCurConfig().asVector());
+    DepthNode goal(depth, VictorRightArmConfig(scenario.goal_config).asVector());
+    NodeIndex start_id = id_graph.addVertexAndEdges(start);
+    NodeIndex goal_id = id_graph.addVertexAndEdges(goal);
 
-        std::cout << "Initial (node " << start_id << ") and Goal (node " << goal_id << ") vertices added\n";
-        // if(depth == 0)
-        {
-            cur_node = start_id;
-            goal_node = goal_id;
-            std::cout << "This is the start and goal\n";
-        }
-    }
-
+    std::cout << "Initial (node " << start_id << ") and Goal (node " << goal_id << ") vertices added\n";
+    cur_node = start_id;
+    goal_node = goal_id;
     std::cout << "Start and goal added " << id_graph.countEdges() - orig_edge_count << " edges\n";
 }
 
 std::vector<NodeIndex> IterativeDeepeningStrategy::plan(NodeIndex start, NodeIndex goal, State &s)
 {
-    return lazySp(start, goal, s);
-    // return astar(start, goal, s);
+    std::vector<double> start_q = getNodeValue(start);
+    std::vector<double> goal_q = getNodeValue(goal);
+
+    for(int depth = 1; depth <= id_graph.depth; depth++)
+    {
+        DepthNode start_node(depth, start_q);
+        DepthNode goal_node(depth, goal_q);
+        NodeIndex start_id = id_graph.addVertexAndEdges(start_node);
+        NodeIndex goal_id = id_graph.addVertexAndEdges(goal_node);        
+
+        std::vector<NodeIndex> path = lazySp(start_id, goal_id, s);
+        if(path.size() > 0)
+        {
+            std::cout << "Path found on layer " << depth << "\n";
+            return path;
+        }
+    }
+    
+    std::cout << "No path found";
+    throw SearchError("Path not found");
 }
 
 std::vector<NodeIndex> IterativeDeepeningStrategy::lazySp(NodeIndex start, NodeIndex goal, State &s)

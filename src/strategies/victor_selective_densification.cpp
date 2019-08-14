@@ -2,7 +2,7 @@
 #include "hacky_functions.hpp"
 
 
-static const int DEFAULT_DEPTH = 16;
+static const int DEFAULT_DEPTH = 18;
 static const double DEFAULT_NUM_NEIGHBORS = 30.0;
 
 

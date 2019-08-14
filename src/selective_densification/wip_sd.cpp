@@ -38,8 +38,8 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
     BeliefParams bp(BeliefType::Deterministic);
     std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
     factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
-    // factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
-    // factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
+    factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
+    factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
     return factories;
 }
 

@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
     for(int seed=0; seed<10; seed++)
     {
-        // makeSDGraph(seed);
+        makeSDGraph(seed);
         makeIDGraph(seed);
     }
 
