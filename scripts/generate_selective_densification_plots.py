@@ -27,6 +27,8 @@ color_cycle = ['#e41a1c',
 strategy_mappings = {"RRT_Strategy":"RRT",
                      "Omniscient_SD_Graph_Search": "SD",
                      "Omniscient_SD_Graph_Search_precomputed": "SD-pre",
+                     "Iterative_Deepening":"ID",
+                     "Iterative_Deepening_precomputed":"ID-pre",
                      "BIT_Strategy":"BIT*",
                      "Dense_Graph_Search":"DG",
                      "Dense_Graph_Search_precomputed":"DG-pre"
@@ -41,7 +43,9 @@ ordering = {"RRT": 1,
             "DG":1.8,
             "DG-pre":1.9,
             "SD":2,
-            "SD-pre":3
+            "SD-pre":3,
+            "ID":4,
+            "ID-pre":5
             }
 
 
@@ -50,7 +54,10 @@ linestyles = {"RRT":    {"color": "grey",         "linewidth":2},
               "DG":     {"color": "yellow",       "linewidth":2},
               "DG-pre": {"color": "orange",       "linewidth":2},
               "SD":     {"color": "blue",         "linewidth":5},
-              "SD-pre": {"color": "green",        "linewidth":5}}
+              "SD-pre": {"color": "blue",        "linewidth":5},
+              "ID":     {"color": "green",         "linewidth":2},
+              "ID-pre": {"color": "green",        "linewidth":2}
+}
 
 
 

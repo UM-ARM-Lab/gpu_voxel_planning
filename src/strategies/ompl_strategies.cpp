@@ -4,6 +4,7 @@
 #include "path_utils_addons.hpp"
 #include "ompl_modifications/custom_bitstar.h"
 #include "gvp_exceptions.hpp"
+#include "sd_params.hpp"
 
 using namespace GVP;
 namespace ob = ompl::base;
@@ -56,7 +57,7 @@ Path OMPL_Strategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz_)
 
     PROFILE_START("PathLength");
     PROFILE_START("OMPL Planning");
-    ob::PlannerStatus solved = ss.solve(120);
+    ob::PlannerStatus solved = ss.solve(PLANNER_TIMEOUT);
     PROFILE_RECORD("OMPL Planning");
     std::cout << "Longest valid segment: " << space->getLongestValidSegmentLength() << "\n";
     if (!solved)
