@@ -225,8 +225,8 @@ int main(int argc, char* argv[])
 
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    // TableWithBox scenario(bp, true, true, true);
-    SlottedWall scenario(bp);
+    TableWithBox scenario(bp, true, true, true);
+    // SlottedWall scenario(bp);
     // Bookshelf scenario(true);
 
     // AStarGraphSearch strat;

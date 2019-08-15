@@ -57,8 +57,8 @@ getPrecomputedStrategyFactories()
 
     for(int i=0; i<10; i++)
     {
-        factories.push_back([i](){
-                return std::make_shared<OmniscientSDGraphSearch>(true, chosen_cp, i);}); //using precomputed
+        // factories.push_back([i](){
+        //         return std::make_shared<OmniscientSDGraphSearch>(true, chosen_cp, i);}); //using precomputed
         // factories.push_back([i](){
         //         return std::make_shared<IDSearch>(true, i);}); //using precomputed
         // factories.push_back([i](){
