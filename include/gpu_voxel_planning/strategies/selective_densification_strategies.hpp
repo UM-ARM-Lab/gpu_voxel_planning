@@ -107,6 +107,20 @@ namespace GVP
                                          const std::vector<double> &raw2) const override;
 
     };
+
+
+    class InflatedDenseGraphSearch : public OmniscientSDGraphSearch
+    {
+    private:
+    public:
+        double inflation;
+        
+        InflatedDenseGraphSearch(bool use_precomputed, double inflation, int graph_num);
+        virtual std::string getName() const override;
+        virtual double distanceHeuristic(const std::vector<double> &raw1,
+                                         const std::vector<double> &raw2) const override;
+        
+    };
 }
 
 

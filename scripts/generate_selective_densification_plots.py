@@ -31,7 +31,9 @@ strategy_mappings = {"RRT_Strategy":"RRT",
                      "Iterative_Deepening_precomputed":"ID-pre",
                      "BIT_Strategy":"BIT*",
                      "Dense_Graph_Search":"DG",
-                     "Dense_Graph_Search_precomputed":"DG-pre"
+                     "Dense_Graph_Search_precomputed":"DG-pre",
+                     "Inflated":"DG-inflated",
+                     "Inflated_precomputed":"DG-inflated-pre"
                      }
 
 scenario_mappings = {"Bookshelf":"Bookshelf",
@@ -45,7 +47,9 @@ ordering = {"RRT": 1,
             "SD":2,
             "SD-pre":3,
             "ID":4,
-            "ID-pre":5
+            "ID-pre":5,
+            "DG-inflated":6,
+            "DG-inflated-pre":7
             }
 
 
@@ -56,7 +60,9 @@ linestyles = {"RRT":    {"color": "grey",         "linewidth":2},
               "SD":     {"color": "blue",         "linewidth":5},
               "SD-pre": {"color": "blue",        "linewidth":5},
               "ID":     {"color": "green",         "linewidth":2},
-              "ID-pre": {"color": "green",        "linewidth":2}
+              "ID-pre": {"color": "green",        "linewidth":2},
+              "DG-inflated":{"color": "black",        "linewidth":2},
+              "DG-inflated-pre":{"color": "black",        "linewidth":2}
 }
 
 
@@ -367,7 +373,7 @@ def plot_group(exps):
     Plots all plots of interest from a group of experiments all belonging to the same scenario
     """
     plot_all_strategies(exps, "length")
-    # plot_all_strategies(exps, "utility")
+    plot_all_strategies(exps, "utility")
     # plot_cp_variation(exps)
     plot_percentage_success(exps)
     

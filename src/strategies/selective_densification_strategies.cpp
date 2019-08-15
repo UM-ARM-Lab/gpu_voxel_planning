@@ -349,3 +349,36 @@ double DenseGraphSearch::distanceHeuristic(const std::vector<double> &raw1,
 
     return EigenHelpers::Distance(d1.q, d2.q);
 }
+
+
+
+/****************************
+ **  Inflated A* search   ***
+ ***************************/
+InflatedDenseGraphSearch::InflatedDenseGraphSearch(bool use_precomputed, double inflation, int graph_num) :
+    OmniscientSDGraphSearch(use_precomputed, 0.0, graph_num),
+    inflation(inflation)
+{
+}
+
+std::string InflatedDenseGraphSearch::getName() const
+{
+    std::string type = (use_precomputed ? "_precomputed" : "");
+    return "Inflated" + type;
+}
+
+double InflatedDenseGraphSearch::distanceHeuristic(const std::vector<double> &raw1,
+                                           const std::vector<double> &raw2) const
+{
+
+    DepthNode d1(raw1);
+    DepthNode d2(raw2);
+    // std::cout << "Calling dist heuristic with depth " << d1.depth << "\n";
+     // std::pow(2, d1.depth);
+    std::string depth_logging_name = "EdgeHeuristic depth=" +
+        std::to_string(d1.depth);
+    PROFILE_START(depth_logging_name);
+    PROFILE_RECORD(depth_logging_name);
+
+    return inflation*EigenHelpers::Distance(d1.q, d2.q);
+}
