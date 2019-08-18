@@ -57,7 +57,7 @@ void SelectiveDensificationStrategy::initialize(Scenario &scenario)
 void SelectiveDensificationStrategy::addStartAndGoalToGraph(const Scenario &scenario)
 {
     int orig_edge_count = sd_graph.countEdges();
-    for(int depth = 3; depth <= sd_graph.depth; depth++)
+    for(int depth = 8; depth <= sd_graph.depth; depth++)
     // for(int depth = 13; depth <= 14; depth++)
     {
         // int depth = sd_graph.depth;
@@ -207,7 +207,7 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
     
     std::cout << "Performing lazysp\n";
     auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
-        sd_graph, start, goal, heuristic_fn, eval_fn, selector);
+        sd_graph, start, goal, heuristic_fn, eval_fn, selector, PLANNER_TIMEOUT);
     // auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformLazySP(
     //     sd_graph, goal, start, heuristic_fn, eval_fn, selector);
     // std::reverse(result.first.begin(), result.first.end());
@@ -217,6 +217,7 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
     if(result.second == std::numeric_limits<double>::infinity())
     {
         std::cout << "No path found on graph\n";
+        throw SearchError("Path not found");
     } else
     {
         std::cout << "Path: " << PrettyPrint::PrettyPrint(result.first) << "\n";
