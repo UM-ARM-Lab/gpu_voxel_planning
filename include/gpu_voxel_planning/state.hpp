@@ -9,6 +9,7 @@
 #include "beliefs/beliefs.hpp"
 #include "ros_interface/ros_interface.hpp"
 #include "arc_utilities/stl_wrappers.hpp"
+#include "sd_params.hpp"
 
 namespace GVP
 {
@@ -124,13 +125,17 @@ namespace GVP
             accumulated_cost += EigenHelpers::Distance(VictorRightArmConfig(current_config).asVector(),
                                                        c.asVector());
             robot.set(c.asMap());
-            if(robot.occupied_space.overlapsWith(&true_world))
-            {
-                bel->updateCollisionSpace(robot, getFirstLinkInCollision(robot, true_world));
 
-                robot.set(current_config);
-                return false;
+            if(!NO_COLLISION_CHECKING_DURING_PATH_ATTEMPT)
+            {
+                if(robot.occupied_space.overlapsWith(&true_world))
+                {
+                    bel->updateCollisionSpace(robot, getFirstLinkInCollision(robot, true_world));
+                    robot.set(current_config);
+                    return false;
+                }
             }
+            
             ri.setRightArm(c);
 
             updateConfig(c.asMap());

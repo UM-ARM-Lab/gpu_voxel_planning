@@ -51,7 +51,6 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
               << "\n";
     ros::Duration(1.0).sleep();
     
-    scenario.viz(ri.viz);
     scenario.initFakeVictor(ri);
     try{
         scenario.validate();
@@ -61,6 +60,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         scenario.viz(ri.viz);
         throw e;
     }
+    scenario.viz(ri.viz);
     
     std::string name = getName(strategy);
     while(!scenario.completed())
