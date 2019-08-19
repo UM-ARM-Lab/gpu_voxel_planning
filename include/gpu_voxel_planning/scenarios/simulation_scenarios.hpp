@@ -133,6 +133,24 @@ namespace GVP
         Object getTable();
     };
 
+
+    /****************************************
+     **      Close Wall
+     ****************************************/
+    class CloseWall : public SimulationScenario
+    {
+        const std::string name;
+    public:
+        CloseWall(BeliefParams bp);
+
+        std::string getName() const
+        {
+            return "CloseWall";
+        }
+
+        Object getCloseWall();
+    };
+
 }
 
 

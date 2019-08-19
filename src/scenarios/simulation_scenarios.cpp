@@ -350,26 +350,6 @@ Object Bookshelf::getBookshelf()
 {
     double lower_wall_height = 1.1;
     double gap_height = .4;
-
-    Vector3f lfwc(1.5, 1.6, 0.0); //lower front wall corner
-    Vector3f lfwd(0.04, 0.4, lower_wall_height);
-    
-    Vector3f ufwc(1.5, 1.6, lower_wall_height + gap_height); //upper front wall
-    Vector3f ufwd(0.04, 0.4, 0.3);
-    
-    Vector3f mfwc(1.5, 1.8, 0);  //middle front wall
-    Vector3f mfwd(0.04, 0.2, 1.5);
-   
-    Vector3f lswc = lfwc;  // lower side wall corner
-    Vector3f lswd(.75, 0.04, lower_wall_height); //lower side wall dims
-    Vector3f cswc = ufwc; //close side wall corner
-    Vector3f cswd(0.2, 0.04, 0.3);
-    Vector3f fswc(1.95, 1.6, lower_wall_height); //far side wall corner
-    Vector3f fswd(0.3, 0.04, 0.6);
-    Vector3f mswc(1.95, 1.6, lower_wall_height+gap_height+.1); //far side wall corner
-    Vector3f mswd(0.3, 0.04, 0.2);
-
-
     double bookshelf_width = 0.8;
     double bookshelf_height = 1.6;
     double bookshelf_depth = 0.4;
@@ -395,14 +375,6 @@ Object Bookshelf::getBookshelf()
     bookshelf.add(AABB(bookc, bookc+bookd));
 
     return bookshelf;
-    // g.insertBox(lfwc, lfwc+lfwd);
-    // g.insertBox(ufwc, ufwc+ufwd);
-    // g.insertBox(mfwc, mfwc+mfwd);
-            
-    // g.insertBox(lswc, lswc+lswd);
-    // g.insertBox(cswc, cswc+cswd);
-    // g.insertBox(fswc, fswc+fswd);
-    // g.insertBox(mswc, mswc+mswd);
 }
 
 
@@ -426,4 +398,83 @@ Object Bookshelf::getTable()
     return table;
 
 }
+
+
+
+
+/****************************************
+ **         CloseWall
+ ****************************************/
+
+CloseWall::CloseWall(BeliefParams bp):
+    name(std::string("CloseWall"))
+{
+    addLeftArm();
+
+    robot::JointValueMap jvm;
+    jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
+    jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
+    jvm["victor_right_gripper_fingerC_joint_2"] = 0.0;
+    victor.set(jvm);
+
+    Object wall = getCloseWall();
+
+    bool wall_known = (bp.belief_type == BeliefType::Deterministic);
+    if(wall_known)
+    {
+        known_obstacles.add(wall);
+    }
+    else
+    {
+        unknown_obstacles.add(wall);
+    }
+
+
+    combineObstacles();
+    setPrior(unknown_obstacles, bp);
+    
+    // s.current_config = VictorRightArmConfig(std::vector<double>
+    //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
+    s.current_config = VictorRightArmConfig(std::vector<double>
+                                            {-1.2, 1.3, -0.8, 0.4, 0.4, 0.3, 0.3}).asMap();
+    goal_config = VictorRightArmConfig(std::vector<double>
+                                       {0.3, 1.2, -0.3, 1.5, 0, -0.7, -0.9}).asMap();
+
+    victor.set(s.current_config);
+}
+
+
+Object CloseWall::getCloseWall()
+{
+    double lower_wall_height = 1.1;
+    double gap_height = .4;
+
+    double bookshelf_width = 0.8;
+    double bookshelf_height = 1.6;
+    double bookshelf_depth = 0.4;
+    Vector3f backwallc(1.2, 0.8, 0.0); //backwall cornder
+    Vector3f backwall_thickness(bookshelf_width, 0.04, bookshelf_height);
+    Vector3f sidewall(0.04, bookshelf_depth,  bookshelf_height);
+    Vector3f swoff(bookshelf_width, 0, 0);
+    Vector3f shelf(bookshelf_width + 0.04, bookshelf_depth, 0.02);
+    Vector3f shelf_spacing(0, 0, 0.4);
+
+    Vector3f bookc(1.6, 0.82, 1.2);
+    Vector3f bookd(0.05, 0.3, 0.3);
+
+    Object wall;
+
+    wall.add(AABB(backwallc, backwallc + backwall_thickness));
+    wall.add(AABB(backwallc, backwallc + sidewall));
+    wall.add(AABB(backwallc + swoff, backwallc + sidewall + swoff));
+    for(int i=0; i<5; i++)
+    {
+        wall.add(AABB(backwallc + shelf_spacing*(float)i, backwallc + shelf + shelf_spacing*(float)i));
+    }
+    wall.add(AABB(bookc, bookc+bookd));
+
+    return wall;
+}
+
+
 
