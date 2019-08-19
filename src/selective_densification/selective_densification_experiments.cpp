@@ -23,6 +23,7 @@ static const double chosen_cp = 1;
 // std::vector<double> c_ps{1.0};
 
 const double inflation = 10.0;
+const double greedy_inflation = 100000.0;
 
 
 void test(ros::NodeHandle &n, SimulationScenario &scenario, Strategy &strategy)
@@ -38,9 +39,10 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 {
     BeliefParams bp(BeliefType::Deterministic);
     std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
-    factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
-    factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
-    factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
+    // factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
+    // factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
+    factories.push_back([bp](){ return std::make_shared<CloseWall>(bp);});
+    // factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
     return factories;
 }
 
@@ -52,20 +54,23 @@ getPrecomputedStrategyFactories()
     std::vector<std::function<std::shared_ptr<LayeredGraphStrategy>(void)>> factories;
     for(double c_p: c_ps)
     {
-        // factories.push_back([c_p](){
-        //         return std::make_shared<OmniscientSDGraphSearch>(true, c_p, 0);}); //using precomputed
+        factories.push_back([c_p](){
+                return std::make_shared<OmniscientSDGraphSearch>(true, c_p, 0);}); //using precomputed
     }
 
     for(int i=0; i<10; i++)
     {
+        factories.push_back([i](){
+                return std::make_shared<OmniscientSDGraphSearch>(true, chosen_cp, i);}); //using precomputed
+        // Cant precompute edges for dense graph, too many edges to search, not enough memory
         // factories.push_back([i](){
-        //         return std::make_shared<OmniscientSDGraphSearch>(true, chosen_cp, i);}); //using precomputed
-        // factories.push_back([i](){
-        //         return std::make_shared<DenseGraphSearch>(true, i);}); //not precomputed
-        // factories.push_back([i](){
-        //         return std::make_shared<IDSearch>(true, i);}); //using precomputed
+        //         return std::make_shared<DenseGraphSearch>(true, i);}); //using precomputed
+        factories.push_back([i](){
+                return std::make_shared<IDSearch>(true, i);}); //using precomputed
         factories.push_back([i](){
                 return std::make_shared<InflatedDenseGraphSearch>(true, inflation, i);}); //not precomputed
+        factories.push_back([i](){
+                return std::make_shared<InflatedDenseGraphSearch>(true, greedy_inflation, i);}); //not precomputed
     }
 
     return factories;
@@ -81,29 +86,31 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
 
     for(double c_p: c_ps)
     {
-        // factories.push_back([c_p](){
-        //         return std::make_shared<OmniscientSDGraphSearch>(false, c_p, 0);}); //not using precomputed
+        factories.push_back([c_p](){
+                return std::make_shared<OmniscientSDGraphSearch>(false, c_p, 0);}); //not using precomputed
     }
 
     for(int i=0; i<10; i++)
     {
-        // factories.push_back([i](){
-        //         return std::make_shared<OmniscientSDGraphSearch>(false, chosen_cp, i);}); //using precomputed
-        // factories.push_back([i](){
-        //         return std::make_shared<DenseGraphSearch>(false, i);}); //not precomputed
-        // factories.push_back([i](){
-        //         return std::make_shared<IDSearch>(false, i);}); //notprecomputed
+        factories.push_back([i](){
+                return std::make_shared<OmniscientSDGraphSearch>(false, chosen_cp, i);}); //using precomputed
+        factories.push_back([i](){
+                return std::make_shared<DenseGraphSearch>(false, i);}); //not precomputed
+        factories.push_back([i](){
+                return std::make_shared<IDSearch>(false, i);}); //notprecomputed
         factories.push_back([i](){
                 return std::make_shared<InflatedDenseGraphSearch>(false, inflation, i);}); //not precomputed
+        factories.push_back([i](){
+                return std::make_shared<InflatedDenseGraphSearch>(false, greedy_inflation, i);}); //not precomputed
 
     }
                 
     
-    // for(int i=0; i<10; i++)
-    // {
-    //     factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
-    //     factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
-    // }
+    for(int i=0; i<10; i++)
+    {
+        factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
+        factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
+    }
     
 
     return factories;

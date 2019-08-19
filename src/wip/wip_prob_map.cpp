@@ -221,13 +221,15 @@ int main(int argc, char* argv[])
     // return 1;
 
 
-    BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0.0, 0.0, 0.0}, 0.001);
+    // BeliefParams bp(BeliefType::Obstacle, std::vector<double>{0.0, 0.0, 0.0}, 0.001);
+    BeliefParams bp(BeliefType::Deterministic);
 
     // GVP::VictorRightArm victor_right;
     // GVP::VictorLeftArmAndBase victor_left;
-    TableWithBox scenario(bp, true, true, true);
+    // TableWithBox scenario(bp, true, true, true);
     // SlottedWall scenario(bp);
     // Bookshelf scenario(true);
+    CloseWall scenario(bp);
 
     // AStarGraphSearch strat;
     OmniscientGraphSearch strat;

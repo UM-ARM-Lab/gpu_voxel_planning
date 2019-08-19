@@ -365,7 +365,7 @@ InflatedDenseGraphSearch::InflatedDenseGraphSearch(bool use_precomputed, double 
 std::string InflatedDenseGraphSearch::getName() const
 {
     std::string type = (use_precomputed ? "_precomputed" : "");
-    return "Inflated" + type;
+    return "Inflated_" + std::to_string(inflation) + type;
 }
 
 double InflatedDenseGraphSearch::distanceHeuristic(const std::vector<double> &raw1,

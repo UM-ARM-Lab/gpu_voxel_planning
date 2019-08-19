@@ -110,7 +110,7 @@ std::vector<NodeIndex> IterativeDeepeningStrategy::lazySp(NodeIndex start, NodeI
     
     if(result.second == std::numeric_limits<double>::infinity())
     {
-        std::cout << "No path found on graph\n";
+        std::cout << "No path found on this layer\n";
     } else
     {
         std::cout << "Path: " << PrettyPrint::PrettyPrint(result.first) << "\n";
@@ -118,7 +118,7 @@ std::vector<NodeIndex> IterativeDeepeningStrategy::lazySp(NodeIndex start, NodeI
     
     
     PROFILE_RECORD_DOUBLE("lazySP path cost ", result.second);
-    std::cout << "LazySP path cost " << result.second << "\n";
+    std::cout << "LazySP path cost " << result.second << " found in " << PROFILE_RECORD("total_lazy_sp") << " seconds\n";
 
     return result.first;
 }

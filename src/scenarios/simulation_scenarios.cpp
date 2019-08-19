@@ -436,9 +436,9 @@ CloseWall::CloseWall(BeliefParams bp):
     // s.current_config = VictorRightArmConfig(std::vector<double>
     //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
     s.current_config = VictorRightArmConfig(std::vector<double>
-                                            {-1.2, 1.3, -0.8, 0.4, 0.4, 0.3, 0.3}).asMap();
+                                            {-0.5, 1.2, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
     goal_config = VictorRightArmConfig(std::vector<double>
-                                       {0.3, 1.2, -0.3, 1.5, 0, -0.7, -0.9}).asMap();
+                                       {-0.0, -0.4, -1.5, -0.4, -1.5, -1.0, 1.5}).asMap();
 
     victor.set(s.current_config);
 }
@@ -452,15 +452,12 @@ Object CloseWall::getCloseWall()
     double bookshelf_width = 0.8;
     double bookshelf_height = 1.6;
     double bookshelf_depth = 0.4;
-    Vector3f backwallc(1.2, 0.8, 0.0); //backwall cornder
+    Vector3f backwallc(1.6, 1.2, 0.0); //backwall cornder
     Vector3f backwall_thickness(bookshelf_width, 0.04, bookshelf_height);
     Vector3f sidewall(0.04, bookshelf_depth,  bookshelf_height);
     Vector3f swoff(bookshelf_width, 0, 0);
     Vector3f shelf(bookshelf_width + 0.04, bookshelf_depth, 0.02);
     Vector3f shelf_spacing(0, 0, 0.4);
-
-    Vector3f bookc(1.6, 0.82, 1.2);
-    Vector3f bookd(0.05, 0.3, 0.3);
 
     Object wall;
 
@@ -471,7 +468,6 @@ Object CloseWall::getCloseWall()
     {
         wall.add(AABB(backwallc + shelf_spacing*(float)i, backwallc + shelf + shelf_spacing*(float)i));
     }
-    wall.add(AABB(bookc, bookc+bookd));
 
     return wall;
 }
