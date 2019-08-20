@@ -128,7 +128,7 @@ bool OMPL_Strategy::isOmplStateValid(const ompl::base::State *ompl_state,
 ompl::base::PlannerPtr RRT_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
 {
     std::shared_ptr<og::RRTConnect> pp = std::make_shared<og::RRTConnect>(si);
-    pp->setRange(discretization*5);
+    pp->setRange(discretization*50);
     std::cout << "Range: " << pp->getRange() << "\n";
     return pp;
 }
@@ -150,12 +150,15 @@ Path RRT_Strategy::smooth(Path gvp_path, State &state)
 
     std::mt19937 rng;
     rng.seed(42);
-
+    
     PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
-    for(int i=0; i<30; i++)
+    if(SMOOTH)
     {
-        gvp_path = GVP::smooth(gvp_path, state, discretization, rng);
-        PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+        for(int i=0; i<30; i++)
+        {
+            gvp_path = GVP::smooth(gvp_path, state, discretization, rng);
+            PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+        }
     }
 
     return GVP::densify(gvp_path, discretization);
