@@ -225,7 +225,7 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
     
     
     PROFILE_RECORD_DOUBLE("lazySP path cost ", result.second);
-    std::cout << "LazySP path cost " << result.second << " found in " << PROFILE_RECORD("total_lazy_sp") << "seconds\n";
+    std::cout << "LazySP path cost " << result.second << " found in " << PROFILE_RECORD("total_lazy_sp") << " seconds\n";
 
     return result.first;
 }

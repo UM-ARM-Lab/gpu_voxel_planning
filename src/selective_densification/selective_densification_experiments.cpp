@@ -18,6 +18,15 @@
 
 using namespace GVP;
 
+void verifyParams()
+{
+    if(!SMOOTH)
+    {
+        arc_helpers::WaitForInput("No smoothing, are you sure you want to run these trials?");
+    }
+}
+
+
 std::vector<double> c_ps{100.0, 10.0, 1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.0};
 static const double chosen_cp = 1;
 // std::vector<double> c_ps{1.0};
@@ -39,10 +48,10 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 {
     BeliefParams bp(BeliefType::Deterministic);
     std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
-    // factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
-    // factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
+    factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
+    factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
     factories.push_back([bp](){ return std::make_shared<CloseWall>(bp);});
-    // factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
+    factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
     return factories;
 }
 
@@ -165,6 +174,8 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
 
     ros::Duration(1.0).sleep();
+
+    verifyParams();
 
     if(VISUALIZE)
     {
