@@ -10,9 +10,21 @@ save_path = logged_filepath + "figures/"
 
 plotted_cp = 1.0
 
-ordered_scenarios = ["Table", "Bookshelf", "Wall"]
+ordered_scenarios = ["Table", "Bookshelf", "Wall", "Obstacle"]
 
-
+strats_to_plot = ["RRT",
+                  "BIT*",
+                  "DG",
+                  # "DG-pre",
+                  # "SD",
+                  "SD-pre",
+                  # "ID",
+                  "ID-pre",
+                  # "DG-inflated",
+                  "DG-inflated-pre",
+                  # "greedy",
+                  "greedy-pre",
+]
 
 color_cycle = ['#332288', '#88CCEE', '#44AA99', '#117733', '#999933', '#DDCC77', '#CC6677', '#882255', '#AA4499']
 color_cycle = ['#e41a1c',
@@ -32,13 +44,16 @@ strategy_mappings = {"RRT_Strategy":"RRT",
                      "BIT_Strategy":"BIT*",
                      "Dense_Graph_Search":"DG",
                      "Dense_Graph_Search_precomputed":"DG-pre",
-                     "Inflated":"DG-inflated",
-                     "Inflated_precomputed":"DG-inflated-pre"
+                     "Inflated_10.000000":"DG-inflated",
+                     "Inflated_10.000000_precomputed":"DG-inflated-pre",
+                     "Inflated_100000.000000":"greedy",
+                     "Inflated_100000.000000_precomputed":"greedy-pre"
                      }
 
 scenario_mappings = {"Bookshelf":"Bookshelf",
                      "Table_with_Box_table_known_visible_cave_known_full_cave_known":"Table",
-                     "SlottedWall": "Wall"}
+                     "SlottedWall": "Wall",
+                     "CloseWall": "Obstacle"}
 
 ordering = {"RRT": 1,
             "BIT*":1.1,
@@ -49,20 +64,24 @@ ordering = {"RRT": 1,
             "ID":4,
             "ID-pre":5,
             "DG-inflated":6,
-            "DG-inflated-pre":7
+            "DG-inflated-pre":7,
+            "greedy":8,
+            "greedy-pre":9,
             }
 
 
-linestyles = {"RRT":    {"color": "grey",         "linewidth":2},
-              "BIT*":   {"color": color_cycle[3], "linewidth":2},
-              "DG":     {"color": "yellow",       "linewidth":2},
-              "DG-pre": {"color": "orange",       "linewidth":2},
-              "SD":     {"color": "blue",         "linewidth":5},
-              "SD-pre": {"color": "blue",        "linewidth":5},
-              "ID":     {"color": "green",         "linewidth":2},
-              "ID-pre": {"color": "green",        "linewidth":2},
-              "DG-inflated":{"color": "black",        "linewidth":2},
-              "DG-inflated-pre":{"color": "black",        "linewidth":2}
+linestyles = {"RRT":            {"color": "grey",         "linewidth":2},
+              "BIT*":           {"color": color_cycle[3], "linewidth":2},
+              "DG":             {"color": "yellow",       "linewidth":2},
+              "DG-pre":         {"color": "orange",       "linewidth":2},
+              "SD":             {"color": "blue",         "linewidth":5},
+              "SD-pre":         {"color": "blue",        "linewidth":5},
+              "ID":             {"color": "green",         "linewidth":2},
+              "ID-pre":         {"color": "green",        "linewidth":2},
+              "DG-inflated":    {"color": "black",        "linewidth":2},
+              "DG-inflated-pre":{"color": "black",        "linewidth":2},
+              "greedy":         {"color": "brown",        "linewidth":2},
+              "greedy-pre":     {"color": "brown",        "linewidth":2}
 }
 
 
@@ -164,6 +183,15 @@ def filter_strat(exps, strat, c_p = None):
     """
     return [e for e in exps if e["strategy"] == strat]
 
+def should_plot(exp):
+    if not exp["strategy"] in strats_to_plot:
+        return False
+    if(exp["data"]["c_p"] != -1 and
+       exp["data"]["c_p"] != plotted_cp):
+        return False
+    return True
+    
+
 def prune_extra_cp(exps, c_ps):
     """
     Removes SD and SD-pre strategies that do not use c_p desired in plotting
@@ -191,8 +219,7 @@ def plot_all_strategies(exps, variant):
     for exp in exps:
         data = exp["data"]
 
-        if(exp["data"]["c_p"] != -1 and
-           exp["data"]["c_p"] != plotted_cp):
+        if not should_plot(exp):
             continue
             
 
@@ -356,6 +383,8 @@ def plot_percentage_success(exps):
     ax = plt.subplot(111)
 
     for strat in successes.keys():
+        if not strat in strats_to_plot:
+            continue
         ax.plot(ts, successes[strat], label=strat, **linestyles[strat])
     
     ax.set_xlabel("Planning Time (s)", fontsize=22)
