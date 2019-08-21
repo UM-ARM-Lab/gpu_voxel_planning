@@ -18,12 +18,12 @@ strats_to_plot = ["RRT",
                   # "DG-pre",
                   "SD",
                   "SD-pre",
-                  # "ID",
-                  "ID-pre",
-                  # "DG-inflated",
-                  "DG-inflated-pre",
-                  # "greedy",
-                  "greedy-pre",
+                  "ID",
+                  # "ID-pre",
+                  "DG-inflated",
+                  # "DG-inflated-pre",
+                  "greedy",
+                  # "greedy-pre",
 ]
 
 color_cycle = ['#332288', '#88CCEE', '#44AA99', '#117733', '#999933', '#DDCC77', '#CC6677', '#882255', '#AA4499']
@@ -55,33 +55,49 @@ scenario_mappings = {"Bookshelf":"Bookshelf",
                      "SlottedWall": "Wall",
                      "CloseWall": "Obstacle"}
 
-ordering = {"RRT": 1,
-            "BIT*":1.1,
-            "DG":1.8,
-            "DG-pre":1.9,
-            "SD":2,
-            "SD-pre":3,
-            "ID":4,
-            "ID-pre":5,
-            "DG-inflated":6,
-            "DG-inflated-pre":7,
-            "greedy":8,
-            "greedy-pre":9,
-            }
 
+strats_in_order = ["SD",
+                   "SD-pre",
+                   "ID",
+                   "ID-pre",
+                   "DG",
+                   "DG-pre",
+                   "DG-inflated",
+                   "DG-inflated-pre",
+                   "greedy",
+                   "greedy-pre",
+                   "RRT",
+                   "BIT*",
+]
+
+ordering = {strats_in_order[i]: i for i in range(len(strats_in_order))}
 
 linestyles = {"RRT":            {"color": "grey",         "linewidth":2},
               "BIT*":           {"color": color_cycle[3], "linewidth":2},
               "DG":             {"color": "yellow",       "linewidth":2},
               "DG-pre":         {"color": "orange",       "linewidth":2},
               "SD":             {"color": "blue",         "linewidth":5},
-              "SD-pre":         {"color": "blue",        "linewidth":5},
+              "SD-pre":         {"color": "lightblue",        "linewidth":2},
               "ID":             {"color": "green",         "linewidth":2},
-              "ID-pre":         {"color": "green",        "linewidth":2},
+              "ID-pre":         {"color": "lightgreen",        "linewidth":2},
               "DG-inflated":    {"color": "black",        "linewidth":2},
-              "DG-inflated-pre":{"color": "black",        "linewidth":2},
+              "DG-inflated-pre":{"color": "darkgrey",        "linewidth":2},
               "greedy":         {"color": "brown",        "linewidth":2},
-              "greedy-pre":     {"color": "brown",        "linewidth":2}
+              "greedy-pre":     {"color": "lightbrown",        "linewidth":2}
+}
+
+display_names = {"SD":"SD",
+                 "SD-pre":"SD-pre",
+                 "ID":"Batching",
+                 "ID-pre":"Batching-pre",
+                 "DG-inflated":"wA*",
+                 "DG-inflated-pre":"wA*-pre",
+                 "greedy":"greedy",
+                 "greedy-pre":"greedy-pre",
+                 "RRT":"BiRRT",
+                 "BIT*":"BIT*",
+                 "DG":"A*",
+                 "DG-pre":"A*-pre",
 }
 
 
@@ -236,7 +252,7 @@ def plot_all_strategies(exps, variant):
         # if(len(data["time"]) > 0 and data["time"][0] > 100):
         #     continue
             
-        ax.plot(data["time"], y, label=exp["strategy"], **linestyles[exp["strategy"]])
+        ax.plot(data["time"], y, label=display_names[exp["strategy"]], **linestyles[exp["strategy"]])
     # plt.title(scenario)
     plt.xscale("log")
 
@@ -357,7 +373,7 @@ def get_all_success_fraction(exps):
     All exps should be from the same scenario but this function will filter into different strategies 
     """
     data = {}
-    ts = np.arange(0, 1000, 0.1)
+    ts = np.arange(0.1, 1000, 0.1)
 
     
     all_strats = get_all_strategies(exps)
@@ -387,6 +403,8 @@ def plot_percentage_success(exps):
     
     ax.set_xlabel("Planning Time (s)", fontsize=22)
     ax.set_ylabel("Success Fraction", fontsize=22)
+    ax.set_xlim([np.min(ts), np.max(ts)])
+
     plt.xscale("log")
     plt.savefig(save_path + scenario + "_success_rate")
     plt.show()
@@ -422,7 +440,7 @@ def get_all_medians(exps):
     All exps should be from the same scenario but this function will filter into different strategies 
     """
     data = {}
-    ts = np.arange(0, 1000, 0.1)
+    ts = np.arange(0.1, 1000, 0.1)
 
     all_strats = get_all_strategies(exps)
     for strat in all_strats:
@@ -447,9 +465,10 @@ def plot_median(exps):
         if not strat in strats_to_plot:
             continue
         ax.plot(ts, medians[strat], label=strat, **linestyles[strat])
-        
+
     ax.set_xlabel("Planning Time (s)", fontsize=22)
     ax.set_ylabel("Median Cost", fontsize=22)
+    ax.set_xlim([np.min(ts), np.max(ts)])
     plt.xscale("log")
     plt.savefig(save_path + scenario + "_medians")
     plt.show()
