@@ -13,10 +13,10 @@ plotted_cp = 1.0
 ordered_scenarios = ["Table", "Bookshelf", "Wall", "Obstacle"]
 
 strats_to_plot = ["RRT",
-                  "BIT*",
+                  # "BIT*",
                   "DG",
                   # "DG-pre",
-                  # "SD",
+                  "SD",
                   "SD-pre",
                   # "ID",
                   "ID-pre",
@@ -349,8 +349,6 @@ def get_success_fraction(exps, ts):
             if(solution_times[0] < t):
                 num += 1
         data.append(float(num)/denom)
-
-
     return data
 
 def get_all_success_fraction(exps):
@@ -393,8 +391,68 @@ def plot_percentage_success(exps):
     plt.savefig(save_path + scenario + "_success_rate")
     plt.show()
 
+def get_median(exps, ts):
+    """
+    Returns the median solution at each timestep. 
+    All exps should be from the same strat and scenario
+    """
+    median_val_at_time = []
+    for t in ts:
+        vals_at_t = []
+        for exp in exps:
+            solution_times = exp["data"]["time"]
+            if len(solution_times) == 0:
+               continue
+
+            best_val_so_far = np.inf
+            for i in range(len(solution_times)):
+                if solution_times[i] > t:
+                    break
+                best_val_so_far = exp["data"]["length"][i]
+
+            vals_at_t.append(best_val_so_far)
+        median_val_at_time.append(np.median(vals_at_t))
+    # IPython.embed()
+    return median_val_at_time
+    
+
+def get_all_medians(exps):
+    """
+    Returns data for the medians of trials
+    All exps should be from the same scenario but this function will filter into different strategies 
+    """
+    data = {}
+    ts = np.arange(0, 1000, 0.1)
+
+    all_strats = get_all_strategies(exps)
+    for strat in all_strats:
+        data[strat] = get_median(filter_strat(exps, strat), ts)
+    return data, ts
 
 
+def plot_median(exps):
+    """
+    Plots success percentages for a set of experiments all belonging to the same scenario
+    """
+    exps = prune_extra_cp(exps, [plotted_cp])
+    exps.sort(key=lambda exp: ordering[exp["strategy"]])
+    scenario = exps[0]["scenario"]
+
+    medians, ts = get_all_medians(exps)
+
+    fig = plt.figure()
+    ax = plt.subplot(111)
+
+    for strat in medians.keys():
+        if not strat in strats_to_plot:
+            continue
+        ax.plot(ts, medians[strat], label=strat, **linestyles[strat])
+        
+    ax.set_xlabel("Planning Time (s)", fontsize=22)
+    ax.set_ylabel("Median Cost", fontsize=22)
+    plt.xscale("log")
+    plt.savefig(save_path + scenario + "_medians")
+    plt.show()
 
 
 def plot_group(exps):
@@ -405,6 +463,7 @@ def plot_group(exps):
     plot_all_strategies(exps, "utility")
     # plot_cp_variation(exps)
     plot_percentage_success(exps)
+    plot_median(exps)
     
 
 
