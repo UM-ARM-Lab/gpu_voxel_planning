@@ -91,6 +91,7 @@ public:
     void insertPointCloud(const PointCloud &pointcloud, const BitVoxelMeaning voxel_meaning);
 
     std::vector<Vector3f> getOccupiedCenters() const;
+    std::vector<Vector3ui> getOccupiedCoords() const;
 
     float getVoxelSideLength() const;
 

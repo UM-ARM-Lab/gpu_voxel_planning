@@ -177,6 +177,12 @@ std::vector<Vector3f> DenseGrid::getOccupiedCenters() const
     return voxelmap::ProbVoxelMap::getOccupiedCenters();
 }
 
+std::vector<Vector3ui> DenseGrid::getOccupiedCoords() const
+{
+    return voxelmap::ProbVoxelMap::getOccupiedCoords();
+}
+
+
 float DenseGrid::getVoxelSideLength() const
 {
     return voxelmap::ProbVoxelMap::getVoxelSideLength();
