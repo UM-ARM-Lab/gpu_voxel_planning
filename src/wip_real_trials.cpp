@@ -85,5 +85,6 @@ int main(int argc, char* argv[])
     PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
     PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
 
+    ros::Duration(3.0).sleep();
     tester.reversePath();
 }

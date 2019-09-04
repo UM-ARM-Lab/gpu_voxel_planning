@@ -296,6 +296,12 @@ def plot_cp_variation(exps):
     ax = plt.subplot(211)
     ax2 = plt.subplot(212)
 
+    repeat = False# To remove multiple trials with same cp on different graphs
+
+    xs = []  #X values
+    ecs = [] # execution costs
+    pcs = [] # planning costs
+
     for exp in exps:
         # if(exp["strategy"] != "Selective Densification" and
         #    exp["strategy"] != "SD with precomputed edges"):
@@ -305,11 +311,27 @@ def plot_cp_variation(exps):
         # x = data["time"][0]
         x = data["c_p"]
         y = data["length"][0]
-        ax.scatter(x, y, label=exp["strategy"], **linestyles[exp["strategy"]])
-        ax2.scatter(x, data["time"][0], label=exp["strategy"], **linestyles[exp["strategy"]])
+
+        if x == plotted_cp:
+            if repeat:
+                continue
+            repeat = True
+
+        xs.append(x)
+        ecs.append(y)
+        pcs.append(data["time"][0])
+        
+        # ax.scatter(x, y, label=exp["strategy"], **linestyles[exp["strategy"]])
+        # ax2.scatter(x, data["time"][0], label=exp["strategy"], color="Blue")
+        ax.bar(x, y, label=exp["strategy"], width=2*x+0.000005)
+        ax2.bar(x, data["time"][0], label=exp["strategy"], color="Blue", width=2*x+0.000005)
         # ax.annotate(exp["data"]["c_p"], (x, y))
 
-
+    # IPython.embed()
+    # ax.bar(xs, ecs, width=np.diff(xs))
+    # ax2.bar(xs, pcs)
+                   
+                
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width, box.height])
 
@@ -329,13 +351,13 @@ def plot_cp_variation(exps):
     # ax2.set_yscale("log")
     ax2.set_xlim([-0.00001, 1000])
     ax2.set_ylabel("Planning time (s)", fontsize=22)
-    ax2.set_xlabel("c_p", fontsize = 22)
+    ax2.set_xlabel("$w_t$", fontsize = 22)
 
     
     ax2.set_xticks([0, 0.0001, 0.01, 1, 100])
     ax2.xaxis.set_tick_params(labelsize=20)
     ax2.yaxis.set_tick_params(labelsize=20)
-    ax2.set_yticks(ax2.get_yticks()[::2])
+    ax2.set_yticks([0, 40, 80])
     ax2.yaxis.set_label_coords(-0.1, 0.4)
     
     ax.set_xticklabels([])
@@ -478,11 +500,11 @@ def plot_group(exps):
     """
     Plots all plots of interest from a group of experiments all belonging to the same scenario
     """
-    plot_all_strategies(exps, "length")
-    plot_all_strategies(exps, "utility")
-    # plot_cp_variation(exps)
-    plot_percentage_success(exps)
-    plot_median(exps)
+    # plot_all_strategies(exps, "length")
+    # plot_all_strategies(exps, "utility")
+    plot_cp_variation(exps)
+    # plot_percentage_success(exps)
+    # plot_median(exps)
     
 
 

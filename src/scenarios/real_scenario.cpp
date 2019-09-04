@@ -181,14 +181,15 @@ RealEmpty::RealEmpty(BeliefParams bp) :
     
 
     DenseGrid kinect = loadPointCloudFromFile();
-    s.known_obstacles.add(&kinect);
+    // s.known_obstacles.add(&kinect);
 
     for(auto& ob: known_obstacles.obstacles)
     {
         s.known_obstacles.add(&ob.occupied);
     }
     s.current_config = VictorRightArmConfig(std::vector<double>{
-            -0.859, 0.357, 0.578, -0.226, 0.197, 0.492, -1.502
+            -1.309, 0.834, 0.211, -0.21, 0.275, 0.516, -1.929
+            // -0.859, 0.357, 0.578, -0.226, 0.197, 0.492, -1.502
             // -0.71, 0.376, 0.261, -0.195, -0.524, 0.493, -0.425
             // 0.053, 0.058, 0.633, -0.504, -0.595, 0.684, -0.357
             // -1.453, 0.445, 1.602, -0.476, -0.867, 0.316, -0.646
@@ -197,7 +198,8 @@ RealEmpty::RealEmpty(BeliefParams bp) :
             // -1.231, 1.225, -0.666, -0.893, -1.496, 0.804, -0.037
                 }).asMap();
     goal_config = VictorRightArmConfig(std::vector<double>{
-            -0.873, 0.771, 0.449, -0.781, 0.102, 0.936, -1.51
+            -0.424, 0.82, 0.338, -0.946, 0.173, 0.683, -1.498
+            // -0.873, 0.771, 0.449, -0.781, 0.102, 0.936, -1.51
             // -1.286, 1.025, 1.334, -1.051, -0.856, 0.946, -1.026
             // 0.274, 0.712, -0.502, -1.131, -1.339, 1.346, -0.03
                 }).asMap();
