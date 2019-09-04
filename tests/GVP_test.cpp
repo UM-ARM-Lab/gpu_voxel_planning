@@ -4,12 +4,12 @@
 #include <arc_utilities/timing.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
-#include "maps/prob_map.hpp"
-#include "maps/distance_map.hpp"
-#include "obstacles/obstacles.hpp"
-#include "state.hpp"
-#include "beliefs/beliefs.hpp"
-#include "strategies/memorized_swept_volumes.hpp"
+#include "gpu_voxel_planning/maps/prob_map.hpp"
+#include "gpu_voxel_planning/maps/distance_map.hpp"
+#include "gpu_voxel_planning/obstacles/obstacles.hpp"
+#include "gpu_voxel_planning/state.hpp"
+#include "gpu_voxel_planning/beliefs/beliefs.hpp"
+#include "gpu_voxel_planning/strategies/memorized_swept_volumes.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
 
 
