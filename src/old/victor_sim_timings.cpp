@@ -10,9 +10,9 @@
 
 #include <iostream>
 #include <fstream>
-#include "hardcoded_params.h"
+#include "gpu_voxel_planning/hardcoded_params.h"
 
-#include "common_names.hpp"
+#include "gpu_voxel_planning/common_names.hpp"
 
 
 #define ENABLE_PROFILING

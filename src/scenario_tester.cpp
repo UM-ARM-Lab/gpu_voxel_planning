@@ -1,5 +1,5 @@
-#include "scenario_tester.hpp"
-#include "gvp_exceptions.hpp"
+#include "gpu_voxel_planning/scenario_tester.hpp"
+#include "gpu_voxel_planning/gvp_exceptions.hpp"
 
 using namespace GVP;
 
@@ -177,7 +177,6 @@ bool RealScenarioTester::attemptStrategy(Strategy &strategy)
 
         ri.viz.vizEEPath(path, "Path Found", 0, makeColor(0.0, 0.0, 1.0));
         // std::cout << "path found with " << path.size() << " verts\n";
-        
         PROFILE_START(name + " Motion Time");
         if(attemptPath(path))
         {

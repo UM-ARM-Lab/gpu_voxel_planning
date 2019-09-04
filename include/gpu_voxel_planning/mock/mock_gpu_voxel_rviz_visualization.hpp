@@ -1,6 +1,7 @@
 #ifndef MOCK_GPU_VOXEL_RVIZ_VISUALIZATION_HPP
 #define MOCK_GPU_VOXEL_RVIZ_VISUALIZATION_HPP
-#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
+
+#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
 
 namespace GVP
 {

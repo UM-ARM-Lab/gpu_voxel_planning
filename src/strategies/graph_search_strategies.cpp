@@ -1,6 +1,6 @@
-#include "strategies/graph_search_strategies.hpp"
-#include "robot/robot_helpers.hpp"
-#include "gvp_exceptions.hpp"
+#include "gpu_voxel_planning/strategies/graph_search_strategies.hpp"
+#include "gpu_voxel_planning/robot/robot_helpers.hpp"
+#include "gpu_voxel_planning/gvp_exceptions.hpp"
 
 
 // using namespace GVP;

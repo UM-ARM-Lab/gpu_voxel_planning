@@ -2,7 +2,7 @@
 #define MEMORIZED_SWEPT_VOLUMES
 
 #include <map>
-#include "maps/prob_map.hpp"
+#include "gpu_voxel_planning/maps/prob_map.hpp"
 #include <graph_planner/dijkstras_addons.hpp>
 #include <arc_utilities/serialization.hpp>
 #include <arc_utilities/zlib_helpers.hpp>

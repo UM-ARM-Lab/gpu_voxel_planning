@@ -39,7 +39,7 @@ find_package(GTest)
 # FIND_PACKAGE(orocos_kdl REQUIRED)
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -g")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -g")
 
 
 # Also we have to inherit some Environment definitions required for our base libs:
@@ -80,8 +80,8 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
- LIBRARIES gpu_voxel_planning
+ INCLUDE_DIRS include
+ # LIBRARIES gpu_voxel_planning
  CATKIN_DEPENDS ${CATKIN_PACKAGES}
  DEPENDS arc_utilities
 )
@@ -104,8 +104,9 @@ set(EXTERN_LIBS
 ## Your package locations should be listed before other locations
 include_directories(
   include
-  include/${PROJECT_NAME}
+  # include/${PROJECT_NAME}
   include/${PROJECT_NAME}/old
+  SYSTEM
   ${catkin_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${gpu_voxels_INCLUDE_DIRS}

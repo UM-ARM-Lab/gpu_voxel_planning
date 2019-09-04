@@ -2,7 +2,7 @@
 #include "worlds.hpp"
 #include "victor_planning.hpp"
 #include "victor_local_controller.hpp"
-#include "helpers.hpp"
+#include "gpu_voxel_planning/helpers.hpp"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <csignal>
 #include <vector>

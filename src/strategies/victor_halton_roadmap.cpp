@@ -1,5 +1,5 @@
-#include "strategies/victor_halton_roadmap.hpp"
-#include "hacky_functions.hpp"
+#include "gpu_voxel_planning/strategies/victor_halton_roadmap.hpp"
+#include "gpu_voxel_planning/hacky_functions.hpp"
 #include <arc_utilities/timing.hpp>
 
 

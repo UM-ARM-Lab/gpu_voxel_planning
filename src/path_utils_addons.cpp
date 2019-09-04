@@ -1,4 +1,4 @@
-#include "path_utils_addons.hpp"
+#include "gpu_voxel_planning/path_utils_addons.hpp"
 #include <arc_utilities/path_utils.hpp>
 
 GVP::Path GVP::smooth(GVP::Path path, State &s, double discretization, std::mt19937 &rng)

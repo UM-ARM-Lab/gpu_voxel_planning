@@ -1,7 +1,9 @@
 #ifndef GVP_BELIEFS_HPP
 #define GVP_BELIEFS_HPP
-#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include "obstacles/obstacles.hpp"
+
+#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "gpu_voxel_planning/obstacles/obstacles.hpp"
+
 #include <random>
 #include <arc_utilities/arc_helpers.hpp>
 #include <arc_utilities/pretty_print.hpp>

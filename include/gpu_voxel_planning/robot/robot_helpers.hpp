@@ -1,7 +1,7 @@
 #ifndef GVP_ROBOT_HELPERS_HPP
 #define GVP_ROBOT_HELPERS_HPP
 
-#include "robot/robot_model.hpp"
+#include "gpu_voxel_planning/robot/robot_model.hpp"
 
 namespace GVP
 {

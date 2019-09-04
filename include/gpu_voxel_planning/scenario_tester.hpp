@@ -1,10 +1,10 @@
 #ifndef SCENARIO_TESTER_HPP
 #define SCENARIO_TESTER_HPP
 
-#include "scenarios/simulation_scenarios.hpp"
-#include "scenarios/real_scenario.hpp"
-#include "strategies/strategies.hpp"
-#include "ros_interface/ros_interface.hpp"
+#include "gpu_voxel_planning/scenarios/simulation_scenarios.hpp"
+#include "gpu_voxel_planning/scenarios/real_scenario.hpp"
+#include "gpu_voxel_planning/strategies/strategies.hpp"
+#include "gpu_voxel_planning/ros_interface/ros_interface.hpp"
 #include <ros/ros.h>
 
 

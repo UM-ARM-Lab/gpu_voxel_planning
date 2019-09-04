@@ -1,8 +1,8 @@
-#include "strategies/iterative_deepening_strategy.hpp"
-#include "path_utils_addons.hpp"
+#include "gpu_voxel_planning/strategies/iterative_deepening_strategy.hpp"
+#include "gpu_voxel_planning/path_utils_addons.hpp"
 #include <algorithm>
 #include <random>
-#include "gvp_exceptions.hpp"
+#include "gpu_voxel_planning/gvp_exceptions.hpp"
 
 
 const std::string basepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/ID/";

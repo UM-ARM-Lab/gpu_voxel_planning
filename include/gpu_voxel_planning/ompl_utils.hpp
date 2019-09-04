@@ -1,3 +1,5 @@
+#ifndef GVP_OMPL_UTILS
+#define GVP_OMPL_UTILS
 
 #include <vector>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
@@ -89,3 +91,4 @@ namespace ompl_utils
 
 
 }
+#endif

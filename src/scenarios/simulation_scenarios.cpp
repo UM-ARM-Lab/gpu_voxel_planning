@@ -1,4 +1,4 @@
-#include "scenarios/simulation_scenarios.hpp"
+#include "gpu_voxel_planning/scenarios/simulation_scenarios.hpp"
 
 using namespace GVP;
 

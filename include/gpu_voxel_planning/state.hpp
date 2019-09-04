@@ -1,15 +1,15 @@
 #ifndef GPU_PLANNING_STATE_HPP
 #define GPU_PLANNING_STATE_HPP
 
-#include "robot/robot_model.hpp"
-#include "robot/robot_helpers.hpp"
+#include "gpu_voxel_planning/robot/robot_model.hpp"
+#include "gpu_voxel_planning/robot/robot_helpers.hpp"
 #include <stdexcept>
 #include <arc_utilities/timing.hpp>
 #include <arc_utilities/math_helpers.hpp>
-#include "beliefs/beliefs.hpp"
-#include "ros_interface/ros_interface.hpp"
-#include "arc_utilities/stl_wrappers.hpp"
-#include "sd_params.hpp"
+#include "gpu_voxel_planning/beliefs/beliefs.hpp"
+#include "gpu_voxel_planning/ros_interface/ros_interface.hpp"
+#include <arc_utilities/stl_wrappers.hpp>
+#include "gpu_voxel_planning/sd_params.hpp"
 
 namespace GVP
 {

@@ -6,7 +6,7 @@
 // #include "collision_detection.hpp"
 
 #include <arc_utilities/maybe.hpp>
-#include "path_utils.hpp"
+#include "gpu_voxel_planning/path_utils.hpp"
 #include <ros/ros.h>
 
 #include <bitset>

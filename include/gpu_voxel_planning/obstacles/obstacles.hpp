@@ -1,8 +1,8 @@
 #ifndef GPU_PLANNING_OBSTACLES_HPP
 #define GPU_PLANNING_OBSTACLES_HPP
 
-#include "maps/prob_map.hpp"
-#include "maps/distance_map.hpp"
+#include "gpu_voxel_planning/maps/prob_map.hpp"
+#include "gpu_voxel_planning/maps/distance_map.hpp"
 
 namespace GVP
 {

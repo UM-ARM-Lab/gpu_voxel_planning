@@ -1,4 +1,4 @@
-#include "path_utils.hpp"
+#include "gpu_voxel_planning/path_utils.hpp"
 #include <cassert>
 #include <stddef.h>
 #include <math.h>

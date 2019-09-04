@@ -1,9 +1,9 @@
 #ifndef GVP_STRATEGIES_HPP
 #define GVP_STRATEGIES_HPP
 
-#include "scenarios/scenarios.hpp"
-#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include "path_utils_addons.hpp"
+#include "gpu_voxel_planning/scenarios/scenarios.hpp"
+#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "gpu_voxel_planning/path_utils_addons.hpp"
 
 namespace GVP
 {

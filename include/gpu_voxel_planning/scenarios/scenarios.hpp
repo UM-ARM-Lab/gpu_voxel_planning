@@ -2,8 +2,8 @@
 #define GVP_SCENARIOS_HPP
 
 
-#include "state.hpp"
-#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "gpu_voxel_planning/state.hpp"
+#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
 
 namespace GVP
 {

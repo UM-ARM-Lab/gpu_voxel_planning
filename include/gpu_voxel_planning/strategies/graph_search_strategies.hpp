@@ -1,15 +1,15 @@
 #ifndef GRAPH_SEARCH_STRATEGIES_HPP
 #define GRAPH_SEARCH_STRATEGIES_HPP
 
-#include "strategies/victor_halton_roadmap.hpp"
-#include "state.hpp"
-#include "strategies/strategies.hpp"
-#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "gpu_voxel_planning/strategies/victor_halton_roadmap.hpp"
+#include "gpu_voxel_planning/state.hpp"
+#include "gpu_voxel_planning/strategies/strategies.hpp"
+#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
 #include <graph_planner/dijkstras_addons.hpp>
 #include <cmath>
 #include <arc_utilities/timing.hpp>
-#include "strategies/memorized_swept_volumes.hpp"
-#include "path_utils_addons.hpp"
+#include "gpu_voxel_planning/strategies/memorized_swept_volumes.hpp"
+#include "gpu_voxel_planning/path_utils_addons.hpp"
 
 namespace GVP
 {

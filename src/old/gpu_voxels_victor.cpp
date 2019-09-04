@@ -1,7 +1,7 @@
 #include "gpu_voxels_victor.hpp"
-#include "common_names.hpp"
-#include "hardcoded_params.h"
-#include "hacky_functions.hpp"
+#include "gpu_voxel_planning/common_names.hpp"
+#include "gpu_voxel_planning/hardcoded_params.h"
+#include "gpu_voxel_planning/hacky_functions.hpp"
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>

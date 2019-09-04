@@ -1,11 +1,11 @@
 #ifndef OMPL_STRATEGIES_HPP
 #define OMPL_STRATEGIES_HPP
 
-#include "strategies/strategies.hpp"
+#include "gpu_voxel_planning/strategies/strategies.hpp"
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-#include "sd_params.hpp"
+#include "gpu_voxel_planning/sd_params.hpp"
 
 
 namespace GVP

@@ -1,4 +1,4 @@
-#include "maps/distance_map.hpp"
+#include "gpu_voxel_planning/maps/distance_map.hpp"
 
 
 DistanceGrid::DistanceGrid() :

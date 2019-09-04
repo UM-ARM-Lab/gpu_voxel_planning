@@ -1,5 +1,6 @@
 #ifndef COMMON_NAMES_HPP
 #define COMMON_NAMES_HPP
+
 #include <string>
 
 const std::string ISVALID_INSERTION = "isValid insertion";

@@ -1,7 +1,7 @@
 #include "victor_planning.hpp"
 
-#include "ompl_utils.hpp"
-#include "hacky_functions.hpp"
+#include "gpu_voxel_planning/ompl_utils.hpp"
+#include "gpu_voxel_planning/hacky_functions.hpp"
 
 #define ENABLE_PROFILING
 #include <arc_utilities/timing.hpp>
@@ -10,10 +10,10 @@
 #include <signal.h>
 #include <iostream>
 
-#include "hardcoded_params.h"
+#include "gpu_voxel_planning/hardcoded_params.h"
 #include "custom_rrtconnect.h"
 
-#include "path_smoothing.h"
+#include "gpu_voxel_planning/path_smoothing.h"
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
 #include <ompl/geometric/PathSimplifier.h>
 

@@ -1,7 +1,7 @@
 #ifndef SELECTIVE_DENSIFICATION_STRATEGIES_HPP
 #define SELECTIVE_DENSIFICATION_STRATEGIES_HPP
 
-#include "layered_graph_strategy.hpp"
+#include "gpu_voxel_planning/strategies/layered_graph_strategy.hpp"
 
 /* 
  * 

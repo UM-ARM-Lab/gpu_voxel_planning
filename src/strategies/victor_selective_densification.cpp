@@ -1,5 +1,5 @@
-#include "strategies/victor_selective_densification.hpp"
-#include "hacky_functions.hpp"
+#include "gpu_voxel_planning/strategies/victor_selective_densification.hpp"
+#include "gpu_voxel_planning/hacky_functions.hpp"
 
 
 static const int DEFAULT_DEPTH = 18;

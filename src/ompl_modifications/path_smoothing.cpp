@@ -1,4 +1,4 @@
-#include "path_smoothing.h"
+#include "gpu_voxel_planning/path_smoothing.h"
 #include <random>
 
 namespace ob = ompl::base;

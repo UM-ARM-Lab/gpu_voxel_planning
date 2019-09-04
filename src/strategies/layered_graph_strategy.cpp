@@ -1,4 +1,4 @@
-#include "strategies/layered_graph_strategy.hpp"
+#include "gpu_voxel_planning/strategies/layered_graph_strategy.hpp"
 
 
 using namespace GVP;

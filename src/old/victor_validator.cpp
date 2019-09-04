@@ -7,11 +7,11 @@
 #include <gpu_voxels/helpers/MetaPointCloud.h>
 #include <gpu_voxels/robot/urdf_robot/urdf_robot.h>
 #include <gpu_voxels/logging/logging_gpu_voxels.h>
-#include "common_names.hpp"
+#include "gpu_voxel_planning/common_names.hpp"
 
 #include <thrust/extrema.h>
 #include <algorithm>
-#include "hardcoded_params.h"
+#include "gpu_voxel_planning/hardcoded_params.h"
 
 #include <thread>
 #include <chrono>

@@ -1,9 +1,9 @@
 #ifndef GVP_PATH_UTILS_ADDONS_HPP
 #define GVP_PATH_UTILS_ADDONS_HPP
 
-#include "path_utils.hpp"
-#include "robot/robot_model.hpp"
-#include "state.hpp"
+#include "gpu_voxel_planning/path_utils.hpp"
+#include "gpu_voxel_planning/robot/robot_model.hpp"
+#include "gpu_voxel_planning/state.hpp"
 
 
 namespace GVP

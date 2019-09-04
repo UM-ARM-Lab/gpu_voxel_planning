@@ -1,7 +1,7 @@
 #ifndef GVP_SIMULATION_SCENARIOS_HPP
 #define GVP_SIMULATION_SCENARIOS_HPP
 
-#include "scenarios/scenarios.hpp"
+#include "gpu_voxel_planning/scenarios/scenarios.hpp"
 
 namespace GVP
 {

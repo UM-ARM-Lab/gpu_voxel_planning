@@ -4,12 +4,8 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
 
-#include "maps/prob_map.hpp"
-// #include "state.hpp"
-// #include "scenarios.hpp"
-#include "robot/urdf_model.hpp"
-// #include "path_utils_addons.hpp"
-// #include "strategies/victor_selective_densification.hpp"
+#include "gpu_voxel_planning/maps/prob_map.hpp"
+#include "gpu_voxel_planning/robot/urdf_model.hpp"
 
 namespace GVP{
     visualization_msgs::Marker visualizeDenseGrid(const DenseGrid &grid,

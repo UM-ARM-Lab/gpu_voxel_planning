@@ -1,5 +1,5 @@
-#include "strategies/victor_selective_densification.hpp"
-#include "sd_params.hpp"
+#include "gpu_voxel_planning/strategies/victor_selective_densification.hpp"
+#include "gpu_voxel_planning/sd_params.hpp"
 #include <ros/ros.h>
 
 

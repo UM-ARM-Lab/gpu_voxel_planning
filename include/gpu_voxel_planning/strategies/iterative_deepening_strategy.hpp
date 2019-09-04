@@ -1,7 +1,7 @@
 #ifndef ITERATIVE_DEEPENING_STRATEGIES_HPP
 #define ITERATIVE_DEEPENING_STRATEGIES_HPP
 
-#include "layered_graph_strategy.hpp"
+#include "gpu_voxel_planning/strategies/layered_graph_strategy.hpp"
 
 
 namespace GVP

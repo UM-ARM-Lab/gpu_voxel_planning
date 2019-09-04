@@ -1,7 +1,7 @@
 #include "victor_local_controller.hpp"
-#include "ompl_utils.hpp"
-#include "helpers.hpp"
-#include "hacky_functions.hpp"
+#include "gpu_voxel_planning/ompl_utils.hpp"
+#include "gpu_voxel_planning/helpers.hpp"
+#include "gpu_voxel_planning/hacky_functions.hpp"
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;

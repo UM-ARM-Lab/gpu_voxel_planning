@@ -1,7 +1,7 @@
 #include "worlds.hpp"
 
-#include "common_names.hpp"
-#include "hardcoded_params.h"
+#include "gpu_voxel_planning/common_names.hpp"
+#include "gpu_voxel_planning/hardcoded_params.h"
 #include <gpu_voxel_planning/CollisionInformation.h>
 #include <gpu_voxel_planning/AttemptPathStart.h>
 #include <gpu_voxel_planning/AttemptPathResult.h>

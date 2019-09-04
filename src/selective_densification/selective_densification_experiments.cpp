@@ -1,19 +1,19 @@
-#include "maps/prob_map.hpp"
+#include "gpu_voxel_planning/maps/prob_map.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
-#include "common_names.hpp"
+#include "gpu_voxel_planning/common_names.hpp"
 #include <arc_utilities/timing.hpp>
 #include <arc_utilities/arc_helpers.hpp>
 
 #include <ros/ros.h>
-#include "ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include "robot/robot_model.hpp"
-#include "state.hpp"
-#include "scenario_tester.hpp"
-#include "strategies/graph_search_strategies.hpp"
-#include "path_utils_addons.hpp"
-#include "strategies/selective_densification_strategies.hpp"
-#include "strategies/iterative_deepening_strategy.hpp"
-#include "strategies/ompl_strategies.hpp"
+#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "gpu_voxel_planning/robot/robot_model.hpp"
+#include "gpu_voxel_planning/state.hpp"
+#include "gpu_voxel_planning/scenario_tester.hpp"
+#include "gpu_voxel_planning/strategies/graph_search_strategies.hpp"
+#include "gpu_voxel_planning/path_utils_addons.hpp"
+#include "gpu_voxel_planning/strategies/selective_densification_strategies.hpp"
+#include "gpu_voxel_planning/strategies/iterative_deepening_strategy.hpp"
+#include "gpu_voxel_planning/strategies/ompl_strategies.hpp"
 
 
 using namespace GVP;

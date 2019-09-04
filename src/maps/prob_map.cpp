@@ -1,4 +1,4 @@
-#include "maps/prob_map.hpp"
+#include "gpu_voxel_planning/maps/prob_map.hpp"
 
 /********************
  ** Sparse Grid

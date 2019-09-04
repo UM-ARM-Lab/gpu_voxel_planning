@@ -1,4 +1,4 @@
-#include "scenarios/real_scenario.hpp"
+#include "gpu_voxel_planning/scenarios/real_scenario.hpp"
 #include <arm_pointcloud_utilities/load_save_to_file.h>
 
 

@@ -1,9 +1,9 @@
 #ifndef GPU_PLANNING_ROBOT_MODEL_HPP
 #define GPU_PLANNING_ROBOT_MODEL_HPP
 
-#include "maps/prob_map.hpp"
-#include "common_names.hpp"
-#include "hacky_functions.hpp"
+#include "gpu_voxel_planning/maps/prob_map.hpp"
+#include "gpu_voxel_planning/common_names.hpp"
+#include "gpu_voxel_planning/hacky_functions.hpp"
 #include <arc_utilities/timing.hpp>
 
 namespace GVP

@@ -1,10 +1,10 @@
-#include "strategies/ompl_strategies.hpp"
-#include "ompl_utils.hpp"
-#include "hacky_functions.hpp"
-#include "path_utils_addons.hpp"
-#include "ompl_modifications/custom_bitstar.h"
-#include "gvp_exceptions.hpp"
-#include "sd_params.hpp"
+#include "gpu_voxel_planning/strategies/ompl_strategies.hpp"
+#include "gpu_voxel_planning/ompl_utils.hpp"
+#include "gpu_voxel_planning/hacky_functions.hpp"
+#include "gpu_voxel_planning/path_utils_addons.hpp"
+#include "gpu_voxel_planning/ompl_modifications/custom_bitstar.h"
+#include "gpu_voxel_planning/gvp_exceptions.hpp"
+#include "gpu_voxel_planning/sd_params.hpp"
 
 using namespace GVP;
 namespace ob = ompl::base;
