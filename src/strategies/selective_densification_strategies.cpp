@@ -207,7 +207,7 @@ std::vector<NodeIndex> SelectiveDensificationStrategy::lazySp(NodeIndex start, N
     
     std::cout << "Performing lazysp\n";
     auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(
-        sd_graph, start, goal, heuristic_fn, eval_fn, selector, PLANNER_TIMEOUT);
+        sd_graph, start, goal, heuristic_fn, eval_fn, selector, PLANNER_TIMEOUT, USE_TIME_BIDIRECTIONAL);
     // auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformLazySP(
     //     sd_graph, goal, start, heuristic_fn, eval_fn, selector);
     // std::reverse(result.first.begin(), result.first.end());

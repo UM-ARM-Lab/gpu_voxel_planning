@@ -9,6 +9,7 @@ namespace GVP
     const bool SMOOTH = true;
     const double PLANNER_TIMEOUT = 300;
     const bool NO_COLLISION_CHECKING_DURING_PATH_ATTEMPT = true;
+    const bool USE_TIME_BIDIRECTIONAL = true; //true is proposed
 }
 
 #endif // GVP_SD_PARAMS

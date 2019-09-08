@@ -60,6 +60,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy)
         scenario.viz(ri.viz);
         throw e;
     }
+    scenario.getSimulationState().move(scenario.getState().getCurConfig(), scenario.getTrueObstacles(), ri);
     scenario.viz(ri.viz);
     
     std::string name = getName(strategy);

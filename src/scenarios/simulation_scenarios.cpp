@@ -88,6 +88,7 @@ void SimulationScenario::validate()
         std::cerr << "Goal configuration overlaps with obstacle\n";
         throw(std::invalid_argument("Goal configuration is invalid\n"));
     }
+    s.robot.set(s.getCurConfig().asMap());
 }
 
 
@@ -314,6 +315,7 @@ Bookshelf::Bookshelf(BeliefParams bp):
     jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
     jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
     jvm["victor_right_gripper_fingerC_joint_2"] = 0.0;
+    // ri.setRightGripper(0);
     victor.set(jvm);
 
     Object bookshelf = getBookshelf();

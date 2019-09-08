@@ -13,6 +13,7 @@ class Roadmap : public HaltonGraph
 public:
     
     Roadmap();
+    Roadmap(int num_nodes, double approx_edges_per_node);
     Roadmap(std::string filename);
     std::vector<std::vector<double>> scaleToVictorDims(std::vector<std::vector<double>> points);
 };
