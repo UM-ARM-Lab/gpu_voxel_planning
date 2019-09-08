@@ -81,7 +81,10 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
  INCLUDE_DIRS include ${gpu_voxels_INCLUDE_DIRS}
- LIBRARIES   ${icl_core_LIBRARIES}  ${gpu_voxels_LIBRARIES} voxelgrid_library
+ LIBRARIES   ${icl_core_LIBRARIES}
+             ${gpu_voxels_LIBRARIES}
+             voxelgrid_library
+             victor_halton_roadmap
 
  CATKIN_DEPENDS ${CATKIN_PACKAGES}
  DEPENDS arc_utilities
