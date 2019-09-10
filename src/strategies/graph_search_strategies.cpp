@@ -92,19 +92,11 @@ namespace GVP
 
     DenseGrid GraphSearchStrategy::computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e)
     {
-        PROFILE_START("ComputeSweptVolume");
-        VictorRightArmConfig q_start(graph.getNode(e.getFromIndex()).getValue());
-        VictorRightArmConfig q_end(graph.getNode(e.getToIndex()).getValue());
+        VictorRightArmConfig q_start(graph.getFromValue(e));
+        VictorRightArmConfig q_end(graph.getToValue(e));
         GVP::Path path = interpolate(q_start, q_end, discretization);
 
-        DenseGrid swept_volume;
-        for(const auto &config: path)
-        {
-            s.robot.set(config.asMap());
-            swept_volume.add(&s.robot.occupied_space);
-        }
-        PROFILE_RECORD("ComputeSweptVolume");
-        return swept_volume;
+        return GVP::sweptVolume(s.robot, path);
     }
 
     void GraphSearchStrategy::storeSweptVolume(const arc_dijkstras::GraphEdge &e,

@@ -19,6 +19,22 @@ namespace GVP
         }
         return first_link_in_collision;
     }
+
+    inline DenseGrid sweptVolume(Robot& robot, std::vector<VictorRightArmConfig> path)
+    {
+        PROFILE_START("ComputeSweptVolume");
+        DenseGrid swept_volume;
+        for(const auto &config: path)
+        {
+            PROFILE_START("Config Added to Swept Volume");
+            robot.set(config.asMap());
+            swept_volume.add(&robot.occupied_space);
+            PROFILE_RECORD("Config Added to Swept Volume");
+        }
+
+        PROFILE_RECORD("ComputeSweptVolume");
+        return swept_volume;
+    }
 }
 
 

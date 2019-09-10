@@ -61,22 +61,11 @@ DenseGrid LayeredGraphStrategy::getSweptVolume(State &s, arc_dijkstras::GraphEdg
 
 DenseGrid LayeredGraphStrategy::computeSweptVolume(State &s, arc_dijkstras::GraphEdge &e)
 {
-    PROFILE_START("ComputeSweptVolume");
     VictorRightArmConfig q_start(getStart(e));
     VictorRightArmConfig q_end(getEnd(e));
-    
     GVP::Path path = interpolate(q_start, q_end, discretization);
-
-    DenseGrid swept_volume;
-    for(const auto &config: path)
-    {
-        PROFILE_START("Config Added to Swept Volume");
-        s.robot.set(config.asMap());
-        swept_volume.add(&s.robot.occupied_space);
-        PROFILE_RECORD("Config Added to Swept Volume");
-    }
-    PROFILE_RECORD("ComputeSweptVolume");
-    return swept_volume;
+    
+    return GVP::sweptVolume(s.robot, path);
 }
 
 void LayeredGraphStrategy::storeSweptVolume(const arc_dijkstras::GraphEdge &e,
