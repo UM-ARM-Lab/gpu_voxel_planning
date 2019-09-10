@@ -85,6 +85,7 @@ catkin_package(
              ${gpu_voxels_LIBRARIES}
              voxelgrid_library
              victor_halton_roadmap
+             planning_library
 
  CATKIN_DEPENDS ${CATKIN_PACKAGES}
  DEPENDS arc_utilities
