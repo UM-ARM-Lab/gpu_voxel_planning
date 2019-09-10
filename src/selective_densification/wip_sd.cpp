@@ -111,9 +111,12 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
     
     for(int i=0; i<10; i++)
     {
-        factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
+        // factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
         // factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
     }
+
+    factories.push_back([](){
+            return std::make_shared<OmniscientSDGraphSearch>(false, chosen_cp, 0);}); //using precomputed
     
 
     return factories;
