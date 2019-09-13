@@ -13,6 +13,13 @@ namespace GVP{
                                                   const std::string& ns,
                                                   const std_msgs::ColorRGBA& color);
 
+    visualization_msgs::Marker visualizeDenseGrid(const std::vector<Vector3f> &centers,
+                                                  const float side_length,
+                                                  const std::string& global_frame,
+                                                  const std::string& ns,
+                                                  const std_msgs::ColorRGBA& color);
+
+
     visualization_msgs::MarkerArray visualizePoint(const Eigen::Vector3d pos,
                                                    const std::string& frame,
                                                    const std::string& ns,
@@ -72,6 +79,11 @@ namespace GVP{
 
         virtual
         void vizGrid(const DenseGrid& grid, const std::string& name, const std_msgs::ColorRGBA& color) const;
+
+        void vizGrid(const std::vector<Vector3f> &centers,
+                     const float side_length,
+                     const std::string& name,
+                     const std_msgs::ColorRGBA& color) const;
 
         // void vizEEGraph(const HaltonGraph &g)
         // {

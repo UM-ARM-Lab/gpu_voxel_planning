@@ -2,22 +2,35 @@
 
 using namespace GVP;
 
+
 visualization_msgs::Marker GVP::visualizeDenseGrid(const DenseGrid &grid,
                                                    const std::string& global_frame,
                                                    const std::string& ns,
                                                    const std_msgs::ColorRGBA& color)
 {
+    return visualizeDenseGrid(grid.getOccupiedCenters(),
+                              grid.getVoxelSideLength(),
+                              global_frame,
+                              ns,
+                              color);
+}
+
+visualization_msgs::Marker GVP::visualizeDenseGrid(const std::vector<Vector3f> &centers,
+                                                   const float side_length,
+                                                   const std::string& global_frame,
+                                                   const std::string& ns,
+                                                   const std_msgs::ColorRGBA& color)
+{
     visualization_msgs::Marker occupied_marker;
-    auto centers = grid.getOccupiedCenters();
     occupied_marker.points.resize(centers.size());
     occupied_marker.ns = ns;
     occupied_marker.type = visualization_msgs::Marker::CUBE_LIST;
     occupied_marker.header.frame_id = global_frame;
     occupied_marker.color = color;
     
-    occupied_marker.scale.x = grid.getVoxelSideLength();
-    occupied_marker.scale.y = grid.getVoxelSideLength();
-    occupied_marker.scale.z = grid.getVoxelSideLength();
+    occupied_marker.scale.x = side_length;
+    occupied_marker.scale.y = side_length;
+    occupied_marker.scale.z = side_length;
 
 
     for(const auto &c:centers)
@@ -110,6 +123,15 @@ void GVP::GpuVoxelRvizVisualizer::vizGrid(const DenseGrid& grid, const std::stri
 {
     grid_pub.publish(visualizeDenseGrid(grid, global_frame, name, color));
 }
+
+void GVP::GpuVoxelRvizVisualizer::vizGrid(const std::vector<Vector3f> &centers,
+                                          const float side_length,
+                                          const std::string& name,
+                                          const std_msgs::ColorRGBA& color) const
+{
+    grid_pub.publish(visualizeDenseGrid(centers, side_length, global_frame, name, color));
+}
+
 
 void GVP::GpuVoxelRvizVisualizer::vizChs(const std::vector<DenseGrid> &chss,
                                          const std::string &ns) const
