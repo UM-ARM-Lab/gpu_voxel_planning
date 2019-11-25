@@ -61,6 +61,23 @@ namespace GVP
         void combineObstacles();
     };
 
+    /****************************************
+     **         Empty
+     ****************************************/
+    class Empty : public SimulationScenario
+    {
+        const std::string name;
+        
+    public:
+        Empty(BeliefParams bp);
+
+        std::string getName() const
+        {
+            return "Empty";
+        }
+    };
+
+
 
 
     /****************************************
@@ -95,7 +112,9 @@ namespace GVP
 
 
 
-    /****************************************
+
+
+/****************************************
      **         SlottedWall
      ****************************************/
     class SlottedWall : public SimulationScenario

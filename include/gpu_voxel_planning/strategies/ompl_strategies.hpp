@@ -3,6 +3,15 @@
 
 #include "gpu_voxel_planning/strategies/strategies.hpp"
 #include <ompl/geometric/SimpleSetup.h>
+
+#include <ompl/geometric/planners/prm/SPARS.h>
+#include <ompl/geometric/planners/sst/SST.h>
+#include <ompl/geometric/planners/kpiece/LBKPIECE1.h>
+#include <ompl/geometric/planners/prm/LazyPRM.h>
+#include <ompl/geometric/planners/stride/STRIDE.h>
+// #include <ompl/geometric/planners/prm/SPARStwo.h>
+
+
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include "gpu_voxel_planning/sd_params.hpp"
@@ -48,7 +57,57 @@ namespace GVP
         Path smooth(Path gvp_path, State &state) override;
     };
 
+    class SPARS_Strategy : public OMPL_Strategy
+    {
+    public:
+        virtual std::string getName() const override;
+        virtual ompl::base::PlannerPtr makePlanner(ompl::base::SpaceInformationPtr si) override;
+        Path smooth(Path gvp_path, State &state) override;
+    };
+
+    // class SPARSTWO_Strategy : public OMPL_Strategy
+    // {
+    // public:
+    //     virtual std::string getName() const override;
+    //     virtual ompl::base::PlannerPtr makePlanner(ompl::base::SpaceInformationPtr si) override;
+    //     Path smooth(Path gvp_path, State &state) override;
+    // };
+
     class BIT_Strategy : public OMPL_Strategy
+    {
+    public:
+        virtual std::string getName() const override;
+        virtual ompl::base::PlannerPtr makePlanner(ompl::base::SpaceInformationPtr si) override;
+        Path smooth(Path gvp_path, State &state) override;
+    };
+
+    class SST_Strategy : public OMPL_Strategy
+    {
+    public:
+        virtual std::string getName() const override;
+        virtual ompl::base::PlannerPtr makePlanner(ompl::base::SpaceInformationPtr si) override;
+        Path smooth(Path gvp_path, State &state) override;
+    };
+
+
+    class LBKPIECE_Strategy : public OMPL_Strategy
+    {
+    public:
+        virtual std::string getName() const override;
+        virtual ompl::base::PlannerPtr makePlanner(ompl::base::SpaceInformationPtr si) override;
+        Path smooth(Path gvp_path, State &state) override;
+    };
+
+
+    class PRM_Strategy : public OMPL_Strategy
+    {
+    public:
+        virtual std::string getName() const override;
+        virtual ompl::base::PlannerPtr makePlanner(ompl::base::SpaceInformationPtr si) override;
+        Path smooth(Path gvp_path, State &state) override;
+    };
+
+    class STRIDE_Strategy : public OMPL_Strategy
     {
     public:
         virtual std::string getName() const override;

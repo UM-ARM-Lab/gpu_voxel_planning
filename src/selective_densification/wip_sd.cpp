@@ -39,10 +39,11 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 {
     BeliefParams bp(BeliefType::Deterministic);
     std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
+    // factories.push_back([bp](){ return std::make_shared<Empty>(bp);});
     // factories.push_back([bp](){ return std::make_shared<TableWithBox>(bp, true, true, true);});
     // factories.push_back([bp](){ return std::make_shared<Bookshelf>(bp);});
-    factories.push_back([bp](){ return std::make_shared<CloseWall>(bp);});
-    // factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
+    // factories.push_back([bp](){ return std::make_shared<CloseWall>(bp);});
+    factories.push_back([bp](){ return std::make_shared<SlottedWall>(bp);});
     return factories;
 }
 
@@ -115,8 +116,16 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
         // factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
     }
 
-    factories.push_back([](){
-            return std::make_shared<OmniscientSDGraphSearch>(false, chosen_cp, 0);}); //using precomputed
+    // factories.push_back([](){
+    //         return std::make_shared<OmniscientSDGraphSearch>(false, chosen_cp, 0);}); //using precomputed
+    // factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
+    // factories.push_back([](){ return std::make_shared<SPARSTWO_Strategy>();});
+    // factories.push_back([](){ return std::make_shared<SPARS_Strategy>();});
+    // factories.push_back([](){ return std::make_shared<SST_Strategy>();});
+    // factories.push_back([](){ return std::make_shared<LBKPIECE_Strategy>();});
+    // factories.push_back([](){ return std::make_shared<PRM_Strategy>();});
+    // factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
+    factories.push_back([](){ return std::make_shared<STRIDE_Strategy>();});
     
 
     return factories;

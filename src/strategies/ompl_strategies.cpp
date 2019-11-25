@@ -189,3 +189,189 @@ Path BIT_Strategy::smooth(Path gvp_path, State &state)
 
 
 
+/************************
+ *  SPARS
+ ***********************/
+ompl::base::PlannerPtr SPARS_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
+{
+    // return std::make_shared<og::custom_BITstar>(si);
+    auto spars = std::make_shared<og::SPARS>(si);
+    spars->setMaxFailures(100);
+    spars->setDenseDeltaFraction(0.00005);
+    spars->setSparseDeltaFraction(0.01);
+    spars->setStretchFactor(1.5);
+    return spars;
+}
+
+std::string SPARS_Strategy::getName() const
+{
+    return "SPARS_Strategy";
+}
+
+Path SPARS_Strategy::smooth(Path gvp_path, State &state)
+{
+    return GVP::densify(gvp_path, discretization);
+}
+
+
+
+// /************************
+//  *  SPARSTWO
+//  ***********************/
+// ompl::base::PlannerPtr SPARSTWO_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
+// {
+//     // return std::make_shared<og::custom_BITstar>(si);
+//     return std::make_shared<og::SPARStwo>(si);
+// }
+
+// std::string SPARSTWO_Strategy::getName() const
+// {
+//     return "SPARSTWO_Strategy";
+// }
+
+// Path SPARSTWO_Strategy::smooth(Path gvp_path, State &state)
+// {
+//     return GVP::densify(gvp_path, discretization);
+// }
+
+
+
+
+/************************
+ *  SST
+ ***********************/
+ompl::base::PlannerPtr SST_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
+{
+    std::shared_ptr<og::SST> pp = std::make_shared<og::SST>(si);
+    pp->setRange(discretization*50);
+    std::cout << "Range: " << pp->getRange() << "\n";
+    return pp;
+}
+
+std::string SST_Strategy::getName() const
+{
+    return "SST_Strategy";
+}
+
+Path SST_Strategy::smooth(Path gvp_path, State &state)
+{
+    std::mt19937 rng;
+    rng.seed(42);
+    
+    PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+    if(SMOOTH)
+    {
+        for(int i=0; i<30; i++)
+        {
+            gvp_path = GVP::smooth(gvp_path, state, discretization, rng);
+            PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+        }
+    }
+
+    return GVP::densify(gvp_path, discretization);
+}
+
+
+/************************
+ *  LBKPIECE
+ ***********************/
+ompl::base::PlannerPtr LBKPIECE_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
+{
+    std::shared_ptr<og::LBKPIECE1> pp = std::make_shared<og::LBKPIECE1>(si);
+    pp->setRange(discretization*50);
+    std::cout << "Range: " << pp->getRange() << "\n";
+    return pp;
+}
+
+std::string LBKPIECE_Strategy::getName() const
+{
+    return "LBKPIECE_Strategy";
+}
+
+Path LBKPIECE_Strategy::smooth(Path gvp_path, State &state)
+{
+    std::mt19937 rng;
+    rng.seed(42);
+    
+    PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+    if(SMOOTH)
+    {
+        for(int i=0; i<30; i++)
+        {
+            gvp_path = GVP::smooth(gvp_path, state, discretization, rng);
+            PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+        }
+    }
+
+    return GVP::densify(gvp_path, discretization);
+}
+
+
+/************************
+ *  PRM
+ ***********************/
+ompl::base::PlannerPtr PRM_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
+{
+    std::shared_ptr<og::LazyPRM> pp = std::make_shared<og::LazyPRM>(si);
+    pp->setRange(discretization*50);
+    std::cout << "Range: " << pp->getRange() << "\n";
+    return pp;
+}
+
+std::string PRM_Strategy::getName() const
+{
+    return "PRM_Strategy";
+}
+
+Path PRM_Strategy::smooth(Path gvp_path, State &state)
+{
+    std::mt19937 rng;
+    rng.seed(42);
+    
+    PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+    if(SMOOTH)
+    {
+        for(int i=0; i<30; i++)
+        {
+            gvp_path = GVP::smooth(gvp_path, state, discretization, rng);
+            PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+        }
+    }
+
+    return GVP::densify(gvp_path, discretization);
+}
+
+
+/************************
+ *  STRIDE
+ ***********************/
+ompl::base::PlannerPtr STRIDE_Strategy::makePlanner(ompl::base::SpaceInformationPtr si)
+{
+    std::shared_ptr<og::STRIDE> pp = std::make_shared<og::STRIDE>(si);
+    pp->setRange(discretization*50);
+    std::cout << "Range: " << pp->getRange() << "\n";
+    return pp;
+}
+
+std::string STRIDE_Strategy::getName() const
+{
+    return "STRIDE_Strategy";
+}
+
+Path STRIDE_Strategy::smooth(Path gvp_path, State &state)
+{
+    std::mt19937 rng;
+    rng.seed(42);
+    
+    PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+    if(SMOOTH)
+    {
+        for(int i=0; i<30; i++)
+        {
+            gvp_path = GVP::smooth(gvp_path, state, discretization, rng);
+            PROFILE_RECORD_DOUBLE("PathLength", PathUtils::length(toPathUtilsPath(gvp_path)));
+        }
+    }
+
+    return GVP::densify(gvp_path, discretization);
+}

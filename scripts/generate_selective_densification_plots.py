@@ -13,7 +13,7 @@ plotted_cp = 1.0
 ordered_scenarios = ["Table", "Bookshelf", "Wall", "Obstacle"]
 
 strats_to_plot = ["RRT",
-                  # "BIT*",
+                  "BIT*",
                   "DG",
                   # "DG-pre",
                   "SD",
@@ -24,6 +24,9 @@ strats_to_plot = ["RRT",
                   # "DG-inflated-pre",
                   "greedy",
                   # "greedy-pre",
+                  "STRIDE",
+                  "LBKPIECE",
+                  "PRM"
 ]
 
 color_cycle = ['#332288', '#88CCEE', '#44AA99', '#117733', '#999933', '#DDCC77', '#CC6677', '#882255', '#AA4499']
@@ -47,7 +50,10 @@ strategy_mappings = {"RRT_Strategy":"RRT",
                      "Inflated_10.000000":"DG-inflated",
                      "Inflated_10.000000_precomputed":"DG-inflated-pre",
                      "Inflated_100000.000000":"greedy",
-                     "Inflated_100000.000000_precomputed":"greedy-pre"
+                     "Inflated_100000.000000_precomputed":"greedy-pre",
+                     "STRIDE_Strategy": "STRIDE",
+                     "LBKPIECE_Strategy":"LBKPIECE",
+                     "PRM_Strategy": "PRM"
                      }
 
 scenario_mappings = {"Bookshelf":"Bookshelf",
@@ -68,6 +74,9 @@ strats_in_order = ["SD",
                    "greedy-pre",
                    "RRT",
                    "BIT*",
+                   "STRIDE",
+                   "LBKPIECE",
+                   "PRM"
 ]
 
 ordering = {strats_in_order[i]: i for i in range(len(strats_in_order))}
@@ -76,14 +85,17 @@ linestyles = {"RRT":            {"color": "grey",         "linewidth":2},
               "BIT*":           {"color": color_cycle[3], "linewidth":2},
               "DG":             {"color": "yellow",       "linewidth":2},
               "DG-pre":         {"color": "orange",       "linewidth":2},
-              "SD":             {"color": "blue",         "linewidth":5},
-              "SD-pre":         {"color": "lightblue",        "linewidth":2},
+              "SD":             {"color": "blue",         "linewidth":3},
+              "SD-pre":         {"color": "lightblue",        "linewidth":5},
               "ID":             {"color": "green",         "linewidth":2},
               "ID-pre":         {"color": "lightgreen",        "linewidth":2},
               "DG-inflated":    {"color": "black",        "linewidth":2},
               "DG-inflated-pre":{"color": "darkgrey",        "linewidth":2},
               "greedy":         {"color": "brown",        "linewidth":2},
-              "greedy-pre":     {"color": "lightbrown",        "linewidth":2}
+              "greedy-pre":     {"color": "lightbrown",        "linewidth":2},
+              "STRIDE":         {"color": "orange",        "linewidth":2},
+              "LBKPIECE":       {"color": "maroon",        "linewidth":2},
+              "PRM":            {"color": "magenta",       "linewidth":2},
 }
 
 display_names = {"SD":"SD",
@@ -98,6 +110,9 @@ display_names = {"SD":"SD",
                  "BIT*":"BIT*",
                  "DG":"A*",
                  "DG-pre":"A*-pre",
+                 "STRIDE":"STRIDE",
+                 "LBKPIECE":"LBKPIECE",
+                 "PRM":"PRM"
 }
 
 
@@ -500,11 +515,11 @@ def plot_group(exps):
     """
     Plots all plots of interest from a group of experiments all belonging to the same scenario
     """
-    # plot_all_strategies(exps, "length")
+    plot_all_strategies(exps, "length")
     # plot_all_strategies(exps, "utility")
-    plot_cp_variation(exps)
-    # plot_percentage_success(exps)
-    # plot_median(exps)
+    # plot_cp_variation(exps)
+    plot_percentage_success(exps)
+    plot_median(exps)
     
 
 
