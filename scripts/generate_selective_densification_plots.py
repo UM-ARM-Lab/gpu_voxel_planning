@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 import os
 import numpy as np
 import IPython
+import pandas as pd
 
 
 logged_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/selective_densification_timings/"
@@ -688,17 +689,95 @@ def ensure_dir(file_path):
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
         os.makedirs(directory)
+
+
+
+
+
+def load_SD_experiment_files():
+
+    exps = []
+    for name in os.listdir(logged_filepath):
+        if name.endswith(".png"):
+            continue
+        if name.endswith(".txt"):
+            continue
+        if name.count("Omniscient_SD_Graph_Search ") == 0:
+            continue
+        
+        if os.path.isdir(os.path.join(logged_filepath, name)):
+            continue
+
     
+        exps.append(extract_depth_info(logged_filepath, name))
+    df = pd.DataFrame(exps)
+    IPython.embed()
+    return exps
+
+def extract_depth_info(dirname, filename):
+    # print filename.split()
+    parts = filename.split()
+    # IPython.embed()
+
+    results = extract_depth_data(dirname, filename)
+    results["scenario"] = scenario_mappings[parts[0]]
+    results["strategy"] = strategy_mappings[parts[1]]
+
+
+    # columns = ["scenario", "strategy"]
+    # columns = columns + ["Depth="+str(i) for i in range(19)]
+
+
+
+    # IPython.embed()
+    # df = pd.DataFrame(results)
+    return results
+
+def extract_depth_data(dirname, filename):
+    filepath = dirname + filename
+    c_p = -1
+    eps = 0.0001
+    a_star = -1
+    data = {}
+
+    with open(filepath, "r") as f:
+        # line = f.readline()
+        lines = f.readlines()
+        for line in lines:
+            words = line.split()
+            if line.startswith("~~~~~~~~~"):
+                break
+            if line.startswith("c_p") and len(words) < 5:
+                c_p = float(words[2])
+                continue
+
+            if line.startswith("CheckEdgeFast depth="):
+                depth = "Depth="+str(int(line[20:22]))
+                count = int(words[3])
+                data[depth] = count
+        # IPython.embed()
+            
+            # print(data)
+    return data
+    
+
+
+def plot_SD_depths():
+    load_SD_experiment_files()
+
+        
 
 if __name__ == "__main__":
     
     print("hi")
     ensure_dir(save_path)
     
-    exps = load_experiment_files()
-    plot_all(exps)
-    print_stats(exps)
-    print_better_fraction(exps)
+    # exps = load_experiment_files()
+    # plot_all(exps)
+    # print_stats(exps)
+    # print_better_fraction(exps)
+
+    plot_SD_depths()
 
 
 

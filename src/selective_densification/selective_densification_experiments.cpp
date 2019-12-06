@@ -115,14 +115,14 @@ std::vector<std::function<std::shared_ptr<Strategy>(void)>> getStrategyFactories
     // }
                 
     
-    for(int i=0; i<10; i++)
+    for(int i=0; i<100; i++)
     {
-        // factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
+        factories.push_back([](){ return std::make_shared<RRT_Strategy>();});
         // factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
-        factories.push_back([](){ return std::make_shared<LBKPIECE_Strategy>();});
-        factories.push_back([](){ return std::make_shared<PRM_Strategy>();});
-        factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
-        factories.push_back([](){ return std::make_shared<STRIDE_Strategy>();});
+        // factories.push_back([](){ return std::make_shared<LBKPIECE_Strategy>();});
+        // factories.push_back([](){ return std::make_shared<PRM_Strategy>();});
+        // factories.push_back([](){ return std::make_shared<BIT_Strategy>();});
+        // factories.push_back([](){ return std::make_shared<STRIDE_Strategy>();});
 
     }
     
