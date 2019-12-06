@@ -14,7 +14,7 @@
 
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
-#include "gpu_voxel_planning/sd_params.hpp"
+#include "gpu_voxel_planning/params.hpp"
 
 
 namespace GVP
@@ -27,7 +27,7 @@ namespace GVP
         int viz_id=0;
         
     public:
-        OMPL_Strategy() : discretization(SD_EDGE_DISCRETIZATION) {}
+        OMPL_Strategy() : discretization(EDGE_DISCRETIZATION) {}
         
         Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
 

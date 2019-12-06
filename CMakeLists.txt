@@ -261,10 +261,6 @@ set(Planning_SOURCES
   src/scenarios/real_scenario.cpp
   src/strategies/graph_search_strategies.cpp
   src/scenario_tester.cpp
-  src/strategies/victor_selective_densification.cpp
-  src/strategies/layered_graph_strategy.cpp
-  src/strategies/selective_densification_strategies.cpp
-  src/strategies/iterative_deepening_strategy.cpp
   src/strategies/ompl_strategies.cpp
   # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
   src/path_utils.cpp
@@ -300,22 +296,7 @@ target_link_libraries(simulation_timings
   )
 
 
-#Commented out for speed
-add_executable(wip_sd
-  src/selective_densification/wip_sd.cpp)
-target_link_libraries(wip_sd
-  ${EXTERN_LIBS}
-  planning_library
-  victor_halton_roadmap
-  )
 
-add_executable(generate_graphs
-  src/selective_densification/generate_graphs.cpp)
-target_link_libraries(generate_graphs
-  ${EXTERN_LIBS}
-  planning_library
-  victor_halton_roadmap
-  )
 
 add_executable(wip_BTP
   src/wip_BTP.cpp)
@@ -333,15 +314,6 @@ target_link_libraries(wip_real_trials
   victor_halton_roadmap
   )
 
-# Commented out due to long compilation time
-add_executable(selective_densification_experiments
-  src/selective_densification/selective_densification_experiments.cpp
-  )
-target_link_libraries(selective_densification_experiments
-  ${EXTERN_LIBS}
-  planning_library
-  victor_halton_roadmap
-  )
 
 
 # add_dependencies(wip_prob_map

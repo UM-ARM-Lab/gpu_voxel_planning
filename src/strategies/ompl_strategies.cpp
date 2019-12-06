@@ -4,7 +4,7 @@
 #include "gpu_voxel_planning/path_utils_addons.hpp"
 #include "gpu_voxel_planning/ompl_modifications/custom_bitstar.h"
 #include "gpu_voxel_planning/gvp_exceptions.hpp"
-#include "gpu_voxel_planning/sd_params.hpp"
+// #include "gpu_voxel_planning/sd_params.hpp"
 
 using namespace GVP;
 namespace ob = ompl::base;

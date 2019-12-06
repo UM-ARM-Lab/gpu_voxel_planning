@@ -9,7 +9,7 @@
 #include "gpu_voxel_planning/beliefs/beliefs.hpp"
 #include "gpu_voxel_planning/ros_interface/ros_interface.hpp"
 #include <arc_utilities/stl_wrappers.hpp>
-#include "gpu_voxel_planning/sd_params.hpp"
+// #include "gpu_voxel_planning/sd_params.hpp"
 
 namespace GVP
 {
@@ -126,15 +126,15 @@ namespace GVP
                                                        c.asVector());
             robot.set(c.asMap());
 
-            if(!NO_COLLISION_CHECKING_DURING_PATH_ATTEMPT)
-            {
+            // if(!NO_COLLISION_CHECKING_DURING_PATH_ATTEMPT)
+            // {
                 if(robot.occupied_space.overlapsWith(&true_world))
                 {
                     bel->updateCollisionSpace(robot, getFirstLinkInCollision(robot, true_world));
                     robot.set(current_config);
                     return false;
                 }
-            }
+            // }
             
             ri.setRightArm(c);
 
