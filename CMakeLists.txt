@@ -314,6 +314,14 @@ target_link_libraries(wip_real_trials
   victor_halton_roadmap
   )
 
+add_executable(live_demo
+  src/live_demo.cpp)
+target_link_libraries(live_demo
+  # ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
+
 
 
 # add_dependencies(wip_prob_map
