@@ -16,3 +16,15 @@
 
   * arc_utilities, branch CleanUpDijkstras
   * [unknown_graph_planner](https://github.com/UM-ARM-Lab/unknown_graph_planner)
+
+
+## Running live demo
+In different terminals run
+1. `roscore`
+2. `rviz`. Load the `.rviz` config file here
+3. Startup Real Victor
+   1. `ssh realtime`
+   2. `rcblizzard` (or source the appropriate computer for ros master), 
+   3. `roslaunch gpu_voxel_models dual_arm_lcm_bridge.launch`. NOTE! This is not the standard `roslauch victor_hardware_interface dual_arm_lcm_bridge.launch`. Also note, `victor_hardware_interface/dual_arm_lcm_bridge.launch` may change. `master` of Jan 2020 works.
+4. `roslaunch gpu_voxel_planning real_victor_setup.launch`
+5. `rosrun gpu_voxel_planning live_demo`
