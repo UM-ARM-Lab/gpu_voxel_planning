@@ -20,12 +20,8 @@ using namespace GVP;
 int main(int argc, char* argv[])
 {
     icl_core::logging::initialize(argc, argv);
-    ros::init(argc, argv, "wip_roadmap");
+    ros::init(argc, argv, "live_demo");
     ros::NodeHandle n;
-    ros::ServiceClient video_recorder =
-        n.serviceClient<arm_video_recorder::TriggerVideoRecording>("video_recorder");
-
-
         
 
     // std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
@@ -57,33 +53,17 @@ int main(int argc, char* argv[])
     // HOPGraphSearch strat;
      
 
-    // std::string filename = scenario.getName() + "_" + strat.getName() + "_" +
-    //     scenario.belief_name + "_" +
-    //     arc_helpers::GetCurrentTimeAsString();
-
-    // arm_video_recorder::TriggerVideoRecording srv;
-    // srv.request.filename=filename + ".mp4";
-    // srv.request.record = true;
-    // srv.request.timeout_in_sec = 30*60.0;
-
-    // video_recorder.call(srv);
 
 
     std::cout << "Attempting strategy\n";
     tester.attemptStrategy(strat);
-    // strat.saveToFile();
+
+
+// strat.saveToFile();
 
     // strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map");
 
-    // viz.vizEEGraph(strat.graph);
-    // viz.vizEESDGraph(strat.sd_graph);
 
-    // srv.request.record = false;
-    // video_recorder.call(srv);
-    
-    // PROFILE_PRINT_SUMMARY_FOR_ALL();
-    // PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
-    // PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
 
     ros::Duration(3.0).sleep();
     tester.reversePath();

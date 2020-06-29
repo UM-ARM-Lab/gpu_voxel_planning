@@ -188,7 +188,10 @@ RealEmpty::RealEmpty(BeliefParams bp) :
         s.known_obstacles.add(&ob.occupied);
     }
     s.current_config = VictorRightArmConfig(std::vector<double>{
-            -1.309, 0.834, 0.211, -0.21, 0.275, 0.516, -1.929
+            1.955, -1.141, 0.644, 0.949, -2.459, 0.0, -2.107
+            // 1.662, -0.876, 0.453, 1.474, -2.433, 0.196, -0.62
+            // -1.078, -0.907, 2.411, -1.024, 0.558, 1.197, 0.929
+            // -1.309, 0.834, 0.211, -0.21, 0.275, 0.516, -1.929
             // -0.859, 0.357, 0.578, -0.226, 0.197, 0.492, -1.502
             // -0.71, 0.376, 0.261, -0.195, -0.524, 0.493, -0.425
             // 0.053, 0.058, 0.633, -0.504, -0.595, 0.684, -0.357
@@ -198,7 +201,9 @@ RealEmpty::RealEmpty(BeliefParams bp) :
             // -1.231, 1.225, -0.666, -0.893, -1.496, 0.804, -0.037
                 }).asMap();
     goal_config = VictorRightArmConfig(std::vector<double>{
-            -0.424, 0.82, 0.338, -0.946, 0.173, 0.683, -1.498
+            2.212, -0.783, 1.117, 0.77, -2.426, 0.327, -2.181
+            // 2.105, -0.761, 0.902, 1.569, -1.7, 0.142, 0.315
+            // -0.424, 0.82, 0.338, -0.946, 0.173, 0.683, -1.498
             // -0.873, 0.771, 0.449, -0.781, 0.102, 0.936, -1.51
             // -1.286, 1.025, 1.334, -1.051, -0.856, 0.946, -1.026
             // 0.274, 0.712, -0.502, -1.131, -1.339, 1.346, -0.03
@@ -207,26 +212,44 @@ RealEmpty::RealEmpty(BeliefParams bp) :
 
 Object RealEmpty::getTable()
 {
-    Object table; //table is actually the frige wall now
-    // Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
-    // Vector3f tc(1.7, 1.4, 0.9); //table corner
+    // Object table; //table is actually the frige wall now
+    // // Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
+    // // Vector3f tc(1.7, 1.4, 0.9); //table corner
+    // // Vector3f tcf(1.7, 1.4, 0.0); //table corner at floor
+    // // Vector3f tld(.033, 0.033, tc.z); //table leg dims
+    // Vector3f td(2.0 * 0.0254, 12.0 * 0.0254, 24.0 * 0.0254); //table dimensions
+    // Vector3f tc(2.5, 2.0, 0.9); //table corner
     // Vector3f tcf(1.7, 1.4, 0.0); //table corner at floor
     // Vector3f tld(.033, 0.033, tc.z); //table leg dims
-    Vector3f td(2.0 * 0.0254, 12.0 * 0.0254, 24.0 * 0.0254); //table dimensions
-    Vector3f tc(2.5, 2.0, 0.9); //table corner
+
+
+    // table.add(AABB(tc, tc+td));
+    // // table.add(AABB(tcf, tcf+tld));
+    // // table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+    // //                Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld));
+    // // table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+    // //                Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld));
+    // // table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+    // //                Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld));
+    // return table;
+
+    Object table;
+    Vector3f td(30.0 * 0.0254, 42.0 * 0.0254, 1.0 * 0.0254); //table dimensions
+    Vector3f tc(1.7, 1.4, 0.9); //table corner
     Vector3f tcf(1.7, 1.4, 0.0); //table corner at floor
     Vector3f tld(.033, 0.033, tc.z); //table leg dims
 
 
     table.add(AABB(tc, tc+td));
-    // table.add(AABB(tcf, tcf+tld));
-    // table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
-    //                Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld));
-    // table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
-    //                Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld));
-    // table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
-    //                Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld));
+    table.add(AABB(tcf, tcf+tld));
+    table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0),
+                   Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, 0, 0) + tld));
+    table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0),
+                   Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y-tld.y, 0) + tld));
+    table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0),
+                   Vector3f(tc.x, tc.y, 0) + Vector3f(td.x-tld.x, td.y-tld.y, 0) + tld));
     return table;
+
 }
 
 
@@ -240,20 +263,24 @@ RealTable::RealTable(BeliefParams bp) :
 {
     addLeftArm();
 
-    known_obstacles.add(getTable());
+    // known_obstacles.add(getTable());
 
     setPrior(unknown_obstacles, bp);
     // setPrior(bp);
 
     for(auto& ob: known_obstacles.obstacles)
     {
-        s.known_obstacles.add(&ob.occupied);
+        // s.known_obstacles.add(&ob.occupied);
     }
 
     s.current_config = VictorRightArmConfig(std::vector<double>{
-            0,0,0,0,0,0,0
+            1.955, -1.141, 0.644, 0.949, -2.459, 0.0, -2.107
+            // 0,0,0,0,0,0,0
                 }).asMap();
-    goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
+    goal_config = VictorRightArmConfig(std::vector<double>{
+                        2.212, -0.783, 1.117, 0.77, -2.426, 0.327, -2.181
+                            // -0.15, 1.0, 0, -0.5, 0, 1.0, 0
+                            }).asMap();
 
 }
 
