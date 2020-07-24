@@ -106,7 +106,7 @@ void SimulationScenario::viz(const GpuVoxelRvizVisualizer& viz)
 void SimulationScenario::addLeftArm()
 {
     VictorLeftArmAndBase left;
-    VictorLeftArmConfig lac(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0});
+    VictorLeftArmConfig lac(std::vector<double>{1.57, -1.57, 0, 0, 0, 0 ,0});
     left.set(lac.asMap());
     s.robot_self_collide_obstacles.add(&left.occupied_space);
 
@@ -522,9 +522,9 @@ GlenScenario1::GlenScenario1(BeliefParams bp):
     addLeftArm();
 
     robot::JointValueMap jvm;
-    jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
-    jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
-    jvm["victor_right_gripper_fingerC_joint_2"] = 0.0;
+    jvm["victor_right_gripper_fingerA_joint_2"] = 1.5;
+    jvm["victor_right_gripper_fingerB_joint_2"] = 1.5;
+    jvm["victor_right_gripper_fingerC_joint_2"] = 1.5;
     victor.set(jvm);
 
     Object wall = getObstacles();
@@ -546,9 +546,13 @@ GlenScenario1::GlenScenario1(BeliefParams bp):
     // s.current_config = VictorRightArmConfig(std::vector<double>
     //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
     s.current_config = VictorRightArmConfig(std::vector<double>
-                                            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}).asMap();
+                                            {1.85543098, 0.83050902, -1.35363243, -1.20649304, -0.58826482, 0.08157917, -2.74823036}).asMap();
     goal_config = VictorRightArmConfig(std::vector<double>
-                                       {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0}).asMap();
+                                       {1.85543098, 0.18264637, -2.14954235, -1.37697656, -0.58826485, 0.08157913, -2.74823044}).asMap();
+
+    // Initial joint angles x0: [ 1.85543098, 0.83050902, -1.35363243, -1.20649304, -0.58826482, 0.08157917, -2.74823036]
+// Goal joint angles xg: [ 1.85543098,  0.18264637, -2.14954235, -1.37697656, -0.58826485, 0.08157913, -2.74823044]
+
 
     victor.set(s.current_config);
 }

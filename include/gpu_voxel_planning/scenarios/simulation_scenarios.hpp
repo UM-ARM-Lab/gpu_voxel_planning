@@ -193,8 +193,8 @@ namespace GVP
         AABB getAABBFromBounds(std::vector<double> bounds)
         {
             double xoff = 1.0;
-            double yoff = 1.3;
-            double zoff = 1.0;
+            double yoff = 1.35;
+            double zoff = 1.1;
             Vector3f lower(bounds[0] + xoff, bounds[2] + yoff, bounds[4] + zoff);
             Vector3f upper(bounds[1] + xoff, bounds[3] + yoff, bounds[5] + zoff);
             return AABB(lower, upper);

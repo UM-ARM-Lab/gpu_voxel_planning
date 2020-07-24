@@ -55,7 +55,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0.9245"/>
       <geometry>
-        <mesh filename="package://victor_description/meshes/baxter_pedestal/pedestal_visual.stl"/>
+        <mesh filename="package://victor_description/meshes/baxter_pedestal/pedestal_collision.stl"/>
       </geometry>
       <material name="DarkGray"/>
     </collision>
@@ -87,10 +87,10 @@
       <material name="LightGrey"/>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0.0"/>
+      <origin rpy="0 0 0" xyz="0 0 0.2"/>
       <geometry>
         <!--<mesh filename="package://victor_description/meshes/torso_visual_model.stl"/>-->
-        <mesh filename="package://victor_description/meshes/torso/torso_visual.stl"/>
+        <cylinder length="0.7" radius="0.2"/>
       </geometry>
       <material name="LightGrey"/>
     </collision>
@@ -128,9 +128,9 @@
     </collision>
   </link>
   <!--joint between {parent} and link_0-->
-  <joint name="victor_left_arm_mount_victor_left_arm_joint" type="fixed">
+  <joint name="victor_right_arm_mount_victor_left_arm_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="victor_left_arm_mount"/>
+    <parent link="victor_right_arm_mount"/>
     <child link="victor_left_arm_link_0"/>
   </joint>
   <link name="victor_left_arm_link_0">
@@ -518,16 +518,16 @@
     </actuator>
   </transmission>
   <joint name="victor_joint_left_arm_world_frame_kuka" type="fixed">
-    <parent link="victor_left_arm_mount"/>
+    <parent link="victor_right_arm_mount"/>
     <child link="victor_left_arm_world_frame_kuka"/>
     <origin rpy="1.57079632679 0 0" xyz="0 0 0"/>
   </joint>
   <link name="victor_left_arm_world_frame_kuka">
     </link>
   <!--joint between {parent} and link_0-->
-  <joint name="victor_right_arm_mount_victor_right_arm_joint" type="fixed">
+  <joint name="victor_left_arm_mount_victor_right_arm_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="victor_right_arm_mount"/>
+    <parent link="victor_left_arm_mount"/>
     <child link="victor_right_arm_link_0"/>
   </joint>
   <link name="victor_right_arm_link_0">
@@ -915,7 +915,7 @@
     </actuator>
   </transmission>
   <joint name="victor_joint_right_arm_world_frame_kuka" type="fixed">
-    <parent link="victor_right_arm_mount"/>
+    <parent link="victor_left_arm_mount"/>
     <child link="victor_right_arm_world_frame_kuka"/>
     <origin rpy="-1.57079632679 0 0" xyz="0 0 0"/>
   </joint>
@@ -1040,7 +1040,7 @@
     <child link="victor_left_gripper_fingerA_prox"/>
     <origin rpy="0 0.610865238198 0" xyz="0.02225000 0 0.02151380"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="1" velocity="10"/>
+    <limit effort="300" lower="0" upper="1.2217304763960307" velocity="10"/>
     <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-0.610865238198" soft_upper_limit="0.610865238198"/>
     <dynamics damping="0.5"/>
   </joint>
@@ -1164,7 +1164,7 @@
     <child link="victor_left_gripper_fingerB_prox"/>
     <origin rpy="0 0.610865238198 0" xyz="0.02225000 0 0.02151380"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="1" velocity="10"/>
+    <limit effort="300" lower="0" upper="1.2217304763960307" velocity="10"/>
     <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-0.610865238198" soft_upper_limit="0.610865238198"/>
     <dynamics damping="0.5"/>
   </joint>
@@ -1288,7 +1288,7 @@
     <child link="victor_left_gripper_fingerC_prox"/>
     <origin rpy="0 0.610865238198 0" xyz="0.02225000 0 0.02151380"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="1" velocity="10"/>
+    <limit effort="300" lower="0" upper="1.2217304763960307" velocity="10"/>
     <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-0.610865238198" soft_upper_limit="0.610865238198"/>
     <dynamics damping="0.5"/>
   </joint>
@@ -1450,7 +1450,7 @@
     <child link="victor_right_gripper_fingerA_prox"/>
     <origin rpy="0 0.610865238198 0" xyz="0.02225000 0 0.02151380"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="1" velocity="10"/>
+    <limit effort="300" lower="0" upper="1.2217304763960307" velocity="10"/>
     <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-0.610865238198" soft_upper_limit="0.610865238198"/>
     <dynamics damping="0.5"/>
   </joint>
@@ -1574,7 +1574,7 @@
     <child link="victor_right_gripper_fingerB_prox"/>
     <origin rpy="0 0.610865238198 0" xyz="0.02225000 0 0.02151380"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="1" velocity="10"/>
+    <limit effort="300" lower="0" upper="1.2217304763960307" velocity="10"/>
     <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-0.610865238198" soft_upper_limit="0.610865238198"/>
     <dynamics damping="0.5"/>
   </joint>
@@ -1698,7 +1698,7 @@
     <child link="victor_right_gripper_fingerC_prox"/>
     <origin rpy="0 0.610865238198 0" xyz="0.02225000 0 0.02151380"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="300" lower="-1" upper="1" velocity="10"/>
+    <limit effort="300" lower="0" upper="1.2217304763960307" velocity="10"/>
     <safety_controller k_position="100" k_velocity="2" soft_lower_limit="-0.610865238198" soft_upper_limit="0.610865238198"/>
     <dynamics damping="0.5"/>
   </joint>
@@ -1786,10 +1786,15 @@
     </collision>
   </link>
   <link name="gpu_voxel_world"/>
+  <!-- <joint name="gpu_voxel_world_joint" type="fixed"> -->
+  <!--   <parent link="gpu_voxel_world"/> -->
+  <!--   <child link="victor_root"/> -->
+  <!--   <origin rpy="0.0 0.0 0.0" xyz="1.0 2.0 0.0"/> -->
+  <!-- </joint> -->
   <joint name="gpu_voxel_world_joint" type="fixed">
     <parent link="gpu_voxel_world"/>
     <child link="victor_root"/>
-    <origin rpy="0.0 0.0 0.785" xyz="1.0 2.0 0.0"/>
+    <origin rpy="0.0 0.0 -0.7854" xyz="1.0 1.3 0.0"/>
   </joint>
 </robot>
 

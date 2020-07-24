@@ -18,22 +18,22 @@
     <!--Import the lbr iiwa macro -->
     <xacro:include filename="$(find victor_description)/urdf/iiwa7.xacro"/>
 
-    <xacro:iiwa7 hardware_interface="$(arg hardware_interface)" robot_name="$(arg robot_name)_left_arm" parent="$(arg robot_name)_left_arm_mount">
+    <xacro:iiwa7 hardware_interface="$(arg hardware_interface)" robot_name="$(arg robot_name)_left_arm" parent="$(arg robot_name)_right_arm_mount">
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:iiwa7>
     <joint name="$(arg robot_name)_joint_left_arm_world_frame_kuka" type="fixed">
-        <parent link="$(arg robot_name)_left_arm_mount"/>
+        <parent link="$(arg robot_name)_right_arm_mount"/>
         <child link="$(arg robot_name)_left_arm_world_frame_kuka"/>
         <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
     </joint>
     <link name="$(arg robot_name)_left_arm_world_frame_kuka">
     </link>
 
-    <xacro:iiwa7 hardware_interface="$(arg hardware_interface)" robot_name="$(arg robot_name)_right_arm" parent="$(arg robot_name)_right_arm_mount">
+    <xacro:iiwa7 hardware_interface="$(arg hardware_interface)" robot_name="$(arg robot_name)_right_arm" parent="$(arg robot_name)_left_arm_mount">
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:iiwa7>
     <joint name="$(arg robot_name)_joint_right_arm_world_frame_kuka" type="fixed">
-        <parent link="$(arg robot_name)_right_arm_mount"/>
+        <parent link="$(arg robot_name)_left_arm_mount"/>
         <child link="$(arg robot_name)_right_arm_world_frame_kuka"/>
         <origin xyz="0 0 0" rpy="-1.57079632679 0 0"/>
     </joint>
