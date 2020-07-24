@@ -117,19 +117,19 @@ void SimulationScenario::addLeftArm()
     victor.set(jvm);
 }
 
-void SimulationScenario::addRightArm()
-{
-    VictorLeftArmAndBase left;
-    VictorLeftArmConfig lac(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0});
-    left.set(lac.asMap());
-    s.robot_self_collide_obstacles.add(&left.occupied_space);
+// void SimulationScenario::addRightArm()
+// {
+//     VictorLeftArmAndBase left;
+//     VictorLeftArmConfig lac(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0});
+//     left.set(lac.asMap());
+//     s.robot_self_collide_obstacles.add(&left.occupied_space);
 
-    robot::JointValueMap jvm;
-    jvm["victor_right_gripper_fingerA_joint_2"] = 1.5;
-    jvm["victor_right_gripper_fingerB_joint_2"] = 1.5;
-    jvm["victor_right_gripper_fingerC_joint_2"] = 1.5;
-    victor.set(jvm);
-}
+//     robot::JointValueMap jvm;
+//     jvm["victor_right_gripper_fingerA_joint_2"] = 1.5;
+//     jvm["victor_right_gripper_fingerB_joint_2"] = 1.5;
+//     jvm["victor_right_gripper_fingerC_joint_2"] = 1.5;
+//     victor.set(jvm);
+// }
 
 void SimulationScenario::combineObstacles()
 {
@@ -519,7 +519,7 @@ Object CloseWall::getCloseWall()
 GlenScenario1::GlenScenario1(BeliefParams bp):
     name(std::string("GlenScenario1"))
 {
-    addRightArm();
+    addLeftArm();
 
     robot::JointValueMap jvm;
     jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
@@ -546,9 +546,9 @@ GlenScenario1::GlenScenario1(BeliefParams bp):
     // s.current_config = VictorRightArmConfig(std::vector<double>
     //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
     s.current_config = VictorRightArmConfig(std::vector<double>
-                                            {-0.5, 1.2, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
+                                            {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}).asMap();
     goal_config = VictorRightArmConfig(std::vector<double>
-                                       {-0.0, -0.4, -1.5, -0.4, -1.5, -1.0, 1.5}).asMap();
+                                       {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0}).asMap();
 
     victor.set(s.current_config);
 }

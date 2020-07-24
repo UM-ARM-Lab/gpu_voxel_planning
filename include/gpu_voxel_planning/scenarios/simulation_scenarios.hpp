@@ -57,7 +57,7 @@ namespace GVP
 
         void addLeftArm();
 
-        void addRightArm();
+        // void addRightArm();
 
     protected:
         void combineObstacles();
