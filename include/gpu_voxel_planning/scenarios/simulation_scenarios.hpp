@@ -57,6 +57,8 @@ namespace GVP
 
         void addLeftArm();
 
+        void addRightArm();
+
     protected:
         void combineObstacles();
     };
@@ -168,6 +170,36 @@ namespace GVP
         }
 
         Object getCloseWall();
+    };
+
+     /****************************************
+     **      Glen's Scenario1
+     ****************************************/
+
+    
+    class GlenScenario1 : public SimulationScenario
+    {
+        const std::string name;
+    public:
+        GlenScenario1(BeliefParams bp);
+
+        std::string getName() const
+        {
+            return "GlenScenario1";
+        }
+
+        Object getObstacles();
+
+        AABB getAABBFromBounds(std::vector<double> bounds)
+        {
+            double xoff = 1.0;
+            double yoff = 1.3;
+            double zoff = 1.0;
+            Vector3f lower(bounds[0] + xoff, bounds[2] + yoff, bounds[4] + zoff);
+            Vector3f upper(bounds[1] + xoff, bounds[3] + yoff, bounds[5] + zoff);
+            return AABB(lower, upper);
+        }
+
     };
 
 }

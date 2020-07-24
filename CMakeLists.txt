@@ -306,6 +306,14 @@ target_link_libraries(wip_BTP
   victor_halton_roadmap
   )
 
+add_executable(glen_corl_trials
+  src/glen_corl_trials.cpp)
+target_link_libraries(glen_corl_trials
+  # ${EXTERN_LIBS}
+  planning_library
+  victor_halton_roadmap
+  )
+
 add_executable(wip_real_trials
   src/wip_real_trials.cpp)
 target_link_libraries(wip_real_trials

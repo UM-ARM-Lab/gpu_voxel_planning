@@ -117,6 +117,20 @@ void SimulationScenario::addLeftArm()
     victor.set(jvm);
 }
 
+void SimulationScenario::addRightArm()
+{
+    VictorLeftArmAndBase left;
+    VictorLeftArmConfig lac(std::vector<double>{1.57, 1.57, 0, 0, 0, 0 ,0});
+    left.set(lac.asMap());
+    s.robot_self_collide_obstacles.add(&left.occupied_space);
+
+    robot::JointValueMap jvm;
+    jvm["victor_right_gripper_fingerA_joint_2"] = 1.5;
+    jvm["victor_right_gripper_fingerB_joint_2"] = 1.5;
+    jvm["victor_right_gripper_fingerC_joint_2"] = 1.5;
+    victor.set(jvm);
+}
+
 void SimulationScenario::combineObstacles()
 {
     for(auto& ob: known_obstacles.obstacles)
@@ -496,3 +510,86 @@ Object CloseWall::getCloseWall()
 
 
 
+
+
+/****************************************
+ **        Glen Scenario 1
+ ****************************************/
+
+GlenScenario1::GlenScenario1(BeliefParams bp):
+    name(std::string("GlenScenario1"))
+{
+    addRightArm();
+
+    robot::JointValueMap jvm;
+    jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
+    jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
+    jvm["victor_right_gripper_fingerC_joint_2"] = 0.0;
+    victor.set(jvm);
+
+    Object wall = getObstacles();
+
+    bool wall_known = (bp.belief_type == BeliefType::Deterministic);
+    if(wall_known)
+    {
+        known_obstacles.add(wall);
+    }
+    else
+    {
+        unknown_obstacles.add(wall);
+    }
+
+
+    combineObstacles();
+    setPrior(unknown_obstacles, bp);
+
+    // s.current_config = VictorRightArmConfig(std::vector<double>
+    //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
+    s.current_config = VictorRightArmConfig(std::vector<double>
+                                            {-0.5, 1.2, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
+    goal_config = VictorRightArmConfig(std::vector<double>
+                                       {-0.0, -0.4, -1.5, -0.4, -1.5, -1.0, 1.5}).asMap();
+
+    victor.set(s.current_config);
+}
+
+
+Object GlenScenario1::getObstacles()
+{
+
+// Format: [x_lower, x_upper, y_lower, y_upper, z_lower, z_upper]
+
+// Top shelf divider: [0.45, 1.97, -1.205, -0.105, 0.53, 0.57]
+// Bottom shelf divider: [0.45, 1.97, -1.205, -0.105, -0.17, -0.13]
+
+// Support 1: [0.45, 0.49, -0.145, -0.105, -0.85, 0.57]
+// Support 2: [0.45, 0.49, -1.205, -1.165, -0.85, 0.57]
+// Support 3: [1.93, 1.97, -0.145, -0.105, -0.85, 0.57]
+// Support 4: [1.93, 1.97, -1.205, -1.165, -0.85, 0.57]
+
+// Obstacle on bottom shelf: [0.885, 1.285, -0.6, -0.2, -0.92767, -0.52767]
+
+// Initial joint angles x0: [ 1.85543098,  0.83050902, -1.35363243, -1.20649304, -0.58826482, 0.08157917, -2.74823036]
+// Goal joint angles xg: [ 1.85543098,  0.18264637, -2.14954235, -1.37697656, -0.58826485, 0.08157913, -2.74823044]
+    std::vector<double> top_shelf_divider{0.45, 1.97, -1.205, -0.105, 0.53, 0.57};
+    std::vector<double> bottom_shelf_divider{0.45, 1.97, -1.205, -0.105, -0.17, -0.13};
+
+    std::vector<double> support_1{0.45, 0.49, -0.145, -0.105, -0.85, 0.57};
+    std::vector<double> support_2{0.45, 0.49, -1.205, -1.165, -0.85, 0.57};
+    std::vector<double> support_3{1.93, 1.97, -0.145, -0.105, -0.85, 0.57};
+    std::vector<double> support_4{1.93, 1.97, -1.205, -1.165, -0.85, 0.57};
+
+    std::vector<double> obstacle_on_bottom_shelf{0.885, 1.285, -0.6, -0.2, -0.92767, -0.52767};
+
+    
+    Object rack;
+    rack.add(getAABBFromBounds(top_shelf_divider));
+    rack.add(getAABBFromBounds(bottom_shelf_divider));
+    rack.add(getAABBFromBounds(support_1));
+    rack.add(getAABBFromBounds(support_2));
+    rack.add(getAABBFromBounds(support_3));
+    rack.add(getAABBFromBounds(support_4));
+    rack.add(getAABBFromBounds(obstacle_on_bottom_shelf));
+    
+    return rack;
+}

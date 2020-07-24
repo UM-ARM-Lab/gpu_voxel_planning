@@ -237,6 +237,60 @@ namespace GVP
         }
     };
 
+    class VictorLeftArm: public Robot
+    {
+    public:
+        const std::vector<std::string> collision_link_names{
+            "victor_left_arm_link_2",
+                "victor_left_arm_link_3",
+                "victor_left_arm_link_4",
+                "victor_left_arm_link_5",
+                "victor_left_arm_link_6",
+                "victor_left_arm_link_7",
+                };
+
+        const std::vector<std::string> gripper_link_names{
+            "victor_left_gripper_palm",
+                "victor_left_gripper_mounting_bracket",
+                "victor_left_gripper_fingerA_base", "victor_left_gripper_fingerA_dist",
+                "victor_left_gripper_fingerA_med", "victor_left_gripper_fingerA_prox",
+                "victor_left_gripper_fingerB_base", "victor_left_gripper_fingerB_dist",
+                "victor_left_gripper_fingerB_med", "victor_left_gripper_fingerB_prox",
+                "victor_left_gripper_fingerC_base", "victor_left_gripper_fingerC_dist",
+                "victor_left_gripper_fingerC_med", "victor_left_gripper_fingerC_prox"
+                };
+        
+
+        VictorLeftArm() :
+            Robot("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_only.urdf")
+            
+        {
+        }
+
+
+        
+        virtual std::vector<std::string> getLinkNames() const override
+        {
+            return collision_link_names;
+        }
+
+
+        virtual std::vector<DenseGrid> getLinkOccupancies() override
+        {
+            std::vector<DenseGrid> link_occupancies;
+            for(const std::string &link: collision_link_names)
+            {
+                link_occupancies.push_back(getLinkOccupancy(link));
+            }
+            for(const std::string &gripper_link: gripper_link_names)
+            {
+                DenseGrid tmp = getLinkOccupancy(gripper_link);
+                link_occupancies.back().add(&tmp);
+            }
+            return link_occupancies;
+        }
+    };
+
 
     
     class VictorLeftArmAndBase: public Robot
@@ -244,6 +298,26 @@ namespace GVP
     public:
         VictorLeftArmAndBase() :
             Robot("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf")
+        {}
+
+        virtual std::vector<std::string> getLinkNames() const override
+        {
+            throw std::logic_error("Not implemented for left arm");
+        }
+
+        virtual std::vector<DenseGrid> getLinkOccupancies() override
+        {
+            throw std::logic_error("Not implemented for left arm");
+        }
+
+    };
+
+    
+    class VictorRightArmAndBase: public Robot
+    {
+    public:
+        VictorRightArmAndBase() :
+            Robot("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_and_body.urdf")
         {}
 
         virtual std::vector<std::string> getLinkNames() const override
