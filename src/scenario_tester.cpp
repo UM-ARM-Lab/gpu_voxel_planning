@@ -195,6 +195,7 @@ bool RealScenarioTester::reversePath()
 {
     std::reverse(path_taken.begin(), path_taken.end());
     scenario.getRealState().move(path_taken, ri);
+    return true;
 }
 
 std::string RealScenarioTester::getName(const Strategy &strategy) const

@@ -37,6 +37,7 @@
 #include "cost_rrtconnect.h"
 #include "ompl/base/goals/GoalSampleableRegion.h"
 #include "ompl/tools/config/SelfConfig.h"
+#include "boost/lexical_cast.hpp"
 
 
 ompl::geometric::CostRRTConnect::CostRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates)

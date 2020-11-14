@@ -8,20 +8,21 @@ add_compile_options(-std=c++14)
 set(CATKIN_PACKAGES
   roscpp
   victor_hardware_interface
-  arm_or_robots
+  # arm_or_robots
   trajectory_msgs
   arc_utilities
   arm_pointcloud_utilities
   arm_video_recorder
   graph_planner
   moveit_core
-  moveit_visual_tools
+  moveit_ros_planning_interface
+  # moveit_visual_tools
   )
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation gazebo_victor)
+find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation)
 FIND_PACKAGE(icl_core REQUIRED )
 FIND_PACKAGE(gpu_voxels REQUIRED)
 FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
@@ -261,7 +262,7 @@ set(Planning_SOURCES
   src/scenarios/real_scenario.cpp
   src/strategies/graph_search_strategies.cpp
   src/scenario_tester.cpp
-  src/strategies/ompl_strategies.cpp
+  # src/strategies/ompl_strategies.cpp
   # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
   src/path_utils.cpp
   src/path_utils_addons.cpp

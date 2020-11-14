@@ -37,6 +37,7 @@
 #include "fullpath_lrrtconnect.h"
 #include "ompl/base/goals/GoalSampleableRegion.h"
 #include "ompl/tools/config/SelfConfig.h"
+#include "boost/lexical_cast.hpp"
 
 ompl::geometric::FLRRTConnect::FLRRTConnect(const base::SpaceInformationPtr &si, bool addIntermediateStates)
   : base::Planner(si, addIntermediateStates ? "FLRRTConnectIntermediate" : "FLRRTConnect")
