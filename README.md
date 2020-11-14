@@ -16,6 +16,7 @@
 
   * arc_utilities, branch CleanUpDijkstras
   * [unknown_graph_planner](https://github.com/UM-ARM-Lab/unknown_graph_planner)
+  * [arm_pointcloud_utilities](https://github.com/UM-ARM-Lab/arm_pointcloud_utilities)
 
 
 ## Running live demo
