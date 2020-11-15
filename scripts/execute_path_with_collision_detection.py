@@ -48,7 +48,7 @@ def check_collision(motion_status_msg):
                         if idx > 0]
 
         if(col_indicies):
-            print jt
+            print(jt)
             print(col_indicies)
         
         g_in_collision = bool(col_indicies)

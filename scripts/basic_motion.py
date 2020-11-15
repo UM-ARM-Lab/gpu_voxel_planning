@@ -2,10 +2,10 @@
 
 from openravepy import *
 import or_victor.motion
-# import victor_hardware_interface.msg as vhimsg
+# import victor_hardware_interface_msgs.msg as vhimsg
 import gpu_voxel_planning.srv as gvpsrv
 from victor_hardware_interface import victor_utils as vu
-from victor_hardware_interface.msg import *
+from victor_hardware_interface_msgs.msg import *
 import rospy
 import IPython
 

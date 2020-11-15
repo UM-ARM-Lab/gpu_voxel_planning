@@ -6,8 +6,8 @@
 #include "gpu_voxel_planning/robot/robot_model.hpp"
 #include <gpu_voxel_planning/AttemptPathStart.h>
 #include <gpu_voxel_planning/AttemptPathResult.h>
-#include <victor_hardware_interface/MotionCommand.h>
-#include <victor_hardware_interface/Robotiq3FingerCommand.h>
+#include <victor_hardware_interface_msgs/MotionCommand.h>
+#include <victor_hardware_interface_msgs/Robotiq3FingerCommand.h>
 
 
 namespace GVP{
@@ -25,7 +25,7 @@ namespace GVP{
             viz(n)
         {
             attempt_path_client = n.serviceClient<gpu_voxel_planning::AttemptPathStart>("attempt_path_on_victor");
-            using namespace victor_hardware_interface;
+            using namespace victor_hardware_interface_msgs;
             right_arm_pub = n.advertise<MotionCommand>("right_arm/motion_command", 10);
             left_arm_pub = n.advertise<MotionCommand>("left_arm/motion_command", 10);
             right_gripper_pub = n.advertise<Robotiq3FingerCommand>("right_arm/gripper_command", 10);
@@ -33,9 +33,9 @@ namespace GVP{
             
         }
 
-        victor_hardware_interface::MotionCommand vectorToMotionCommand(const std::vector<double>& c)
+        victor_hardware_interface_msgs::MotionCommand vectorToMotionCommand(const std::vector<double>& c)
         {
-            using namespace victor_hardware_interface;
+            using namespace victor_hardware_interface_msgs;
             MotionCommand command;
             command.control_mode.mode = 2;
             command.joint_position.joint_1 = c[0];
@@ -62,7 +62,7 @@ namespace GVP{
 
         void setRightGripper(double val)
         {
-            using namespace victor_hardware_interface;
+            using namespace victor_hardware_interface_msgs;
             Robotiq3FingerCommand command;
             command.finger_a_command.position = val;
             command.finger_b_command.position = val;

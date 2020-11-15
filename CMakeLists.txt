@@ -7,7 +7,7 @@ add_compile_options(-std=c++14)
 
 set(CATKIN_PACKAGES
   roscpp
-  victor_hardware_interface
+  victor_hardware_interface_msgs
   # arm_or_robots
   trajectory_msgs
   arc_utilities
@@ -65,7 +65,7 @@ add_service_files(
 generate_messages(
   DEPENDENCIES
   trajectory_msgs
-  victor_hardware_interface
+  victor_hardware_interface_msgs
 )
 
 
