@@ -18,8 +18,8 @@
       <rosparam command="load" file="$(find victor_moveit_config)/config/kinematics.yaml"/>
     </group>
 
-    <node pkg="gpu_voxel_planning" type="execute_path_with_collision_detection.py"
-          name="execute_path_with_collision_detection"/>
+    <!-- <node pkg="gpu_voxel_planning" type="execute_path_with_collision_detection.py" -->
+    <!--       name="execute_path_with_collision_detection"/> -->
 
 
 

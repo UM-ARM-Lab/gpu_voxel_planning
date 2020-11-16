@@ -13,8 +13,8 @@
       <arg name="talkative" value="False"/>
     </include>
 
-
-
-
+    <include file="$(find arm_robots)/launch/rviz_victor.launch">
+      <arg name="update_description" value="false"/>
+    </include>
 
 </launch>
