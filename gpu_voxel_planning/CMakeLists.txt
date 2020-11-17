@@ -16,6 +16,7 @@ set(CATKIN_PACKAGES
   graph_planner
   moveit_core
   moveit_ros_planning_interface
+  gpu_voxel_planning_msgs
   # moveit_visual_tools
   )
 
