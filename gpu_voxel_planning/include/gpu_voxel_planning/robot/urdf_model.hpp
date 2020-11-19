@@ -35,7 +35,9 @@ public:
     }
 
     Eigen::Vector3d getEEPosition(const std::vector<double> &joint_values,
-                                  std::string ee_group_name="victor_right_gripper_palm_surface")
+                                  // std::string ee_group_name="victor_right_gripper_palm_surface"
+                                  std::string ee_group_name="r_palm"
+        )
     {
         kinematic_state->setJointGroupPositions(joint_model_group, joint_values);
         const Eigen::Affine3d &end_effector_tf =

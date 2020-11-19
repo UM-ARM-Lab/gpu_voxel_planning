@@ -35,8 +35,8 @@ namespace GVP
         //                     "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map"){}
         // GraphSearchStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph",
         //                     "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map"){}
-        GraphSearchStrategy("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_10k.graph",
-                            "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map"){}
+        GraphSearchStrategy("/home/bradsaund/catkin_ws/src/planning/gpu_voxel_planning/gpu_voxel_planning/graphs/halton_10k.graph",
+                            "/home/bradsaund/catkin_ws/src/planning/gpu_voxel_planning/gpu_voxel_planning/graphs/swept_volumes_10k.map"){}
         
 
     void GraphSearchStrategy::initialize(const Scenario &scenario)

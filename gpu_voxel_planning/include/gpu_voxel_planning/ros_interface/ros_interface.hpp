@@ -26,9 +26,9 @@ namespace GVP{
         {
             attempt_path_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathStart>("attempt_path_on_victor");
             using namespace victor_hardware_interface_msgs;
-            right_arm_pub = n.advertise<MotionCommand>("right_arm/motion_command", 10);
-            left_arm_pub = n.advertise<MotionCommand>("left_arm/motion_command", 10);
-            right_gripper_pub = n.advertise<Robotiq3FingerCommand>("right_arm/gripper_command", 10);
+            right_arm_pub = n.advertise<MotionCommand>("victor/right_arm/motion_command", 10);
+            left_arm_pub = n.advertise<MotionCommand>("victor/left_arm/motion_command", 10);
+            right_gripper_pub = n.advertise<Robotiq3FingerCommand>("victor/right_arm/gripper_command", 10);
             get_attempt_status_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathResult>("get_path_status");
             
         }

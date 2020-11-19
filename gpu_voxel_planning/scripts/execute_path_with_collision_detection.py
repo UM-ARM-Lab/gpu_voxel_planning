@@ -4,14 +4,14 @@
 from arm_robots.victor import Victor
 # import arm_or_robots.motion_victor
 # import victor_hardware_interface.msg as vhimsg
-import gpu_voxel_planning.srv as gvpsrv
+import gpu_voxel_planning_msgs.srv as gvpsrv
 from victor_hardware_interface import victor_utils as vu
 from victor_hardware_interface_msgs.msg import *
 # from arc_utilities import ros_helpers as rh
 from arc_utilities.listener import Listener
 from arc_utilities import path_utils as pu
-from gpu_voxel_planning.msg import CollisionInformation
-from gpu_voxel_planning.srv import *
+from gpu_voxel_planning_msgs.msg import CollisionInformation
+from gpu_voxel_planning_msgs.srv import *
 from std_msgs.msg import String
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import rospy

@@ -208,7 +208,7 @@ namespace GVP
         
 
         VictorRightArm() :
-            Robot("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf")
+            Robot("/home/bradsaund/catkin_ws/src/planning/gpu_voxel_planning/gpu_voxel_planning/urdf/victor_right_arm_only.urdf")
             
         {
         }
@@ -243,7 +243,7 @@ namespace GVP
     {
     public:
         VictorLeftArmAndBase() :
-            Robot("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf")
+            Robot("/home/bradsaund/catkin_ws/src/planning/gpu_voxel_planning/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf")
         {}
 
         virtual std::vector<std::string> getLinkNames() const override
