@@ -2,9 +2,9 @@
 
 #include "gpu_voxel_planning/common_names.hpp"
 #include "gpu_voxel_planning/hardcoded_params.h"
-#include <gpu_voxel_planning/CollisionInformation.h>
-#include <gpu_voxel_planning/AttemptPathStart.h>
-#include <gpu_voxel_planning/AttemptPathResult.h>
+#include <gpu_voxel_planning_msgs/CollisionInformation.h>
+#include <gpu_voxel_planning_msgs/AttemptPathStart.h>
+#include <gpu_voxel_planning_msgs/AttemptPathResult.h>
 #include <arm_pointcloud_utilities/load_save_to_file.h>
 
 using namespace arm_pointcloud_utilities;
@@ -690,8 +690,8 @@ RealWorld::RealWorld()
 
     ros::NodeHandle n;
     joint_sub = n.subscribe("/joint_states", 1, &RealWorld::jointStateCallback, this);
-    attempt_path_client = n.serviceClient<gpu_voxel_planning::AttemptPathStart>("attempt_path_on_victor");
-    get_attempt_status_client = n.serviceClient<gpu_voxel_planning::AttemptPathResult>("get_path_status");
+    attempt_path_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathStart>("attempt_path_on_victor");
+    get_attempt_status_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathResult>("get_path_status");
     
 
 
@@ -794,7 +794,7 @@ bool RealWorld::attemptPath(const Path &path)
         gvl->visualizeMap(VICTOR_QUERY_MAP);
     }
 
-    gpu_voxel_planning::AttemptPathStart srv;
+    gpu_voxel_planning_msgs::AttemptPathStart srv;
     srv.request.path.points.resize(path.size());
     for(size_t i=0; i<path.size(); i++)
     {
@@ -806,7 +806,7 @@ bool RealWorld::attemptPath(const Path &path)
         std::cout << "New path message sent\n";
     }
 
-    gpu_voxel_planning::AttemptPathResult path_res;
+    gpu_voxel_planning_msgs::AttemptPathResult path_res;
     bool path_finished = false;
     while(ros::ok() && !path_finished)
     {
@@ -820,7 +820,7 @@ bool RealWorld::attemptPath(const Path &path)
 
     if(path_res.response.ci.collided)
     {
-        gpu_voxel_planning::CollisionInformation &ci = path_res.response.ci;
+        gpu_voxel_planning_msgs::CollisionInformation &ci = path_res.response.ci;
         std::cout << "Collision found on path\n";
 
         Path col_points;

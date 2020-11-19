@@ -164,7 +164,7 @@ namespace GVP
         {
             PROFILE_START("real_state_move");
             std::vector<double> start_config = path.front().asVector();
-            gpu_voxel_planning::AttemptPathResultResponse resp = ri.moveRightArm(path);
+            gpu_voxel_planning_msgs::AttemptPathResultResponse resp = ri.moveRightArm(path);
 
             if(resp.ci.collided)
             {

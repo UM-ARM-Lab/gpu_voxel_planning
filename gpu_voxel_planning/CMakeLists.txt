@@ -51,24 +51,6 @@ add_definitions(
   )
 
 
-add_message_files(DIRECTORY msg FILES
-  CollisionInformation.msg
-  )
-
-add_service_files(
-  FILES
-  PlanPath.srv
-  AttemptPath.srv
-  AttemptPathStart.srv
-  AttemptPathResult.srv
-  )
-
-generate_messages(
-  DEPENDENCIES
-  trajectory_msgs
-  victor_hardware_interface_msgs
-)
-
 
 
 

@@ -4,8 +4,8 @@
 #include <ros/ros.h>
 #include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
 #include "gpu_voxel_planning/robot/robot_model.hpp"
-#include <gpu_voxel_planning/AttemptPathStart.h>
-#include <gpu_voxel_planning/AttemptPathResult.h>
+#include <gpu_voxel_planning_msgs/AttemptPathStart.h>
+#include <gpu_voxel_planning_msgs/AttemptPathResult.h>
 #include <victor_hardware_interface_msgs/MotionCommand.h>
 #include <victor_hardware_interface_msgs/Robotiq3FingerCommand.h>
 
@@ -24,12 +24,12 @@ namespace GVP{
         RosInterface(ros::NodeHandle &n) :
             viz(n)
         {
-            attempt_path_client = n.serviceClient<gpu_voxel_planning::AttemptPathStart>("attempt_path_on_victor");
+            attempt_path_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathStart>("attempt_path_on_victor");
             using namespace victor_hardware_interface_msgs;
             right_arm_pub = n.advertise<MotionCommand>("right_arm/motion_command", 10);
             left_arm_pub = n.advertise<MotionCommand>("left_arm/motion_command", 10);
             right_gripper_pub = n.advertise<Robotiq3FingerCommand>("right_arm/gripper_command", 10);
-            get_attempt_status_client = n.serviceClient<gpu_voxel_planning::AttemptPathResult>("get_path_status");
+            get_attempt_status_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathResult>("get_path_status");
             
         }
 
@@ -71,10 +71,10 @@ namespace GVP{
         }
 
 
-        gpu_voxel_planning::AttemptPathResultResponse
+        gpu_voxel_planning_msgs::AttemptPathResultResponse
         moveRightArm(const std::vector<VictorRightArmConfig> &path)
         {
-            gpu_voxel_planning::AttemptPathStart srv;
+            gpu_voxel_planning_msgs::AttemptPathStart srv;
             srv.request.path.points.resize(path.size());
             for(int i=0; i<path.size(); i++)
             {
@@ -88,9 +88,9 @@ namespace GVP{
             return getPathResponse(); // Blocks until path is complete
         }
 
-        gpu_voxel_planning::AttemptPathResultResponse getPathResponse()
+        gpu_voxel_planning_msgs::AttemptPathResultResponse getPathResponse()
         {
-            gpu_voxel_planning::AttemptPathResult path_res;
+            gpu_voxel_planning_msgs::AttemptPathResult path_res;
             bool path_finished = false;
             while(ros::ok() && !path_finished)
             {
