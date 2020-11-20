@@ -109,7 +109,7 @@ void testAngles()
         std::getline(std::cin, unused);
 
         std::ifstream myfile;
-        myfile.open("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/config/test_angles.txt");
+        myfile.open(ros::package::getPath("gpu_voxel_planning") + "/config/test_angles.txt");
         std::cout << "file is open: " << myfile.is_open() << "\n";
         std::vector<double> goal_tmp;
         goal_tmp.resize(7);

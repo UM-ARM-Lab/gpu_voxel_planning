@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
 
   
   // And a robot, generated from a ROS URDF file:
-  gvl->addRobot("victor", "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);  
+  gvl->addRobot("victor", ros::package::getPath("gpu_voxel_planning") + "/urdf/victor.urdf", false);
 
   ros::NodeHandle n;
   ros::Subscriber sub1 = n.subscribe("joint_states", 1, jointStateCallback);

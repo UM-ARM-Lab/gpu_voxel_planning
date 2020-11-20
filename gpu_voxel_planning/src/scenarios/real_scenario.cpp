@@ -119,7 +119,7 @@ void RealScenario::addLeftArm()
 DenseGrid RealScenario::loadPointCloudFromFile()
 {
     const std::pair<std::string, Eigen::Matrix3Xf> deserialized =
-        arm_pointcloud_utilities::LoadPointsetFromFile("/home/bradsaund/catkin_ws/src/arm_pointcloud_utilities/logs/point_cloud_latest.compressed");
+        arm_pointcloud_utilities::LoadPointsetFromFile(ros::package::getPath("arm_pointcloud_utilities") + "/logs/point_cloud_latest.compressed");
 
     const Eigen::Matrix3Xf &mat = deserialized.second;
     std::cout << "Loading matrix of size " << mat.rows() << ", " << mat.cols() << "\n";

@@ -9,6 +9,7 @@
 #include <arc_utilities/arc_helpers.hpp>
 #include <math.h>
 #include <random>
+#include <ros/package.h>
 
 
 std::vector<std::string> COLLISION_HYPOTHESIS_SETS;
@@ -92,17 +93,17 @@ GpuVoxelsVictor::GpuVoxelsVictor():
 
     if(PEG_IN_HOLE || REAL_ROBOT)
     {
-        gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_with_rod.urdf", false);
+        gvl->addRobot(VICTOR_ROBOT, ros::package::getPath("gpu_voxel_planning") + "/urdf/victor_right_arm_with_rod.urdf", false);
         right_gripper_collision_link_names.push_back("rod");
         right_arm_collision_link_names.push_back("rod");
     }
     else{
-        gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_right_arm_only.urdf", false);
+        gvl->addRobot(VICTOR_ROBOT, ros::package::getPath("gpu_voxel_planning") + "/urdf/victor_right_arm_only.urdf", false);
     }
 
-    // gvl->addRobot(VICTOR_ROBOT, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor.urdf", false);
+    // gvl->addRobot(VICTOR_ROBOT, ros::package::getPath("gpu_voxel_planning") + "/urdf/victor.urdf", false);
 
-    gvl->addRobot(VICTOR_ROBOT_STATIONARY, "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/urdf/victor_left_arm_and_body.urdf", false);
+    gvl->addRobot(VICTOR_ROBOT_STATIONARY, ros::package::getPath("gpu_voxel_planning") + "/urdf/victor_left_arm_and_body.urdf", false);
 
     
     COLLISION_HYPOTHESIS_SETS.resize(NUM_SETS);

@@ -5,6 +5,7 @@
 #include <arc_utilities/arc_helpers.hpp>
 
 #include <ros/ros.h>
+#include <ros/package.h>
 #include "gpu_voxel_planning/ros_interface/ros_interface.hpp"
 #include "gpu_voxel_planning/state.hpp"
 #include "gpu_voxel_planning/scenario_tester.hpp"
@@ -19,7 +20,7 @@ using namespace GVP;
 
 // void precomputeEdges()
 // {
-//     std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
+//     std::string graph_filepath = ros::package::getPath("gpu_voxel_planning") + "/graphs/SD_100k.graph";
 //     OmniscientSDGraphSearch strat;
 //     Bookshelf scenario(true);
 
@@ -87,7 +88,7 @@ int main(int argc, char* argv[])
     tester.attemptStrategy(strat);
     // strat.saveToFile();
 
-    // strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_10k.map");
+    // strat.saveToFile(ros::package::getPath("gpu_voxel_planning") + "/graphs/swept_volumes_10k.map");
 
     // viz.vizEEGraph(strat.graph);
     // viz.vizEESDGraph(strat.sd_graph);

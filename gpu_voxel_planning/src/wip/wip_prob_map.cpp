@@ -6,6 +6,7 @@
 #include <arc_utilities/arc_helpers.hpp>
 
 #include <ros/ros.h>
+#include <ros/package.h>
 #include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
 #include "gpu_voxel_planning/state.hpp"
 #include "gpu_voxel_planning/scenario_tester.hpp"
@@ -91,7 +92,7 @@ void testAngles(Scenario& scenario, GpuVoxelRvizVisualizer &viz)
         arc_helpers::WaitForInput("Waiting for user input to set position...\n");
 
         std::ifstream myfile;
-        myfile.open("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/config/test_angles.txt");
+        myfile.open(ros::package::getPath("gpu_voxel_planning") + "/config/test_angles.txt");
         std::cout << "file " << (myfile.is_open() ? "is open":"failed to open") << "\n";
         std::vector<double> joint_angles;
         joint_angles.resize(7);
@@ -205,7 +206,7 @@ int main(int argc, char* argv[])
 
 
 
-    std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/halton_100k.graph";
+    std::string graph_filepath = ros::package::getPath("gpu_voxel_planning")  + "/graphs/halton_100k.graph";
 
     // checkBasicViz(viz);
     // viewLinks(viz);

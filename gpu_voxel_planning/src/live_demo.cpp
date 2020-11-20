@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
         
 
-    // std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
+    // std::string graph_filepath = ros::package::getPath("gpu_voxel_planning") + "/graphs/SD_100k.graph";
 
 
     BeliefParams bp(BeliefType::CHS);
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 
 // strat.saveToFile();
 
-    // strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map");
+    // strat.saveToFile(ros::package::getPath("gpu_voxel_planning") + "/graphs/swept_volumes_100k.map");
 
 
 

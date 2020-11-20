@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 
         
 
-    // std::string graph_filepath = "/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/SD_100k.graph";
+    // std::string graph_filepath = ros::package::getPath("gpu_voxel_planning")  + "/graphs/SD_100k.graph";
 
 
     BeliefParams bp(BeliefType::CHS);
@@ -73,7 +73,6 @@ int main(int argc, char* argv[])
     tester.attemptStrategy(strat);
     // strat.saveToFile();
 
-    // strat.saveToFile("/home/bradsaund/catkin_ws/src/gpu_voxel_planning/graphs/swept_volumes_100k.map");
 
     // viz.vizEEGraph(strat.graph);
     // viz.vizEESDGraph(strat.sd_graph);
