@@ -16,5 +16,6 @@ int main(){
     Voxelgrid v;
     v.test();
     v.otherTest();
+    v.testTensor();
     return 0;
 }
