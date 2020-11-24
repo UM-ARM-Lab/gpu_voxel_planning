@@ -30,15 +30,15 @@ public:
 
     void merge(const DenseGrid* other);
 
-    float getVoxelSideLength() const;
+    float getVoxelSideLength() const override;
 
     uint64_t serializeSelf(std::vector<uint8_t>& buffer) const;
     
     bool deserializeSelf(std::vector<uint8_t>& buffer, uint64_t &buffer_index);
 
-    bool writeToDisk(const std::string path);
+    bool writeToDisk(const std::string path) override;
 
-    bool readFromDisk(const std::string path);
+    bool readFromDisk(const std::string path) override;
 
 };
 
@@ -82,24 +82,24 @@ public:
     
     void copyIthOccupied(const DenseGrid* other, unsigned long copy_index) const;
 
-    void insertMetaPointCloud(const MetaPointCloud &meta_point_cloud, BitVoxelMeaning voxel_meaning);
+    void insertMetaPointCloud(const MetaPointCloud &meta_point_cloud, BitVoxelMeaning voxel_meaning) override;
 
-    void clearMap();
+    void clearMap() override;
 
-    void insertPointCloud(const std::vector<Vector3f> &point_cloud, const BitVoxelMeaning voxelmeaning);
+    void insertPointCloud(const std::vector<Vector3f> &point_cloud, const BitVoxelMeaning voxel_meaning) override;
 
-    void insertPointCloud(const PointCloud &pointcloud, const BitVoxelMeaning voxel_meaning);
+    void insertPointCloud(const PointCloud &pointcloud, const BitVoxelMeaning voxel_meaning) override;
 
     std::vector<Vector3f> getOccupiedCenters() const;
     std::vector<Vector3ui> getOccupiedCoords() const;
 
-    float getVoxelSideLength() const;
+    float getVoxelSideLength() const override;
 
-    Vector3ui getDimensions() const;
+    Vector3ui getDimensions() const override;
 
-    bool writeToDisk(const std::string path);
+    bool writeToDisk(const std::string path) override;
 
-    bool readFromDisk(const std::string path);
+    bool readFromDisk(const std::string path) override;
 };
 
 
