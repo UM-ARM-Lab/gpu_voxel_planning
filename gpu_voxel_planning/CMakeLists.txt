@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(gpu_voxel_planning)
+cmake_policy(SET CMP0048 NEW)
+project(gpu_voxel_planning VERSION 0.1.1)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -15,7 +16,7 @@ set(CATKIN_PACKAGES
   arm_video_recorder
   graph_planner
   moveit_core
-  moveit_ros_planning_interface
+#  moveit_ros_planning_interface
   gpu_voxel_planning_msgs
   # moveit_visual_tools
   )
@@ -167,7 +168,7 @@ add_library(victor_model
   src/old/gpu_voxels_victor.cpp
   src/old/worlds.cpp
   src/path_utils.cpp)
-add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
+#add_dependencies(victor_model gpu_voxel_planning_generate_messages_cpp)
 target_link_libraries(victor_model
   ${catkin_LIBRARIES}
   ${gpu_voxels_LIBRARIES}
