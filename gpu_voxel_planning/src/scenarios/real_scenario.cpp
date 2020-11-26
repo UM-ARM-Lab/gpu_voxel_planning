@@ -1,4 +1,5 @@
 #include "gpu_voxel_planning/scenarios/real_scenario.hpp"
+#undef likely  //boost::likely conflict with arc_helpers
 #include <arm_pointcloud_utilities/load_save_to_file.h>
 
 
