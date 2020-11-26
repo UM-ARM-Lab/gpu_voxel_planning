@@ -11,6 +11,7 @@
     <include file="$(find victor_fake_hardware_interface)/launch/fake_dual_arm_lcm_bridge.launch">
       <arg name="model" value="$(arg model)"/>
       <arg name="talkative" value="False"/>
+      <arg name="initial_control_mode" value="2"/>
     </include>
 
     <include file="$(find arm_robots)/launch/rviz_victor.launch">
