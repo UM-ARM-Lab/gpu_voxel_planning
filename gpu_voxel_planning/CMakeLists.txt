@@ -18,6 +18,8 @@ set(CATKIN_PACKAGES
         moveit_core
         moveit_ros_planning_interface
         gpu_voxel_planning_msgs
+        rviz_voxelgrid_visuals_msgs
+        rviz_voxelgrid_visuals
         # moveit_visual_tools
         )
 
@@ -269,6 +271,7 @@ add_executable(simulation_timings
         )
 target_link_libraries(simulation_timings
         ${EXTERN_LIBS}
+        ${catkin_LIBRARIES}
         planning_library
         victor_halton_roadmap
         )
