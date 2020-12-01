@@ -49,12 +49,12 @@ bool SparseGrid::deserializeSelf(std::vector<uint8_t>& buffer, uint64_t &buffer_
     return gpu_voxels::voxellist::ProbVoxelList::deserializeSelf(buffer, buffer_index);
 }
 
-bool SparseGrid::writeToDisk(const std::string path)
+bool SparseGrid::writeToDisk(const std::string& path)
 {
     return voxellist::ProbVoxelList::writeToDisk(path);
 }
 
-bool SparseGrid::readFromDisk(const std::string path)
+bool SparseGrid::readFromDisk(const std::string& path)
 {
     return voxellist::ProbVoxelList::readFromDisk(path);
 }
@@ -195,12 +195,12 @@ Vector3ui DenseGrid::getDimensions() const
     return voxelmap::ProbVoxelMap::getDimensions();
 }
 
-bool DenseGrid::writeToDisk(const std::string path)
+bool DenseGrid::writeToDisk(const std::string& path)
 {
     return voxelmap::ProbVoxelMap::writeToDisk(path);
 }
 
-bool DenseGrid::readFromDisk(const std::string path)
+bool DenseGrid::readFromDisk(const std::string& path)
 {
     return voxelmap::ProbVoxelMap::readFromDisk(path);
 }

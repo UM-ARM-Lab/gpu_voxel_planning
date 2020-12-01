@@ -2,6 +2,7 @@
 <robot name="victor" xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:property name="gripper" value="kinematic_robotiq" />
     <xacro:arg name="robot_name" default="victor"/>
+    <xacro:arg name="kinematic_arms" default="0"/>
     <xacro:arg name="hardware_interface" default="hardware_interface/PositionJointInterface"/>
 
     <!-- Import Rviz colors -->
@@ -20,7 +21,7 @@
     <xacro:include filename="$(find victor_description)/urdf/iiwa7.xacro"/>
 
     <xacro:iiwa7 hardware_interface="$(arg hardware_interface)" robot_name="$(arg robot_name)_left_arm"
-                 parent="$(arg robot_name)_left_arm_mount">
+                 parent="$(arg robot_name)_left_arm_mount" kinematic="$(arg kinematic_arms)">
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:iiwa7>
     <joint name="$(arg robot_name)_joint_left_arm_world_frame_kuka" type="fixed">
@@ -32,7 +33,7 @@
     </link>
 
     <xacro:iiwa7 hardware_interface="$(arg hardware_interface)" robot_name="$(arg robot_name)_right_arm"
-                 parent="$(arg robot_name)_right_arm_mount">
+                 parent="$(arg robot_name)_right_arm_mount" kinematic="$(arg kinematic_arms)">
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:iiwa7>
     <joint name="$(arg robot_name)_joint_right_arm_world_frame_kuka" type="fixed">

@@ -36,9 +36,9 @@ public:
     
     bool deserializeSelf(std::vector<uint8_t>& buffer, uint64_t &buffer_index);
 
-    bool writeToDisk(const std::string path) override;
+    bool writeToDisk(const std::string& path) override;
 
-    bool readFromDisk(const std::string path) override;
+    bool readFromDisk(const std::string& path) override;
 
 };
 
@@ -56,7 +56,7 @@ public:
     
     DenseGrid(const DenseGrid &other);
 
-    DenseGrid(const SparseGrid &other);
+    explicit DenseGrid(const SparseGrid &other);
 
     const gpu_voxels::voxelmap::ProbVoxelMap* getProbVoxelMap() const;
 
@@ -97,9 +97,9 @@ public:
 
     Vector3ui getDimensions() const override;
 
-    bool writeToDisk(const std::string path) override;
+    bool writeToDisk(const std::string& path) override;
 
-    bool readFromDisk(const std::string path) override;
+    bool readFromDisk(const std::string& path) override;
 };
 
 
