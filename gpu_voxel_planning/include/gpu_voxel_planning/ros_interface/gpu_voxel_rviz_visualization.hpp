@@ -2,6 +2,8 @@
 #define GPU_VOXEL_RVIZ_VISUALIZATION_HPP
 
 #include <ros/ros.h>
+#include <rviz_voxelgrid_visuals_msgs/SparseVoxelgridStamped.h>
+#include <rviz_voxelgrid_visuals_msgs/VoxelgridStamped.h>
 #include <visualization_msgs/Marker.h>
 
 #include "gpu_voxel_planning/maps/prob_map.hpp"
@@ -21,6 +23,8 @@ visualization_msgs::MarkerArray visualizePoint(const Eigen::Vector3d& pos, const
 visualization_msgs::MarkerArray visualize3DPath(const std::vector<Eigen::Vector3d>& path, const std::string& frame,
                                                 const std::string& ns, int id, const std_msgs::ColorRGBA& color);
 
+rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped denseGridToMsg(const DenseGrid& g, const std::string& frame);
+
 inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double a = 1.0) {
   std_msgs::ColorRGBA color;
   color.r = r;
@@ -32,7 +36,11 @@ inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double a = 1.
 
 class GpuVoxelRvizVisualizer {
  public:
-  ros::Publisher grid_pub;
+  std::string topic_prefix = "voxelgrid/";
+  std::vector<std::string> grid_names{"known_obstacles", "unknown_obstacles", "active_robot",
+                                      "passive_robot",   "known_free",        "true_obstacles"};
+  std::map<std::string, ros::Publisher> grid_pubs;
+  //  ros::Publisher grid_pub;
   ros::Publisher chs_pub;
   ros::Publisher ee_path_pub;
   std::string global_frame = "gpu_voxel_world";
@@ -52,16 +60,16 @@ class GpuVoxelRvizVisualizer {
 
   void vizEEPosition(const std::vector<double>& config, const std_msgs::ColorRGBA& color, int id = 0);
 
-  virtual void vizEEPath(const std::vector<GVP::VictorRightArmConfig>& path_config, const std::string& path_name, int id,
-                         const std_msgs::ColorRGBA& color) {
+  virtual void vizEEPath(const std::vector<GVP::VictorRightArmConfig>& path_config, const std::string& path_name,
+                         int id, const std_msgs::ColorRGBA& color) {
     std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(path_config);
     ee_path_pub.publish(visualize3DPath(path_3d, global_frame, path_name, id, color));
   }
 
   virtual void vizGrid(const DenseGrid& grid, const std::string& name, const std_msgs::ColorRGBA& color) const;
 
-  void vizGrid(const std::vector<Vector3f>& centers, float side_length, const std::string& name,
-               const std_msgs::ColorRGBA& color) const;
+  //  void vizGrid(const std::vector<Vector3f>& centers, float side_length, const std::string& name,
+  //               const std_msgs::ColorRGBA& color) const;
 
   // void vizEEGraph(const HaltonGraph &g)
   // {

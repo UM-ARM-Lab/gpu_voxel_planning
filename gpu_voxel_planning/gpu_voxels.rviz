@@ -8,10 +8,9 @@ Panels:
         - /Status1
         - /VoxelGrids1
         - /VoxelGrids1/Namespaces1
-        - /EE_Path1
         - /EE_Path1/Namespaces1
       Splitter Ratio: 0.5
-    Tree Height: 747
+    Tree Height: 746
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -20,7 +19,7 @@ Panels:
       - /2D Nav Goal1
       - /Publish Point1
     Name: Tool Properties
-    Splitter Ratio: 0.588679016
+    Splitter Ratio: 0.5886790156364441
   - Class: rviz/Views
     Expanded:
       - /Current View1
@@ -31,32 +30,61 @@ Panels:
     Name: Time
     SyncMode: 0
     SyncSource: ""
+Preferences:
+  PromptSaveOnExit: true
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
   Class: ""
   Displays:
     - Class: rviz/Marker
-      Enabled: true
+      Enabled: false
       Marker Topic: /grid
       Name: VoxelGrids
       Namespaces:
         {}
       Queue Size: 100
-      Value: true
+      Value: false
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /chs
       Name: CHS
       Namespaces:
-        {}
+        chs_0: true
+        chs_1: true
+        chs_10: true
+        chs_11: true
+        chs_12: true
+        chs_13: true
+        chs_14: true
+        chs_15: true
+        chs_16: true
+        chs_17: true
+        chs_18: true
+        chs_19: true
+        chs_2: true
+        chs_20: true
+        chs_21: true
+        chs_22: true
+        chs_23: true
+        chs_24: true
+        chs_25: true
+        chs_26: true
+        chs_3: true
+        chs_4: true
+        chs_5: true
+        chs_6: true
+        chs_7: true
+        chs_8: true
+        chs_9: true
       Queue Size: 100
       Value: true
-    - Class: rviz/Axes
+    - Alpha: 1
+      Class: rviz/Axes
       Enabled: false
       Length: 1
       Name: Axes
-      Radius: 0.0199999996
+      Radius: 0.019999999552965164
       Reference Frame: <Fixed Frame>
       Value: false
     - Class: rviz/MarkerArray
@@ -64,7 +92,9 @@ Visualization Manager:
       Marker Topic: /ee_path
       Name: EE_Path
       Namespaces:
-        {}
+        attempt: true
+        invalid_attempt: true
+        valid_attempt: true
       Queue Size: 100
       Value: true
     - Class: rviz/TF
@@ -72,6 +102,7 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+      Marker Alpha: 1
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -97,6 +128,61 @@ Visualization Manager:
       Update Interval: 0
       Value: false
       Visual Enabled: true
+    - Alpha Multiple: 1
+      Binary Display: true
+      Class: rviz_voxelgrid_visuals/SparseVoxelGrid
+      Color: 78; 154; 6
+      Enabled: true
+      Hide: false
+      Name: Active Robot
+      Queue Size: 10
+      Threshold: 0.5
+      Topic: /voxelgrid/active_robot
+      Value: true
+    - Alpha Multiple: 1
+      Binary Display: true
+      Class: rviz_voxelgrid_visuals/SparseVoxelGrid
+      Color: 78; 154; 6
+      Enabled: true
+      Hide: false
+      Name: Passive Robot
+      Queue Size: 10
+      Threshold: 0.5
+      Topic: /voxelgrid/passive_robot
+      Value: true
+    - Alpha Multiple: 0.30000001192092896
+      Binary Display: true
+      Class: rviz_voxelgrid_visuals/SparseVoxelGrid
+      Color: 136; 138; 133
+      Enabled: true
+      Hide: false
+      Name: True Obstacles
+      Queue Size: 10
+      Threshold: 0.5
+      Topic: /voxelgrid/true_obstacles
+      Value: true
+    - Alpha Multiple: 0.10000000149011612
+      Binary Display: true
+      Class: rviz_voxelgrid_visuals/SparseVoxelGrid
+      Color: 0; 0; 255
+      Enabled: true
+      Hide: false
+      Name: Known Free
+      Queue Size: 10
+      Threshold: 0.5
+      Topic: /voxelgrid/known_free
+      Value: true
+    - Alpha Multiple: 1
+      Binary Display: true
+      Class: rviz_voxelgrid_visuals/SparseVoxelGrid
+      Color: 46; 52; 54
+      Enabled: true
+      Hide: false
+      Name: Known Obstacles
+      Queue Size: 10
+      Threshold: 0.5
+      Topic: /voxelgrid/known_obstacles
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 255; 255; 255
@@ -112,7 +198,10 @@ Visualization Manager:
     - Class: rviz/FocusCamera
     - Class: rviz/Measure
     - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
       Topic: /initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
     - Class: rviz/SetGoal
       Topic: /move_base_simple/goal
     - Class: rviz/PublishPoint
@@ -122,33 +211,33 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.99369049
+      Distance: 2.3346636295318604
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.0599999987
+        Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
+      Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.249614
-        Y: 1.35677493
-        Z: 0.696169972
+        X: 1.2496140003204346
+        Y: 1.356774926185608
+        Z: 0.6961699724197388
       Focal Shape Fixed Size: true
-      Focal Shape Size: 0.0500000007
+      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
-      Near Clip Distance: 0.00999999978
-      Pitch: 0.479798138
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.18479833006858826
       Target Frame: <Fixed Frame>
-      Value: Orbit (rviz)
-      Yaw: 5.82558012
+      Yaw: 0.8673984408378601
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1028
+  Height: 1043
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000016a0000037afc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000000280000037a000000d700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f0000037afc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a0056006900650077007301000000280000037a000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073f0000003efc0100000002fb0000000800540069006d006501000000000000073f0000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000004ba0000037a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000016a00000375fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d00000375000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f00000375fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d00000375000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007380000003efc0100000002fb0000000800540069006d0065010000000000000738000002eb00fffffffb0000000800540069006d00650100000000000004500000000000000000000004b30000037500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -157,6 +246,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1855
-  X: 3905
-  Y: 24
+  Width: 1848
+  X: 72
+  Y: 0

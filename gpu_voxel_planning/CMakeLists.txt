@@ -217,6 +217,7 @@ target_link_libraries(victor_local_controller
 #        )
 
 
+
 add_library(victor_halton_roadmap
         src/strategies/victor_halton_roadmap.cpp)
 
