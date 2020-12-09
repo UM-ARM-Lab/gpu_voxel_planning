@@ -1,218 +1,176 @@
 #ifndef GRAPH_SEARCH_STRATEGIES_HPP
 #define GRAPH_SEARCH_STRATEGIES_HPP
 
-#include "gpu_voxel_planning/strategies/victor_halton_roadmap.hpp"
-#include "gpu_voxel_planning/state.hpp"
-#include "gpu_voxel_planning/strategies/strategies.hpp"
-#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include <graph_planner/dijkstras_addons.hpp>
-#include <cmath>
 #include <arc_utilities/timing.hpp>
-#include "gpu_voxel_planning/strategies/memorized_swept_volumes.hpp"
+#include <cmath>
+#include <graph_planner/dijkstras_addons.hpp>
+
 #include "gpu_voxel_planning/path_utils_addons.hpp"
+#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "gpu_voxel_planning/state.hpp"
+#include "gpu_voxel_planning/strategies/memorized_swept_volumes.hpp"
+#include "gpu_voxel_planning/strategies/strategies.hpp"
+#include "gpu_voxel_planning/strategies/victor_halton_roadmap.hpp"
 
-namespace GVP
-{
+namespace GVP {
 
-    typedef int64_t NodeIndex;
-    
-    class GraphSearchStrategy : public Strategy
-    {
-    public:        
-        Roadmap graph;
-        NodeIndex prev_node;
-        NodeIndex cur_node;
-        NodeIndex goal_node;
-        bool initialized;
-        double discretization = 0.02;
-        const std::string graph_filepath;
-        const std::string swept_volumes_filepath;
-        
+typedef int64_t NodeIndex;
 
-        // std::map<arc_dijkstras::HashableEdge, SparseGrid> precomputed_swept_volumes;
-        MemorizedSweptVolume precomputed_swept_volumes;
+class GraphSearchStrategy : public Strategy {
+ public:
+  Roadmap graph;
+  NodeIndex prev_node{};
+  NodeIndex cur_node{};
+  NodeIndex goal_node{};
+  bool initialized;
+  double discretization = 0.02;
+  const std::string graph_filepath;
+  const std::string swept_volumes_filepath;
 
-        // GraphSearchStrategy(const std::string &filename) : graph(filename), initialized(false) {}
-        GraphSearchStrategy(const std::string &graph_filepath, const std::string& swept_volumes_filepath);
-        GraphSearchStrategy(const std::string &graph_filepath);
-        GraphSearchStrategy();
+  // std::map<arc_dijkstras::HashableEdge, SparseGrid> precomputed_swept_volumes;
+  MemorizedSweptVolume precomputed_swept_volumes;
 
-        virtual ~GraphSearchStrategy() = default;
+  // GraphSearchStrategy(const std::string &filename) : graph(filename), initialized(false) {}
+  GraphSearchStrategy(const std::string &graph_filepath, const std::string &swept_volumes_filepath);
+  explicit GraphSearchStrategy(const std::string &graph_filepath);
+  GraphSearchStrategy();
 
-        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) = 0;
+  virtual ~GraphSearchStrategy() = default;
 
-        virtual Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
+  virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) = 0;
 
-        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
-                                            GpuVoxelRvizVisualizer& viz);
+  Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &viz) override;
 
-        void initialize(const Scenario &scenario);
+  virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz);
 
-        virtual DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e);
-        
-        /* Checks an edge against known obstacles to see if there is a collision.
-         * Changes the graph edge validity accordingly
-         */
-        bool checkEdge(arc_dijkstras::GraphEdge &e, State &s);
+  void initialize(const Scenario &scenario);
 
-        double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
+  virtual DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e);
 
-        void saveToFile(std::string filename);
-        void saveToFile() {saveToFile(swept_volumes_filepath);}
+  /* Checks an edge against known obstacles to see if there is a collision.
+   * Changes the graph edge validity accordingly
+   */
+  bool checkEdge(arc_dijkstras::GraphEdge &e, State &s);
 
-    protected:
-        DenseGrid computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e);
-        void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
-        std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s, Roadmap &rm);
-    };
+  double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
 
+  void saveToFile(const std::string& filename);
+  void saveToFile() { saveToFile(swept_volumes_filepath); }
 
-    class OmniscientGraphSearch : public GraphSearchStrategy
-    {
-    public:
-        OmniscientGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
-        OmniscientGraphSearch() {}
-        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
-        virtual std::string getName() const override;
-        virtual Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer& viz) override;
-    };
+ protected:
+  DenseGrid computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e);
+  void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
+  std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s, Roadmap &rm);
+};
 
-    
-    class OptimisticGraphSearch : public GraphSearchStrategy
-    {
-    public:        
-        OptimisticGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
-        OptimisticGraphSearch() {}
+class OmniscientGraphSearch : public GraphSearchStrategy {
+ public:
+  explicit OmniscientGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
+  OmniscientGraphSearch() = default;
+  double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+  std::string getName() const override;
+  Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &viz) override;
+};
 
-        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
-        virtual std::string getName() const override;
-    };        
+class OptimisticGraphSearch : public GraphSearchStrategy {
+ public:
+  explicit OptimisticGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
+  OptimisticGraphSearch() = default;
 
+  double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+  std::string getName() const override;
+};
 
-    class ParetoCostGraphSearch : public GraphSearchStrategy
-    {
-    public:        
-        double alpha = 10.0;
-        ParetoCostGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
-        ParetoCostGraphSearch(double alpha) : alpha(alpha){}
-        
-        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
-        virtual std::string getName() const override;
-    };
+class ParetoCostGraphSearch : public GraphSearchStrategy {
+ public:
+  double alpha = 10.0;
+  explicit ParetoCostGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
+  explicit ParetoCostGraphSearch(double alpha) : alpha(alpha) {}
 
-    
-    class UnknownSpaceCostGraphSearch : public GraphSearchStrategy
-    {
-    public:
-        double alpha;
-        double free_cost;
-        UnknownSpaceCostGraphSearch(double alpha, double free_cost) :
-            alpha(alpha), free_cost(free_cost){}
+  double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+  std::string getName() const override;
+};
 
-        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
-        virtual std::string getName() const override;
-    };
+//class UnknownSpaceCostGraphSearch : public GraphSearchStrategy {
+// public:
+//  double alpha;
+//  double free_cost;
+//  UnknownSpaceCostGraphSearch(double alpha, double free_cost) : alpha(alpha), free_cost(free_cost) {}
+//
+//  double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+//  std::string getName() const override;
+//};
 
+class AStarGraphSearch : public GraphSearchStrategy {
+ public:
+  AStarGraphSearch() = default;
 
-    class AStarGraphSearch : public GraphSearchStrategy
-    {
-    public:
-        AStarGraphSearch(){}
+  std::string getName() const override;
+  std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) override;
+  double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+  DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) override;
+};
 
-        virtual std::string getName() const override;
-        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
-                                            GpuVoxelRvizVisualizer& viz) override;
-        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
-        virtual DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) override;
-    };
+class ThompsonGraphSearch : public GraphSearchStrategy {
+ public:
+  ThompsonGraphSearch() = default;
+  std::string getName() const override;
 
+  //        State sampleValidState();
 
-    class ThompsonGraphSearch : public GraphSearchStrategy
-    {
-    public:
-        ThompsonGraphSearch() {}
-        virtual std::string getName() const override;
+  std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) override;
+  double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+};
 
-        State sampleValidState();
-        
-        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
-                                            GpuVoxelRvizVisualizer& viz) override;
-        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
-    };
+class HOPGraphSearch : public GraphSearchStrategy {
+ public:
+  int num_samples;
 
-    
-    class HOPGraphSearch : public GraphSearchStrategy
-    {
-    public:
-        int num_samples;
-        
-    public:
-        HOPGraphSearch() : num_samples(100){}
-        virtual std::string getName() const override;
-        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
-                                            GpuVoxelRvizVisualizer& viz) override;
-        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
-    };
+ public:
+  HOPGraphSearch() : num_samples(100) {}
+  std::string getName() const override;
+  std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) override;
+  double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+};
 
+class ROGraphSearch : public GraphSearchStrategy {
+ public:
+  int num_samples;
 
-    class ROGraphSearch : public GraphSearchStrategy
-    {
-    public:
-        int num_samples;
+ public:
+  ROGraphSearch() : num_samples(10) {}
 
-    public:
-        ROGraphSearch() : num_samples(10) {}
+  bool pathExists(NodeIndex start, NodeIndex goal, State &s);
+  std::vector<NodeIndex> getPossibleActions(State &state, NodeIndex cur, GpuVoxelRvizVisualizer &viz);
+  double simulateTransition(State &state, const Roadmap &rm, const DenseGrid &occupied, NodeIndex &cur, NodeIndex next,
+                            arc_dijkstras::EvaluatedEdges &additional_invalid, GpuVoxelRvizVisualizer &viz);
 
-        bool pathExists(NodeIndex start, NodeIndex goal, State &s);
-        std::vector<NodeIndex> getPossibleActions(State& state, NodeIndex cur,
-            GpuVoxelRvizVisualizer& viz);
-        double simulateTransition(State& state, const Roadmap& rm, const DenseGrid& occupied,
-                                  NodeIndex& cur, NodeIndex next,
-                                  arc_dijkstras::EvaluatedEdges& additional_invalid,
-                                  GpuVoxelRvizVisualizer& viz);
+  std::vector<NodeIndex> lazySpForRollout(NodeIndex start, NodeIndex goal, State &s, Roadmap &rm,
+                                          arc_dijkstras::EvaluatedEdges &additional_invalid);
 
-        std::vector<NodeIndex> lazySpForRollout(NodeIndex start, NodeIndex goal, State &s,
-                                                Roadmap &rm,
-                                                arc_dijkstras::EvaluatedEdges& additional_invalid);
-                
+  std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) override;
+  double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
 
-        virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s,
-                                            GpuVoxelRvizVisualizer& viz) override;
-        virtual double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
+  virtual double rollout(State &state, Roadmap &rm, const DenseGrid &occupied, NodeIndex cur, NodeIndex goal,
+                         arc_dijkstras::EvaluatedEdges &invalid_edges_during_rollout,
+                         arc_dijkstras::EvaluatedEdges &invalid_edges_during_sample, GpuVoxelRvizVisualizer &viz) = 0;
+};
 
-        virtual double rollout(State& state, Roadmap& rm, const DenseGrid& occupied,
-                               NodeIndex cur, NodeIndex goal,
-                               arc_dijkstras::EvaluatedEdges& invalid_edges_during_rollout,
-                               arc_dijkstras::EvaluatedEdges& invalid_edges_during_sample,
-                               GpuVoxelRvizVisualizer& viz) = 0;
-        
-    };
+class OROGraphSearch : public ROGraphSearch {
+  std::string getName() const override;
 
-    class OROGraphSearch : public ROGraphSearch
-    {
-        virtual std::string getName() const override;
+  double rollout(State &state, Roadmap &rm, const DenseGrid &occupied, NodeIndex cur, NodeIndex goal,
+                 arc_dijkstras::EvaluatedEdges &invalid_edges_during_rollout,
+                 arc_dijkstras::EvaluatedEdges &invalid_edges_during_sample, GpuVoxelRvizVisualizer &viz) override;
+};
 
-        double rollout(State& state, Roadmap& rm, const DenseGrid& occupied,
-                       NodeIndex cur, NodeIndex goal,
-                       arc_dijkstras::EvaluatedEdges& invalid_edges_during_rollout,
-                       arc_dijkstras::EvaluatedEdges& invalid_edges_during_sample,
-                       GpuVoxelRvizVisualizer& viz) override;
-    };
+class QMDP : public ROGraphSearch {
+  std::string getName() const override;
 
-
-    class QMDP : public ROGraphSearch
-    {
-        virtual std::string getName() const override;
-
-        double rollout(State& state, Roadmap& rm, const DenseGrid& occupied,
-                       NodeIndex cur, NodeIndex goal,
-                       arc_dijkstras::EvaluatedEdges& invalid_edges_during_rollout,
-                       arc_dijkstras::EvaluatedEdges& invalid_edges_during_sample,
-                       GpuVoxelRvizVisualizer& viz) override;
-    };
-}
+  double rollout(State &state, Roadmap &rm, const DenseGrid &occupied, NodeIndex cur, NodeIndex goal,
+                 arc_dijkstras::EvaluatedEdges &invalid_edges_during_rollout,
+                 arc_dijkstras::EvaluatedEdges &invalid_edges_during_sample, GpuVoxelRvizVisualizer &viz) override;
+};
+}  // namespace GVP
 
 #endif
-
-
-
