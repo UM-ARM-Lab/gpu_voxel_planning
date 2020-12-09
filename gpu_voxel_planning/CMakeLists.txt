@@ -258,8 +258,8 @@ target_link_libraries(planning_library
         gpu_voxels_viz
         )
 
-add_executable(wip_prob_map
-        src/wip/wip_prob_map.cpp
+add_executable(wip_shape_completion
+        src/wip/wip_shape_completion_scenario.cpp
         )
 target_link_libraries(wip_prob_map
         # ${EXTERN_LIBS}
