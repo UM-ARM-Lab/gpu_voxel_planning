@@ -3,174 +3,139 @@
 
 #include "gpu_voxel_planning/scenarios/scenarios.hpp"
 
-namespace GVP
-{
-    
-    class SimulationScenario : public Scenario
-    {
-    public:
-        SimulationState s;
-        ObstacleConfiguration true_obstacles;
-        ObstacleConfiguration known_obstacles;
-        ObstacleConfiguration unknown_obstacles;
+namespace GVP {
 
-        std::string belief_name;
-        
-        SimulationScenario();
+class SimulationScenario : public Scenario {
+ public:
+  SimulationState s;
+  ObstacleConfiguration true_obstacles;
+  ObstacleConfiguration known_obstacles;
+  ObstacleConfiguration unknown_obstacles;
 
-        void initFakeVictor(RosInterface &ri);
-        virtual void setPrior(ObstacleConfiguration &unknown_obstacles, BeliefParams bp);
+  std::string belief_name;
 
-        virtual void validate();
+  SimulationScenario();
 
-        virtual void viz(const GpuVoxelRvizVisualizer& viz) override;
+  void initFakeVictor(RosInterface& ri);
+  virtual void setPrior(ObstacleConfiguration& unknown_obstacles, BeliefParams bp);
 
-        virtual DenseGrid& getTrueObstacles()
-        {
-            return true_obstacles.occupied;
-        }
+  virtual void validate();
 
-        virtual const DenseGrid& getTrueObstacles() const
-        {
-            return true_obstacles.occupied;
-        }
+  void viz(const GpuVoxelRvizVisualizer& viz) override;
 
-        virtual SimulationState& getSimulationState()
-        {
-            return s;
-        }
+  virtual DenseGrid& getTrueObstacles() { return true_obstacles.occupied; }
 
-        virtual const SimulationState& getSimulationState() const
-        {
-            return s;
-        }
+  virtual const DenseGrid& getTrueObstacles() const { return true_obstacles.occupied; }
 
-        virtual State& getState() override
-        {
-            return s;
-        }
+  virtual SimulationState& getSimulationState() { return s; }
 
-        virtual const State& getState() const override
-        {
-            return s;
-        }
+  virtual const SimulationState& getSimulationState() const { return s; }
 
-        void addLeftArm();
+  State& getState() override { return s; }
 
-    protected:
-        void combineObstacles();
-    };
+  const State& getState() const override { return s; }
 
-    /****************************************
-     **         Empty
-     ****************************************/
-    class Empty : public SimulationScenario
-    {
-        const std::string name;
-        
-    public:
-        Empty(BeliefParams bp);
+  void addLeftArm();
 
-        std::string getName() const
-        {
-            return "Empty";
-        }
-    };
-
-
-
-
-    /****************************************
-     **         Table With Box
-     ****************************************/
-    class TableWithBox : public SimulationScenario
-    {
-    public:
-        Vector3f cavecorner;
-        Vector3f caveheight;
-        Vector3f cavetopd;
-        Vector3f cavesidedim;
-        Vector3f cavesideoffset;
-        const std::string name;
-
-        TableWithBox(BeliefParams bp, bool table_known=true, bool visible_cave_known=true,
-                     bool full_cave_known=false);
-
-        virtual std::string getName() const override
-        {
-            return name;
-        }
-
-        Object getTable();
-
-        void setCaveDims();
-
-        Object getVisibleCave();
-
-        Object getCaveBack();
-    };
-
-
-
-
+ protected:
+  void combineObstacles();
+};
 
 /****************************************
-     **         SlottedWall
-     ****************************************/
-    class SlottedWall : public SimulationScenario
-    {
-        const std::string name;
-    public:
-        SlottedWall(BeliefParams bp);
+ **         Empty
+ ****************************************/
+class Empty : public SimulationScenario {
+  const std::string name;
 
-        std::string getName() const
-        {
-            return "SlottedWall";
-        }
-        Object getFrontWall() const;
-        Object getSlottedWall() const;
-    };
+ public:
+  explicit Empty(BeliefParams bp);
 
+  std::string getName() const override { return "Empty"; }
+};
 
+/****************************************
+ **         Table With Box
+ ****************************************/
+class TableWithBox : public SimulationScenario {
+ public:
+  Vector3f cavecorner;
+  Vector3f caveheight;
+  Vector3f cavetopd;
+  Vector3f cavesidedim;
+  Vector3f cavesideoffset;
+  const std::string name;
 
-    /****************************************
-     **         Bookshelf
-     ****************************************/
-    class Bookshelf : public SimulationScenario
-    {
-        const std::string name;
-    public:
-        Bookshelf(BeliefParams bp);
+  explicit TableWithBox(BeliefParams bp, bool table_known = true, bool visible_cave_known = true, bool full_cave_known = false);
 
-        std::string getName() const
-        {
-            return "Bookshelf";
-        }
+  std::string getName() const override { return name; }
 
-        Object getBookshelf();
+  Object getTable();
 
-        Object getTable();
-    };
+  void setCaveDims();
 
+  Object getVisibleCave();
 
-    /****************************************
-     **      Close Wall
-     ****************************************/
-    class CloseWall : public SimulationScenario
-    {
-        const std::string name;
-    public:
-        CloseWall(BeliefParams bp);
+  Object getCaveBack();
+};
 
-        std::string getName() const
-        {
-            return "CloseWall";
-        }
+/****************************************
+ **         SlottedWall
+ ****************************************/
+class SlottedWall : public SimulationScenario {
+  const std::string name;
 
-        Object getCloseWall();
-    };
+ public:
+  explicit SlottedWall(BeliefParams bp);
 
-}
+  std::string getName() const override { return "SlottedWall"; }
+  Object getFrontWall() const;
+  Object getSlottedWall() const;
+};
 
+/****************************************
+ **         Bookshelf
+ ****************************************/
+class Bookshelf : public SimulationScenario {
+  const std::string name;
+
+ public:
+  explicit Bookshelf(BeliefParams bp);
+
+  std::string getName() const override { return "Bookshelf"; }
+
+  Object getBookshelf();
+
+  Object getTable();
+};
+
+/****************************************
+ **      Close Wall
+ ****************************************/
+class CloseWall : public SimulationScenario {
+  const std::string name;
+
+ public:
+  explicit CloseWall(BeliefParams bp);
+
+  std::string getName() const override { return "CloseWall"; }
+
+  static Object getCloseWall();
+};
+
+/****************************************
+**      ShapeRequest Scenario
+****************************************/
+class ShapeRequestScenario : public SimulationScenario {
+  const std::string name;
+
+ public:
+  explicit ShapeRequestScenario(BeliefParams bp);
+
+  std::string getName() const override { return "ShapeRequest"; }
+
+  Object getObstacles();
+};
+
+}  // namespace GVP
 
 #endif

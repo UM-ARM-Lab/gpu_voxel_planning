@@ -1,4 +1,6 @@
 #include "gpu_voxel_planning/scenarios/simulation_scenarios.hpp"
+#include <gpu_voxel_planning_msgs/RequestShape.h>
+#include <sensor_msgs/point_cloud2_iterator.h>
 
 using namespace GVP;
 
@@ -496,3 +498,53 @@ Object CloseWall::getCloseWall()
 
 
 
+
+/****************************************
+**      ShapeRequest Scenario
+****************************************/
+ShapeRequestScenario::ShapeRequestScenario(BeliefParams bp):
+    name(std::string("ShapeRequestScenario"))
+{
+  addLeftArm();
+
+  Object table = getObstacles();
+  bool table_known = false;
+
+  table_known ? known_obstacles.add(table) : unknown_obstacles.add(table);
+  // visible_cave_known ? known_obstacles.add(known_cave) : unknown_obstacles.add(known_cave);
+  // full_cave_known ? known_obstacles.add(cave_back) : unknown_obstacles.add(cave_back);
+
+  combineObstacles();
+
+
+  setPrior(unknown_obstacles, bp);
+
+
+  // s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
+  // s.current_config = VictorRightArmConfig(std::vector<double>{-1.5,1.5,-1.5,-0.4,-1.5,-1.0,1.5}).asMap();
+  s.current_config = VictorRightArmConfig(std::vector<double>{-1.0,1.5,-1.5,0.4,-1.5,0.0,1.5}).asMap();
+  goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
+}
+
+
+Object ShapeRequestScenario::getObstacles() {
+  Object obj;
+//  obj.add(AABB(Vector3f(0,0,0), Vector3f(1,1,1)));
+  ros::NodeHandle n;
+  ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::RequestShape>("/get_shape");
+  gpu_voxel_planning_msgs::RequestShape srv;
+  if(client.call(srv)){
+    std::cout << "Pointcloud given with header: " << srv.response.points.header.frame_id << "\n";
+    std::vector<Vector3f> points;
+    for (sensor_msgs::PointCloud2ConstIterator<float> it(srv.response.points, "x"); it != it.end(); ++it) {
+      // TODO: do something with the values of x, y, z
+//      std::cout << it[0] << ", " << it[1] << ", " << it[2] << '\n';
+      points.emplace_back(it[0], it[1], it[2]);
+    }
+    obj.occupied.insertPointCloud(points, PROB_OCCUPIED);
+
+  } else {
+    std::cout << "Service call failed\n";
+  }
+  return obj;
+}
