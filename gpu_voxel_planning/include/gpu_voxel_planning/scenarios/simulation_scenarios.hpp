@@ -14,7 +14,7 @@ class SimulationScenario : public Scenario {
 
   std::string belief_name;
 
-  SimulationScenario();
+  explicit SimulationScenario(const std::string& config_file);
 
   static void initFakeVictor(RosInterface& ri);
   void setPrior(ObstacleConfiguration& unknown_obstacles_prior, const BeliefParams& bp);

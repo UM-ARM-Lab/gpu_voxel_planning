@@ -5,6 +5,7 @@
 #include <jsoncpp/json/json.h>
 #include "gpu_voxel_planning/json_helpers.h"
 #include <ros/package.h>
+#include <exception>
 
 using namespace GVP;
 
@@ -26,9 +27,12 @@ static ObstacleConfiguration getBonkersBelief() {
   return oc;
 }
 
-SimulationScenario::SimulationScenario() : s(victor) {
+SimulationScenario::SimulationScenario(const std::string& config_file) : s(victor) {
   Json::Value obj;
-  std::ifstream ifs(ros::package::getPath("gpu_voxel_planning") + "/config/scenario_configuration.json");
+  std::ifstream ifs(ros::package::getPath("gpu_voxel_planning") + "/config/" + config_file);
+  if(not ifs.is_open()){
+    throw std::invalid_argument(std::string("Config file not found: ") + config_file);
+  }
   ifs >> obj;
 
   s.current_config = VictorRightArmConfig(Json::toVector<double>(obj["initial_configuration"])).asMap();
@@ -133,7 +137,7 @@ void SimulationScenario::combineObstacles() {
 /****************************************
  **         Empty
  ****************************************/
-Empty::Empty(const BeliefParams& bp) : name("empty") {
+Empty::Empty(const BeliefParams& bp) : SimulationScenario("empty_scenario.json"), name("empty") {
   setPrior(unknown_obstacles, bp);
 
   s.current_config = VictorRightArmConfig(std::vector<double>{-1.0, 1.5, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
@@ -144,7 +148,8 @@ Empty::Empty(const BeliefParams& bp) : name("empty") {
  **         Table With Box
  ****************************************/
 TableWithBox::TableWithBox(const BeliefParams& bp, bool table_known, bool visible_cave_known, bool full_cave_known)
-    : name(std::string("Table_with_Box_") + "table_" + (table_known ? "" : "un") + "known_" + "visible_cave_" +
+    : SimulationScenario("table_with_box_scenario.json"),
+      name(std::string("Table_with_Box_") + "table_" + (table_known ? "" : "un") + "known_" + "visible_cave_" +
            (visible_cave_known ? "" : "un") + "known_" + "full_cave_" + (full_cave_known ? "" : "un") + "known") {
 
 
@@ -210,7 +215,8 @@ Object TableWithBox::getCaveBack() {
 /****************************************
  **         SlottedWall
  ****************************************/
-SlottedWall::SlottedWall(const BeliefParams& bp) : name("Sloted Wall") {
+SlottedWall::SlottedWall(const BeliefParams& bp)
+    : SimulationScenario("slotted_walll_scenario.json"), name("Sloted Wall") {
   bool all_known = (bp.belief_type == BeliefType::Deterministic);
 
   known_obstacles.add(getFrontWall());
@@ -279,7 +285,8 @@ Object SlottedWall::getSlottedWall() {
  **         Bookshelf
  ****************************************/
 
-Bookshelf::Bookshelf(const BeliefParams& bp) : name(std::string("Bookshelf")) {
+Bookshelf::Bookshelf(const BeliefParams& bp)
+    : SimulationScenario("bookshelf_scenario.json"), name(std::string("Bookshelf")) {
   robot::JointValueMap jvm;
   jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
   jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
@@ -361,7 +368,8 @@ Object Bookshelf::getTable() {
  **         CloseWall
  ****************************************/
 
-CloseWall::CloseWall(const BeliefParams& bp) : name(std::string("CloseWall")) {
+CloseWall::CloseWall(const BeliefParams& bp)
+    : SimulationScenario("close_wall_scenario.json"), name(std::string("CloseWall")) {
   robot::JointValueMap jvm;
   jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
   jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
@@ -414,7 +422,8 @@ Object CloseWall::getCloseWall() {
 /****************************************
 **      ShapeRequest Scenario
 ****************************************/
-ShapeRequestScenario::ShapeRequestScenario(const BeliefParams& bp) : name(std::string("ShapeRequestScenario")) {
+ShapeRequestScenario::ShapeRequestScenario(const BeliefParams& bp)
+    : SimulationScenario("shape_request_scenario.json"), name(std::string("ShapeRequestScenario")) {
   Object table = getObstacles();
 
   unknown_obstacles.add(table);
