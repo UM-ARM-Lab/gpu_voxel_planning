@@ -25,7 +25,7 @@ namespace GVP
         Path p;
         for(const auto& point: pu)
         {
-            p.push_back(point);
+            p.push_back(VictorRightArmConfig(point));
         }
         return p;
     }

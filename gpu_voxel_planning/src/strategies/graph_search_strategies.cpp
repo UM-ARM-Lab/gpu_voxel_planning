@@ -49,11 +49,11 @@ Path GraphSearchStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &vi
 
   if (current == expected) {
     std::vector<NodeIndex> node_path = plan(cur_node, goal_node, scenario.getState(), viz);
-    next = graph.getNode(node_path[1]).getValue();
+    next = VictorRightArmConfig(graph.getNode(node_path[1]).getValue());
     prev_node = cur_node;
     cur_node = node_path[1];
   } else {
-    next = graph.getNode(prev_node).getValue();
+    next = VictorRightArmConfig(graph.getNode(prev_node).getValue());
     graph.getEdge(prev_node, cur_node).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
     graph.getEdge(cur_node, prev_node).setValidity(arc_dijkstras::EDGE_VALIDITY::INVALID);
 
@@ -166,7 +166,8 @@ Path OmniscientGraphSearch::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &
 
   for (size_t i = 0; i < node_path.size() - 1; i++) {
     Path segment =
-        interpolate(graph.getNode(node_path[i]).getValue(), graph.getNode(node_path[i + 1]).getValue(), discretization);
+        interpolate(VictorRightArmConfig(graph.getNode(node_path[i]).getValue()),
+                    VictorRightArmConfig(graph.getNode(node_path[i + 1]).getValue()), discretization);
 
     path.insert(path.end(), segment.begin(), segment.end());
   }
@@ -300,7 +301,8 @@ std::vector<NodeIndex> ThompsonGraphSearch::plan(NodeIndex start, NodeIndex goal
     }
 
     PROFILE_START("Viz_sample_ee_path");
-    viz.vizEEPath(interpolate(s.getCurConfig(), graph.getNode(result[1]).getValue(), 0.1), "sampledPath", 0,
+    viz.vizEEPath(interpolate(VictorRightArmConfig(s.getCurConfig()),
+                              VictorRightArmConfig(graph.getNode(result[1]).getValue()), 0.1), "sampledPath", 0,
                   makeColor(0.0, 0.0, 1.0));
     PROFILE_RECORD("Viz_sample_ee_path");
     return result;
@@ -354,7 +356,8 @@ std::vector<NodeIndex> HOPGraphSearch::plan(NodeIndex start, NodeIndex goal, Sta
     }
 
     PROFILE_START("Viz_sample_ee_path");
-    viz.vizEEPath(interpolate(s.getCurConfig(), graph.getNode(result[1]).getValue(), 0.1), "sampledPath", 0,
+    viz.vizEEPath(interpolate(VictorRightArmConfig(s.getCurConfig()),
+                              VictorRightArmConfig(graph.getNode(result[1]).getValue()), 0.1), "sampledPath", 0,
                   makeColor(0.0, 0.0, 1.0));
     PROFILE_RECORD("Viz_sample_ee_path");
 
