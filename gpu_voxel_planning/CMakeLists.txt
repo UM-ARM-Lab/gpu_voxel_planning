@@ -4,7 +4,7 @@ project(gpu_voxel_planning VERSION 0.1.1)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
-add_compile_options(-std=c++14)
+add_compile_options(-std=c++17)
 
 set(CATKIN_PACKAGES
         roscpp
@@ -33,6 +33,11 @@ FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 FIND_PACKAGE(CUDA REQUIRED)
 FIND_PACKAGE(ompl REQUIRED)
 FIND_PACKAGE(orocos_kdl REQUIRED)
+
+FIND_PACKAGE(jsoncpp REQUIRED)
+# Not sure why this is needed, but failed to link to jsoncpp without the next two lines
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSONCPP jsoncpp)
 
 find_package(GTest)
 
@@ -77,14 +82,13 @@ catkin_package(
 ###########
 ## Build ##
 ###########
-
-
 set(EXTERN_LIBS
         ${catkin_LIBRARIES}
         ${Boost_SYSTEM_LIBRARY}
         ${icl_core_LIBRARIES}
         ${gpu_voxels_LIBRARIES}
         ${OMPL_LIBRARIES}
+        ${JSONCPP_LIBRARIES}
         )
 
 
@@ -217,7 +221,6 @@ target_link_libraries(victor_local_controller
 #        )
 
 
-
 add_library(victor_halton_roadmap
         src/strategies/victor_halton_roadmap.cpp)
 
@@ -246,7 +249,7 @@ set(Planning_SOURCES
         # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
         src/path_utils.cpp
         src/path_utils_addons.cpp
-        )
+        include/gpu_voxel_planning/json_helpers.h)
 
 add_library(planning_library
         ${Planning_SOURCES}
@@ -261,8 +264,8 @@ target_link_libraries(planning_library
 add_executable(wip_shape_completion
         src/wip/wip_shape_completion_scenario.cpp
         )
-target_link_libraries(wip_prob_map
-        # ${EXTERN_LIBS}
+target_link_libraries(wip_shape_completion
+        ${EXTERN_LIBS}
         planning_library
         )
 

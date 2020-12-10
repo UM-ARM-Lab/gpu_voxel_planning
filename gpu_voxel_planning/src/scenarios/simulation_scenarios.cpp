@@ -2,6 +2,9 @@
 
 #include <gpu_voxel_planning_msgs/RequestShape.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
+#include <jsoncpp/json/json.h>
+#include "gpu_voxel_planning/json_helpers.h"
+#include <ros/package.h>
 
 using namespace GVP;
 
@@ -23,7 +26,15 @@ static ObstacleConfiguration getBonkersBelief() {
   return oc;
 }
 
-SimulationScenario::SimulationScenario() : s(victor) {}
+SimulationScenario::SimulationScenario() : s(victor) {
+  Json::Value obj;
+  std::ifstream ifs(ros::package::getPath("gpu_voxel_planning") + "/config/scenario_configuration.json");
+  ifs >> obj;
+
+  s.current_config = VictorRightArmConfig(Json::toVector<double>(obj["initial_configuration"])).asMap();
+  goal_config = VictorRightArmConfig(Json::toVector<double>(obj["goal_configuration"])).asMap();
+  addLeftArm();
+}
 
 void SimulationScenario::initFakeVictor(RosInterface& ri) {
   // NOTE:!!! These values are duplicated, and harded coded elsewhere in this code
@@ -123,8 +134,6 @@ void SimulationScenario::combineObstacles() {
  **         Empty
  ****************************************/
 Empty::Empty(const BeliefParams& bp) : name("empty") {
-  addLeftArm();
-
   setPrior(unknown_obstacles, bp);
 
   s.current_config = VictorRightArmConfig(std::vector<double>{-1.0, 1.5, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
@@ -137,7 +146,7 @@ Empty::Empty(const BeliefParams& bp) : name("empty") {
 TableWithBox::TableWithBox(const BeliefParams& bp, bool table_known, bool visible_cave_known, bool full_cave_known)
     : name(std::string("Table_with_Box_") + "table_" + (table_known ? "" : "un") + "known_" + "visible_cave_" +
            (visible_cave_known ? "" : "un") + "known_" + "full_cave_" + (full_cave_known ? "" : "un") + "known") {
-  addLeftArm();
+
 
   Object table = getTable();
   Object known_cave = getVisibleCave();
@@ -202,8 +211,6 @@ Object TableWithBox::getCaveBack() {
  **         SlottedWall
  ****************************************/
 SlottedWall::SlottedWall(const BeliefParams& bp) : name("Sloted Wall") {
-  addLeftArm();
-
   bool all_known = (bp.belief_type == BeliefType::Deterministic);
 
   known_obstacles.add(getFrontWall());
@@ -273,8 +280,6 @@ Object SlottedWall::getSlottedWall() {
  ****************************************/
 
 Bookshelf::Bookshelf(const BeliefParams& bp) : name(std::string("Bookshelf")) {
-  addLeftArm();
-
   robot::JointValueMap jvm;
   jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
   jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
@@ -357,8 +362,6 @@ Object Bookshelf::getTable() {
  ****************************************/
 
 CloseWall::CloseWall(const BeliefParams& bp) : name(std::string("CloseWall")) {
-  addLeftArm();
-
   robot::JointValueMap jvm;
   jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
   jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
@@ -412,12 +415,9 @@ Object CloseWall::getCloseWall() {
 **      ShapeRequest Scenario
 ****************************************/
 ShapeRequestScenario::ShapeRequestScenario(const BeliefParams& bp) : name(std::string("ShapeRequestScenario")) {
-  addLeftArm();
-
   Object table = getObstacles();
-  bool table_known = false;
 
-  table_known ? known_obstacles.add(table) : unknown_obstacles.add(table);
+  unknown_obstacles.add(table);
   // visible_cave_known ? known_obstacles.add(known_cave) : unknown_obstacles.add(known_cave);
   // full_cave_known ? known_obstacles.add(cave_back) : unknown_obstacles.add(cave_back);
 
@@ -427,8 +427,7 @@ ShapeRequestScenario::ShapeRequestScenario(const BeliefParams& bp) : name(std::s
 
   // s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
   // s.current_config = VictorRightArmConfig(std::vector<double>{-1.5,1.5,-1.5,-0.4,-1.5,-1.0,1.5}).asMap();
-  s.current_config = VictorRightArmConfig(std::vector<double>{-1.0, 1.5, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
-  goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
+
 }
 
 Object ShapeRequestScenario::getObstacles() {
