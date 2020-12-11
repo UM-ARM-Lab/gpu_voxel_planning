@@ -5,7 +5,6 @@
 #include <jsoncpp/json/json.h>
 #include "gpu_voxel_planning/json_helpers.h"
 #include <ros/package.h>
-#include <exception>
 
 using namespace GVP;
 
@@ -41,7 +40,7 @@ SimulationScenario::SimulationScenario(const std::string& config_file) : s(victo
 }
 
 void SimulationScenario::initFakeVictor(RosInterface& ri) {
-  // NOTE:!!! These values are duplicated, and harded coded elsewhere in this code
+  // NOTE:!!! These values are duplicated, and hard coded elsewhere in this code
   VictorLeftArmConfig lac(std::vector<double>{1.57, 1.57, 0, 0, 0, 0, 0});
   ri.setLeftArm(lac);
   ri.setRightGripper(1.5);
@@ -63,11 +62,11 @@ void SimulationScenario::setPrior(ObstacleConfiguration& unknown_obstacles_prior
       s.bel = std::make_unique<ObstacleBelief>(getBonkersBelief(), bp.noise, bp.bias);
       break;
     case BeliefType::MoEObstacle:
-      std::cout << "Using MoE Obstalcebelief\n";
+      std::cout << "Using MoE Obstacle belief\n";
       s.bel = std::make_unique<MoEBelief>(unknown_obstacles_prior, bp.noise, bp.bias);
       break;
     case BeliefType::MoEBonkers:
-      std::cout << "Using MoE Obstalcebelief\n";
+      std::cout << "Using MoE Obstacle belief\n";
       s.bel = std::make_unique<MoEBelief>(getBonkersBelief(), bp.noise, bp.bias);
       break;
     case BeliefType::IID:
@@ -216,7 +215,7 @@ Object TableWithBox::getCaveBack() {
  **         SlottedWall
  ****************************************/
 SlottedWall::SlottedWall(const BeliefParams& bp)
-    : SimulationScenario("slotted_walll_scenario.json"), name("Sloted Wall") {
+    : SimulationScenario("slotted_wall_scenario.json"), name("Slotted Wall") {
   bool all_known = (bp.belief_type == BeliefType::Deterministic);
 
   known_obstacles.add(getFrontWall());
@@ -433,15 +432,10 @@ ShapeRequestScenario::ShapeRequestScenario(const BeliefParams& bp)
   combineObstacles();
 
   setPrior(unknown_obstacles, bp);
-
-  // s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
-  // s.current_config = VictorRightArmConfig(std::vector<double>{-1.5,1.5,-1.5,-0.4,-1.5,-1.0,1.5}).asMap();
-
 }
 
 Object ShapeRequestScenario::getObstacles() {
   Object obj;
-  //  obj.add(AABB(Vector3f(0,0,0), Vector3f(1,1,1)));
   ros::NodeHandle n;
   ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::RequestShape>("/get_shape");
   gpu_voxel_planning_msgs::RequestShape srv;
@@ -449,8 +443,6 @@ Object ShapeRequestScenario::getObstacles() {
     std::cout << "Pointcloud given with header: " << srv.response.points.header.frame_id << "\n";
     std::vector<Vector3f> points;
     for (sensor_msgs::PointCloud2ConstIterator<float> it(srv.response.points, "x"); it != it.end(); ++it) {
-      // TODO: do something with the values of x, y, z
-      //      std::cout << it[0] << ", " << it[1] << ", " << it[2] << '\n';
       points.emplace_back(it[0], it[1], it[2]);
     }
     obj.occupied.insertPointCloud(points, PROB_OCCUPIED);

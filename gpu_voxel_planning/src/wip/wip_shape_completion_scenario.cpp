@@ -1,19 +1,19 @@
-#include "gpu_voxel_planning/maps/prob_map.hpp"
 #include <gpu_voxels/helpers/GeometryGeneration.h>
-#include "gpu_voxel_planning/common_names.hpp"
-#include <arc_utilities/timing.hpp>
-#include <arc_utilities/arc_helpers.hpp>
-
-#include <ros/ros.h>
-#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include "gpu_voxel_planning/state.hpp"
-#include "gpu_voxel_planning/scenario_tester.hpp"
-#include "gpu_voxel_planning/strategies/graph_search_strategies.hpp"
-#include "gpu_voxel_planning/path_utils_addons.hpp"
 #include <ros/package.h>
+#include <ros/ros.h>
+
+#include <arc_utilities/arc_helpers.hpp>
+#include <arc_utilities/timing.hpp>
+
+#include "gpu_voxel_planning/common_names.hpp"
+#include "gpu_voxel_planning/maps/prob_map.hpp"
+#include "gpu_voxel_planning/path_utils_addons.hpp"
+#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "gpu_voxel_planning/scenario_tester.hpp"
+#include "gpu_voxel_planning/state.hpp"
+#include "gpu_voxel_planning/strategies/graph_search_strategies.hpp"
 
 using namespace GVP;
-
 
 void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy &strategy) {
   PROFILE_REINITIALIZE(0, 0);
@@ -86,8 +86,8 @@ std::vector<BeliefParams> getBeliefParams() {
 void testAll(ros::NodeHandle &n) {
   for (int i = 0; i < 10; i++) {
     for (auto bp: getBeliefParams()) {
-      for (auto scenario_factory:getScenarioFactories(bp)) {
-        for (auto strategy_factory: getStrategyFactories()) {
+      for (const auto& scenario_factory:getScenarioFactories(bp)) {
+        for (const auto& strategy_factory: getStrategyFactories()) {
           test(n, *scenario_factory(), *strategy_factory());
         }
       }
