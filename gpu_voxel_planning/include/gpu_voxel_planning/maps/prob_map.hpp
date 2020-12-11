@@ -14,31 +14,23 @@ class DenseGrid;
 /***************************
  *   Sparse Grid
  ****************************/
-class SparseGrid : private gpu_voxels::voxellist::ProbVoxelList {
+class SparseGrid : public gpu_voxels::voxellist::ProbVoxelList {
  public:
   SparseGrid();
   explicit SparseGrid(const DenseGrid& other);
-  const gpu_voxels::voxellist::ProbVoxelList* getProbVoxelList() const;
   SparseGrid& operator=(const DenseGrid& other);
   void merge(const DenseGrid* other);
-
-  using gpu_voxels::voxellist::ProbVoxelList::getVoxelSideLength;
-  using gpu_voxels::voxellist::ProbVoxelList::serializeSelf;
-  using gpu_voxels::voxellist::ProbVoxelList::deserializeSelf;
-  using gpu_voxels::voxellist::ProbVoxelList::writeToDisk;
-  using gpu_voxels::voxellist::ProbVoxelList::readFromDisk;
 };
 
 /***************************
  *   Dense Grid
  ****************************/
 
-class DenseGrid : private gpu_voxels::voxelmap::ProbVoxelMap {
+class DenseGrid : public gpu_voxels::voxelmap::ProbVoxelMap {
  public:
   DenseGrid();
   DenseGrid(const DenseGrid& other);
   explicit DenseGrid(const SparseGrid& other);
-  const gpu_voxels::voxelmap::ProbVoxelMap* getProbVoxelMap() const;
   DenseGrid& operator=(const DenseGrid& other);
   void insertBox(const Vector3f& corner_min, const Vector3f& corner_max);
   void copyRandomOccupiedElement(DenseGrid& to) const;
@@ -49,17 +41,6 @@ class DenseGrid : private gpu_voxels::voxelmap::ProbVoxelMap {
   void copy(const DenseGrid* other);
   void merge(const SparseGrid* other);
   void copyIthOccupied(const DenseGrid* other, unsigned long copy_index) const;
-
-  using gpu_voxels::voxelmap::ProbVoxelMap::getVoxelSideLength;
-  using gpu_voxels::voxelmap::ProbVoxelMap::getOccupiedCenters;
-  using gpu_voxels::voxelmap::ProbVoxelMap::getOccupiedCoords;
-  using gpu_voxels::voxelmap::ProbVoxelMap::getDimensions;
-  using gpu_voxels::voxelmap::ProbVoxelMap::clearMap;
-  using gpu_voxels::voxelmap::ProbVoxelMap::countOccupied;
-  using gpu_voxels::voxelmap::ProbVoxelMap::insertPointCloud;
-  using gpu_voxels::voxelmap::ProbVoxelMap::insertMetaPointCloud;
-  using gpu_voxels::voxelmap::ProbVoxelMap::writeToDisk;
-  using gpu_voxels::voxelmap::ProbVoxelMap::readFromDisk;
 };
 
 #endif

@@ -14,15 +14,13 @@ SparseGrid::SparseGrid(const DenseGrid& other)
   merge(&other);
 }
 
-const gpu_voxels::voxellist::ProbVoxelList* SparseGrid::getProbVoxelList() const { return this; }
-
 SparseGrid& SparseGrid::operator=(const DenseGrid& other) {
   merge(&other);
   return *this;
 }
 
 void SparseGrid::merge(const DenseGrid* other) {
-  gpu_voxels::voxellist::ProbVoxelList::merge(other->getProbVoxelMap());
+  gpu_voxels::voxellist::ProbVoxelList::merge(other);
 }
 
 /*******************
@@ -47,8 +45,6 @@ DenseGrid& DenseGrid::operator=(const DenseGrid& other) {
   copy(&other);
   return *this;
 }
-
-const gpu_voxels::voxelmap::ProbVoxelMap* DenseGrid::getProbVoxelMap() const { return this; }
 
 void DenseGrid::insertBox(const Vector3f& corner_min, const Vector3f& corner_max) {
   float delta = VOXEL_SIDE_LENGTH / 2.0;
@@ -76,7 +72,7 @@ void DenseGrid::add(const DenseGrid* other) { voxelmap::ProbVoxelMap::add(other)
 
 void DenseGrid::copy(const DenseGrid* other) { voxelmap::ProbVoxelMap::copy(other); }
 
-void DenseGrid::merge(const SparseGrid* other) { voxelmap::ProbVoxelMap::merge(other->getProbVoxelList()); }
+void DenseGrid::merge(const SparseGrid* other) { voxelmap::ProbVoxelMap::merge(other); }
 
 void DenseGrid::copyIthOccupied(const DenseGrid* other, unsigned long copy_index) const {
   voxelmap::ProbVoxelMap::copyIthOccupied(other, copy_index);

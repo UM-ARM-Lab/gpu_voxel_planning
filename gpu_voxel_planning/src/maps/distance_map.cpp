@@ -26,19 +26,19 @@ void DistanceGrid::computeDistances()
 bool DistanceGrid::mergeOccupied(const DenseGrid *other)
 {
     ready_for_operations = false;
-    return gpu_voxels::voxelmap::DistanceVoxelMap::mergeOccupied(other->getProbVoxelMap());
+    return gpu_voxels::voxelmap::DistanceVoxelMap::mergeOccupied(other);
 }
 
 std::pair<Vector3i, DistanceVoxel> DistanceGrid::getClosestObstacle(const DenseGrid *other)
 {
     checkReadyForComputation();
-    return gpu_voxels::voxelmap::DistanceVoxelMap::getClosestObstacle(other->getProbVoxelMap());
+    return gpu_voxels::voxelmap::DistanceVoxelMap::getClosestObstacle(other);
 }
 
 DistanceVoxel::pba_dist_t DistanceGrid::getClosestObstacleDistance(const DenseGrid *other)
 {
     checkReadyForComputation();
-    return gpu_voxels::voxelmap::DistanceVoxelMap::getClosestObstacleDistance(other->getProbVoxelMap());
+    return gpu_voxels::voxelmap::DistanceVoxelMap::getClosestObstacleDistance(other);
 }
 
 
