@@ -116,7 +116,7 @@ class ObstacleConfiguration {
     for (int i = 0; i < obstacles.size(); i++) {
       double d = dg.getClosestObstacleDistance(&obstacles[i].occupied);
       if (d < closest_dist) {
-        d = closest_dist;
+        closest_dist = d;
         closest_ind = i;
       }
     }
