@@ -22,7 +22,7 @@ struct BeliefParams {
   explicit BeliefParams(BeliefType bt, std::vector<double> bias = std::vector<double>{0, 0, 0}, double noise = 0)
       : belief_type(bt), bias(std::move(bias)), noise(noise) {}
 
-  std::string toString() const {
+  [[nodiscard]] std::string toString() const {
     std::map<BeliefType, std::string> m{{BeliefType::CHS, "CHS"},
                                         {BeliefType::IID, "IID"},
                                         {BeliefType::Obstacle, "Obstacle"},
@@ -47,13 +47,13 @@ class Belief {
 
   virtual void updateCollisionSpace(Robot& robot, size_t first_link_in_collision) = 0;
 
-  virtual DenseGrid sampleState() const = 0;
+  [[nodiscard]] virtual DenseGrid sampleState() const = 0;
 
   // virtual std::string getName() const = 0;
 
   virtual ~Belief() = default;
 
-  virtual std::unique_ptr<Belief> clone() const = 0;
+  [[nodiscard]] virtual std::unique_ptr<Belief> clone() const = 0;
 };
 
 class EmptyBelief : public Belief {
@@ -68,11 +68,11 @@ class EmptyBelief : public Belief {
 
   void updateCollisionSpace(Robot& robot, const size_t first_link_in_collision) override {}
 
-  DenseGrid sampleState() const override { return DenseGrid(); }
+  [[nodiscard]] DenseGrid sampleState() const override { return DenseGrid(); }
 
   // virtual std::string getName() const = 0;
 
-  std::unique_ptr<Belief> clone() const override { return std::make_unique<EmptyBelief>(); }
+  [[nodiscard]] std::unique_ptr<Belief> clone() const override { return std::make_unique<EmptyBelief>(); }
 };
 
 class ObstacleBelief : public Belief {
@@ -97,9 +97,9 @@ class ObstacleBelief : public Belief {
     }
   }
 
-  std::unique_ptr<Belief> clone() const override { return cloneObstacleBelief(); }
+  [[nodiscard]] std::unique_ptr<Belief> clone() const override { return cloneObstacleBelief(); }
 
-  std::unique_ptr<ObstacleBelief> cloneObstacleBelief() const {
+  [[nodiscard]] std::unique_ptr<ObstacleBelief> cloneObstacleBelief() const {
     std::cout << "cloning obstacle belief\n";
     std::unique_ptr<ObstacleBelief> b = std::make_unique<ObstacleBelief>();
     b->particles = particles;
@@ -140,7 +140,7 @@ class ObstacleBelief : public Belief {
     PROFILE_RECORD("Obstacle_belief_update_free");
   }
 
-  std::vector<std::vector<double>> getParticleVectors() const {
+  [[nodiscard]] std::vector<std::vector<double>> getParticleVectors() const {
     std::vector<std::vector<double>> pvs;
     for (const auto& particle : particles) {
       pvs.push_back(particle.asParticle());
@@ -152,7 +152,7 @@ class ObstacleBelief : public Belief {
    * Computes weights of the current posterior particles given a prior
    * Note!! This assumes the prior is weighted evently, which is not the case
    **/
-  std::vector<double> kernelDensityEstimate(std::vector<std::vector<double>> prior, double bandwidth) const {
+  [[nodiscard]] std::vector<double> kernelDensityEstimate(std::vector<std::vector<double>> prior, double bandwidth) const {
     double normalizing = cumSum().back() * weights.size();
     if (normalizing <= 0) {
       return std::vector<double>(particles.size(), 0);
@@ -192,7 +192,7 @@ class ObstacleBelief : public Belief {
     PROFILE_RECORD("Obstacle_belief_update_collision");
   }
 
-  DenseGrid sampleState() const override {
+  [[nodiscard]] DenseGrid sampleState() const override {
     std::mt19937 rng;
     rng.seed(std::random_device()());
     std::uniform_real_distribution<double> dist(0.0, cumSum().back());
@@ -224,7 +224,7 @@ class ObstacleBelief : public Belief {
   }
 
   // protected:
-  std::vector<double> cumSum() const {
+  [[nodiscard]] std::vector<double> cumSum() const {
     double sum = 0;
     std::vector<double> cum_sum;
     for (const auto& w : weights) {
@@ -246,7 +246,7 @@ class IIDBelief : public ObstacleBelief {
 
   void updateCollisionSpace(Robot& robot, const size_t first_link_in_collision) override {}
 
-  DenseGrid sampleState() const override { return DenseGrid(); }
+  [[nodiscard]] DenseGrid sampleState() const override { return DenseGrid(); }
 };
 
 /*********************************
