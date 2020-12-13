@@ -249,7 +249,7 @@ set(Planning_SOURCES
         # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time
         src/path_utils.cpp
         src/path_utils_addons.cpp
-        include/gpu_voxel_planning/json_helpers.h)
+        src/beliefs/beliefs.cpp)
 
 add_library(planning_library
         ${Planning_SOURCES}

@@ -91,9 +91,26 @@ rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped GVP::denseGridToMsg(const De
     voxel.value = 1.0f;
     msg.voxels.push_back(voxel);
   }
-
   msg.scale = g.getVoxelSideLength();
+  return msg;
+}
 
+rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped GVP::denseGridsToMsg(
+    const std::vector<DenseGrid*>& grids, const std::vector<double>& alphas, const std::string& frame) {
+  rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped msg;
+  msg.header.frame_id = frame;
+
+  for (int i = 0; i < grids.size(); i++) {
+    for (const auto& ind : grids[i]->getOccupiedCoords()) {
+      rviz_voxelgrid_visuals_msgs::SparseVoxel voxel;
+      voxel.i = ind.x;
+      voxel.j = ind.y;
+      voxel.k = ind.z;
+      voxel.value = alphas[i];
+      msg.voxels.push_back(voxel);
+    }
+  }
+  msg.scale = grids[0]->getVoxelSideLength();
   return msg;
 }
 
@@ -115,6 +132,15 @@ void GVP::GpuVoxelRvizVisualizer::vizGrid(const DenseGrid& grid, const std::stri
                                           const std_msgs::ColorRGBA& color) const {
   try {
     grid_pubs.at(name).publish(denseGridToMsg(grid, global_frame));
+  } catch (std::out_of_range& e) {
+    std::cout << "voxelgrid " + name + " is not in list, so cannot be displayed\n";
+  }
+}
+
+void GVP::GpuVoxelRvizVisualizer::vizGrids(const std::vector<DenseGrid*>& grids,
+                                           const std::vector<double>& alphas, const std::string& name) const {
+  try {
+    grid_pubs.at(name).publish(denseGridsToMsg(grids, alphas, global_frame));
   } catch (std::out_of_range& e) {
     std::cout << "voxelgrid " + name + " is not in list, so cannot be displayed\n";
   }

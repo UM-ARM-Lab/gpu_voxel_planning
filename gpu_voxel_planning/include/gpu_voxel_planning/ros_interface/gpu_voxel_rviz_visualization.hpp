@@ -24,6 +24,9 @@ visualization_msgs::MarkerArray visualize3DPath(const std::vector<Eigen::Vector3
                                                 const std::string& ns, int id, const std_msgs::ColorRGBA& color);
 
 rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped denseGridToMsg(const DenseGrid& g, const std::string& frame);
+rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped denseGridsToMsg(const std::vector<DenseGrid*>& g,
+                                                                    const std::vector<double>& alphas,
+                                                                    const std::string& frame);
 
 inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double a = 1.0) {
   std_msgs::ColorRGBA color;
@@ -37,8 +40,8 @@ inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double a = 1.
 class GpuVoxelRvizVisualizer {
  public:
   std::string topic_prefix = "voxelgrid/";
-  std::vector<std::string> grid_names{"known_obstacles", "unknown_obstacles", "active_robot",
-                                      "passive_robot",   "known_free",        "true_obstacles"};
+  std::vector<std::string> grid_names{"known_obstacles", "unknown_obstacles", "active_robot",     "passive_robot",
+                                      "known_free",      "true_obstacles",    "belief_obstacles"};
   std::map<std::string, ros::Publisher> grid_pubs;
   //  ros::Publisher grid_pub;
   ros::Publisher chs_pub;
@@ -67,6 +70,9 @@ class GpuVoxelRvizVisualizer {
   }
 
   virtual void vizGrid(const DenseGrid& grid, const std::string& name, const std_msgs::ColorRGBA& color) const;
+
+  virtual void vizGrids(const std::vector<DenseGrid*>& grids, const std::vector<double>& alphas,
+                        const std::string& name) const;
 
   //  void vizGrid(const std::vector<Vector3f>& centers, float side_length, const std::string& name,
   //               const std_msgs::ColorRGBA& color) const;
