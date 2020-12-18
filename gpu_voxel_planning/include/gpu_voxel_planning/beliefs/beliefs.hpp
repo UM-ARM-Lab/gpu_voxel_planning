@@ -10,7 +10,7 @@
 #include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
 
 namespace GVP {
-enum BeliefType { CHS, IID, Obstacle, Bonkers, MoEObstacle, MoEBonkers, Deterministic };
+enum BeliefType { CHS, IID, Obstacle, Bonkers, MoEObstacle, MoEBonkers, Deterministic, ShapeCompletion };
 
 struct BeliefParams {
   BeliefType belief_type;
@@ -29,7 +29,8 @@ struct BeliefParams {
                                         {BeliefType::Bonkers, "Bonkers"},
                                         {BeliefType::MoEObstacle, "MoE"},
                                         {BeliefType::MoEBonkers, "MoEBonkers"},
-                                        {BeliefType::Deterministic, "Deterministic"}};
+                                        {BeliefType::Deterministic, "Deterministic"},
+                                        {BeliefType::ShapeCompletion, "ShapeCompletion"}};
 
     std::string name = m[belief_type] + "_" + std::to_string(bias[0]) + "_" + std::to_string(bias[1]) + "_" +
                        std::to_string(bias[2]) + "_" + std::to_string(noise);
@@ -87,6 +88,24 @@ class ObstacleBelief : public Belief {
   void viz(const GpuVoxelRvizVisualizer& viz) override;
   // protected:
   [[nodiscard]] std::vector<double> cumSum() const;
+};
+
+class ShapeCompletionBelief: public Belief {
+ public:
+  DenseGrid known_free;
+  std::vector<DenseGrid> chss;
+  std::vector<DenseGrid> sampled_particles;
+
+
+ public:
+  ShapeCompletionBelief();
+  double calcProbFree(const DenseGrid& volume) override;
+  void updateFreeSpace(const DenseGrid& new_free) override;
+  void updateCollisionSpace(Robot& robot, size_t first_link_in_collision) override;
+  DenseGrid sampleState() const override;
+  void viz(const GpuVoxelRvizVisualizer& viz) override;
+  std::unique_ptr<Belief> clone() const override;
+  void requestCompletions();
 };
 /*********************************
  **         IID Belief          **

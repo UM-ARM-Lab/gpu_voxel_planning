@@ -1,7 +1,9 @@
 //
 // Created by bsaund on 12/13/20.
 //
-#include <gpu_voxel_planning/beliefs/beliefs.hpp>
+#include "gpu_voxel_planning/beliefs/beliefs.hpp"
+#include <gpu_voxel_planning/pointcloud_utils.h>
+#include <gpu_voxel_planning_msgs/CompleteShape.h>
 
 using namespace GVP;
 
@@ -324,4 +326,84 @@ DenseGrid MoEBelief::sampleState() const {
     }
   }
   throw std::logic_error("Sampling from mixture of experts did not find an expert");
+}
+
+
+/***************************************************************
+ * Shape Completion Belief
+ ***************************************************************/
+ShapeCompletionBelief::ShapeCompletionBelief()
+{
+  std::cout << "Constructing shape completion belief\n";
+  requestCompletions();
+}
+
+double ShapeCompletionBelief::calcProbFree(const DenseGrid& volume) {
+  PROFILE_START("CalcProbFreeCHS");
+  if(sampled_particles.empty()){
+    return 1.0;
+  }
+
+  int num_free = 0;
+  for (auto& c : sampled_particles) {
+    if (c.countOccupied() == 0) {
+      num_free++;
+    }
+  }
+  PROFILE_RECORD("CalcProbFreeCHS");
+  return (double)num_free / sampled_particles.size();
+}
+void ShapeCompletionBelief::updateFreeSpace(const DenseGrid& new_free) {
+  known_free.add(&new_free);
+  for (auto& c: chss){
+    c.subtract(&new_free);
+  }
+}
+void ShapeCompletionBelief::updateCollisionSpace(Robot& robot, size_t first_link_in_collision) {
+  auto link_occupancies = robot.getLinkOccupancies();
+  if (first_link_in_collision >= link_occupancies.size()) {
+    throw std::logic_error("Trying to add CHS, but no link collided");
+  }
+  DenseGrid new_chs;
+  for (size_t i = first_link_in_collision; i < link_occupancies.size(); i++) {
+    new_chs.add(&link_occupancies[i]);
+  }
+  new_chs.subtract(&known_free);
+  chss.push_back(new_chs);
+  requestCompletions();
+}
+DenseGrid ShapeCompletionBelief::sampleState() const {
+  std::mt19937 rng;
+  rng.seed(std::random_device()());
+  std::uniform_int_distribution dist(0, (int)sampled_particles.size());
+  return sampled_particles[dist(rng)];
+}
+void ShapeCompletionBelief::viz(const GpuVoxelRvizVisualizer& viz) {
+  std::vector<DenseGrid*> grids;
+  std::vector<double> alphas;
+  for (auto & sampled_particle : sampled_particles) {
+    alphas.push_back(1.0/ sampled_particles.size());
+    grids.emplace_back(&sampled_particle);
+  }
+  viz.vizGrids(grids, alphas, "belief_obstacles");
+}
+std::unique_ptr<Belief> ShapeCompletionBelief::clone() const {
+  std::unique_ptr<ShapeCompletionBelief> b;
+  b->sampled_particles = sampled_particles;
+  b->chss = chss;
+  b->known_free = known_free;
+  return b;
+}
+
+void ShapeCompletionBelief::requestCompletions() {
+  std::cout << "Requesting Shape Completion!\n";
+  ros::NodeHandle n;
+  ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::CompleteShape>("/complete_shape");
+  gpu_voxel_planning_msgs::CompleteShape srv;
+  srv.request.known_free = toMsg(known_free);
+  if(client.call(srv)){
+    std::cout << "Shapes completed\n";
+  } else {
+    throw(std::runtime_error("complete shape failed. Perhaps the service is not running?"));
+  }
 }

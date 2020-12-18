@@ -110,7 +110,9 @@ rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped GVP::denseGridsToMsg(
       msg.voxels.push_back(voxel);
     }
   }
-  msg.scale = grids[0]->getVoxelSideLength();
+  if(!grids.empty()) {
+    msg.scale = grids[0]->getVoxelSideLength();
+  }
   return msg;
 }
 

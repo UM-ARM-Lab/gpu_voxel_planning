@@ -14,12 +14,10 @@ std::vector<T> toVector(const Value& val);
 
 template<>
 std::vector<double> toVector(const Value& val){
-  std::cout << "Calling toVector<double>\n";
   std::vector<double> v;
   for(const auto& num: val){
     v.push_back(num.asDouble());
   }
-  std::cout << "Returning from toVector<double>\n";
   return v;
 }
 

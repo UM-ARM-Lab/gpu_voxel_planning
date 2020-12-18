@@ -82,7 +82,6 @@ void waitForKeypress()
     std::string unused;
     std::cout << "Waiting for user input...\n";
     std::getline(std::cin, unused);
-
 }
 
 

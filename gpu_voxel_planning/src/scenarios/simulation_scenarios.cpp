@@ -4,6 +4,7 @@
 #include <sensor_msgs/point_cloud2_iterator.h>
 #include <jsoncpp/json/json.h>
 #include "gpu_voxel_planning/json_helpers.h"
+#include "gpu_voxel_planning/pointcloud_utils.h"
 #include <ros/package.h>
 
 using namespace GVP;
@@ -76,6 +77,10 @@ void SimulationScenario::setPrior(ObstacleConfiguration& unknown_obstacles_prior
     case BeliefType::Deterministic:
       std::cout << "Using Deterministic\n";
       s.bel = std::make_unique<EmptyBelief>();
+      break;
+    case BeliefType::ShapeCompletion:
+      std::cout << "Using shape completion belief\n";
+      s.bel = std::make_unique<ShapeCompletionBelief>();
       break;
     default:
       std::cout << "Invalid belief type " << bp.belief_type << "\n";
@@ -440,12 +445,7 @@ Object ShapeRequestScenario::getObstacles() {
   ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::RequestShape>("/get_shape");
   gpu_voxel_planning_msgs::RequestShape srv;
   if (client.call(srv)) {
-    std::cout << "Pointcloud given with header: " << srv.response.points.header.frame_id << "\n";
-    std::vector<Vector3f> points;
-    for (sensor_msgs::PointCloud2ConstIterator<float> it(srv.response.points, "x"); it != it.end(); ++it) {
-      points.emplace_back(it[0], it[1], it[2]);
-    }
-    obj.occupied.insertPointCloud(points, PROB_OCCUPIED);
+    obj.occupied.insertPointCloud(toPointsVector(srv.response.points), PROB_OCCUPIED);
 
   } else {
     std::cout << "Service call failed\n";

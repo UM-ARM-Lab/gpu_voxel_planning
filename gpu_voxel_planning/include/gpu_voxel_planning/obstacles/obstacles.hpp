@@ -124,6 +124,7 @@ class ObstacleConfiguration {
     remakeGrid();
   }
 };
+
 }  // namespace GVP
 
 #endif

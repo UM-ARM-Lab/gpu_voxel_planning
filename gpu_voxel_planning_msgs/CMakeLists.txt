@@ -29,6 +29,7 @@ add_service_files(
   AttemptPathStart.srv
   AttemptPathResult.srv
   RequestShape.srv
+  CompleteShape.srv
   )
 
 generate_messages(

@@ -51,8 +51,8 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
 std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenarioFactories(BeliefParams &bp) {
   std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
 
-//  factories.push_back([&]() { return std::make_shared<ShapeRequestScenario>(bp); });
-  factories.push_back([&]() { return std::make_shared<TableWithBox>(bp, false, true, false); });
+  factories.push_back([&]() { return std::make_shared<ShapeRequestScenario>(bp); });
+//  factories.push_back([&]() { return std::make_shared<TableWithBox>(bp, false, true, false); });
 //  factories.push_back([&]() { return std::make_shared<Bookshelf>(bp); });
   return factories;
 }
@@ -74,11 +74,12 @@ std::vector<BeliefParams> getBeliefParams() {
   std::vector<BeliefParams> bps;
 //  bps.emplace_back(BeliefType::CHS);
 //   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
-   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
+//   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
   // bps.emplace_back(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
   // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
   // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
   // bps.emplace_back(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
+  bps.emplace_back(BeliefType::ShapeCompletion);
   return bps;
 }
 
