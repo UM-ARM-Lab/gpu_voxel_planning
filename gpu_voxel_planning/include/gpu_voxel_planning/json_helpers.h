@@ -8,29 +8,30 @@
 #ifndef GPU_VOXEL_PLANNING_JSON_HELPERS_H
 #define GPU_VOXEL_PLANNING_JSON_HELPERS_H
 
-namespace Json{
+namespace Json {
 
-template<typename T>
-std::vector<T> toVector(const Hjson::Value& val);
+    template<typename T>
+    std::vector<T> toVector(const Hjson::Value &val);
 
-template<>
-std::vector<double> toVector(const Hjson::Value& val){
-  std::vector<double> v;
-  for(const auto& num: val){
-    v.push_back(num.second);
-  }
-  return v;
-}
+    template<>
+    std::vector<double> toVector(const Hjson::Value &val) {
+        std::vector<double> v;
+        std::cout << "Converting to vector from json to vector size: " << val.size() << "\n";
+        for (int i = 0; i < val.size(); i++) {
+            v.push_back(val[i]);
+        }
+        std::cout << "Made a vector of size " << v.size() << "\n";
+        return v;
+    }
 
-template<>
-std::vector<float> toVector(const Hjson::Value& val){
-  std::vector<float> v;
-  for(const auto& num: val){
-    v.push_back(num.second);
-  }
-  return v;
-}
-
+    template<>
+    std::vector<float> toVector(const Hjson::Value &val) {
+        std::vector<float> v;
+        for (int i = 0; i < val.size(); i++) {
+            v.push_back(val[i]);
+        }
+        return v;
+    }
 }
 
 #endif  // GPU_VOXEL_PLANNING_JSON_HELPERS_H
