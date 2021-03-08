@@ -2,7 +2,8 @@
 
 #include <gpu_voxel_planning_msgs/RequestShape.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
-#include <jsoncpp/json/json.h>
+//#include <jsoncpp/json/json.h>
+#include <hjson/hjson.h>
 #include "gpu_voxel_planning/json_helpers.h"
 #include "gpu_voxel_planning/pointcloud_utils.h"
 #include <ros/package.h>

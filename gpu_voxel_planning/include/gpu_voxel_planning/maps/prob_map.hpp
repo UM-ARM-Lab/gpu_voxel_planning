@@ -4,10 +4,10 @@
 #include <gpu_voxels/GpuVoxels.h>
 #include <gpu_voxels/helpers/GeometryGeneration.h>
 
-#define GRID_X_DIM 128
-#define GRID_Y_DIM 128
-#define GRID_Z_DIM 128
-#define VOXEL_SIDE_LENGTH 0.04
+#define GRID_X_DIM 256
+#define GRID_Y_DIM 256
+#define GRID_Z_DIM 256
+#define VOXEL_SIDE_LENGTH 0.02
 
 class DenseGrid;
 

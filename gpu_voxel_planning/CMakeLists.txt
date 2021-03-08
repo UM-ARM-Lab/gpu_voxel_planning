@@ -33,11 +33,12 @@ FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 FIND_PACKAGE(CUDA REQUIRED)
 FIND_PACKAGE(ompl REQUIRED)
 FIND_PACKAGE(orocos_kdl REQUIRED)
+find_package(hjson REQUIRED)
 
-FIND_PACKAGE(jsoncpp REQUIRED)
+#FIND_PACKAGE(jsoncpp REQUIRED)
 # Not sure why this is needed, but failed to link to jsoncpp without the next two lines
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(JSONCPP jsoncpp)
+#find_package(PkgConfig REQUIRED)
+#pkg_check_modules(JSONCPP jsoncpp)
 
 find_package(GTest)
 
@@ -88,7 +89,7 @@ set(EXTERN_LIBS
         ${icl_core_LIBRARIES}
         ${gpu_voxels_LIBRARIES}
         ${OMPL_LIBRARIES}
-        ${JSONCPP_LIBRARIES}
+        hjson
         )
 
 
@@ -259,6 +260,14 @@ target_link_libraries(planning_library
         voxelgrid_library
         victor_halton_roadmap
         gpu_voxels_viz
+        )
+
+add_executable(victor_voxelgrid_live_publisher
+        src/wip/victor_voxelgrid_live_publisher.cpp
+        )
+target_link_libraries(victor_voxelgrid_live_publisher
+        ${EXTERN_LIBS}
+        planning_library
         )
 
 add_executable(wip_shape_completion
