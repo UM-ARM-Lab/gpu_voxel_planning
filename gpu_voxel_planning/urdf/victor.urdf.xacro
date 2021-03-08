@@ -76,9 +76,9 @@
 
     <link name="gpu_voxel_world"/>
     <joint name="gpu_voxel_world_joint" type="fixed">
-      <parent link="gpu_voxel_world"/>
-      <child link="victor_root"/>
-      <origin rpy="0.0 0.0 0.0" xyz="1.0 2.0 0.0"/>
+        <parent link="gpu_voxel_world"/>
+        <child link="victor_root"/>
+        <origin rpy="0.0 0.0 0.0" xyz="1.0 2.0 0.0"/>
     </joint>
 
 

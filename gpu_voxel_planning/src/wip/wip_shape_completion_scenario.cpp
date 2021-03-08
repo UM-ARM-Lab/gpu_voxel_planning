@@ -28,8 +28,8 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
   std::string filename = scenario.getName() + "_" + strategy.getName() + "_" +
                          scenario.belief_name + "_" +
                          arc_helpers::GetCurrentTimeAsString();
-  PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
-  PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
+//  PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
+//  PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
 //    std::string package_path = ros::package::getPath("gpu_voxel_planning");
   strategy.saveToFile(ros::package::getPath("gpu_voxel_planning") + "/graphs/swept_volumes_10k.map");
 }
@@ -72,20 +72,20 @@ std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrate
 
 std::vector<BeliefParams> getBeliefParams() {
   std::vector<BeliefParams> bps;
-//  bps.emplace_back(BeliefType::CHS);
+  bps.emplace_back(BeliefType::CHS);
 //   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
 //   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
   // bps.emplace_back(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
   // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
   // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
   // bps.emplace_back(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
-  bps.emplace_back(BeliefType::ShapeCompletion);
+//  bps.emplace_back(BeliefType::ShapeCompletion);
   return bps;
 }
 
 
 void testAll(ros::NodeHandle &n) {
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 1; i++) {
     for (auto bp: getBeliefParams()) {
       for (const auto& scenario_factory:getScenarioFactories(bp)) {
         for (const auto& strategy_factory: getStrategyFactories()) {
