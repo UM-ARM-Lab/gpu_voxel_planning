@@ -16,11 +16,9 @@ namespace Json {
     template<>
     std::vector<double> toVector(const Hjson::Value &val) {
         std::vector<double> v;
-        std::cout << "Converting to vector from json to vector size: " << val.size() << "\n";
         for (int i = 0; i < val.size(); i++) {
             v.push_back(val[i]);
         }
-        std::cout << "Made a vector of size " << v.size() << "\n";
         return v;
     }
 

@@ -79,7 +79,7 @@ std::vector<BeliefParams> getBeliefParams() {
   // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
   // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
   // bps.emplace_back(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
-//  bps.emplace_back(BeliefType::ShapeCompletion);
+  bps.emplace_back(BeliefType::ShapeCompletion);
   return bps;
 }
 

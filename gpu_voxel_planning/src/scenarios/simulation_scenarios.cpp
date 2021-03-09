@@ -37,8 +37,8 @@ SimulationScenario::SimulationScenario(const std::string &config_file) : s(victo
 //  ifs >> obj;
     auto obj = Hjson::UnmarshalFromFile(ros::package::getPath("gpu_voxel_planning") + "/config/" + config_file);
 
-    s.current_config = VictorRightArmConfig(Json::toVector<double>(obj["initial_configuration"])).asMap();
-    goal_config = VictorRightArmConfig(Json::toVector<double>(obj["goal_configuration"])).asMap();
+    s.current_config = VictorRightArmConfig(Json::toVector<double>(obj.at("initial_configuration"))).asMap();
+    goal_config = VictorRightArmConfig(Json::toVector<double>(obj.at("goal_configuration"))).asMap();
     addLeftArm();
 }
 
