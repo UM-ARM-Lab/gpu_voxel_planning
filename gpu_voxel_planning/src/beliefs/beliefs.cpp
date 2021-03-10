@@ -4,6 +4,7 @@
 #include "gpu_voxel_planning/beliefs/beliefs.hpp"
 #include <gpu_voxel_planning/pointcloud_utils.h>
 #include <gpu_voxel_planning_msgs/CompleteShape.h>
+#include <sensor_msgs/PointCloud2.h>
 
 using namespace GVP;
 
@@ -336,6 +337,9 @@ ShapeCompletionBelief::ShapeCompletionBelief()
 {
   std::cout << "Constructing shape completion belief\n";
   requestCompletions();
+
+  ros::NodeHandle nh;
+  free_space_publisher = nh.advertise<sensor_msgs::PointCloud2>("swept_freespace_pointcloud", 10);
 }
 
 double ShapeCompletionBelief::calcProbFree(const DenseGrid& volume) {
@@ -358,6 +362,8 @@ void ShapeCompletionBelief::updateFreeSpace(const DenseGrid& new_free) {
   for (auto& c: chss){
     c.subtract(&new_free);
   }
+  free_space_publisher.publish(toMsg(known_free));
+  std::cout << "Updated free space\n";
 }
 void ShapeCompletionBelief::updateCollisionSpace(Robot& robot, size_t first_link_in_collision) {
   auto link_occupancies = robot.getLinkOccupancies();
@@ -396,7 +402,7 @@ std::unique_ptr<Belief> ShapeCompletionBelief::clone() const {
 }
 
 void ShapeCompletionBelief::requestCompletions() {
-  std::cout << "Requesting Shape Completion!\n";
+  std::cout << "Requesting Shape Completion\n";
   ros::NodeHandle n;
   ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::CompleteShape>("/complete_shape");
   gpu_voxel_planning_msgs::CompleteShape srv;

@@ -447,6 +447,7 @@ Object ShapeRequestScenario::getObstacles() {
     ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::RequestShape>("/get_shape");
     gpu_voxel_planning_msgs::RequestShape srv;
     if (client.call(srv)) {
+        std::cout << "Got shape\n";
         obj.occupied.insertPointCloud(toPointsVector(srv.response.points), PROB_OCCUPIED);
 
     } else {

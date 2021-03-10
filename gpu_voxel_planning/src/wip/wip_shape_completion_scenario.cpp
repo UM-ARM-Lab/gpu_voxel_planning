@@ -72,7 +72,7 @@ std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrate
 
 std::vector<BeliefParams> getBeliefParams() {
   std::vector<BeliefParams> bps;
-  bps.emplace_back(BeliefType::CHS);
+//  bps.emplace_back(BeliefType::CHS);
 //   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
 //   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
   // bps.emplace_back(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
