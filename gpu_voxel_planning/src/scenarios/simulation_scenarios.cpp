@@ -449,7 +449,6 @@ Object ShapeRequestScenario::getObstacles() {
     if (client.call(srv)) {
         std::cout << "Got shape\n";
         obj.occupied.insertPointCloud(toPointsVector(srv.response.points), PROB_OCCUPIED);
-
     } else {
         std::cout << "Service call failed\n";
     }
