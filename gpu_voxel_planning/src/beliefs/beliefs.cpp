@@ -348,6 +348,7 @@ DenseGrid MoEBelief::sampleState() const {
  ***************************************************************/
 ShapeCompletionBelief::ShapeCompletionBelief() {
     std::cout << "Constructing shape completion belief\n";
+    sampled_particles.resize(num_samples);
     requestCompletions();
 
     ros::NodeHandle nh;
@@ -355,18 +356,19 @@ ShapeCompletionBelief::ShapeCompletionBelief() {
 }
 
 double ShapeCompletionBelief::calcProbFree(const DenseGrid &volume) {
-    PROFILE_START("CalcProbFreeCHS");
+    PROFILE_START("CalcProbShapeCompletion");
     if (sampled_particles.empty()) {
         return 1.0;
     }
 
     int num_free = 0;
     for (auto &c : sampled_particles) {
-        if (c.countOccupied() == 0) {
+        if (c.collideWith(&volume) == 0) {
             num_free++;
         }
     }
-    PROFILE_RECORD("CalcProbFreeCHS");
+    
+    PROFILE_RECORD("CalcProbShapeCompletion");
     return (double) num_free / sampled_particles.size();
 }
 
@@ -425,9 +427,21 @@ void ShapeCompletionBelief::requestCompletions() {
     ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::CompleteShape>("/complete_shape");
     gpu_voxel_planning_msgs::CompleteShape srv;
     srv.request.known_free = toMsg(known_free);
+    srv.request.num_samples = num_samples;
     if (client.call(srv)) {
         std::cout << "Shapes completed\n";
     } else {
         throw (std::runtime_error("complete shape failed. Perhaps the service is not running?"));
     }
+    if (srv.response.sampled_completions.size() != num_samples) {
+        throw std::length_error("Requested " + std::to_string(num_samples) + " completions but got " +
+                                std::to_string(srv.response.sampled_completions.size()));
+    }
+
+//    std::cout << "Loading samples from message...";
+    for (int i = 0; i < num_samples; i++) {
+        sampled_particles[i] = DenseGrid();
+        sampled_particles[i].insertPointCloud(toPointsVector(srv.response.sampled_completions[i]), PROB_OCCUPIED);
+    }
+//    std::cout << "...Done\n";
 }

@@ -122,6 +122,7 @@ namespace GVP {
         std::vector<DenseGrid> chss;
         std::vector<DenseGrid> sampled_particles;
         ros::Publisher free_space_publisher;
+        int num_samples = 3;
 
     public:
         ShapeCompletionBelief();
