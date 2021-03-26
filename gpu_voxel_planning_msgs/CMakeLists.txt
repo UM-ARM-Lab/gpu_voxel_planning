@@ -20,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGES} message_generation)
 
 add_message_files(DIRECTORY msg FILES
   CollisionInformation.msg
+  JointConfig.msg
   )
 
 add_service_files(

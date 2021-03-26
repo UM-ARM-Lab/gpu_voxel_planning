@@ -81,11 +81,16 @@ void RealScenario::validate()
         std::cerr << "Start configuration overlaps with obstacle\n";
         throw(std::invalid_argument("Start configuration is invalid\n"));
     }
-    s.robot.set(goal_config);
-    if(s.robot.occupied_space.overlapsWith(&known_obstacles.occupied))
-    {
-        std::cerr << "Goal configuration overlaps with obstacle\n";
-        throw(std::invalid_argument("Goal configuration is invalid\n"));
+
+    if(known_goal_config.has_value()) {
+        auto goals = getPossibleGoals();
+        assert(goals.size() == 1);
+        s.robot.set(goals.at(0));
+//        s.robot.set(goal_config);
+        if (s.robot.occupied_space.overlapsWith(&known_obstacles.occupied)) {
+            std::cerr << "Goal configuration overlaps with obstacle\n";
+            throw (std::invalid_argument("Goal configuration is invalid\n"));
+        }
     }
 }
 
@@ -188,6 +193,7 @@ RealEmpty::RealEmpty(BeliefParams bp) :
     {
         s.known_obstacles.add(&ob.occupied);
     }
+    //TODO: Read this in from a config file
     s.current_config = VictorRightArmConfig(std::vector<double>{
             1.955, -1.141, 0.644, 0.949, -2.459, 0.0, -2.107
             // 1.662, -0.876, 0.453, 1.474, -2.433, 0.196, -0.62
@@ -201,7 +207,7 @@ RealEmpty::RealEmpty(BeliefParams bp) :
             // -1.513, 1.217, 0.954, -0.935, -1.949, 0.879, -0.029
             // -1.231, 1.225, -0.666, -0.893, -1.496, 0.804, -0.037
                 }).asMap();
-    goal_config = VictorRightArmConfig(std::vector<double>{
+    auto goal_config = VictorRightArmConfig(std::vector<double>{
             2.212, -0.783, 1.117, 0.77, -2.426, 0.327, -2.181
             // 2.105, -0.761, 0.902, 1.569, -1.7, 0.142, 0.315
             // -0.424, 0.82, 0.338, -0.946, 0.173, 0.683, -1.498
@@ -209,6 +215,7 @@ RealEmpty::RealEmpty(BeliefParams bp) :
             // -1.286, 1.025, 1.334, -1.051, -0.856, 0.946, -1.026
             // 0.274, 0.712, -0.502, -1.131, -1.339, 1.346, -0.03
                 }).asMap();
+    setKnownGoalConfig(goal_config);
 }
 
 Object RealEmpty::getTable()
@@ -274,14 +281,16 @@ RealTable::RealTable(BeliefParams bp) :
         // s.known_obstacles.add(&ob.occupied);
     }
 
+    //TODO: Read these in from a config file
     s.current_config = VictorRightArmConfig(std::vector<double>{
             1.955, -1.141, 0.644, 0.949, -2.459, 0.0, -2.107
             // 0,0,0,0,0,0,0
                 }).asMap();
-    goal_config = VictorRightArmConfig(std::vector<double>{
+    auto goal_config = VictorRightArmConfig(std::vector<double>{
                         2.212, -0.783, 1.117, 0.77, -2.426, 0.327, -2.181
                             // -0.15, 1.0, 0, -0.5, 0, 1.0, 0
                             }).asMap();
+    setKnownGoalConfig(goal_config);
 
 }
 

@@ -116,6 +116,9 @@ class ShapeRequestScenario : public SimulationScenario {
   explicit ShapeRequestScenario(const BeliefParams& bp);
   std::string getName() const override { return "ShapeRequest"; }
   static Object getObstacles();
+  std::vector<robot::JointValueMap> getPossibleGoals() const override;
+
+  bool completed() const override;
 };
 
 }  // namespace GVP

@@ -367,7 +367,7 @@ double ShapeCompletionBelief::calcProbFree(const DenseGrid &volume) {
             num_free++;
         }
     }
-    
+
     PROFILE_RECORD("CalcProbShapeCompletion");
     return (double) num_free / sampled_particles.size();
 }
@@ -439,9 +439,24 @@ void ShapeCompletionBelief::requestCompletions() {
     }
 
 //    std::cout << "Loading samples from message...";
+    std::vector<robot::JointValueMap> goals;
     for (int i = 0; i < num_samples; i++) {
         sampled_particles[i] = DenseGrid();
         sampled_particles[i].insertPointCloud(toPointsVector(srv.response.sampled_completions[i]), PROB_OCCUPIED);
+        goals.push_back(VictorRightArmConfig(srv.response.goal_configs[i].joint_values).asMap());
+//        goals.push_back(sr)
     }
+    possible_goals = goals;
 //    std::cout << "...Done\n";
+}
+
+std::vector<robot::JointValueMap> ShapeCompletionBelief::getPossibleGoals() const {
+    if (possible_goals.has_value()) {
+        return possible_goals.value();
+    }
+    throw std::logic_error("Shape completion belief does not have any possible goals");
+}
+
+void ShapeCompletionBelief::syncBelief() {
+    requestCompletions();
 }

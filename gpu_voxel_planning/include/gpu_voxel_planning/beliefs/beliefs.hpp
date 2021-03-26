@@ -56,6 +56,12 @@ namespace GVP {
         virtual ~Belief() = default;
 
         [[nodiscard]] virtual std::unique_ptr<Belief> clone() const = 0;
+
+        [[nodiscard]] virtual std::vector<robot::JointValueMap> getPossibleGoals() const{
+            throw std::logic_error("getPossibleGoals is not implemented for this belief type\n");
+        }
+
+        virtual void syncBelief(){}
     };
 
     class EmptyBelief : public Belief {
@@ -123,6 +129,7 @@ namespace GVP {
         std::vector<DenseGrid> sampled_particles;
         ros::Publisher free_space_publisher;
         int num_samples = 3;
+        std::optional<std::vector<robot::JointValueMap>> possible_goals;
 
     public:
         ShapeCompletionBelief();
@@ -140,6 +147,10 @@ namespace GVP {
         std::unique_ptr<Belief> clone() const override;
 
         void requestCompletions();
+
+        [[nodiscard]] std::vector<robot::JointValueMap> getPossibleGoals() const override;
+
+        void syncBelief() override;
     };
 
 /*********************************

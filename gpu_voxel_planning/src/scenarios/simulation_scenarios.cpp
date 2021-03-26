@@ -38,7 +38,12 @@ SimulationScenario::SimulationScenario(const std::string &config_file) : s(victo
     auto obj = Hjson::UnmarshalFromFile(ros::package::getPath("gpu_voxel_planning") + "/config/" + config_file);
 
     s.current_config = VictorRightArmConfig(Json::toVector<double>(obj.at("initial_configuration"))).asMap();
-    goal_config = VictorRightArmConfig(Json::toVector<double>(obj.at("goal_configuration"))).asMap();
+//    goal_config = VictorRightArmConfig(Json::toVector<double>(obj.at("goal_configuration"))).asMap();
+    try {
+        setKnownGoalConfig(VictorRightArmConfig(Json::toVector<double>(obj.at("goal_configuration"))).asMap());
+    } catch (Hjson::index_out_of_bounds &e) {
+        std::cout << "No goal configuration set. I hope the belief defines a goal\n";
+    }
     addLeftArm();
 }
 
@@ -96,10 +101,15 @@ void SimulationScenario::validate() {
         std::cerr << "Start configuration overlaps with obstacle\n";
         throw (std::invalid_argument("Start configuration is invalid\n"));
     }
-    s.robot.set(goal_config);
-    if (s.robot.occupied_space.overlapsWith(&true_obstacles.occupied)) {
-        std::cerr << "Goal configuration overlaps with obstacle\n";
-        throw (std::invalid_argument("Goal configuration is invalid\n"));
+
+    if (known_goal_config.has_value()) {
+        auto goals = getPossibleGoals();
+        assert(goals.size() == 1);
+        s.robot.set(goals.at(0));
+        if (s.robot.occupied_space.overlapsWith(&true_obstacles.occupied)) {
+            std::cerr << "Goal configuration overlaps with obstacle\n";
+            throw (std::invalid_argument("Goal configuration is invalid\n"));
+        }
     }
     s.robot.set(s.getCurConfig().asMap());
 }
@@ -146,8 +156,8 @@ void SimulationScenario::combineObstacles() {
 Empty::Empty(const BeliefParams &bp) : SimulationScenario("empty_scenario.json"), name("empty") {
     setPrior(unknown_obstacles, bp);
 
-    s.current_config = VictorRightArmConfig(std::vector<double>{-1.0, 1.5, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
-    goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
+//    s.current_config = VictorRightArmConfig(std::vector<double>{-1.0, 1.5, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
+//    goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
 }
 
 /****************************************
@@ -173,8 +183,8 @@ TableWithBox::TableWithBox(const BeliefParams &bp, bool table_known, bool visibl
 
     // s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
     // s.current_config = VictorRightArmConfig(std::vector<double>{-1.5,1.5,-1.5,-0.4,-1.5,-1.0,1.5}).asMap();
-    s.current_config = VictorRightArmConfig(std::vector<double>{-1.0, 1.5, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
-    goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
+//    s.current_config = VictorRightArmConfig(std::vector<double>{-1.0, 1.5, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
+//    goal_config = VictorRightArmConfig(std::vector<double>{-0.15, 1.0, 0, -0.5, 0, 1.0, 0}).asMap();
 }
 
 void TableWithBox::setCaveDims() {
@@ -239,8 +249,8 @@ SlottedWall::SlottedWall(const BeliefParams &bp)
     // s.current_config = VictorRightArmConfig(std::vector<double>{0,0,0,0,0,0,0}).asMap();
     // goal_config = VictorRightArmConfig(std::vector<double>{0, 0.32, 0, -1.32, -0.2, 0.9, 0.3}).asMap();
 
-    s.current_config = VictorRightArmConfig(std::vector<double>{-1.5, 1.0, -0.5, -0.5, 0, 0, 0}).asMap();
-    goal_config = VictorRightArmConfig(std::vector<double>{0, 0.72, -0.3, -1.32, -1.2, 0.9, 0.3}).asMap();
+//    s.current_config = VictorRightArmConfig(std::vector<double>{-1.5, 1.0, -0.5, -0.5, 0, 0, 0}).asMap();
+//    goal_config = VictorRightArmConfig(std::vector<double>{0, 0.72, -0.3, -1.32, -1.2, 0.9, 0.3}).asMap();
 
     victor.set(s.current_config);
 }
@@ -317,8 +327,8 @@ Bookshelf::Bookshelf(const BeliefParams &bp)
 
     // s.current_config = VictorRightArmConfig(std::vector<double>
     //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
-    s.current_config = VictorRightArmConfig(std::vector<double>{-1.2, 1.3, -0.8, 0.4, 0.4, 0.3, 0.3}).asMap();
-    goal_config = VictorRightArmConfig(std::vector<double>{0.3, 1.2, -0.3, 1.5, 0, -0.7, -0.9}).asMap();
+//    s.current_config = VictorRightArmConfig(std::vector<double>{-1.2, 1.3, -0.8, 0.4, 0.4, 0.3, 0.3}).asMap();
+//    goal_config = VictorRightArmConfig(std::vector<double>{0.3, 1.2, -0.3, 1.5, 0, -0.7, -0.9}).asMap();
 
     victor.set(s.current_config);
 }
@@ -396,8 +406,8 @@ CloseWall::CloseWall(const BeliefParams &bp)
 
     // s.current_config = VictorRightArmConfig(std::vector<double>
     //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
-    s.current_config = VictorRightArmConfig(std::vector<double>{-0.5, 1.2, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
-    goal_config = VictorRightArmConfig(std::vector<double>{-0.0, -0.4, -1.5, -0.4, -1.5, -1.0, 1.5}).asMap();
+//    s.current_config = VictorRightArmConfig(std::vector<double>{-0.5, 1.2, -1.5, 0.4, -1.5, 0.0, 1.5}).asMap();
+//    goal_config = VictorRightArmConfig(std::vector<double>{-0.0, -0.4, -1.5, -0.4, -1.5, -1.0, 1.5}).asMap();
 
     victor.set(s.current_config);
 }
@@ -453,4 +463,19 @@ Object ShapeRequestScenario::getObstacles() {
         std::cout << "Service call failed\n";
     }
     return obj;
+}
+
+std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const {
+    //    if(known_goal_config.has_value()){
+    //        return std::vector<robot::JointValueMap>{known_goal_config.value()};
+    //    }
+    return s.bel->getPossibleGoals();
+//    throw std::runtime_error("Shape Request Scenario does not have a known_goal_config");
+}
+
+bool ShapeRequestScenario::completed() const {
+    if(!Scenario::completed()){
+        return false;
+    }
+    return true;
 }
