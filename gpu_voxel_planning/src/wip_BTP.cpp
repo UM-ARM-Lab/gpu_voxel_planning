@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
     // HOPGraphSearch strat;
     // OROGraphSearch strat;
     // QMDP strat;
-    ParetoCostGraphSearch strat(1.0);
+    CollisionMeasure strat(1.0);
 
     // arc_helpers::WaitForInput();
 

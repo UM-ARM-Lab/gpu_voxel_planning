@@ -53,6 +53,7 @@ namespace GVP {
             return;
         }
 
+        std::cout << "Updating goals\n";
         //TODO: Very temporary
         const auto &goal_configs = scenario.getPossibleGoals();
         if (goal_configs.size() == 0) {
@@ -67,7 +68,7 @@ namespace GVP {
         if (!initialized) {
             initialize(scenario);
         }
-        std::cout << "Updating goals\n";
+
         updateGoals(scenario);
 
         const VictorRightArmConfig &current(scenario.getState().getCurConfig());
@@ -220,7 +221,7 @@ namespace GVP {
 /**********************************
 **  ParetoCost Graph Search
 ********************************/
-    double ParetoCostGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) {
+    double CollisionMeasure::calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) {
         double edge_probability = s.calcProbFree(getSweptVolume(s, e));
         if (edge_probability <= 0) {
             return std::numeric_limits<double>::infinity();
@@ -230,9 +231,9 @@ namespace GVP {
         return l_cost + alpha * p_cost;
     }
 
-    std::string ParetoCostGraphSearch::getName() const {
+    std::string CollisionMeasure::getName() const {
         std::stringstream ss;
-        ss << "ParetoCosta" << alpha;
+        ss << "CollisionMeasure_a" << alpha;
         return ss.str();
     }
 

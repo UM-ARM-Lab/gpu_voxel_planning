@@ -474,8 +474,5 @@ std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const
 }
 
 bool ShapeRequestScenario::completed() const {
-    if(!Scenario::completed()){
-        return false;
-    }
-    return true;
+  return Scenario::completed();
 }

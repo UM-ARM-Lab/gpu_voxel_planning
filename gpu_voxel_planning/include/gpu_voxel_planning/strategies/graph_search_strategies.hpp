@@ -94,13 +94,13 @@ namespace GVP {
         std::string getName() const override;
     };
 
-    class ParetoCostGraphSearch : public GraphSearchStrategy {
+    class CollisionMeasure : public GraphSearchStrategy {
     public:
         double alpha = 10.0;
 
-        explicit ParetoCostGraphSearch(const std::string &filename) : GraphSearchStrategy(filename) {}
+        explicit CollisionMeasure(const std::string &filename) : GraphSearchStrategy(filename) {}
 
-        explicit ParetoCostGraphSearch(double alpha) : alpha(alpha) {}
+        explicit CollisionMeasure(double alpha) : alpha(alpha) {}
 
         double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
 

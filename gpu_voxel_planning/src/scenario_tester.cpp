@@ -54,7 +54,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy) {
   scenario.viz(ri.viz);
 
   std::string name = getName(strategy);
-  while (!scenario.completed()) {
+  while (!scenario.completed() and ros::ok()) {
     // arc_helpers::WaitForInput();
     PROFILE_START(name + " Planning Time");
     std::vector<VictorRightArmConfig> path;

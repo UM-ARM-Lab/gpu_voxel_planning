@@ -44,7 +44,7 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
 // void test2(ros::NodeHandle &n)
 // {
 //     TableWithBox scenario(true, true, false);
-//     ParetoCostGraphSearch strat(1.0);
+//     CollisionMeasure strat(1.0);
 //     test(n, scenario, strat);
 // }
 
@@ -60,8 +60,8 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrategyFactories() {
   std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> factories;
   factories.push_back([]() { return std::make_shared<OptimisticGraphSearch>(); });
-  // factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(1.0);});
-  // factories.push_back([](){ return std::make_shared<ParetoCostGraphSearch>(10.0);});
+  // factories.push_back([](){ return std::make_shared<CollisionMeasure>(1.0);});
+  // factories.push_back([](){ return std::make_shared<CollisionMeasure>(10.0);});
   // factories.push_back([](){ return std::make_shared<ThompsonGraphSearch>();});
   // factories.push_back([](){ return std::make_shared<HOPGraphSearch>();});
   // factories.push_back([](){ return std::make_shared<QMDP>();});

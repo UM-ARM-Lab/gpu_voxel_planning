@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     RealScenarioTester tester(scenario, n);
 
     // OptimisticGraphSearch strat;
-    ParetoCostGraphSearch strat(1.0);
+    CollisionMeasure strat(1.0);
     // ThompsonGraphSearch strat;
     // HOPGraphSearch strat;
      
