@@ -1,7 +1,6 @@
 #ifndef GPU_VOX_HARDCODED_PARAMS_H
 #define GPU_VOX_HARDCODED_PARAMS_H
 
-
 /* Number of iterations to run shortcut smoothing */
 #define SMOOTHING_ITERATIONS 100
 

@@ -58,10 +58,11 @@ class VictorArmConfig {
   explicit VictorArmConfig(const std::vector<std::string>* joint_names) : joint_names(joint_names){};
 
   VictorArmConfig(const std::vector<std::string>* joint_names, std::vector<double> joint_values_)
-      : joint_names(joint_names), joint_values(std::move(joint_values_)){
-      if(joint_values.size() != joint_names->size()){
-          throw std::range_error("Invalid joint size when creating VictorArmConfig: " + std::to_string(joint_values.size()));
-      }
+      : joint_names(joint_names), joint_values(std::move(joint_values_)) {
+    if (joint_values.size() != joint_names->size()) {
+      throw std::range_error("Invalid joint size when creating VictorArmConfig: " +
+                             std::to_string(joint_values.size()));
+    }
   };
 
   VictorArmConfig(const std::vector<std::string>* joint_names, const double* values) : joint_names(joint_names) {

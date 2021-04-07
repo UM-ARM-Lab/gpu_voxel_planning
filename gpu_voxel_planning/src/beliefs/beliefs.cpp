@@ -2,6 +2,7 @@
 // Created by bsaund on 12/13/20.
 //
 #include "gpu_voxel_planning/beliefs/beliefs.hpp"
+
 #include <gpu_voxel_planning/pointcloud_utils.h>
 #include <gpu_voxel_planning_msgs/CompleteShape.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -14,148 +15,148 @@ using namespace GVP;
 
 GVP::ObstacleBelief::ObstacleBelief(const ObstacleConfiguration &oc, const double noise,
                                     const std::vector<double> &bias) {
-    int num_samples = 10;  // HARDCODED PARAM
-    std::mt19937 rng;
-    std::normal_distribution<float> offset(0, noise);
-    for (int i = 0; i < num_samples; i++) {
-        ObstacleConfiguration sample = oc;
-        for (auto &object : sample.obstacles) {
-            object.shift(Vector3f(offset(rng) + bias[0], offset(rng) + bias[1], offset(rng) + bias[2]));
-        }
-        sample.remakeGrid();
-        addElem(sample, 1.0);
+  int num_samples = 10;  // HARDCODED PARAM
+  std::mt19937 rng;
+  std::normal_distribution<float> offset(0, noise);
+  for (int i = 0; i < num_samples; i++) {
+    ObstacleConfiguration sample = oc;
+    for (auto &object : sample.obstacles) {
+      object.shift(Vector3f(offset(rng) + bias[0], offset(rng) + bias[1], offset(rng) + bias[2]));
     }
+    sample.remakeGrid();
+    addElem(sample, 1.0);
+  }
 }
 
 std::unique_ptr<ObstacleBelief> GVP::ObstacleBelief::cloneObstacleBelief() const {
-    std::cout << "cloning obstacle belief\n";
-    std::unique_ptr<ObstacleBelief> b = std::make_unique<ObstacleBelief>();
-    b->particles = particles;
-    b->weights = weights;
-    return b;
+  std::cout << "cloning obstacle belief\n";
+  std::unique_ptr<ObstacleBelief> b = std::make_unique<ObstacleBelief>();
+  b->particles = particles;
+  b->weights = weights;
+  return b;
 }
 
 void GVP::ObstacleBelief::addElem(const GVP::ObstacleConfiguration &obs, double weight) {
-    particles.push_back(obs);
-    weights.push_back(weight);
+  particles.push_back(obs);
+  weights.push_back(weight);
 }
 
 double GVP::ObstacleBelief::calcProbFree(const DenseGrid &volume) {
-    double agreement = 0;
-    if (cumSum().back() <= 0) {
-        return 1.0;
-    }
+  double agreement = 0;
+  if (cumSum().back() <= 0) {
+    return 1.0;
+  }
 
-    for (int i = 0; i < particles.size(); i++) {
-        if (!particles[i].occupied.overlapsWith(&volume)) {
-            agreement += weights[i];
-        }
+  for (int i = 0; i < particles.size(); i++) {
+    if (!particles[i].occupied.overlapsWith(&volume)) {
+      agreement += weights[i];
     }
-    return agreement / cumSum().back();
+  }
+  return agreement / cumSum().back();
 }
 
 void GVP::ObstacleBelief::updateFreeSpace(const DenseGrid &new_free) {
-    PROFILE_START("Obstacle_belief_update_free");
-    for (int i = 0; i < particles.size(); i++) {
-        if (weights[i] == 0) {
-            continue;
-        }
-        // heuristic for near collisions
-        if (particles[i].occupied.collideWith(&new_free) > 0) {
-            weights[i] = 0;
-        }
+  PROFILE_START("Obstacle_belief_update_free");
+  for (int i = 0; i < particles.size(); i++) {
+    if (weights[i] == 0) {
+      continue;
     }
-    PROFILE_RECORD("Obstacle_belief_update_free");
+    // heuristic for near collisions
+    if (particles[i].occupied.collideWith(&new_free) > 0) {
+      weights[i] = 0;
+    }
+  }
+  PROFILE_RECORD("Obstacle_belief_update_free");
 }
 
 std::vector<std::vector<double>> GVP::ObstacleBelief::getParticleVectors() const {
-    std::vector<std::vector<double>> pvs;
-    for (const auto &particle : particles) {
-        pvs.push_back(particle.asParticle());
-    }
-    return pvs;
+  std::vector<std::vector<double>> pvs;
+  for (const auto &particle : particles) {
+    pvs.push_back(particle.asParticle());
+  }
+  return pvs;
 }
 
 std::vector<double> ObstacleBelief::kernelDensityEstimate(std::vector<std::vector<double>> prior,
                                                           double bandwidth) const {
-    double normalizing = cumSum().back() * weights.size();
-    if (normalizing <= 0) {
-        return std::vector<double>(particles.size(), 0);
-    }
+  double normalizing = cumSum().back() * weights.size();
+  if (normalizing <= 0) {
+    return std::vector<double>(particles.size(), 0);
+  }
 
-    std::vector<double> new_weights;
-    for (const auto &particle : particles) {
-        double w_i = 0;
-        for (int i = 0; i < weights.size(); i++) {
-            // double d = EigenHelpers::Distance(particle.asParticle(), prior[i]);
-            double density = 1;
-            auto pv = particle.asParticle();
-            for (int j = 0; j < pv.size(); j++) {
-                double d = pv[j] - prior[i][j];
-                density *= arc_helpers::EvaluateGaussianPDF(0, bandwidth, d);
-            }
-            w_i += density * weights[i];
-        }
-        new_weights.push_back(w_i / normalizing);
+  std::vector<double> new_weights;
+  for (const auto &particle : particles) {
+    double w_i = 0;
+    for (int i = 0; i < weights.size(); i++) {
+      // double d = EigenHelpers::Distance(particle.asParticle(), prior[i]);
+      double density = 1;
+      auto pv = particle.asParticle();
+      for (int j = 0; j < pv.size(); j++) {
+        double d = pv[j] - prior[i][j];
+        density *= arc_helpers::EvaluateGaussianPDF(0, bandwidth, d);
+      }
+      w_i += density * weights[i];
     }
-    return new_weights;
+    new_weights.push_back(w_i / normalizing);
+  }
+  return new_weights;
 }
 
 void ObstacleBelief::updateCollisionSpace(Robot &robot, const size_t first_link_in_collision) {
-    PROFILE_START("Obstacle_belief_update_collision");
-    auto prior = getParticleVectors();
+  PROFILE_START("Obstacle_belief_update_collision");
+  auto prior = getParticleVectors();
 
-    DistanceGrid dg;
-    dg.mergeOccupied(&robot.occupied_space);
-    for (auto &particle : particles) {
-        particle.project(dg);
-    }
-    weights = kernelDensityEstimate(prior, 0.05);
-    // recomputeWeights();
-    std::cout << "Sum of particle weights is " << cumSum().back() << "\n";
+  DistanceGrid dg;
+  dg.mergeOccupied(&robot.occupied_space);
+  for (auto &particle : particles) {
+    particle.project(dg);
+  }
+  weights = kernelDensityEstimate(prior, 0.05);
+  // recomputeWeights();
+  std::cout << "Sum of particle weights is " << cumSum().back() << "\n";
 
-    PROFILE_RECORD("Obstacle_belief_update_collision");
+  PROFILE_RECORD("Obstacle_belief_update_collision");
 }
 
 DenseGrid ObstacleBelief::sampleState() const {
-    std::mt19937 rng;
-    rng.seed(std::random_device()());
-    std::uniform_real_distribution<double> dist(0.0, cumSum().back());
-    double r = dist(rng);
-    auto cum_sum = cumSum();
-    if (cum_sum.back() == 0) {
-        return DenseGrid();
-    }
+  std::mt19937 rng;
+  rng.seed(std::random_device()());
+  std::uniform_real_distribution<double> dist(0.0, cumSum().back());
+  double r = dist(rng);
+  auto cum_sum = cumSum();
+  if (cum_sum.back() == 0) {
+    return DenseGrid();
+  }
 
-    for (int i = 0; i < particles.size(); i++) {
-        if (r <= cum_sum[i]) {
-            return particles[i].occupied;
-        }
+  for (int i = 0; i < particles.size(); i++) {
+    if (r <= cum_sum[i]) {
+      return particles[i].occupied;
     }
-    throw std::logic_error("Particle sample not found in cum_sum");
+  }
+  throw std::logic_error("Particle sample not found in cum_sum");
 }
 
 void ObstacleBelief::viz(const GpuVoxelRvizVisualizer &viz) {
-    std::vector<DenseGrid *> grids;
-    std::vector<double> alphas;
-    for (int i = 0; i < particles.size(); i++) {
-        if (weights[i] == 0) {
-            continue;
-        }
-        alphas.push_back(std::max(weights[i] / cumSum().back(), 1.0 / 100));
-        grids.emplace_back(&particles[i].occupied);
+  std::vector<DenseGrid *> grids;
+  std::vector<double> alphas;
+  for (int i = 0; i < particles.size(); i++) {
+    if (weights[i] == 0) {
+      continue;
     }
-    viz.vizGrids(grids, alphas, "belief_obstacles");
+    alphas.push_back(std::max(weights[i] / cumSum().back(), 1.0 / 100));
+    grids.emplace_back(&particles[i].occupied);
+  }
+  viz.vizGrids(grids, alphas, "belief_obstacles");
 }
 
 std::vector<double> ObstacleBelief::cumSum() const {
-    double sum = 0;
-    std::vector<double> cum_sum;
-    for (const auto &w : weights) {
-        sum += w;
-        cum_sum.push_back(sum);
-    }
-    return cum_sum;
+  double sum = 0;
+  std::vector<double> cum_sum;
+  for (const auto &w : weights) {
+    sum += w;
+    cum_sum.push_back(sum);
+  }
+  return cum_sum;
 }
 
 /***************************************************************
@@ -163,63 +164,63 @@ std::vector<double> ObstacleBelief::cumSum() const {
  ***************************************************************/
 
 std::unique_ptr<ChsBelief> ChsBelief::cloneChsBelief() const {
-    std::unique_ptr<ChsBelief> b = std::make_unique<ChsBelief>();
-    b->known_free = known_free;
-    b->chs = chs;
-    return b;
+  std::unique_ptr<ChsBelief> b = std::make_unique<ChsBelief>();
+  b->known_free = known_free;
+  b->chs = chs;
+  return b;
 }
 
 void ChsBelief::viz(const GpuVoxelRvizVisualizer &viz) {
-    viz.vizChs(chs);
-    viz.vizGrid(known_free, "known_free", makeColor(0, 0, 1, 0.1));
+  viz.vizChs(chs);
+  viz.vizGrid(known_free, "known_free", makeColor(0, 0, 1, 0.1));
 }
 
 double ChsBelief::calcProbFree(const DenseGrid &volume) {
-    PROFILE_START("CalcProbFreeCHS");
-    double p_free = 1.0;
-    for (auto &c : chs) {
-        if (c.countOccupied() == 0) {
-            // throw std::runtime_error("Empty CHS");
-            continue;
-        }
-        p_free *= 1 - ((double) c.collideWith(&volume) / c.countOccupied());
+  PROFILE_START("CalcProbFreeCHS");
+  double p_free = 1.0;
+  for (auto &c : chs) {
+    if (c.countOccupied() == 0) {
+      // throw std::runtime_error("Empty CHS");
+      continue;
     }
-    PROFILE_RECORD("CalcProbFreeCHS");
-    return p_free;
+    p_free *= 1 - ((double)c.collideWith(&volume) / c.countOccupied());
+  }
+  PROFILE_RECORD("CalcProbFreeCHS");
+  return p_free;
 }
 
 void ChsBelief::updateFreeSpace(const DenseGrid &new_free) {
-    known_free.add(&new_free);
-    for (auto &c : chs) {
-        c.subtract(&new_free);
-    }
+  known_free.add(&new_free);
+  for (auto &c : chs) {
+    c.subtract(&new_free);
+  }
 }
 
 void ChsBelief::updateCollisionSpace(Robot &robot, const size_t first_link_in_collision) {
-    addChs(robot, first_link_in_collision);
+  addChs(robot, first_link_in_collision);
 }
 
 void ChsBelief::addChs(Robot &robot, const size_t first_link_in_collision) {
-    auto link_occupancies = robot.getLinkOccupancies();
-    if (first_link_in_collision >= link_occupancies.size()) {
-        throw std::logic_error("Trying to add CHS, but no link collided");
-    }
+  auto link_occupancies = robot.getLinkOccupancies();
+  if (first_link_in_collision >= link_occupancies.size()) {
+    throw std::logic_error("Trying to add CHS, but no link collided");
+  }
 
-    DenseGrid new_chs;
+  DenseGrid new_chs;
 
-    for (size_t i = first_link_in_collision; i < link_occupancies.size(); i++) {
-        new_chs.add(&link_occupancies[i]);
-    }
-    new_chs.subtract(&known_free);
-    chs.push_back(new_chs);
+  for (size_t i = first_link_in_collision; i < link_occupancies.size(); i++) {
+    new_chs.add(&link_occupancies[i]);
+  }
+  new_chs.subtract(&known_free);
+  chs.push_back(new_chs);
 }
 
 DenseGrid ChsBelief::sampleState() const {
-    DenseGrid sampled_obstacles;
-    for (const auto &c : chs) {
-        c.copyRandomOccupiedElement(sampled_obstacles);
-    }
-    return sampled_obstacles;
+  DenseGrid sampled_obstacles;
+  for (const auto &c : chs) {
+    c.copyRandomOccupiedElement(sampled_obstacles);
+  }
+  return sampled_obstacles;
 }
 
 /************************************************************
@@ -227,236 +228,233 @@ DenseGrid ChsBelief::sampleState() const {
  ************************************************************/
 
 MoEBelief::MoEBelief(const ObstacleConfiguration &oc, const double noise, const std::vector<double> &bias)
-        : expert_particle(oc, noise, bias) {
-    weights = std::vector<double>{1.0, 1.0};
-    experts.push_back(&expert_chs);
-    experts.push_back(&expert_particle);
-    particle_prior = expert_particle.getParticleVectors();
+    : expert_particle(oc, noise, bias) {
+  weights = std::vector<double>{1.0, 1.0};
+  experts.push_back(&expert_chs);
+  experts.push_back(&expert_particle);
+  particle_prior = expert_particle.getParticleVectors();
 
-    updateWeights();
-    std::cout << "Weights are: " << PrettyPrint::PrettyPrint(weights) << "\n";
+  updateWeights();
+  std::cout << "Weights are: " << PrettyPrint::PrettyPrint(weights) << "\n";
 }
 
 std::unique_ptr<Belief> MoEBelief::clone() const {
-    std::cout << "Cloning MoE belief\n";
-    std::unique_ptr<MoEBelief> b =
-            std::make_unique<MoEBelief>(*expert_chs.cloneChsBelief(), *expert_particle.cloneObstacleBelief());
-    // b->expert_particle = expert_particle;
-    // b->expert_chs = expert_chs;
-    b->weights = weights;
-    b->experts.push_back(&(b->expert_chs));
-    b->experts.push_back(&(b->expert_particle));
-    b->particle_prior = particle_prior;
-    return b;
+  std::cout << "Cloning MoE belief\n";
+  std::unique_ptr<MoEBelief> b =
+      std::make_unique<MoEBelief>(*expert_chs.cloneChsBelief(), *expert_particle.cloneObstacleBelief());
+  // b->expert_particle = expert_particle;
+  // b->expert_chs = expert_chs;
+  b->weights = weights;
+  b->experts.push_back(&(b->expert_chs));
+  b->experts.push_back(&(b->expert_particle));
+  b->particle_prior = particle_prior;
+  return b;
 }
 
 double MoEBelief::kernelDensityLikelihood(const std::vector<std::vector<double>> &prior,
                                           const std::vector<std::vector<double>> &posterior,
                                           std::vector<double> posterior_weights, double bandwidth) {
-    std::vector<double> new_weights;
-    double posterior_mass = std::accumulate(posterior_weights.begin(), posterior_weights.end(), (double) 0.0);
+  std::vector<double> new_weights;
+  double posterior_mass = std::accumulate(posterior_weights.begin(), posterior_weights.end(), (double)0.0);
 
-    if (posterior_mass <= 0.0) {
-        return 0.0;
+  if (posterior_mass <= 0.0) {
+    return 0.0;
+  }
+
+  // std::cout << "posterior mass: " << posterior_mass << "\n";
+  double normalizing = prior.size() * posterior_mass;
+  // std::cout << "normalizing factor: " << normalizing << "\n";
+  double total = 0;
+
+  for (const auto &particle : posterior) {
+    double w_i = 0;
+    for (int i = 0; i < prior.size(); i++) {
+      double density = 1;
+      for (int j = 0; j < prior[i].size(); j++) {
+        double d = particle[j] - prior[i][j];
+        density *= arc_helpers::EvaluateGaussianPDF(0, bandwidth, d);
+      }
+      w_i += density * posterior_weights[i];
     }
-
-    // std::cout << "posterior mass: " << posterior_mass << "\n";
-    double normalizing = prior.size() * posterior_mass;
-    // std::cout << "normalizing factor: " << normalizing << "\n";
-    double total = 0;
-
-    for (const auto &particle : posterior) {
-        double w_i = 0;
-        for (int i = 0; i < prior.size(); i++) {
-            double density = 1;
-            for (int j = 0; j < prior[i].size(); j++) {
-                double d = particle[j] - prior[i][j];
-                density *= arc_helpers::EvaluateGaussianPDF(0, bandwidth, d);
-            }
-            w_i += density * posterior_weights[i];
-        }
-        total += w_i / normalizing;
-    }
-    return total;
+    total += w_i / normalizing;
+  }
+  return total;
 }
 
 std::vector<double> MoEBelief::cumSum() const {
-    std::vector<double> cs;
-    double sum = 0;
-    for (const auto &w : weights) {
-        sum += w;
-        cs.push_back(sum);
-    }
-    return cs;
+  std::vector<double> cs;
+  double sum = 0;
+  for (const auto &w : weights) {
+    sum += w;
+    cs.push_back(sum);
+  }
+  return cs;
 }
 
 void MoEBelief::viz(const GpuVoxelRvizVisualizer &viz) {
-    for (const auto &expert : experts) {
-        expert->viz(viz);
-    }
+  for (const auto &expert : experts) {
+    expert->viz(viz);
+  }
 }
 
 void MoEBelief::updateWeights() {
-    // weights[0] = weights[0] //CHS weights do not update
-    // std::cout << "expert cum sum: " << expert_particle.cumSum().back() << "\n";
-    weights[1] =
-            kernelDensityLikelihood(particle_prior, expert_particle.getParticleVectors(), expert_particle.weights, 0.1);
+  // weights[0] = weights[0] //CHS weights do not update
+  // std::cout << "expert cum sum: " << expert_particle.cumSum().back() << "\n";
+  weights[1] =
+      kernelDensityLikelihood(particle_prior, expert_particle.getParticleVectors(), expert_particle.weights, 0.1);
 }
 
 double MoEBelief::calcProbFree(const DenseGrid &volume) {
-    double normalizing = cumSum().back();
-    double p = 0;
-    for (int i = 0; i < experts.size(); i++) {
-        p += (weights[i] / normalizing) * experts[i]->calcProbFree(volume);
-    }
-    return p;
+  double normalizing = cumSum().back();
+  double p = 0;
+  for (int i = 0; i < experts.size(); i++) {
+    p += (weights[i] / normalizing) * experts[i]->calcProbFree(volume);
+  }
+  return p;
 }
 
 void MoEBelief::updateFreeSpace(const DenseGrid &new_free) {
-    for (auto &expert : experts) {
-        expert->updateFreeSpace(new_free);
-    }
-    updateWeights();
+  for (auto &expert : experts) {
+    expert->updateFreeSpace(new_free);
+  }
+  updateWeights();
 }
 
 void MoEBelief::updateCollisionSpace(Robot &robot, const size_t first_link_in_collision) {
-    for (auto &expert : experts) {
-        expert->updateCollisionSpace(robot, first_link_in_collision);
-    }
-    updateWeights();
-    std::cout << "Weights are: " << PrettyPrint::PrettyPrint(weights) << "\n";
+  for (auto &expert : experts) {
+    expert->updateCollisionSpace(robot, first_link_in_collision);
+  }
+  updateWeights();
+  std::cout << "Weights are: " << PrettyPrint::PrettyPrint(weights) << "\n";
 }
 
 DenseGrid MoEBelief::sampleState() const {
-    std::vector<double> cum_sum = cumSum();
-    std::mt19937 rng;
-    rng.seed(std::random_device()());
-    std::uniform_real_distribution<double> dist(0.0, cum_sum.back());
-    double r = dist(rng);
+  std::vector<double> cum_sum = cumSum();
+  std::mt19937 rng;
+  rng.seed(std::random_device()());
+  std::uniform_real_distribution<double> dist(0.0, cum_sum.back());
+  double r = dist(rng);
 
-    for (int i = 0; i < experts.size(); i++) {
-        if (r <= cum_sum[i]) {
-            return experts[i]->sampleState();
-        }
+  for (int i = 0; i < experts.size(); i++) {
+    if (r <= cum_sum[i]) {
+      return experts[i]->sampleState();
     }
-    throw std::logic_error("Sampling from mixture of experts did not find an expert");
+  }
+  throw std::logic_error("Sampling from mixture of experts did not find an expert");
 }
-
 
 /***************************************************************
  * Shape Completion Belief
  ***************************************************************/
 ShapeCompletionBelief::ShapeCompletionBelief() {
-    std::cout << "Constructing shape completion belief\n";
-    sampled_particles.resize(num_samples);
-    requestCompletions();
+  std::cout << "Constructing shape completion belief\n";
+  sampled_particles.resize(num_samples);
+  requestCompletions();
 
-    ros::NodeHandle nh;
-    free_space_publisher = nh.advertise<sensor_msgs::PointCloud2>("swept_freespace_pointcloud", 10);
+  ros::NodeHandle nh;
+  free_space_publisher = nh.advertise<sensor_msgs::PointCloud2>("swept_freespace_pointcloud", 10);
 }
 
 double ShapeCompletionBelief::calcProbFree(const DenseGrid &volume) {
-    PROFILE_START("CalcProbShapeCompletion");
-    if (sampled_particles.empty()) {
-        return 1.0;
-    }
+  PROFILE_START("CalcProbShapeCompletion");
+  if (sampled_particles.empty()) {
+    return 1.0;
+  }
 
-    int num_free = 0;
-    for (auto &c : sampled_particles) {
-        if (c.collideWith(&volume) == 0) {
-            num_free++;
-        }
+  int num_free = 0;
+  for (auto &c : sampled_particles) {
+    if (c.collideWith(&volume) == 0) {
+      num_free++;
     }
+  }
 
-    PROFILE_RECORD("CalcProbShapeCompletion");
-    return (double) num_free / sampled_particles.size();
+  PROFILE_RECORD("CalcProbShapeCompletion");
+  return (double)num_free / sampled_particles.size();
 }
 
 void ShapeCompletionBelief::updateFreeSpace(const DenseGrid &new_free) {
-    known_free.add(&new_free);
-    for (auto &c: chss) {
-        c.subtract(&new_free);
-    }
-    free_space_publisher.publish(toMsg(known_free));
-//  std::cout << "Updated free space\n";
+  known_free.add(&new_free);
+  for (auto &c : chss) {
+    c.subtract(&new_free);
+  }
+  free_space_publisher.publish(toMsg(known_free));
+  //  std::cout << "Updated free space\n";
 }
 
 void ShapeCompletionBelief::updateCollisionSpace(Robot &robot, size_t first_link_in_collision) {
-    auto link_occupancies = robot.getLinkOccupancies();
-    if (first_link_in_collision >= link_occupancies.size()) {
-        throw std::logic_error("Trying to add CHS, but no link collided");
-    }
-    DenseGrid new_chs;
-    for (size_t i = first_link_in_collision; i < link_occupancies.size(); i++) {
-        new_chs.add(&link_occupancies[i]);
-    }
-    new_chs.subtract(&known_free);
-    chss.push_back(new_chs);
-    requestCompletions();
+  auto link_occupancies = robot.getLinkOccupancies();
+  if (first_link_in_collision >= link_occupancies.size()) {
+    throw std::logic_error("Trying to add CHS, but no link collided");
+  }
+  DenseGrid new_chs;
+  for (size_t i = first_link_in_collision; i < link_occupancies.size(); i++) {
+    new_chs.add(&link_occupancies[i]);
+  }
+  new_chs.subtract(&known_free);
+  chss.push_back(new_chs);
+  requestCompletions();
 }
 
 DenseGrid ShapeCompletionBelief::sampleState() const {
-    std::mt19937 rng;
-    rng.seed(std::random_device()());
-    std::uniform_int_distribution dist(0, (int) sampled_particles.size());
-    return sampled_particles[dist(rng)];
+  std::mt19937 rng;
+  rng.seed(std::random_device()());
+  std::uniform_int_distribution dist(0, (int)sampled_particles.size());
+  return sampled_particles[dist(rng)];
 }
 
 void ShapeCompletionBelief::viz(const GpuVoxelRvizVisualizer &viz) {
-    std::vector<DenseGrid *> grids;
-    std::vector<double> alphas;
-    for (auto &sampled_particle : sampled_particles) {
-        alphas.push_back(1.0 / sampled_particles.size());
-        grids.emplace_back(&sampled_particle);
-    }
-    viz.vizGrids(grids, alphas, "belief_obstacles");
-    viz.vizGrid(known_free, "known_free", makeColor(0, 0, 1, 0.1));
+  std::vector<DenseGrid *> grids;
+  std::vector<double> alphas;
+  for (auto &sampled_particle : sampled_particles) {
+    alphas.push_back(1.0 / sampled_particles.size());
+    grids.emplace_back(&sampled_particle);
+  }
+  viz.vizGrids(grids, alphas, "belief_obstacles");
+  viz.vizGrid(known_free, "known_free", makeColor(0, 0, 1, 0.1));
 }
 
 std::unique_ptr<Belief> ShapeCompletionBelief::clone() const {
-    std::unique_ptr<ShapeCompletionBelief> b;
-    b->sampled_particles = sampled_particles;
-    b->chss = chss;
-    b->known_free = known_free;
-    return b;
+  std::unique_ptr<ShapeCompletionBelief> b;
+  b->sampled_particles = sampled_particles;
+  b->chss = chss;
+  b->known_free = known_free;
+  return b;
 }
 
 void ShapeCompletionBelief::requestCompletions() {
-    std::cout << "Requesting Shape Completion\n";
-    ros::NodeHandle n;
-    ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::CompleteShape>("/complete_shape");
-    gpu_voxel_planning_msgs::CompleteShape srv;
-    srv.request.known_free = toMsg(known_free);
-    srv.request.num_samples = num_samples;
-    if (client.call(srv)) {
-        std::cout << "Shapes completed\n";
-    } else {
-        throw (std::runtime_error("complete shape failed. Perhaps the service is not running?"));
-    }
-    if (srv.response.sampled_completions.size() != num_samples) {
-        throw std::length_error("Requested " + std::to_string(num_samples) + " completions but got " +
-                                std::to_string(srv.response.sampled_completions.size()));
-    }
+  std::cout << "Requesting Shape Completion\n";
+  ros::NodeHandle n;
+  ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::CompleteShape>("/complete_shape");
+  gpu_voxel_planning_msgs::CompleteShape srv;
+  srv.request.known_free = toMsg(known_free);
+  srv.request.num_samples = num_samples;
+  if (client.call(srv)) {
+    std::cout << "Shapes completed\n";
+  } else {
+    throw(std::runtime_error("complete shape failed. Perhaps the service is not running?"));
+  }
+  if (srv.response.sampled_completions.size() != num_samples) {
+    throw std::length_error("Requested " + std::to_string(num_samples) + " completions but got " +
+                            std::to_string(srv.response.sampled_completions.size()));
+  }
 
-//    std::cout << "Loading samples from message...";
-    std::vector<robot::JointValueMap> goals;
-    for (int i = 0; i < num_samples; i++) {
-        sampled_particles[i] = DenseGrid();
-        sampled_particles[i].insertPointCloud(toPointsVector(srv.response.sampled_completions[i]), PROB_OCCUPIED);
-        goals.push_back(VictorRightArmConfig(srv.response.goal_configs[i].joint_values).asMap());
-//        goals.push_back(sr)
-    }
-    possible_goals = goals;
-//    std::cout << "...Done\n";
+  //    std::cout << "Loading samples from message...";
+  std::vector<robot::JointValueMap> goals;
+  for (int i = 0; i < num_samples; i++) {
+    sampled_particles[i] = DenseGrid();
+    sampled_particles[i].insertPointCloud(toPointsVector(srv.response.sampled_completions[i]), PROB_OCCUPIED);
+    goals.push_back(VictorRightArmConfig(srv.response.goal_configs[i].joint_values).asMap());
+    //        goals.push_back(sr)
+  }
+  possible_goals = goals;
+  //    std::cout << "...Done\n";
 }
 
 std::vector<robot::JointValueMap> ShapeCompletionBelief::getPossibleGoals() const {
-    if (possible_goals.has_value()) {
-        return possible_goals.value();
-    }
-    throw std::logic_error("Shape completion belief does not have any possible goals");
+  if (possible_goals.has_value()) {
+    return possible_goals.value();
+  }
+  throw std::logic_error("Shape completion belief does not have any possible goals");
 }
 
-void ShapeCompletionBelief::syncBelief() {
-    requestCompletions();
-}
+void ShapeCompletionBelief::syncBelief() { requestCompletions(); }

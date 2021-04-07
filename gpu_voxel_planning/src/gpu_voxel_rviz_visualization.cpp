@@ -95,8 +95,9 @@ rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped GVP::denseGridToMsg(const De
   return msg;
 }
 
-rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped GVP::denseGridsToMsg(
-    const std::vector<DenseGrid*>& grids, const std::vector<double>& alphas, const std::string& frame) {
+rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped GVP::denseGridsToMsg(const std::vector<DenseGrid*>& grids,
+                                                                         const std::vector<double>& alphas,
+                                                                         const std::string& frame) {
   rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped msg;
   msg.header.frame_id = frame;
 
@@ -110,7 +111,7 @@ rviz_voxelgrid_visuals_msgs::SparseVoxelgridStamped GVP::denseGridsToMsg(
       msg.voxels.push_back(voxel);
     }
   }
-  if(!grids.empty()) {
+  if (!grids.empty()) {
     msg.scale = grids[0]->getVoxelSideLength();
   }
   return msg;
@@ -139,8 +140,8 @@ void GVP::GpuVoxelRvizVisualizer::vizGrid(const DenseGrid& grid, const std::stri
   }
 }
 
-void GVP::GpuVoxelRvizVisualizer::vizGrids(const std::vector<DenseGrid*>& grids,
-                                           const std::vector<double>& alphas, const std::string& name) const {
+void GVP::GpuVoxelRvizVisualizer::vizGrids(const std::vector<DenseGrid*>& grids, const std::vector<double>& alphas,
+                                           const std::string& name) const {
   try {
     grid_pubs.at(name).publish(denseGridsToMsg(grids, alphas, global_frame));
   } catch (std::out_of_range& e) {

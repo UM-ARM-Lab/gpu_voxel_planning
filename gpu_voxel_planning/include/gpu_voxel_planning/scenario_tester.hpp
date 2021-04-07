@@ -1,64 +1,52 @@
 #ifndef SCENARIO_TESTER_HPP
 #define SCENARIO_TESTER_HPP
 
-#include "gpu_voxel_planning/scenarios/simulation_scenarios.hpp"
-#include "gpu_voxel_planning/scenarios/real_scenario.hpp"
-#include "gpu_voxel_planning/strategies/strategies.hpp"
-#include "gpu_voxel_planning/ros_interface/ros_interface.hpp"
 #include <ros/ros.h>
 
+#include "gpu_voxel_planning/ros_interface/ros_interface.hpp"
+#include "gpu_voxel_planning/scenarios/real_scenario.hpp"
+#include "gpu_voxel_planning/scenarios/simulation_scenarios.hpp"
+#include "gpu_voxel_planning/strategies/strategies.hpp"
 
-namespace GVP
-{
-    class SimulationScenarioTester
-    {
-    public:
-        SimulationScenario &scenario;
-        RosInterface ri;
-        ros::NodeHandle &n;
+namespace GVP {
+class SimulationScenarioTester {
+ public:
+  SimulationScenario &scenario;
+  RosInterface ri;
+  ros::NodeHandle &n;
 
-        int num_path_attempts;
-        bool last_invalid = false;
-        
+  int num_path_attempts;
+  bool last_invalid = false;
 
-        SimulationScenarioTester(SimulationScenario &scenario, ros::NodeHandle &n) :
-            scenario(scenario), n(n), ri(n), num_path_attempts(0)
-        {
-        }
+  SimulationScenarioTester(SimulationScenario &scenario, ros::NodeHandle &n)
+      : scenario(scenario), n(n), ri(n), num_path_attempts(0) {}
 
-        bool attemptPath(const std::vector<VictorRightArmConfig> &path);
+  bool attemptPath(const std::vector<VictorRightArmConfig> &path);
 
-        bool attemptStrategy(Strategy &strategy);
+  bool attemptStrategy(Strategy &strategy);
 
-        std::string getName(const Strategy &strategy) const;
-    };
+  std::string getName(const Strategy &strategy) const;
+};
 
+class RealScenarioTester {
+ public:
+  RealScenario &scenario;
+  RosInterface ri;
+  ros::NodeHandle &n;
+  int num_path_attempts;
+  bool last_invalid = false;
+  std::vector<VictorRightArmConfig> path_taken;
 
-    class RealScenarioTester
-    {
-    public:
-        RealScenario &scenario;
-        RosInterface ri;
-        ros::NodeHandle &n;
-        int num_path_attempts;
-        bool last_invalid = false;
-        std::vector<VictorRightArmConfig> path_taken;
+  RealScenarioTester(RealScenario &scenario, ros::NodeHandle &n) : scenario(scenario), n(n), ri(n) {}
 
-        
+  bool attemptPath(const std::vector<VictorRightArmConfig> &path);
 
-        RealScenarioTester(RealScenario &scenario, ros::NodeHandle &n) :
-            scenario(scenario), n(n), ri(n)
-        {
-        }
+  bool reversePath();
 
-        bool attemptPath(const std::vector<VictorRightArmConfig> &path);
+  bool attemptStrategy(Strategy &strategy);
 
-        bool reversePath();
-
-        bool attemptStrategy(Strategy &strategy);
-
-        std::string getName(const Strategy &strategy) const;
-    };
-}
+  std::string getName(const Strategy &strategy) const;
+};
+}  // namespace GVP
 
 #endif

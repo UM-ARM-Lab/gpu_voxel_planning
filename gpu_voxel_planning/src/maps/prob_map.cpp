@@ -19,9 +19,7 @@ SparseGrid& SparseGrid::operator=(const DenseGrid& other) {
   return *this;
 }
 
-void SparseGrid::merge(const DenseGrid* other) {
-  gpu_voxels::voxellist::ProbVoxelList::merge(other);
-}
+void SparseGrid::merge(const DenseGrid* other) { gpu_voxels::voxellist::ProbVoxelList::merge(other); }
 
 /*******************
  ** Dense Grid

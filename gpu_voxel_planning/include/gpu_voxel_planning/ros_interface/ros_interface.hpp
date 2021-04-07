@@ -1,110 +1,87 @@
 #ifndef GVP_ROS_INTERFACE_HPP
 #define GVP_ROS_INTERFACE_HPP
 
-#include <ros/ros.h>
-#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
-#include "gpu_voxel_planning/robot/robot_model.hpp"
-#include <gpu_voxel_planning_msgs/AttemptPathStart.h>
 #include <gpu_voxel_planning_msgs/AttemptPathResult.h>
+#include <gpu_voxel_planning_msgs/AttemptPathStart.h>
+#include <ros/ros.h>
 #include <victor_hardware_interface_msgs/MotionCommand.h>
 #include <victor_hardware_interface_msgs/Robotiq3FingerCommand.h>
 
+#include "gpu_voxel_planning/robot/robot_model.hpp"
+#include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
 
-namespace GVP{
-    class RosInterface
-    {
-    public:
-        GpuVoxelRvizVisualizer viz;
-        ros::ServiceClient attempt_path_client;
-        ros::Publisher right_arm_pub;
-        ros::Publisher left_arm_pub;
-        ros::Publisher right_gripper_pub;
-        ros::ServiceClient get_attempt_status_client;
+namespace GVP {
+class RosInterface {
+ public:
+  GpuVoxelRvizVisualizer viz;
+  ros::ServiceClient attempt_path_client;
+  ros::Publisher right_arm_pub;
+  ros::Publisher left_arm_pub;
+  ros::Publisher right_gripper_pub;
+  ros::ServiceClient get_attempt_status_client;
 
-        RosInterface(ros::NodeHandle &n) :
-            viz(n)
-        {
-            attempt_path_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathStart>("attempt_path_on_victor");
-            using namespace victor_hardware_interface_msgs;
-            right_arm_pub = n.advertise<MotionCommand>("victor/right_arm/motion_command", 10);
-            left_arm_pub = n.advertise<MotionCommand>("victor/left_arm/motion_command", 10);
-            right_gripper_pub = n.advertise<Robotiq3FingerCommand>("victor/right_arm/gripper_command", 10);
-            get_attempt_status_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathResult>("get_path_status");
-            
-        }
+  RosInterface(ros::NodeHandle &n) : viz(n) {
+    attempt_path_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathStart>("attempt_path_on_victor");
+    using namespace victor_hardware_interface_msgs;
+    right_arm_pub = n.advertise<MotionCommand>("victor/right_arm/motion_command", 10);
+    left_arm_pub = n.advertise<MotionCommand>("victor/left_arm/motion_command", 10);
+    right_gripper_pub = n.advertise<Robotiq3FingerCommand>("victor/right_arm/gripper_command", 10);
+    get_attempt_status_client = n.serviceClient<gpu_voxel_planning_msgs::AttemptPathResult>("get_path_status");
+  }
 
-        victor_hardware_interface_msgs::MotionCommand vectorToMotionCommand(const std::vector<double>& c)
-        {
-            using namespace victor_hardware_interface_msgs;
-            MotionCommand command;
-            command.control_mode.mode = 2;
-            command.joint_position.joint_1 = c[0];
-            command.joint_position.joint_2 = c[1];
-            command.joint_position.joint_3 = c[2];
-            command.joint_position.joint_4 = c[3];
-            command.joint_position.joint_5 = c[4];
-            command.joint_position.joint_6 = c[5];
-            command.joint_position.joint_7 = c[6];
-            
-            return command;
-        }
-                
+  victor_hardware_interface_msgs::MotionCommand vectorToMotionCommand(const std::vector<double> &c) {
+    using namespace victor_hardware_interface_msgs;
+    MotionCommand command;
+    command.control_mode.mode = 2;
+    command.joint_position.joint_1 = c[0];
+    command.joint_position.joint_2 = c[1];
+    command.joint_position.joint_3 = c[2];
+    command.joint_position.joint_4 = c[3];
+    command.joint_position.joint_5 = c[4];
+    command.joint_position.joint_6 = c[5];
+    command.joint_position.joint_7 = c[6];
 
-        void setRightArm(const VictorRightArmConfig &c)
-        {
-            right_arm_pub.publish(vectorToMotionCommand(c.asVector()));
-        }
+    return command;
+  }
 
-        void setLeftArm(const VictorLeftArmConfig &c)
-        {
-            left_arm_pub.publish(vectorToMotionCommand(c.asVector()));
-        }
+  void setRightArm(const VictorRightArmConfig &c) { right_arm_pub.publish(vectorToMotionCommand(c.asVector())); }
 
-        void setRightGripper(double val)
-        {
-            using namespace victor_hardware_interface_msgs;
-            Robotiq3FingerCommand command;
-            command.finger_a_command.position = val;
-            command.finger_b_command.position = val;
-            command.finger_c_command.position = val;
-            right_gripper_pub.publish(command);
-        }
+  void setLeftArm(const VictorLeftArmConfig &c) { left_arm_pub.publish(vectorToMotionCommand(c.asVector())); }
 
+  void setRightGripper(double val) {
+    using namespace victor_hardware_interface_msgs;
+    Robotiq3FingerCommand command;
+    command.finger_a_command.position = val;
+    command.finger_b_command.position = val;
+    command.finger_c_command.position = val;
+    right_gripper_pub.publish(command);
+  }
 
-        gpu_voxel_planning_msgs::AttemptPathResultResponse
-        moveRightArm(const std::vector<VictorRightArmConfig> &path)
-        {
-            gpu_voxel_planning_msgs::AttemptPathStart srv;
-            srv.request.path.points.resize(path.size());
-            for(int i=0; i<path.size(); i++)
-            {
-                srv.request.path.points[i].positions = path[i].asVector();
-            }
+  gpu_voxel_planning_msgs::AttemptPathResultResponse moveRightArm(const std::vector<VictorRightArmConfig> &path) {
+    gpu_voxel_planning_msgs::AttemptPathStart srv;
+    srv.request.path.points.resize(path.size());
+    for (int i = 0; i < path.size(); i++) {
+      srv.request.path.points[i].positions = path[i].asVector();
+    }
 
-            if(!attempt_path_client.call(srv))
-            {
-                std::cout << "Failed to send command to ros robot\n";
-            }
-            return getPathResponse(); // Blocks until path is complete
-        }
+    if (!attempt_path_client.call(srv)) {
+      std::cout << "Failed to send command to ros robot\n";
+    }
+    return getPathResponse();  // Blocks until path is complete
+  }
 
-        gpu_voxel_planning_msgs::AttemptPathResultResponse getPathResponse()
-        {
-            gpu_voxel_planning_msgs::AttemptPathResult path_res;
-            bool path_finished = false;
-            while(ros::ok() && !path_finished)
-            {
-                // std::cout << "path not yet finished\n";
-                get_attempt_status_client.call(path_res);
-                path_finished = path_res.response.finished;
-                ros::spinOnce();
+  gpu_voxel_planning_msgs::AttemptPathResultResponse getPathResponse() {
+    gpu_voxel_planning_msgs::AttemptPathResult path_res;
+    bool path_finished = false;
+    while (ros::ok() && !path_finished) {
+      // std::cout << "path not yet finished\n";
+      get_attempt_status_client.call(path_res);
+      path_finished = path_res.response.finished;
+      ros::spinOnce();
+    }
+    return path_res.response;
+  }
+};
+}  // namespace GVP
 
-            }
-            return path_res.response;
-        }
-
-    };
-}
-
-
-#endif //GVP_ROS_INTERFACE_HPP
+#endif  // GVP_ROS_INTERFACE_HPP

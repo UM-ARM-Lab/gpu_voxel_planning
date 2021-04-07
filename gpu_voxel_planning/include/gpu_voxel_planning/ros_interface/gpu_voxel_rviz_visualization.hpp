@@ -40,7 +40,7 @@ inline std_msgs::ColorRGBA makeColor(double r, double g, double b, double a = 1.
 class GpuVoxelRvizVisualizer {
  public:
   std::string topic_prefix = "voxelgrid/";
-  std::vector<std::string> grid_names{"known_obstacles", "unknown_obstacles", "active_robot",     "passive_robot",
+  std::vector<std::string> grid_names{"known_obstacles", "unknown_obstacles", "active_robot",    "passive_robot",
                                       "known_free",      "true_obstacles",    "belief_obstacles"};
   std::map<std::string, ros::Publisher> grid_pubs;
   //  ros::Publisher grid_pub;

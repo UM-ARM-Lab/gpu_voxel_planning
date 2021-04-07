@@ -25,12 +25,11 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
   ros::Duration(1.0).sleep();
   tester.attemptStrategy(strategy);
 
-  std::string filename = scenario.getName() + "_" + strategy.getName() + "_" +
-                         scenario.belief_name + "_" +
+  std::string filename = scenario.getName() + "_" + strategy.getName() + "_" + scenario.belief_name + "_" +
                          arc_helpers::GetCurrentTimeAsString();
-//  PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
-//  PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
-//    std::string package_path = ros::package::getPath("gpu_voxel_planning");
+  //  PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
+  //  PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
+  //    std::string package_path = ros::package::getPath("gpu_voxel_planning");
   strategy.saveToFile(ros::package::getPath("gpu_voxel_planning") + "/graphs/swept_volumes_10k.map");
 }
 
@@ -52,8 +51,8 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
   std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
 
   factories.push_back([&]() { return std::make_shared<ShapeRequestScenario>(bp); });
-//  factories.push_back([&]() { return std::make_shared<TableWithBox>(bp, false, true, false); });
-//  factories.push_back([&]() { return std::make_shared<Bookshelf>(bp); });
+  //  factories.push_back([&]() { return std::make_shared<TableWithBox>(bp, false, true, false); });
+  //  factories.push_back([&]() { return std::make_shared<Bookshelf>(bp); });
   return factories;
 }
 
@@ -72,9 +71,9 @@ std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrate
 
 std::vector<BeliefParams> getBeliefParams() {
   std::vector<BeliefParams> bps;
-//  bps.emplace_back(BeliefType::CHS);
-//   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
-//   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
+  //  bps.emplace_back(BeliefType::CHS);
+  //   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
+  //   bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
   // bps.emplace_back(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
   // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
   // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
@@ -83,19 +82,17 @@ std::vector<BeliefParams> getBeliefParams() {
   return bps;
 }
 
-
 void testAll(ros::NodeHandle &n) {
   for (int i = 0; i < 1; i++) {
-    for (auto bp: getBeliefParams()) {
-      for (const auto& scenario_factory:getScenarioFactories(bp)) {
-        for (const auto& strategy_factory: getStrategyFactories()) {
+    for (auto bp : getBeliefParams()) {
+      for (const auto &scenario_factory : getScenarioFactories(bp)) {
+        for (const auto &strategy_factory : getStrategyFactories()) {
           test(n, *scenario_factory(), *strategy_factory());
         }
       }
     }
   }
 }
-
 
 int main(int argc, char *argv[]) {
   icl_core::logging::initialize(argc, argv);
@@ -107,5 +104,4 @@ int main(int argc, char *argv[]) {
   // test1(n);
   // test2(n);
   testAll(n);
-
 }

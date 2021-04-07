@@ -1,31 +1,25 @@
 #ifndef GPU_VOXELS_PATH_UTILS_HPP
 #define GPU_VOXELS_PATH_UTILS_HPP
 
-
-#include <vector>
 #include <cstddef>
+#include <vector>
 
+namespace PathUtils {
+typedef std::vector<std::vector<double>> Path;
+Path densify(const Path &orig, double max_dist);
 
+double dist(const std::vector<double> &p1, const std::vector<double> &p2);
 
-namespace PathUtils
-{
-    typedef std::vector<std::vector<double>> Path;
-    Path densify(const Path &orig, double max_dist);
+// std::vector<double> interpolate(const std::vector<double> &p0, const std::vector<double> &p1,
+//                                 double interp_dist);
 
-    double dist(const std::vector<double> &p1, const std::vector<double> &p2);
+size_t closestIndex(const Path &path, const std::vector<double> &point);
 
-    // std::vector<double> interpolate(const std::vector<double> &p0, const std::vector<double> &p1,
-    //                                 double interp_dist);
+Path followPartial(const Path &path, double dist);
 
-    size_t closestIndex(const Path &path, const std::vector<double> &point);
+void printPath(const Path &path);
 
-    Path followPartial(const Path& path, double dist);
-
-    void printPath(const Path& path);
-
-    double length(const Path& path);
-};
-
-
+double length(const Path &path);
+};  // namespace PathUtils
 
 #endif
