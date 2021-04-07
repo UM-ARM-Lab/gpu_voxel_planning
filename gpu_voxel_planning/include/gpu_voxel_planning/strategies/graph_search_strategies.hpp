@@ -21,7 +21,7 @@ class GraphSearchStrategy : public Strategy {
   Roadmap graph;
   NodeIndex prev_node{};
   NodeIndex cur_node{};
-  std::optional<NodeIndex> goal_node{};
+  std::vector<NodeIndex> goal_nodes{};
   bool initialized;
   double discretization = 0.02;
   const std::string graph_filepath;
@@ -43,7 +43,7 @@ class GraphSearchStrategy : public Strategy {
 
   Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &viz) override;
 
-  virtual std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz);
+  virtual std::vector<NodeIndex> plan(NodeIndex start, std::vector<NodeIndex> goals, State &s, GpuVoxelRvizVisualizer &viz);
 
   void initialize(const Scenario &scenario);
 
@@ -65,7 +65,7 @@ class GraphSearchStrategy : public Strategy {
 
   void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
 
-  std::vector<NodeIndex> lazySp(NodeIndex start, NodeIndex goal, State &s, Roadmap &rm);
+  std::vector<NodeIndex> lazySp(NodeIndex start, std::vector<NodeIndex> goals, State &s, Roadmap &rm);
 
   void updateGoals(const Scenario &scenario);
 };
@@ -123,7 +123,7 @@ class AStarGraphSearch : public GraphSearchStrategy {
 
   std::string getName() const override;
 
-  std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) override;
+  std::vector<NodeIndex> plan(NodeIndex start, std::vector<NodeIndex> goals, State &s, GpuVoxelRvizVisualizer &viz) override;
 
   double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
 
@@ -138,7 +138,7 @@ class ThompsonGraphSearch : public GraphSearchStrategy {
 
   //        State sampleValidState();
 
-  std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) override;
+  std::vector<NodeIndex> plan(NodeIndex start, std::vector<NodeIndex> goals, State &s, GpuVoxelRvizVisualizer &viz) override;
 
   double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
 };
@@ -152,7 +152,7 @@ class HOPGraphSearch : public GraphSearchStrategy {
 
   std::string getName() const override;
 
-  std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) override;
+  std::vector<NodeIndex> plan(NodeIndex start, std::vector<NodeIndex> goals, State &s, GpuVoxelRvizVisualizer &viz) override;
 
   double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
 };
@@ -174,7 +174,7 @@ class ROGraphSearch : public GraphSearchStrategy {
   std::vector<NodeIndex> lazySpForRollout(NodeIndex start, NodeIndex goal, State &s, Roadmap &rm,
                                           arc_dijkstras::EvaluatedEdges &additional_invalid);
 
-  std::vector<NodeIndex> plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) override;
+  std::vector<NodeIndex> plan(NodeIndex start, std::vector<NodeIndex> goal, State &s, GpuVoxelRvizVisualizer &viz) override;
 
   double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
 

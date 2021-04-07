@@ -102,6 +102,7 @@ class SimulationState : public State {
     if (robot.occupied_space.overlapsWith(&true_world)) {
       bel->updateCollisionSpace(robot, getFirstLinkInCollision(robot, true_world));
       robot.set(current_config);
+      std::cout << "Collided with true world\n";
       return false;
     }
     // }

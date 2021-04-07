@@ -32,6 +32,8 @@ class Scenario {
         return true;
       }
     }
+    std::cout << PrettyPrint::PrettyPrint(VictorRightArmConfig(getState().current_config).asVector(), true)
+              << " is not a goal\n";
     return false;
     //            return VictorRightArmConfig(getState().current_config) == VictorRightArmConfig(goal_config);
   }

@@ -36,10 +36,11 @@ void GraphSearchStrategy::initialize(const Scenario &scenario) {
   if (scenario.known_goal_config.has_value()) {
     const auto &goal_configs = scenario.getPossibleGoals();
     assert(goal_configs.size() == 1);
-    goal_node = graph.addVertexAndEdges(VictorRightArmConfig(goal_configs.at(0)).asVector());
+    goal_nodes.clear();
+    goal_nodes.push_back(graph.addVertexAndEdges(VictorRightArmConfig(goal_configs.at(0)).asVector()));
   }
-  if (goal_node.has_value()) {
-    std::cout << "Initial (node " << cur_node << ") and Goal (node " << goal_node.value() << ") vertices added\n";
+  if (!goal_nodes.empty()) {
+    std::cout << "Initial (node " << cur_node << ") and Goal (node " << goal_nodes.at(0) << ") vertices added\n";
   } else {
     std::cout << "Initial (node " << cur_node << ") vertex added. No goal yet\n";
   }
@@ -53,13 +54,17 @@ void GraphSearchStrategy::updateGoals(const Scenario &scenario) {
   }
 
   std::cout << "Updating goals\n";
-  // TODO: Very temporary
   const auto &goal_configs = scenario.getPossibleGoals();
   if (goal_configs.size() == 0) {
     throw std::logic_error("Attempted to plan but belief does not have any goal_configs");
   }
-  goal_node = graph.addVertexAndEdges(VictorRightArmConfig(goal_configs.at(0)).asVector());
-  std::cout << "Goal node " << goal_node.value() << " added\n";
+  goal_nodes.clear();
+  for(const auto& goal_config: goal_configs){
+    const auto v = VictorRightArmConfig(goal_config).asVector();
+    const auto n = graph.addVertexAndEdges(v);
+    goal_nodes.push_back(n);
+    std::cout << "Goal nodes " << n << " added: " << PrettyPrint::PrettyPrint(v, true) << "\n";
+  }
 }
 
 Path GraphSearchStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &viz) {
@@ -74,7 +79,9 @@ Path GraphSearchStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &vi
   VictorRightArmConfig next;
 
   if (current == expected) {
-    std::vector<NodeIndex> node_path = plan(cur_node, goal_node.value(), scenario.getState(), viz);
+    //TODO: Temporary. Only uses first goal node
+    std::vector<NodeIndex> node_path = plan(cur_node, goal_nodes, scenario.getState(), viz);
+    std::cout << "Planning to nodes: " << PrettyPrint::PrettyPrint(node_path, true) << "\n";
     next = VictorRightArmConfig(graph.getNode(node_path[1]).getValue());
     prev_node = cur_node;
     cur_node = node_path[1];
@@ -89,9 +96,9 @@ Path GraphSearchStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &vi
   return interpolate(current, next, discretization);
 }
 
-std::vector<NodeIndex> GraphSearchStrategy::plan(NodeIndex start, NodeIndex goal, State &s,
+std::vector<NodeIndex> GraphSearchStrategy::plan(NodeIndex start, std::vector<NodeIndex> goals, State &s,
                                                  GpuVoxelRvizVisualizer &viz) {
-  auto path = lazySp(start, goal, s, graph);
+  auto path = lazySp(start, goals, s, graph);
   if (path.size() < 2) {
     throw SearchError("No plan found");
   }
@@ -136,7 +143,7 @@ double GraphSearchStrategy::evaluateEdge(arc_dijkstras::GraphEdge &e, State &s) 
   return calculateEdgeWeight(s, e);
 }
 
-std::vector<NodeIndex> GraphSearchStrategy::lazySp(NodeIndex start, NodeIndex goal, State &s, Roadmap &rm) {
+std::vector<NodeIndex> GraphSearchStrategy::lazySp(NodeIndex start, std::vector<NodeIndex> goals, State &s, Roadmap &rm) {
   const auto eval_fn = [&](arc_dijkstras::Graph<std::vector<double>> &g, arc_dijkstras::GraphEdge &e) {
     return evaluateEdge(e, s);
   };
@@ -148,7 +155,13 @@ std::vector<NodeIndex> GraphSearchStrategy::lazySp(NodeIndex start, NodeIndex go
   PROFILE_START("lazysp_successful");
   PROFILE_START("lazysp_no_path_found");
 
-  auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(rm, start, goal, heuristic_fn, eval_fn);
+  //TODO: Accept multiple goals
+  if(goals.size() != 1){
+    std::cout << "lazySP only accepts a single goal. " << goals.size() << " given\n";
+    assert(false);
+  }
+
+  auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(rm, start, goals.at(0), heuristic_fn, eval_fn);
   if (result.second == std::numeric_limits<double>::infinity()) {
     std::cout << "No path found on graph\n";
   }
@@ -183,7 +196,7 @@ Path OmniscientGraphSearch::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &
   VictorRightArmConfig next;
 
   Path path;
-  std::vector<NodeIndex> node_path = plan(cur_node, goal_node.value(), scenario.getState(), viz);
+  std::vector<NodeIndex> node_path = plan(cur_node, goal_nodes, scenario.getState(), viz);
 
   if (node_path.size() <= 1) {
     std::cerr << "Path of less than 2 nodes found\n";
@@ -263,7 +276,7 @@ double AStarGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::Grap
 
 std::string AStarGraphSearch::getName() const { return "AStar Optimistic"; }
 
-std::vector<NodeIndex> AStarGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) {
+std::vector<NodeIndex> AStarGraphSearch::plan(NodeIndex start, std::vector<NodeIndex> goals, State &s, GpuVoxelRvizVisualizer &viz) {
   using namespace arc_dijkstras;
   const auto edge_validity_check_fn = [&](Graph<std::vector<double>> &g, GraphEdge &e) { return checkEdge(e, s); };
   const auto distance_fn = [&](const Graph<std::vector<double>> &search_graph, const GraphEdge &edge) {
@@ -271,7 +284,12 @@ std::vector<NodeIndex> AStarGraphSearch::plan(NodeIndex start, NodeIndex goal, S
     return edge.getWeight();
   };
 
-  auto result = AstarLogging<std::vector<double>>::PerformLazyAstar(graph, start, goal, edge_validity_check_fn,
+  //TODO: Use multiple goals
+  if(goals.size() != 1){
+    std::cout << "AStar only accepts a single goal. " << goals.size() << " given\n";
+    assert(false);
+  }
+  auto result = AstarLogging<std::vector<double>>::PerformLazyAstar(graph, start, goals, edge_validity_check_fn,
                                                                     distance_fn, &distanceHeuristic, true);
   if (result.second == std::numeric_limits<double>::infinity()) {
     std::cout << "No path found on graph\n";
@@ -301,7 +319,7 @@ double ThompsonGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::G
 //
 //    }
 
-std::vector<NodeIndex> ThompsonGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s,
+std::vector<NodeIndex> ThompsonGraphSearch::plan(NodeIndex start, std::vector<NodeIndex> goals, State &s,
                                                  GpuVoxelRvizVisualizer &viz) {
   PROFILE_START("Thompson_plan");
 
@@ -313,13 +331,19 @@ std::vector<NodeIndex> ThompsonGraphSearch::plan(NodeIndex start, NodeIndex goal
     viz.vizGrid(sampled_state.known_obstacles, "sampled_world", makeColor(0, 0, 1.0, 1.0));
     PROFILE_RECORD("Viz_sample");
 
-    VictorRightArmConfig goal_config(graph.getNode(goal).getValue());
+    //TODO: Accept multiple goals
+    if(goals.size() != 1){
+      std::cout << "TS only accepts a single goal. " << goals.size() << " given\n";
+      assert(false);
+    }
+
+    VictorRightArmConfig goal_config(graph.getNode(goals.at(0)).getValue());
     sampled_state.robot.set(goal_config.asMap());
     if (sampled_state.robot.occupied_space.overlapsWith(&sampled_state.known_obstacles)) {
       continue;
     }
 
-    auto result = lazySp(start, goal, sampled_state, graph_cpy);
+    auto result = lazySp(start, goals, sampled_state, graph_cpy);
 
     if (result.size() < 2) {
       continue;
@@ -349,7 +373,7 @@ double HOPGraphSearch::calculateEdgeWeight(State &s, const arc_dijkstras::GraphE
   return e.getWeight();
 }
 
-std::vector<NodeIndex> HOPGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) {
+std::vector<NodeIndex> HOPGraphSearch::plan(NodeIndex start, std::vector<NodeIndex> goals, State &s, GpuVoxelRvizVisualizer &viz) {
   PROFILE_START("HOP_plan");
   std::map<NodeIndex, double> actions;
   using pair_type = decltype(actions)::value_type;
@@ -364,7 +388,12 @@ std::vector<NodeIndex> HOPGraphSearch::plan(NodeIndex start, NodeIndex goal, Sta
     viz.vizGrid(sampled_state.known_obstacles, "sampled_world", makeColor(0, 0, 1.0, 1.0));
     PROFILE_RECORD("Viz_sample");
 
-    VictorRightArmConfig goal_config(graph.getNode(goal).getValue());
+    if(goals.size() != 1){
+      std::cout << "HOP only accepts a single goal. " << goals.size() << " given\n";
+      assert(false);
+    }
+
+    VictorRightArmConfig goal_config(graph.getNode(goals.at(0)).getValue());
     sampled_state.robot.set(goal_config.asMap());
     if (sampled_state.robot.occupied_space.overlapsWith(&sampled_state.known_obstacles)) {
       continue;
@@ -374,7 +403,7 @@ std::vector<NodeIndex> HOPGraphSearch::plan(NodeIndex start, NodeIndex goal, Sta
     graph_cpy = graph;
     PROFILE_RECORD("Copy_graph");
 
-    auto result = lazySp(start, goal, sampled_state, graph_cpy);
+    auto result = lazySp(start, goals, sampled_state, graph_cpy);
 
     if (result.size() < 2) {
       continue;
@@ -558,7 +587,7 @@ double ROGraphSearch::simulateTransition(State &state, const Roadmap &rm, const 
   return 2 * d;
 }
 
-std::vector<NodeIndex> ROGraphSearch::plan(NodeIndex start, NodeIndex goal, State &s, GpuVoxelRvizVisualizer &viz) {
+std::vector<NodeIndex> ROGraphSearch::plan(NodeIndex start, std::vector<NodeIndex> goals, State &s, GpuVoxelRvizVisualizer &viz) {
   std::cout << getName() << "plan\n";
   PROFILE_START(getName() + "_plan");
   std::map<NodeIndex, double> actions;
@@ -579,6 +608,14 @@ std::vector<NodeIndex> ROGraphSearch::plan(NodeIndex start, NodeIndex goal, Stat
     PROFILE_START("Viz_sample");
     viz.vizGrid(sampled_state.known_obstacles, "sampled_world", makeColor(0, 0, 1.0, 1.0));
     PROFILE_RECORD("Viz_sample");
+
+    //TODO: Accept multiple goals
+    if(goals.size() != 1){
+      std::cout << "ROGraph only accepts a single goal. " << goals.size() << " given\n";
+      assert(false);
+    }
+    auto goal = goals.at(0);
+
 
     if (!pathExists(start, goal, sampled_state)) {
       std::cout << "Path check failed. Resampling\n";

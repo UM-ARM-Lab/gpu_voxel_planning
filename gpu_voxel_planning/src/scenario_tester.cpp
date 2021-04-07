@@ -9,6 +9,7 @@ using namespace GVP;
  *******************************/
 bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfig> &path) {
   num_path_attempts++;
+//  std::cout << "Attempting path ending in " << PrettyPrint::PrettyPrint(path.back().asVector(), true) << "\n";
   for (const auto &c : path) {
     if (!scenario.getSimulationState().move(c, scenario.getTrueObstacles(), ri)) {
       PROFILE_START("Viz_scenario");
@@ -17,6 +18,7 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
       PROFILE_RECORD_DOUBLE("Bump", 0);
       ri.viz.vizEEPath(path, "invalid_attempt", num_path_attempts, makeColor(1.0, 0.0, 0.0));
       last_invalid = true;
+//      std::cout << "Path unsuccessful\n";
       return false;
     }
     PROFILE_START("Viz_scenario");
@@ -31,6 +33,8 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
     ri.viz.vizEEPath(path, "valid_attempt", num_path_attempts, makeColor(0.0, 0.0, 1.0));
   }
   last_invalid = false;
+//  std::cout << "Path successful. Robot at "
+//            << PrettyPrint::PrettyPrint(scenario.getSimulationState().getCurConfig().asVector(), true) << "\n";
   return true;
 }
 
