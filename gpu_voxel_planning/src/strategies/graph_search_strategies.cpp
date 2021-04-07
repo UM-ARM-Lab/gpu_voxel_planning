@@ -155,13 +155,7 @@ std::vector<NodeIndex> GraphSearchStrategy::lazySp(NodeIndex start, std::vector<
   PROFILE_START("lazysp_successful");
   PROFILE_START("lazysp_no_path_found");
 
-  //TODO: Accept multiple goals
-  if(goals.size() != 1){
-    std::cout << "lazySP only accepts a single goal. " << goals.size() << " given\n";
-    assert(false);
-  }
-
-  auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformBiLazySP(rm, start, goals.at(0), heuristic_fn, eval_fn);
+  auto result = arc_dijkstras::LazySP<std::vector<double>>::PerformLazySP(rm, start, goals, heuristic_fn, eval_fn);
   if (result.second == std::numeric_limits<double>::infinity()) {
     std::cout << "No path found on graph\n";
   }
@@ -284,11 +278,6 @@ std::vector<NodeIndex> AStarGraphSearch::plan(NodeIndex start, std::vector<NodeI
     return edge.getWeight();
   };
 
-  //TODO: Use multiple goals
-  if(goals.size() != 1){
-    std::cout << "AStar only accepts a single goal. " << goals.size() << " given\n";
-    assert(false);
-  }
   auto result = AstarLogging<std::vector<double>>::PerformLazyAstar(graph, start, goals, edge_validity_check_fn,
                                                                     distance_fn, &distanceHeuristic, true);
   if (result.second == std::numeric_limits<double>::infinity()) {

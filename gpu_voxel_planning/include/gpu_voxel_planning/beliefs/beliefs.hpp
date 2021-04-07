@@ -126,7 +126,7 @@ class ShapeCompletionBelief : public Belief {
   std::vector<DenseGrid> chss;
   std::vector<DenseGrid> sampled_particles;
   ros::Publisher free_space_publisher;
-  int num_samples = 3;
+  int num_samples = 10;
   std::optional<std::vector<robot::JointValueMap>> possible_goals;
 
  public:
