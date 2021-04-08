@@ -2,7 +2,6 @@
 
 #include <gpu_voxel_planning_msgs/RequestShape.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
-//#include <jsoncpp/json/json.h>
 #include <hjson/hjson.h>
 #include <ros/package.h>
 
@@ -468,8 +467,12 @@ std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const
   //    if(known_goal_config.has_value()){
   //        return std::vector<robot::JointValueMap>{known_goal_config.value()};
   //    }
+
   return s.bel->getPossibleGoals();
   //    throw std::runtime_error("Shape Request Scenario does not have a known_goal_config");
 }
 
-bool ShapeRequestScenario::completed() const { return Scenario::completed(); }
+bool ShapeRequestScenario::completed() const {
+  //TODO: Check TSRs
+  return Scenario::completed();
+}

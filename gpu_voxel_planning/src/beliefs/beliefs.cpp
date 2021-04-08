@@ -439,20 +439,26 @@ void ShapeCompletionBelief::requestCompletions() {
   }
 
   //    std::cout << "Loading samples from message...";
-  std::vector<robot::JointValueMap> goals;
+//  std::vector<robot::JointValueMap> goals;
+  goal_tsrs.clear();
   for (int i = 0; i < num_samples; i++) {
     sampled_particles[i] = DenseGrid();
     sampled_particles[i].insertPointCloud(toPointsVector(srv.response.sampled_completions[i]), PROB_OCCUPIED);
-    goals.push_back(VictorRightArmConfig(srv.response.goal_configs[i].joint_values).asMap());
+    goal_tsrs.push_back(std::make_shared<TSRGoal>();
+    //    goals.push_back(VictorRightArmConfig(srv.response.goal_configs[i].joint_values).asMap());
     //        goals.push_back(sr)
   }
-  possible_goals = goals;
+
+
+
+  //TODO Sample goal configs from TSRs
+//  goal_configs = goals;
   //    std::cout << "...Done\n";
 }
 
 std::vector<robot::JointValueMap> ShapeCompletionBelief::getPossibleGoals() const {
-  if (possible_goals.has_value()) {
-    return possible_goals.value();
+  if (goal_configs.has_value()) {
+    return goal_configs.value();
   }
   throw std::logic_error("Shape completion belief does not have any possible goals");
 }

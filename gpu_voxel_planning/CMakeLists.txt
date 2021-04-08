@@ -20,6 +20,7 @@ set(CATKIN_PACKAGES
         gpu_voxel_planning_msgs
         rviz_voxelgrid_visuals_msgs
         rviz_voxelgrid_visuals
+        jacobian_follower
         # moveit_visual_tools
         )
 
@@ -75,7 +76,6 @@ catkin_package(
         victor_halton_roadmap
         planning_library
         gpu_voxels_viz
-
         CATKIN_DEPENDS ${CATKIN_PACKAGES}
         DEPENDS arc_utilities
 )
@@ -244,6 +244,7 @@ target_link_libraries(gpu_voxels_viz
 set(Planning_SOURCES
         src/scenarios/simulation_scenarios.cpp
         src/scenarios/real_scenario.cpp
+        src/scenarios/goal.cpp
         src/strategies/graph_search_strategies.cpp
         src/scenario_tester.cpp
         # src/strategies/ompl_strategies.cpp

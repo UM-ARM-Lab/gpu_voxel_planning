@@ -1,0 +1,13 @@
+std_msgs/Header header
+float64 x_lower
+float64 x_upper
+float64 y_lower
+float64 y_upper
+float64 z_lower
+float64 z_upper
+float64 rx_lower
+float64 rx_upper
+float64 ry_lower
+float64 ry_upper
+float64 rz_lower
+float64 rz_upper

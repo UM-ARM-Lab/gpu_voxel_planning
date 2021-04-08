@@ -4,12 +4,17 @@
 #include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
 #include "gpu_voxel_planning/state.hpp"
 
+#include <jacobian_follower/jacobian_follower.hpp>
+
 namespace GVP {
 class Scenario {
  public:
+  explicit Scenario(): jacobian_follower("victor", 0.01) {}
+
   VictorRightArm victor;
   //        robot::JointValueMap goal_config;
   std::optional<robot::JointValueMap> known_goal_config;
+  JacobianFollower jacobian_follower;
 
   void setKnownGoalConfig(robot::JointValueMap goal_config) { known_goal_config = goal_config; }
 
@@ -39,8 +44,6 @@ class Scenario {
   }
 
   virtual void viz(const GpuVoxelRvizVisualizer &viz) {}
-
-  Scenario() = default;
 };
 }  // namespace GVP
 

@@ -4,6 +4,7 @@
 
 #include <arc_utilities/arc_helpers.hpp>
 #include <arc_utilities/timing.hpp>
+#include <jacobian_follower/jacobian_follower.hpp>
 
 #include "gpu_voxel_planning/common_names.hpp"
 #include "gpu_voxel_planning/maps/prob_map.hpp"
@@ -12,6 +13,8 @@
 #include "gpu_voxel_planning/scenario_tester.hpp"
 #include "gpu_voxel_planning/state.hpp"
 #include "gpu_voxel_planning/strategies/graph_search_strategies.hpp"
+
+
 
 using namespace GVP;
 
@@ -100,6 +103,10 @@ int main(int argc, char *argv[]) {
   ros::NodeHandle n;
 
   ros::Duration(1.0).sleep();
+
+//  JacobianFollower j("victor", 0.01);
+//  auto fk_msg = j.computeFK(std::vector<double>{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, "right_arm");
+//  std::cout << "FK is: " << fk_msg.position.x << ", " << fk_msg.position.y << ", " << fk_msg.position.z << "\n";
 
   // test1(n);
   // test2(n);

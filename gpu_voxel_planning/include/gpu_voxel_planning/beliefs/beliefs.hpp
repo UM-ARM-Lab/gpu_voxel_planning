@@ -8,6 +8,7 @@
 
 #include "gpu_voxel_planning/obstacles/obstacles.hpp"
 #include "gpu_voxel_planning/ros_interface/gpu_voxel_rviz_visualization.hpp"
+#include "gpu_voxel_planning/scenarios/goal.hpp"
 
 namespace GVP {
 enum BeliefType { CHS, IID, Obstacle, Bonkers, MoEObstacle, MoEBonkers, Deterministic, ShapeCompletion };
@@ -127,7 +128,8 @@ class ShapeCompletionBelief : public Belief {
   std::vector<DenseGrid> sampled_particles;
   ros::Publisher free_space_publisher;
   int num_samples = 10;
-  std::optional<std::vector<robot::JointValueMap>> possible_goals;
+  std::optional<std::vector<robot::JointValueMap>> goal_configs;
+  std::vector<std::shared_ptr<Goal> > goal_tsrs;
 
  public:
   ShapeCompletionBelief();
