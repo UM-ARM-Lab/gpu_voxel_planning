@@ -468,8 +468,32 @@ std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const
   //        return std::vector<robot::JointValueMap>{known_goal_config.value()};
   //    }
 
-  return s.bel->getPossibleGoals();
+  //TODO: Made more general for more types of beliefs
+  auto bel = dynamic_cast<ShapeCompletionBelief*>(s.bel.get());
+  std::vector<robot::JointValueMap> goal_configs;
+  for(const auto& tsr: bel->goal_tsrs){
+    //TODO: Sample uniformly from the TSR
+
+    //TODO: Remove hardcoded orientation
+    geometry_msgs::Pose target_pose;
+    target_pose.orientation.x = -0.05594805960241513;
+    target_pose.orientation.y = -0.7682472566147173;
+    target_pose.orientation.z = -0.6317937464624142;
+    target_pose.orientation.w = 0.08661771909760922;
+
+    target_pose.position.x = (tsr.x.min + tsr.x.max) / 2;
+    target_pose.position.y = (tsr.y.min + tsr.y.max) / 2;
+    target_pose.position.z = (tsr.z.min + tsr.z.max) / 2;
+
+
+    auto ik_solutions = jacobian_follower.compute_IK_solutions(target_pose, "right_arm");
+    for(const auto& sol: ik_solutions){
+      goal_configs.emplace_back(VictorRightArmConfig(sol).asMap());
+    }
+  }
+//  return s.bel->getPossibleGoals();
   //    throw std::runtime_error("Shape Request Scenario does not have a known_goal_config");
+  return goal_configs;
 }
 
 bool ShapeRequestScenario::completed() const {
