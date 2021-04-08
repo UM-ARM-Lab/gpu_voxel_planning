@@ -22,6 +22,11 @@ TSR::TSR(const gpu_voxel_planning_msgs::TSR& tsr)
       ry(TSRBound(tsr.ry_lower, tsr.ry_upper)),
       rz(TSRBound(tsr.rz_lower, tsr.rz_upper)) {}
 
+bool TSR::contains(const geometry_msgs::Pose& pose) const {
+  // TODO: Check orientation (requires converting pose quaterion to TSR
+  return x.contains(pose.position.x) and y.contains(pose.position.y) and z.contains(pose.position.z);
+}
+
 bool ConfigGoal::isAchieved(VictorRightArmConfig config) const { return goal_config == config; }
 
 TSRGoal::TSRGoal(const gpu_voxel_planning_msgs::TSR& tsr) : goal(tsr) {}

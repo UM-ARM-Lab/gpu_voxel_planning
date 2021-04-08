@@ -24,6 +24,9 @@ class TSRBound {
   double min;
   double max;
   TSRBound(double min_, double max_);
+  [[nodiscard]] bool contains(double v) const {
+    return min <= v and v <= max;
+  };
 };
 
 class TSR {
@@ -32,6 +35,8 @@ class TSR {
   TSR(TSRBound x_bound, TSRBound y_bound, TSRBound z_bound, TSRBound rx_bound, TSRBound ry_bound, TSRBound rz_bound);
 
   explicit TSR(const gpu_voxel_planning_msgs::TSR& tsr);
+
+  [[nodiscard]] bool contains(const geometry_msgs::Pose& pose) const;
 };
 
 class TSRGoal : Goal {

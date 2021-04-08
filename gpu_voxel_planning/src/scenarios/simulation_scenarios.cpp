@@ -1,9 +1,9 @@
 #include "gpu_voxel_planning/scenarios/simulation_scenarios.hpp"
 
 #include <gpu_voxel_planning_msgs/RequestShape.h>
-#include <sensor_msgs/point_cloud2_iterator.h>
 #include <hjson/hjson.h>
 #include <ros/package.h>
+#include <sensor_msgs/point_cloud2_iterator.h>
 
 #include "gpu_voxel_planning/json_helpers.h"
 #include "gpu_voxel_planning/pointcloud_utils.h"
@@ -468,13 +468,13 @@ std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const
   //        return std::vector<robot::JointValueMap>{known_goal_config.value()};
   //    }
 
-  //TODO: Made more general for more types of beliefs
-  auto bel = dynamic_cast<ShapeCompletionBelief*>(s.bel.get());
+  // TODO: Made more general for more types of beliefs
+  auto bel = dynamic_cast<ShapeCompletionBelief *>(s.bel.get());
   std::vector<robot::JointValueMap> goal_configs;
-  for(const auto& tsr: bel->goal_tsrs){
-    //TODO: Sample uniformly from the TSR
+  for (const auto &tsr : bel->goal_tsrs) {
+    // TODO: Sample uniformly from the TSR
 
-    //TODO: Remove hardcoded orientation
+    // TODO: Remove hardcoded orientation
     geometry_msgs::Pose target_pose;
     target_pose.orientation.x = -0.05594805960241513;
     target_pose.orientation.y = -0.7682472566147173;
@@ -485,18 +485,33 @@ std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const
     target_pose.position.y = (tsr.y.min + tsr.y.max) / 2;
     target_pose.position.z = (tsr.z.min + tsr.z.max) / 2;
 
-
     auto ik_solutions = jacobian_follower.compute_IK_solutions(target_pose, "right_arm");
-    for(const auto& sol: ik_solutions){
+    for (const auto &sol : ik_solutions) {
       goal_configs.emplace_back(VictorRightArmConfig(sol).asMap());
     }
   }
-//  return s.bel->getPossibleGoals();
+  //  return s.bel->getPossibleGoals();
   //    throw std::runtime_error("Shape Request Scenario does not have a known_goal_config");
   return goal_configs;
 }
 
 bool ShapeRequestScenario::completed() const {
-  //TODO: Check TSRs
-  return Scenario::completed();
+  // TODO: Check TSRs
+  //  return Scenario::completed();
+  auto bel = dynamic_cast<ShapeCompletionBelief *>(s.bel.get());
+  auto cur_angles = VictorRightArmConfig(s.current_config).asVector();
+  auto cur_pose = jacobian_follower.computeFK(cur_angles, "right_arm");
+
+  int num_valid = 0;
+  for (const auto &tsr : bel->goal_tsrs) {
+    // TODO Check orientation as well as position
+    //    ????
+    if (tsr.contains(cur_pose)) {
+      num_valid += 1;
+    }
+  }
+
+  double prob_complete = (double)num_valid / bel->goal_tsrs.size();
+  std::cout << "cur pose is within " << prob_complete << " of the tsrs\n";
+  return prob_complete >= 0.9;
 }

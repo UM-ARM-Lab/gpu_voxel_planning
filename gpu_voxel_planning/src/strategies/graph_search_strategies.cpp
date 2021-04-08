@@ -63,7 +63,7 @@ void GraphSearchStrategy::updateGoals(const Scenario &scenario) {
     const auto v = VictorRightArmConfig(goal_config).asVector();
     const auto n = graph.addVertexAndEdges(v);
     goal_nodes.push_back(n);
-    std::cout << "Goal nodes " << n << " added: " << PrettyPrint::PrettyPrint(v, true) << "\n";
+//    std::cout << "Goal nodes " << n << " added: " << PrettyPrint::PrettyPrint(v, true) << "\n";
   }
 }
 
