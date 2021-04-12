@@ -56,7 +56,7 @@ class Belief {
 
   [[nodiscard]] virtual std::unique_ptr<Belief> clone() const = 0;
 
-  [[nodiscard]] virtual std::vector<robot::JointValueMap> getPossibleGoals() const {
+  [[nodiscard]] virtual std::vector<robot::JointValueMap> getPossibleGoals(const Scenario* scenario) const {
     throw std::logic_error("getPossibleGoals is not implemented for this belief type\n");
   }
 
@@ -237,7 +237,7 @@ class ShapeCompletionBelief : public Belief {
 
   void requestCompletions();
 
-  [[nodiscard]] std::vector<robot::JointValueMap> getPossibleGoals() const override;
+  [[nodiscard]] std::vector<robot::JointValueMap> getPossibleGoals(const Scenario* scenario) const override;
 
   void syncBelief() override { syncWithShapeCompletion(); };
 };

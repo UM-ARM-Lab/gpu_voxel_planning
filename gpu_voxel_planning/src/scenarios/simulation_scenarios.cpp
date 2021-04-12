@@ -468,17 +468,15 @@ std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const
   //        return std::vector<robot::JointValueMap>{known_goal_config.value()};
   //    }
 
+  return s.bel->getPossibleGoals(this);
   // TODO: Made more general for more types of beliefs
-  auto bel = dynamic_cast<ShapeCompletionBelief *>(s.bel.get());
-  std::vector<robot::JointValueMap> goal_configs;
-  for (const auto &tsrgoal : bel->goal_tsrs) {
-    auto new_goals = tsrgoal->sampleGoalConfigs(this);
-    goal_configs.insert(goal_configs.end(), new_goals.begin(), new_goals.end());
-  }
+//  auto bel = dynamic_cast<ShapeCompletionBelief *>(s.bel.get());
+//  std::vector<robot::JointValueMap> goal_configs;
+
 
   //  return s.bel->getPossibleGoals();
   //    throw std::runtime_error("Shape Request Scenario does not have a known_goal_config");
-  return goal_configs;
+//  return goal_configs;
 }
 
 bool ShapeRequestScenario::completed() const {

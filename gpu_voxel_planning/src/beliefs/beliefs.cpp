@@ -349,15 +349,15 @@ DenseGrid MoEBelief::sampleState() const {
 ShapeCompletionBelief::ShapeCompletionBelief() {
   std::cout << "Constructing shape completion belief\n";
   sampled_particles.resize(num_samples);
-//  requestCompletions();
-//  syncWithShapeCompletion();
+  //  requestCompletions();
+  //  syncWithShapeCompletion();
 
   ros::NodeHandle nh;
   free_space_publisher = nh.advertise<sensor_msgs::PointCloud2>("swept_freespace_pointcloud", 10);
 }
 
 void ShapeCompletionBelief::syncWithShapeCompletion() {
-  if(!sync_needed){
+  if (!sync_needed) {
     return;
   }
   requestCompletions();
@@ -407,7 +407,7 @@ void ShapeCompletionBelief::updateCollisionSpace(Robot &robot, size_t first_link
 }
 
 DenseGrid ShapeCompletionBelief::sampleState() const {
-  //TODO: syncWithShapeCompletion()
+  // TODO: syncWithShapeCompletion()
   // Need to sync, but cannot sync in a const method
   // syncWithShapeCompletion
   std::mt19937 rng;
@@ -468,12 +468,19 @@ void ShapeCompletionBelief::requestCompletions() {
   //    std::cout << "...Done\n";
 }
 
-std::vector<robot::JointValueMap> ShapeCompletionBelief::getPossibleGoals() const {
-  //TODO: syncWithShapeCompletion. Cannot sync in a const method
-//  syncWithShapeCompletion();
-  if (goal_configs.has_value()) {
-    return goal_configs.value();
-  }
-  throw std::logic_error("Shape completion belief does not have any possible goals");
-}
+std::vector<robot::JointValueMap> ShapeCompletionBelief::getPossibleGoals(const Scenario *scenario) const {
+  // TODO: syncWithShapeCompletion. Cannot sync in a const method
 
+  //  syncWithShapeCompletion();
+  //  if (sampled_goal_configs.has_value()) {
+  //    return sampled_goal_configs.value();
+  //  }
+  std::vector<robot::JointValueMap> sampled_goal_configs;
+  for (const auto &tsr_goal : goal_tsrs) {
+    auto new_goals = tsr_goal->sampleGoalConfigs(scenario);
+//    auto new_goals = getPossibleGoals(this);
+    sampled_goal_configs.insert(sampled_goal_configs.end(), new_goals.begin(), new_goals.end());
+  }
+  return sampled_goal_configs;
+//  throw std::logic_error("Shape completion belief does not have any possible goals");
+}
