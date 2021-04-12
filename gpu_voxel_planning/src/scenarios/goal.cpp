@@ -30,11 +30,41 @@ bool TSR::contains(const geometry_msgs::Pose& pose) const {
 
 bool ConfigGoal::isAchieved(const VictorRightArmConfig& config, const Scenario* scenario) const { return goal_config == config; }
 
-TSRGoal::TSRGoal(const gpu_voxel_planning_msgs::TSR& tsr) : goal(tsr) {}
+std::vector<robot::JointValueMap> ConfigGoal::sampleGoalConfigs(const Scenario* scenario) const {
+  return std::vector<robot::JointValueMap>{goal_config.asMap()};
+}
+
+TSRGoal::TSRGoal(const gpu_voxel_planning_msgs::TSR& tsr) : goal_tsr(tsr) {}
 
 bool TSRGoal::isAchieved(const VictorRightArmConfig& config, const Scenario* scenario) const {
 //  throw std::logic_error("Not implemented");
   auto cur_angles = config.asVector();
   auto cur_pose = scenario->jacobian_follower.computeFK(cur_angles, "right_arm");
-  return(goal.contains(cur_pose));
+  return(goal_tsr.contains(cur_pose));
+}
+
+std::vector<robot::JointValueMap> TSRGoal::sampleGoalConfigs(const Scenario* scenario) const {
+  std::vector<robot::JointValueMap> goal_configs;
+  //
+  // TODO: Sample uniformly from the TSR
+
+  // TODO: Remove hardcoded orientation
+  geometry_msgs::Pose target_pose;
+  target_pose.orientation.x = -0.05594805960241513;
+  target_pose.orientation.y = -0.7682472566147173;
+  target_pose.orientation.z = -0.6317937464624142;
+  target_pose.orientation.w = 0.08661771909760922;
+
+//  auto tsr = dynamic_cast<TSRGoal*>(tsrgoal.get())->goal;
+
+
+  target_pose.position.x = (goal_tsr.x.min + goal_tsr.x.max) / 2;
+  target_pose.position.y = (goal_tsr.y.min + goal_tsr.y.max) / 2;
+  target_pose.position.z = (goal_tsr.z.min + goal_tsr.z.max) / 2;
+
+  auto ik_solutions = scenario->jacobian_follower.compute_IK_solutions(target_pose, "right_arm");
+  for (const auto& sol : ik_solutions) {
+    goal_configs.emplace_back(VictorRightArmConfig(sol).asMap());
+  }
+  return goal_configs;
 }
