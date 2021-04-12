@@ -121,38 +121,6 @@ class ObstacleBelief : public Belief {
   [[nodiscard]] std::vector<double> cumSum() const;
 };
 
-class ShapeCompletionBelief : public Belief {
- public:
-  DenseGrid known_free;
-  std::vector<DenseGrid> chss;
-  std::vector<DenseGrid> sampled_particles;
-  ros::Publisher free_space_publisher;
-  int num_samples = 10;
-  std::optional<std::vector<robot::JointValueMap>> goal_configs;
-  std::vector<TSR> goal_tsrs;
-
- public:
-  ShapeCompletionBelief();
-
-  double calcProbFree(const DenseGrid &volume) override;
-
-  void updateFreeSpace(const DenseGrid &new_free) override;
-
-  void updateCollisionSpace(Robot &robot, size_t first_link_in_collision) override;
-
-  DenseGrid sampleState() const override;
-
-  void viz(const GpuVoxelRvizVisualizer &viz) override;
-
-  std::unique_ptr<Belief> clone() const override;
-
-  void requestCompletions();
-
-  [[nodiscard]] std::vector<robot::JointValueMap> getPossibleGoals() const override;
-
-  void syncBelief() override;
-};
-
 /*********************************
  **         IID Belief          **
  ********************************/
@@ -234,6 +202,44 @@ class MoEBelief : public Belief {
   void updateCollisionSpace(Robot &robot, size_t first_link_in_collision) override;
 
   DenseGrid sampleState() const override;
+};
+
+/*********************************
+ **   Shape Completion Belief   **
+ ********************************/
+class ShapeCompletionBelief : public Belief {
+ public:
+  DenseGrid known_free;
+  std::vector<DenseGrid> chss;
+  std::vector<DenseGrid> sampled_particles;
+  ros::Publisher free_space_publisher;
+  int num_samples = 10;
+  std::optional<std::vector<robot::JointValueMap>> goal_configs;
+  std::vector<TSR> goal_tsrs;
+  bool sync_needed = true;
+
+ public:
+  ShapeCompletionBelief();
+
+  void syncWithShapeCompletion();
+
+  double calcProbFree(const DenseGrid &volume) override;
+
+  void updateFreeSpace(const DenseGrid &new_free) override;
+
+  void updateCollisionSpace(Robot &robot, size_t first_link_in_collision) override;
+
+  DenseGrid sampleState() const override;
+
+  void viz(const GpuVoxelRvizVisualizer &viz) override;
+
+  std::unique_ptr<Belief> clone() const override;
+
+  void requestCompletions();
+
+  [[nodiscard]] std::vector<robot::JointValueMap> getPossibleGoals() const override;
+
+  void syncBelief() override { syncWithShapeCompletion(); };
 };
 }  // namespace GVP
 

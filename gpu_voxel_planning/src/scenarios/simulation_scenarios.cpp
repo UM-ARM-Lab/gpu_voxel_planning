@@ -496,8 +496,7 @@ std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const
 }
 
 bool ShapeRequestScenario::completed() const {
-  // TODO: Check TSRs
-  //  return Scenario::completed();
+  s.bel->syncBelief();
   auto bel = dynamic_cast<ShapeCompletionBelief *>(s.bel.get());
   auto cur_angles = VictorRightArmConfig(s.current_config).asVector();
   auto cur_pose = jacobian_follower.computeFK(cur_angles, "right_arm");
@@ -512,6 +511,6 @@ bool ShapeRequestScenario::completed() const {
   }
 
   double prob_complete = (double)num_valid / bel->goal_tsrs.size();
-  std::cout << "cur pose is within " << prob_complete << " of the tsrs\n";
+  std::cout << "cur pose is within " << prob_complete*100 << "% of the tsrs\n";
   return prob_complete >= 0.9;
 }

@@ -9,7 +9,7 @@ using namespace GVP;
  *******************************/
 bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfig> &path) {
   num_path_attempts++;
-//  std::cout << "Attempting path ending in " << PrettyPrint::PrettyPrint(path.back().asVector(), true) << "\n";
+  //  std::cout << "Attempting path ending in " << PrettyPrint::PrettyPrint(path.back().asVector(), true) << "\n";
   for (const auto &c : path) {
     if (!scenario.getSimulationState().move(c, scenario.getTrueObstacles(), ri)) {
       PROFILE_START("Viz_scenario");
@@ -18,7 +18,7 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
       PROFILE_RECORD_DOUBLE("Bump", 0);
       ri.viz.vizEEPath(path, "invalid_attempt", num_path_attempts, makeColor(1.0, 0.0, 0.0));
       last_invalid = true;
-//      std::cout << "Path unsuccessful\n";
+      //      std::cout << "Path unsuccessful\n";
       return false;
     }
     PROFILE_START("Viz_scenario");
@@ -33,8 +33,8 @@ bool SimulationScenarioTester::attemptPath(const std::vector<VictorRightArmConfi
     ri.viz.vizEEPath(path, "valid_attempt", num_path_attempts, makeColor(0.0, 0.0, 1.0));
   }
   last_invalid = false;
-//  std::cout << "Path successful. Robot at "
-//            << PrettyPrint::PrettyPrint(scenario.getSimulationState().getCurConfig().asVector(), true) << "\n";
+  //  std::cout << "Path successful. Robot at "
+  //            << PrettyPrint::PrettyPrint(scenario.getSimulationState().getCurConfig().asVector(), true) << "\n";
   return true;
 }
 
@@ -56,6 +56,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy) {
   }
   scenario.getSimulationState().move(scenario.getState().getCurConfig(), scenario.getTrueObstacles(), ri);
   scenario.viz(ri.viz);
+  scenario.getSimulationState().bel->syncBelief();
 
   std::string name = getName(strategy);
   while (!scenario.completed() and ros::ok()) {
@@ -79,6 +80,8 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy) {
     PROFILE_RECORD(name + " Motion Time");
   }
   std::cout << "Reached Goal with cost " << scenario.getState().accumulated_cost << "\n";
+  std::cout << "Goal Configuration: "
+            << PrettyPrint::PrettyPrint(VictorRightArmConfig(scenario.getState().current_config).asVector()) << "\n";
   PROFILE_RECORD_DOUBLE("accumulated_cost", scenario.getState().accumulated_cost);
   return true;
 }

@@ -349,13 +349,23 @@ DenseGrid MoEBelief::sampleState() const {
 ShapeCompletionBelief::ShapeCompletionBelief() {
   std::cout << "Constructing shape completion belief\n";
   sampled_particles.resize(num_samples);
-  requestCompletions();
+//  requestCompletions();
+//  syncWithShapeCompletion();
 
   ros::NodeHandle nh;
   free_space_publisher = nh.advertise<sensor_msgs::PointCloud2>("swept_freespace_pointcloud", 10);
 }
 
+void ShapeCompletionBelief::syncWithShapeCompletion() {
+  if(!sync_needed){
+    return;
+  }
+  requestCompletions();
+  sync_needed = false;
+}
+
 double ShapeCompletionBelief::calcProbFree(const DenseGrid &volume) {
+  syncWithShapeCompletion();
   PROFILE_START("CalcProbShapeCompletion");
   if (sampled_particles.empty()) {
     return 1.0;
@@ -379,6 +389,7 @@ void ShapeCompletionBelief::updateFreeSpace(const DenseGrid &new_free) {
   }
   free_space_publisher.publish(toMsg(known_free));
   //  std::cout << "Updated free space\n";
+  sync_needed = true;
 }
 
 void ShapeCompletionBelief::updateCollisionSpace(Robot &robot, size_t first_link_in_collision) {
@@ -392,10 +403,13 @@ void ShapeCompletionBelief::updateCollisionSpace(Robot &robot, size_t first_link
   }
   new_chs.subtract(&known_free);
   chss.push_back(new_chs);
-  requestCompletions();
+  sync_needed = true;
 }
 
 DenseGrid ShapeCompletionBelief::sampleState() const {
+  //TODO: syncWithShapeCompletion()
+  // Need to sync, but cannot sync in a const method
+  // syncWithShapeCompletion
   std::mt19937 rng;
   rng.seed(std::random_device()());
   std::uniform_int_distribution dist(0, (int)sampled_particles.size());
@@ -439,7 +453,7 @@ void ShapeCompletionBelief::requestCompletions() {
   }
 
   //    std::cout << "Loading samples from message...";
-//  std::vector<robot::JointValueMap> goals;
+  //  std::vector<robot::JointValueMap> goals;
   goal_tsrs.clear();
   for (int i = 0; i < num_samples; i++) {
     sampled_particles[i] = DenseGrid();
@@ -449,18 +463,17 @@ void ShapeCompletionBelief::requestCompletions() {
     //        goals.push_back(sr)
   }
 
-
-
-  //TODO Sample goal configs from TSRs
-//  goal_configs = goals;
+  // TODO Sample goal configs from TSRs
+  //  goal_configs = goals;
   //    std::cout << "...Done\n";
 }
 
 std::vector<robot::JointValueMap> ShapeCompletionBelief::getPossibleGoals() const {
+  //TODO: syncWithShapeCompletion. Cannot sync in a const method
+//  syncWithShapeCompletion();
   if (goal_configs.has_value()) {
     return goal_configs.value();
   }
   throw std::logic_error("Shape completion belief does not have any possible goals");
 }
 
-void ShapeCompletionBelief::syncBelief() { requestCompletions(); }
