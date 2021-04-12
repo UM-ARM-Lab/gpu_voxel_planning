@@ -471,7 +471,7 @@ std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const
   // TODO: Made more general for more types of beliefs
   auto bel = dynamic_cast<ShapeCompletionBelief *>(s.bel.get());
   std::vector<robot::JointValueMap> goal_configs;
-  for (const auto &tsr : bel->goal_tsrs) {
+  for (const auto &tsrgoal : bel->goal_tsrs) {
     // TODO: Sample uniformly from the TSR
 
     // TODO: Remove hardcoded orientation
@@ -480,6 +480,9 @@ std::vector<robot::JointValueMap> ShapeRequestScenario::getPossibleGoals() const
     target_pose.orientation.y = -0.7682472566147173;
     target_pose.orientation.z = -0.6317937464624142;
     target_pose.orientation.w = 0.08661771909760922;
+
+
+    auto tsr = dynamic_cast<TSRGoal*>(tsrgoal.get())->goal;
 
     target_pose.position.x = (tsr.x.min + tsr.x.max) / 2;
     target_pose.position.y = (tsr.y.min + tsr.y.max) / 2;
@@ -502,10 +505,12 @@ bool ShapeRequestScenario::completed() const {
   auto cur_pose = jacobian_follower.computeFK(cur_angles, "right_arm");
 
   int num_valid = 0;
-  for (const auto &tsr : bel->goal_tsrs) {
+  for (const auto &goal : bel->goal_tsrs) {
     // TODO Check orientation as well as position
     //    ????
-    if (tsr.contains(cur_pose)) {
+//    auto tsrgoal = dynamic_cast<TSRGoal*>(goal.get());
+//    if (tsrgoal->goal.contains(cur_pose)) {
+    if(goal->isAchieved(VictorRightArmConfig(s.current_config), this)){
       num_valid += 1;
     }
   }

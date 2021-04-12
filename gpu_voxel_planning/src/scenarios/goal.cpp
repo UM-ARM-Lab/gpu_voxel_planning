@@ -2,6 +2,7 @@
 // Created by bsaund on 4/8/21.
 //
 #include "gpu_voxel_planning/scenarios/goal.hpp"
+#include "gpu_voxel_planning/scenarios/scenarios.hpp"
 
 using namespace GVP;
 
@@ -27,10 +28,13 @@ bool TSR::contains(const geometry_msgs::Pose& pose) const {
   return x.contains(pose.position.x) and y.contains(pose.position.y) and z.contains(pose.position.z);
 }
 
-bool ConfigGoal::isAchieved(VictorRightArmConfig config) const { return goal_config == config; }
+bool ConfigGoal::isAchieved(const VictorRightArmConfig& config, const Scenario* scenario) const { return goal_config == config; }
 
 TSRGoal::TSRGoal(const gpu_voxel_planning_msgs::TSR& tsr) : goal(tsr) {}
 
-bool TSRGoal::isAchieved(VictorRightArmConfig config, JacobianFollower& jf) {
-  throw std::logic_error("Not implemented");
+bool TSRGoal::isAchieved(const VictorRightArmConfig& config, const Scenario* scenario) const {
+//  throw std::logic_error("Not implemented");
+  auto cur_angles = config.asVector();
+  auto cur_pose = scenario->jacobian_follower.computeFK(cur_angles, "right_arm");
+  return(goal.contains(cur_pose));
 }

@@ -458,7 +458,7 @@ void ShapeCompletionBelief::requestCompletions() {
   for (int i = 0; i < num_samples; i++) {
     sampled_particles[i] = DenseGrid();
     sampled_particles[i].insertPointCloud(toPointsVector(srv.response.sampled_completions[i]), PROB_OCCUPIED);
-    goal_tsrs.emplace_back(srv.response.goal_tsrs[i]);
+    goal_tsrs.emplace_back(std::make_shared<TSRGoal>(srv.response.goal_tsrs[i]));
     //    goals.push_back(VictorRightArmConfig(srv.response.goal_configs[i].joint_values).asMap());
     //        goals.push_back(sr)
   }

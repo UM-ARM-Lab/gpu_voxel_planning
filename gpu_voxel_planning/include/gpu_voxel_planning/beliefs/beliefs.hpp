@@ -215,7 +215,7 @@ class ShapeCompletionBelief : public Belief {
   ros::Publisher free_space_publisher;
   int num_samples = 10;
   std::optional<std::vector<robot::JointValueMap>> goal_configs;
-  std::vector<TSR> goal_tsrs;
+  std::vector<std::shared_ptr<Goal>> goal_tsrs;
   bool sync_needed = true;
 
  public:
