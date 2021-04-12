@@ -24,7 +24,7 @@ TSR::TSR(const gpu_voxel_planning_msgs::TSR& tsr)
       rz(TSRBound(tsr.rz_lower, tsr.rz_upper)) {}
 
 bool TSR::contains(const geometry_msgs::Pose& pose) const {
-  // TODO: Check orientation (requires converting pose quaterion to TSR
+  // TODO: Check orientation (requires converting pose quaterion to TSR)
   return x.contains(pose.position.x) and y.contains(pose.position.y) and z.contains(pose.position.z);
 }
 
@@ -46,7 +46,7 @@ bool TSRGoal::isAchieved(const VictorRightArmConfig& config, const Scenario* sce
 std::vector<robot::JointValueMap> TSRGoal::sampleGoalConfigs(const Scenario* scenario) const {
   std::vector<robot::JointValueMap> goal_configs;
   //
-  // TODO: Sample uniformly from the TSR
+  // TODO: Sample multiple points (perhaps uniformly) from the TSR
 
   // TODO: Remove hardcoded orientation
   geometry_msgs::Pose target_pose;

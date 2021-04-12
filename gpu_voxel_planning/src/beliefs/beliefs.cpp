@@ -451,36 +451,20 @@ void ShapeCompletionBelief::requestCompletions() {
     throw std::length_error("Requested " + std::to_string(num_samples) + " completions but got " +
                             std::to_string(srv.response.sampled_completions.size()));
   }
-
-  //    std::cout << "Loading samples from message...";
-  //  std::vector<robot::JointValueMap> goals;
+  
   goal_tsrs.clear();
   for (int i = 0; i < num_samples; i++) {
     sampled_particles[i] = DenseGrid();
     sampled_particles[i].insertPointCloud(toPointsVector(srv.response.sampled_completions[i]), PROB_OCCUPIED);
     goal_tsrs.emplace_back(std::make_shared<TSRGoal>(srv.response.goal_tsrs[i]));
-    //    goals.push_back(VictorRightArmConfig(srv.response.goal_configs[i].joint_values).asMap());
-    //        goals.push_back(sr)
   }
-
-  // TODO Sample goal configs from TSRs
-  //  goal_configs = goals;
-  //    std::cout << "...Done\n";
 }
 
 std::vector<robot::JointValueMap> ShapeCompletionBelief::getPossibleGoals(const Scenario *scenario) const {
-  // TODO: syncWithShapeCompletion. Cannot sync in a const method
-
-  //  syncWithShapeCompletion();
-  //  if (sampled_goal_configs.has_value()) {
-  //    return sampled_goal_configs.value();
-  //  }
   std::vector<robot::JointValueMap> sampled_goal_configs;
   for (const auto &tsr_goal : goal_tsrs) {
     auto new_goals = tsr_goal->sampleGoalConfigs(scenario);
-//    auto new_goals = getPossibleGoals(this);
     sampled_goal_configs.insert(sampled_goal_configs.end(), new_goals.begin(), new_goals.end());
   }
   return sampled_goal_configs;
-//  throw std::logic_error("Shape completion belief does not have any possible goals");
 }

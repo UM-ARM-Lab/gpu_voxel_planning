@@ -487,10 +487,6 @@ bool ShapeRequestScenario::completed() const {
 
   int num_valid = 0;
   for (const auto &goal : bel->goal_tsrs) {
-    // TODO Check orientation as well as position
-    //    ????
-//    auto tsrgoal = dynamic_cast<TSRGoal*>(goal.get());
-//    if (tsrgoal->goal.contains(cur_pose)) {
     if(goal->isAchieved(VictorRightArmConfig(s.current_config), this)){
       num_valid += 1;
     }
