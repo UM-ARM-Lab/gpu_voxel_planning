@@ -20,6 +20,9 @@ from pathlib import Path
 experiment_dir = "experiments"
 scenarios_to_parse = ["Box", "Bookshelf"]
 
+# Output
+OUTDIR = "paper_figures"
+
 short_scenario = OrderedDict([
     ("Bookshelf", "Bookshelf"),
     ("Table_with_Box_table_known_visible_cave_known_full_cave_unknown", "Box"),
@@ -484,8 +487,15 @@ def load_file(filepath, filename):
     return exp
 
 
+def root_dir():
+    return Path(rospkg.RosPack().get_path('gpu_voxel_planning'))
+
+
 def load_all_files():
-    path = Path(rospkg.RosPack().get_path('gpu_voxel_planning')) / experiment_dir
+    path = root_dir() / experiment_dir
+    save_dir = root_dir() / OUTDIR
+    if not save_dir.exists():
+        save_dir.mkdir()
     experiments = []
     for name in os.listdir(path):
         if name.endswith(".png") or \
@@ -499,12 +509,12 @@ def load_all_files():
     # plot_all_data_for_scenarios(experiments, path)
 
     # - this is the one currently in the paper
-    plot_sorted(experiments, path)
+    plot_sorted(experiments, save_dir)
 
     # plot_avg_fig(experiments, path)
-    write_latex(experiments, path)
+    write_latex(experiments, save_dir)
 
 
 if __name__ == '__main__':
-    rospy.init_node("plot_experiments")
+    # rospy.init_node("plot_experiments")
     load_all_files()
