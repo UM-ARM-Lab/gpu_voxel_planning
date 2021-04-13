@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import os
-
 from typing import List
 from matplotlib import pyplot as plt
 
@@ -21,7 +19,7 @@ experiment_dir = "experiments"
 scenarios_to_parse = ["Box", "Bookshelf"]
 
 # Output
-OUTDIR = "paper_figures"
+OUT_DIR = "paper_figures"
 
 short_scenario = OrderedDict([
     ("Bookshelf", "Bookshelf"),
@@ -60,11 +58,7 @@ def super_short_belief(belief_string):
 
 
 def is_selected_strat(strat):
-    ss = short_strategy[strat]
     return True
-    if ss in ["OFU", "CM 1", "MCBE"]:
-        return True
-    return False
 
 
 fmt = "%Y-%m-%dT%H:%M:%S"
@@ -255,9 +249,8 @@ def bar_plot_by_scenario_and_prior(experiments: List[ExperimentGroup], hardness:
 
     # Add baseline experiment, all of which failed
     x_labels = x_labels + ["Baseline [8]"]
-    costs = costs + [upper_clip_time] # Add baseline cost
-    planning_times = planning_times + [15 * 60] # Add baseline planning time
-
+    costs = costs + [upper_clip_time]  # Add baseline cost
+    planning_times = planning_times + [15 * 60]  # Add baseline planning time
 
     hue = [float(label == "MoE+CM 1") for label in x_labels]
     # hue = [c for c in costs]
@@ -275,25 +268,17 @@ def bar_plot_by_scenario_and_prior(experiments: List[ExperimentGroup], hardness:
     ax.legend_.remove()
 
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
-    ax.set_title(short_scenario[experiments[0].scenario] + " " + hardness + "\n", fontsize=30)
-    # ax.set_xticklabels(x_labels)
-    # ax.set_yticks([25, 50])
+    ax.set_title(f"{short_scenario[experiments[0].scenario]} {hardness}\n", fontsize=30)
     ax.set_yticks([20, 40])
-    labels = [item.get_text() for item in ax.get_yticklabels()]
-    labels[0] = "20"
-    labels[1] = ">40"
-    if hardness in {"medium", "hard"}:
-        ax.yaxis.set_label_text(" ")
-        labels[0] = " "
-        labels[1] = "   "
+    labels = ["20", ">40"]
     ax.set_yticklabels(labels)
     ax.xaxis.set_label_text("")
 
-    # plt.axvline(x=2.5, linewidth=1, color='k')
+    # Add separating line to distinguish proposed method
     plt.axvline(x=0.5, linewidth=1, color='k')
     plt.tight_layout()
     plt.show()
-    filepath = save_path / (short_scenario[experiments[0].scenario] + "_" + hardness.replace(" ", "") + ".png")
+    filepath = save_path / f"{short_scenario[experiments[0].scenario]}_{hardness.replace(' ', '')}.png"
     ax.get_figure().savefig(filepath.as_posix())
 
     ax = sns.barplot(x="method", y="planning time (s)", data=data, hue="hue", dodge=False)
@@ -302,19 +287,12 @@ def bar_plot_by_scenario_and_prior(experiments: List[ExperimentGroup], hardness:
 
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
     ax.set_yticks([50, 100])
-    labels = [item.get_text() for item in ax.get_yticklabels()]
-    labels[0] = "50"
-    labels[1] = ">100"
-    if hardness in {"medium" or "hard"}:
-        ax.yaxis.set_label_text(" ")
-        labels[0] = " "
-        labels[1] = "   "
-    ax.set_yticklabels(labels)
+    labels = ["50", ">100"]
 
     ax.set_yticklabels(labels)
     ax.xaxis.set_label_text("")
 
-    # plt.axvline(x=2.5, linewidth=1, color='k')
+    # Add separating line to distinguish proposed method
     plt.axvline(x=0.5, linewidth=1, color='k')
     plt.tight_layout()
     plt.show()
@@ -492,12 +470,11 @@ def root_dir():
 
 def load_all_files():
     path = root_dir() / experiment_dir
-    save_dir = root_dir() / OUTDIR
+    save_dir = root_dir() / OUT_DIR
     if not save_dir.exists():
         save_dir.mkdir()
 
     experiments = group_experiments([load_file(fp) for fp in path.glob('*')])
-
 
     # plot_all_data_for_scenarios(experiments, path)
 
