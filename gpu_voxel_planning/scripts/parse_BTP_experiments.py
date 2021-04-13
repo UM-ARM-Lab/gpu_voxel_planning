@@ -1,31 +1,24 @@
 #!/usr/bin/env python
 
-import requests
-import json
-import urllib2
-import IPython
 import os
-import time
-from datetime import datetime
+
 from matplotlib import pyplot as plt
-from collections import OrderedDict
-import matplotlib.dates as mdates
+
 import rospy
 import rospkg
 import pandas as pd
 from collections import OrderedDict
 import numpy as np
 import seaborn as sns
-
+from pathlib import Path
 
 # Real
 # experiment_dir = "/experiments_real/"
 # scenarios_to_parse = ["RealTable", "Refrigerator"]
 
 # Sim
-experiment_dir = "/experiments/"
+experiment_dir = "experiments"
 scenarios_to_parse = ["Box", "Bookshelf"]
-
 
 short_scenario = OrderedDict([
     ("Bookshelf", "Bookshelf"),
@@ -52,14 +45,16 @@ short_strategy = OrderedDict([
     ("QMDP", "QMDP"),
     ("Thompson", "TS")])
 
+
 def super_short_belief(belief_string):
     sb = short_belief[belief_string]
-    if(sb == "CHS"):
+    if sb == "CHS":
         return "CHS"
-    if(sb.startswith("Particles")):
+    if sb.startswith("Particles"):
         return "MPF"
-    if(sb.startswith("MoE")):
+    if sb.startswith("MoE"):
         return "MoE"
+
 
 def is_selected_strat(strat):
     ss = short_strategy[strat]
@@ -71,28 +66,33 @@ def is_selected_strat(strat):
 
 fmt = "%Y-%m-%dT%H:%M:%S"
 
+
 class Experiment:
-    timestamp = None
-    scenario = None
-    strategy = None
-    belief = None
-    label = None
-    exec_cost = None
-    pareto_weight = None
-    succeeded = True
-    planning_time = None
-    num_collision = None
-    num_steps = None
+    def __init__(self):
+        self.timestamp = None
+        self.scenario = None
+        self.strategy = None
+        self.belief = None
+        self.label = None
+        self.exec_cost = None
+        self.pareto_weight = None
+        self.succeeded = True
+        self.planning_time = None
+        self.num_collision = None
+        self.num_steps = None
+
 
 class ExperimentGroup:
-    scenario = None
-    strategy = None
-    belief = None
-    exec_costs = None
-    avg_exec_cost = None
-    planning_times = None
-    avg_planning_time = None
-    succeeded = None
+    def __init__(self):
+        self.scenario = None
+        self.strategy = None
+        self.belief = None
+        self.exec_costs = None
+        self.avg_exec_cost = None
+        self.planning_times = None
+        self.avg_planning_time = None
+        self.succeeded = None
+
 
 def find_all(experiments, scenario, strategy, belief):
     return [e for e in experiments
@@ -100,12 +100,13 @@ def find_all(experiments, scenario, strategy, belief):
             if e.strategy == strategy
             if e.belief == belief]
 
+
 def group_experiments(experiments):
     """Groups experiments of the same scenario, strat, belief"""
     grouped = []
     for exp in experiments:
         if len(find_all(grouped, exp.scenario, exp.strategy, exp.belief)):
-            print("Skipping " + exp.scenario + ", " + exp.strategy + ", " + exp.belief + ". Already evaluated")
+            print(f"Skipping {exp.scenario}, {exp.strategy}, {exp.belief}. Already evaluated")
             continue
         eg = ExperimentGroup()
         eg.scenario = exp.scenario
@@ -114,11 +115,11 @@ def group_experiments(experiments):
         eg.succeeded = True
         eg.exec_costs = []
         eg.planning_times = []
-        
+
         g = find_all(experiments, exp.scenario, exp.strategy, exp.belief)
         print(len(g))
         for e in g:
-            if(exp.exec_cost is None):
+            if exp.exec_cost is None:
                 eg.exec_costs.append(float('inf'))
             else:
                 eg.exec_costs.append(exp.exec_cost)
@@ -131,24 +132,22 @@ def group_experiments(experiments):
         # IPython.embed()
     return grouped
 
+
 def average_same_xval(xs, ys):
     if len(xs) != len(ys):
-        raise "Can't average when xs and ys have different lengths"
-        
+        raise Exception("Can't average when xs and ys have different lengths")
+
     avg_xs = []
     avg_ys = []
     for x in xs:
         if x in avg_xs:
             continue
         same_y_costs = [ys[i] for i in range(len(ys)) if xs[i] == x]
-        
-        
+
         avg_xs.append(x)
         avg_ys.append(np.mean(same_y_costs))
     return avg_xs, avg_ys
-        
-    
-        
+
 
 def get_experiment(experiments, scenario, strategy, belief):
     """
@@ -169,23 +168,23 @@ def get_scenarios(experiments):
     """ Returns a set of all scenarios in the experiments"""
     return {exp.scenario for exp in experiments}
 
+
 def plot_all_data_for_scenarios(all_experiments, save_path):
     for scenario in get_scenarios(all_experiments):
         exps = [exp for exp in all_experiments if exp.scenario == scenario]
         plot_scenario(exps, save_path)
-    
+
 
 def plot_scenario(experiments, save_path):
-
     """Plots a list of experiments all belonging to the same scenario"""
 
-    experiments.sort(key=lambda e:e.label)
+    experiments.sort(key=lambda e: e.label)
 
     series = pd.Series([e.avg_exec_cost * e.succeeded for e in experiments])
     ax = series.plot(kind='bar')
-    
+
     ax.set_title(short_scenario[experiments[0].scenario])
-    
+
     x_labels = [e.label for e in experiments]
     ax.set_xticklabels(x_labels)
     plt.tight_layout()
@@ -195,9 +194,9 @@ def plot_scenario(experiments, save_path):
 
 def plot_sorted(all_experiments, save_path):
     hardness_map = {"Easy Prior": ["CHS", "Particles Good", "MoE Good"],
-                    "Medium Prior" : ["CHS", "Particles Noisy", "MoE Noisy"],
-                    "Hard Prior" : ["CHS", "Particles Bonkers", "MoE Bonkers"]}
-    
+                    "Medium Prior": ["CHS", "Particles Noisy", "MoE Noisy"],
+                    "Hard Prior": ["CHS", "Particles Bonkers", "MoE Bonkers"]}
+
     for scenario in get_scenarios(all_experiments):
         for hardness in hardness_map:
             exps = [exp for exp in all_experiments
@@ -205,6 +204,7 @@ def plot_sorted(all_experiments, save_path):
                     if short_belief[exp.belief] in hardness_map[hardness]
                     if is_selected_strat(exp.strategy)]
             plot_sorted_single(exps, hardness, save_path)
+
 
 def plot_sorted_single(experiments, hardness, save_path):
     """Plots a list of experiments all belonging to the same scenario"""
@@ -226,7 +226,7 @@ def plot_sorted_single(experiments, hardness, save_path):
              # "CHS+OFU",
              # "MPF+OFU"
 
-    ]
+             ]
 
     def custom_sort(exp):
         # order = ["MoE+CM",
@@ -243,12 +243,11 @@ def plot_sorted_single(experiments, hardness, save_path):
             if label.startswith(order[i]):
                 return i
         return 100
-        
 
     # experiments.sort(key=lambda e:e.label)
     experiments.sort(key=custom_sort)
     experiments = [e for e in experiments if e.label in order]
-    
+
     costs = [e.avg_exec_cost * e.succeeded for e in experiments]
     planning_times = [e.avg_planning_time * e.succeeded for e in experiments]
 
@@ -257,28 +256,22 @@ def plot_sorted_single(experiments, hardness, save_path):
 
     x_labels = x_labels + ["Baseline [8]"]
     costs = costs + [100]
-    planning_times = planning_times + [15*60]
-    hue = [float(label == "MoE+CM 1") for label in x_labels ]
+    planning_times = planning_times + [15 * 60]
+    hue = [float(label == "MoE+CM 1") for label in x_labels]
     # hue = [c for c in costs]
     clipped_times = [min(p, 100) for p in planning_times]
     clipped_policy = [min(p, 40) for p in costs]
 
-    data = pd.DataFrame({"average policy cost (rad)":clipped_policy,
-                         "planning time (s)":clipped_times,
-                         "method":x_labels,
-                         "hue":hue})
-    
-    # series = pd.Series(costs)
-    # ax = series.plot(kind='bar', fontsize=30)
-    # IPython.embed()
+    data = pd.DataFrame({"average policy cost (rad)": clipped_policy,
+                         "planning time (s)": clipped_times,
+                         "method": x_labels,
+                         "hue": hue})
+
     sns.set(style="whitegrid", font_scale=2.2)
     ax = sns.barplot(x="method", y="average policy cost (rad)", data=data, hue="hue", dodge=False)
 
-
-
-
     ax.legend_.remove()
-    
+
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
     ax.set_title(short_scenario[experiments[0].scenario] + " " + hardness + "\n", fontsize=30)
     # ax.set_xticklabels(x_labels)
@@ -287,7 +280,7 @@ def plot_sorted_single(experiments, hardness, save_path):
     labels = [item.get_text() for item in ax.get_yticklabels()]
     labels[0] = "20"
     labels[1] = ">40"
-    if(hardness=="medium" or hardness =="hard"):
+    if hardness in {"medium", "hard"}:
         ax.yaxis.set_label_text(" ")
         labels[0] = " "
         labels[1] = "   "
@@ -298,19 +291,19 @@ def plot_sorted_single(experiments, hardness, save_path):
     plt.axvline(x=0.5, linewidth=1, color='k')
     plt.tight_layout()
     plt.show()
-    ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness.replace(" ", "") + ".png")
-
+    filepath = save_path / (short_scenario[experiments[0].scenario] + "_" + hardness.replace(" ", "") + ".png")
+    ax.get_figure().savefig(filepath.as_posix())
 
     ax = sns.barplot(x="method", y="planning time (s)", data=data, hue="hue", dodge=False)
 
     ax.legend_.remove()
-    
+
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
     ax.set_yticks([50, 100])
     labels = [item.get_text() for item in ax.get_yticklabels()]
     labels[0] = "50"
     labels[1] = ">100"
-    if(hardness=="medium" or hardness =="hard"):
+    if hardness in {"medium" or "hard"}:
         ax.yaxis.set_label_text(" ")
         labels[0] = " "
         labels[1] = "   "
@@ -323,7 +316,9 @@ def plot_sorted_single(experiments, hardness, save_path):
     plt.axvline(x=0.5, linewidth=1, color='k')
     plt.tight_layout()
     plt.show()
-    ax.get_figure().savefig(save_path + short_scenario[experiments[0].scenario] + "_" + hardness.replace(" ", "") + "_times.png")
+    filepath = save_path / (short_scenario[experiments[0].scenario] + "_" + hardness.replace(" ", "") + "_times.png")
+    ax.get_figure().savefig(filepath.as_posix())
+
 
 def plot_avg_fig(all_experiments, save_path):
     scenario = "Bookshelf"
@@ -333,40 +328,39 @@ def plot_avg_fig(all_experiments, save_path):
     plot_sorted_single(exps, "all", save_path)
 
 
-def plot_swarm(all_experiments, save_path):
-    plt.show()
-    ax.get_figure().savefig(save_path + "_swarm.png")
-    
+# def plot_swarm(all_experiments, save_path):
+#     plt.show()
+#     ax.get_figure().savefig(save_path + "_swarm.png")
 
 
 def write_latex(experiments, save_path):
-#     \begin{table}[]
-#     \centering
-#     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-#         \hline
-#          & \multicolumn{9}{c|}{Prior Belief} \\
-#         \hline
-#          & \multicolumn{4}{c|}{MoE} & \multicolumn{4}{c|}{Obstacles} & CHS\\
-#         \hline
-#          & \multicolumn{2}{c|}{good} & \multicolumn{2}{c|}{bonkers} &
-#          \multicolumn{2}{c|}{good} & \multicolumn{2}{c|}{bonkers} & \\
-#         \hline
-#          & narrow & broad & narrow & broad & narrow & broad & narrow & broad & \\
-#         \hline
-#         Optimistic & & & & & & & & & \\
-#         \hline
-#         Thompson & & & & & & & & & \\
-#         \hline
-#         HOP & & & & & & & & & \\
-#         \hline
-#         ORO & & & & & & & & & \\
-#         \hline
-#         Collision Measure & & & & & & & & & \\
-#         \hline
-#     \end{tabular}
-#     \caption{HOP: Hindsight optimization, aka Average over Clairvoyance. ORO: Optimistic Rollout}
-#     \label{tab:my_label}
-#     \end{table}
+    #     \begin{table}[]
+    #     \centering
+    #     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+    #         \hline
+    #          & \multicolumn{9}{c|}{Prior Belief} \\
+    #         \hline
+    #          & \multicolumn{4}{c|}{MoE} & \multicolumn{4}{c|}{Obstacles} & CHS\\
+    #         \hline
+    #          & \multicolumn{2}{c|}{good} & \multicolumn{2}{c|}{bonkers} &
+    #          \multicolumn{2}{c|}{good} & \multicolumn{2}{c|}{bonkers} & \\
+    #         \hline
+    #          & narrow & broad & narrow & broad & narrow & broad & narrow & broad & \\
+    #         \hline
+    #         Optimistic & & & & & & & & & \\
+    #         \hline
+    #         Thompson & & & & & & & & & \\
+    #         \hline
+    #         HOP & & & & & & & & & \\
+    #         \hline
+    #         ORO & & & & & & & & & \\
+    #         \hline
+    #         Collision Measure & & & & & & & & & \\
+    #         \hline
+    #     \end{tabular}
+    #     \caption{HOP: Hindsight optimization, aka Average over Clairvoyance. ORO: Optimistic Rollout}
+    #     \label{tab:my_label}
+    #     \end{table}
 
     header = """\begin{table}[]
 \centering
@@ -376,9 +370,9 @@ def write_latex(experiments, save_path):
     beliefs = short_belief.values()
     scenarios = short_scenario.values()
     strategies = short_strategy.values()
-    
-    def gc(scenario, strat, bel):
-        exp = get_experiment(experiments, scenario, strat, bel)
+
+    def get_cost(scenario, strategy, bel):
+        exp = get_experiment(experiments, scenario, strategy, bel)
         if exp is None:
             return "-"
         if not exp.succeeded:
@@ -387,8 +381,8 @@ def write_latex(experiments, save_path):
             return str(float('inf'))
         return "%5.1f" % exp.avg_exec_cost
 
-    def gt(scenario, strat, bel):
-        exp = get_experiment(experiments, scenario, strat, bel)
+    def get_time(scenario, strategy, bel):
+        exp = get_experiment(experiments, scenario, strategy, bel)
         if exp is None:
             return "-"
         if not exp.succeeded:
@@ -405,24 +399,23 @@ def write_latex(experiments, save_path):
             f.write(classy_names[bel])
         f.write("\\\\")
 
-
     def write_cost_line(f, scenario, strat):
         f.write("\\hline\n")
         f.write(strat)
         for bel in beliefs:
             f.write(" & ")
-            f.write(gc(scenario, strat, bel))
+            f.write(get_cost(scenario, strat, bel))
         f.write("\\\\\n")
 
     def write_cost_table(scenario):
-        with open(save_path + "table_" + scenario + "cost.tex", "w") as f:
+        with (save_path / f"table_{scenario}_cost.tex").open("w") as f:
             f.write("\\begin{table}[]\n")
             f.write("\\centering\n")
             f.write("\\begin{tabular}{|c|" + "c|" * len(beliefs) + "}\n")
             f.write("\\hline\n")
             write_belief_headers(f)
-            for strat in strategies:
-                write_cost_line(f, scenario, strat)
+            for strategy in strategies:
+                write_cost_line(f, scenario, strategy)
             f.write("\\hline\n")
             f.write("\\end{tabular}\n")
             f.write("\\caption{" + scenario + " Policy Cost}\n")
@@ -434,43 +427,38 @@ def write_latex(experiments, save_path):
         f.write(strat)
         for bel in beliefs:
             f.write(" & ")
-            f.write(gt(scenario, strat, bel))
+            f.write(get_time(scenario, strat, bel))
         f.write("\\\\\n")
-        
+
     def write_time_table(scenario):
-        with open(save_path + "table_" + scenario + "timings.tex", "w") as f:
+        with (save_path / f"table_{scenario}_timings.tex").open("w") as f:
             f.write("\\begin{table}[]\n")
             f.write("\\centering\n")
             f.write("\\begin{tabular}{|c|" + "c|" * len(beliefs) + "}\n")
             f.write("\\hline\n")
             write_belief_headers(f)
-            for strat in strategies:
-                write_time_line(f, scenario, strat)
+            for strategy in strategies:
+                write_time_line(f, scenario, strategy)
             f.write("\\hline\n")
             f.write("\\end{tabular}\n")
             f.write("\\caption{" + scenario + " Planning Times}\n")
             f.write("\\label{tab:experiment_" + scenario + "_time}\n")
             f.write("\\end{table}\n")
 
-        
+    for scenario_to_parse in scenarios_to_parse:
+        write_cost_table(scenario_to_parse)
+        write_time_table(scenario_to_parse)
 
-    for scenario in scenarios_to_parse:
-        write_cost_table(scenario)
-        write_time_table(scenario)
-
-    
 
 def load_file(filepath, filename):
     exp = Experiment()
-    with open(filepath + filename) as f:
+    with (filepath / filename).open() as f:
         exp.timestamp = f.readline()
-        line = f.readline()
-        while line:
+        while line := f.readline():
             parts = line.split()
             if len(parts) == 0:
-                line = f.readline()
                 continue
-            
+
             if parts[0] == "accumulated_cost" and exp.exec_cost is None:
                 exp.exec_cost = float(parts[5])
             elif parts[0] == "Strategy:":
@@ -489,26 +477,25 @@ def load_file(filepath, filename):
             elif len(parts) > 4 and parts[2] == "Planning" and exp.planning_time is None:
                 exp.planning_time = float(parts[4])
                 exp.num_steps = parts[5]
-            line = f.readline()
 
-    print filename
-    exp.label =  short_belief[exp.belief] + "_" + short_strategy[exp.strategy]
+    print(filename)
+    exp.label = short_belief[exp.belief] + "_" + short_strategy[exp.strategy]
     # IPython.embed()
     return exp
-        
+
 
 def load_all_files():
-    path = rospkg.RosPack().get_path('gpu_voxel_planning') + experiment_dir
+    path = Path(rospkg.RosPack().get_path('gpu_voxel_planning')) / experiment_dir
     experiments = []
     for name in os.listdir(path):
-        if name.endswith(".png") or\
-           name.endswith(".pdf") or\
-           name.endswith(".tex"):
-           continue;
+        if name.endswith(".png") or \
+                name.endswith(".pdf") or \
+                name.endswith(".tex"):
+            continue
         experiments.append(load_file(path, name))
 
     experiments = group_experiments(experiments)
-        
+
     # plot_all_data_for_scenarios(experiments, path)
 
     # - this is the one currently in the paper
@@ -516,9 +503,8 @@ def load_all_files():
 
     # plot_avg_fig(experiments, path)
     write_latex(experiments, path)
-    
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     rospy.init_node("plot_experiments")
-    load_all_files();
+    load_all_files()
