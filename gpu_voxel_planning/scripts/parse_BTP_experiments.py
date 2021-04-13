@@ -2,9 +2,9 @@
 
 import os
 
+from typing import List
 from matplotlib import pyplot as plt
 
-import rospy
 import rospkg
 import pandas as pd
 from collections import OrderedDict
@@ -84,20 +84,40 @@ class Experiment:
         self.num_collision = None
         self.num_steps = None
 
+    def __str__(self):
+        return f"[{self.scenario}, {self.strategy}, {self.belief}]"
+
 
 class ExperimentGroup:
-    def __init__(self):
-        self.scenario = None
-        self.strategy = None
-        self.belief = None
-        self.exec_costs = None
-        self.avg_exec_cost = None
-        self.planning_times = None
-        self.avg_planning_time = None
-        self.succeeded = None
+    def __init__(self, experiments: List[Experiment]):
+        if len(experiments) == 0:
+            raise RuntimeError("Cannot create an experiment group with 0 experiments")
+
+        self.scenario = experiments[0].scenario
+        self.strategy = experiments[0].strategy
+        self.belief = experiments[0].belief
+
+        self._validate(experiments)
+
+        self.exec_costs = [e.exec_cost if e.exec_cost is not None else float('inf') for e in experiments]
+        self.avg_exec_cost = np.mean(self.exec_costs)
+        self.planning_times = [e.planning_time for e in experiments]
+        self.avg_planning_time = np.mean(self.planning_times)
+        self.succeeded = all(e.succeeded for e in experiments)
+        self.label = f"{super_short_belief(self.belief)}+{short_strategy[self.strategy]}"
+
+    def __str__(self):
+        return f"[{self.scenario}, {self.strategy}, {self.belief}]"
+
+    def _validate(self, experiments):
+        """Confirm all experiments belong to the same group"""
+        for exp in experiments:
+            if exp.scenario != self.scenario or exp.strategy != self.strategy or exp.belief != self.belief:
+                raise RuntimeError(f"Experiment {exp} does not belong in this group {self}")
 
 
-def find_all(experiments, scenario, strategy, belief):
+def find_all(experiments, scenario: str, strategy: str, belief: str):
+    """Returns all experiments done using scenario, stratety, belief"""
     return [e for e in experiments
             if e.scenario == scenario
             if e.strategy == strategy
@@ -105,34 +125,21 @@ def find_all(experiments, scenario, strategy, belief):
 
 
 def group_experiments(experiments):
-    """Groups experiments of the same scenario, strat, belief"""
+    """Groups experiments of the same scenario, strat, belief
+
+    This is needed because multiple trials were conducted for each experiment, and some are across multiple files
+    """
     grouped = []
     for exp in experiments:
-        if len(find_all(grouped, exp.scenario, exp.strategy, exp.belief)):
-            print(f"Skipping {exp.scenario}, {exp.strategy}, {exp.belief}. Already evaluated")
+        if already_in_group := len(find_all(grouped, exp.scenario, exp.strategy, exp.belief)):
+            if already_in_group > 1:
+                raise RuntimeError(
+                    f"Experiment group {exp.scenario}, {exp.strategy}, {exp.belief} appears more than once")
+            # print(f"Skipping {exp.scenario}, {exp.strategy}, {exp.belief}. Already evaluated")
             continue
-        eg = ExperimentGroup()
-        eg.scenario = exp.scenario
-        eg.strategy = exp.strategy
-        eg.belief = exp.belief
-        eg.succeeded = True
-        eg.exec_costs = []
-        eg.planning_times = []
 
-        g = find_all(experiments, exp.scenario, exp.strategy, exp.belief)
-        print(len(g))
-        for e in g:
-            if exp.exec_cost is None:
-                eg.exec_costs.append(float('inf'))
-            else:
-                eg.exec_costs.append(exp.exec_cost)
-            eg.planning_times.append(exp.planning_time)
-            eg.succeeded = eg.succeeded and exp.succeeded
+        grouped.append(ExperimentGroup(find_all(experiments, exp.scenario, exp.strategy, exp.belief)))
 
-        eg.avg_exec_cost = np.mean(eg.exec_costs)
-        eg.avg_planning_time = np.mean(eg.planning_times)
-        grouped.append(eg)
-        # IPython.embed()
     return grouped
 
 
@@ -195,7 +202,7 @@ def plot_scenario(experiments, save_path):
     ax.get_figure().savefig(save_path + experiments[0].scenario + ".png")
 
 
-def plot_sorted(all_experiments, save_path):
+def plot_sorted(all_experiments: List[ExperimentGroup], save_path: Path):
     hardness_map = {"Easy Prior": ["CHS", "Particles Good", "MoE Good"],
                     "Medium Prior": ["CHS", "Particles Noisy", "MoE Noisy"],
                     "Hard Prior": ["CHS", "Particles Bonkers", "MoE Bonkers"]}
@@ -206,15 +213,12 @@ def plot_sorted(all_experiments, save_path):
                     if exp.scenario == scenario
                     if short_belief[exp.belief] in hardness_map[hardness]
                     if is_selected_strat(exp.strategy)]
-            plot_sorted_single(exps, hardness, save_path)
+            bar_plot_by_scenario_and_prior(exps, hardness, save_path)
 
 
-def plot_sorted_single(experiments, hardness, save_path):
+def bar_plot_by_scenario_and_prior(experiments: List[ExperimentGroup], hardness: str, save_path):
     """Plots a list of experiments all belonging to the same scenario"""
 
-    for e in experiments:
-        e.label = super_short_belief(e.belief) + "+" + short_strategy[e.strategy]
-        # e.label = e.label.ljust(8)
     order = ["MoE+CM 1",
              "CHS+CM 1",
              "MPF+CM 1",
@@ -231,20 +235,12 @@ def plot_sorted_single(experiments, hardness, save_path):
 
              ]
 
-    def custom_sort(exp):
-        # order = ["MoE+CM",
-        #          "MoE+MCBE",
-        #          "MoE+OFU",
-        #          "CHS+CM",
-        #          "CHS+MCBE",
-        #          "CHS+OFU",
-        #          "MPF+CM",
-        #          "MPF+MCBE",
-        #          "MPF+OFU"]
-        label = exp.label
-        for i in range(len(order)):
-            if label.startswith(order[i]):
-                return i
+    upper_clip_time = 100
+    upper_clip_cost = 40
+
+    def custom_sort(exp: ExperimentGroup):
+        if exp.label in order:
+            return order.index(exp.label)
         return 100
 
     # experiments.sort(key=lambda e:e.label)
@@ -257,13 +253,16 @@ def plot_sorted_single(experiments, hardness, save_path):
     x_labels, costs = average_same_xval([e.label for e in experiments], costs)
     x_labels, planning_times = average_same_xval([e.label for e in experiments], planning_times)
 
+    # Add baseline experiment, all of which failed
     x_labels = x_labels + ["Baseline [8]"]
-    costs = costs + [100]
-    planning_times = planning_times + [15 * 60]
+    costs = costs + [upper_clip_time] # Add baseline cost
+    planning_times = planning_times + [15 * 60] # Add baseline planning time
+
+
     hue = [float(label == "MoE+CM 1") for label in x_labels]
     # hue = [c for c in costs]
-    clipped_times = [min(p, 100) for p in planning_times]
-    clipped_policy = [min(p, 40) for p in costs]
+    clipped_times = [min(p, upper_clip_time) for p in planning_times]
+    clipped_policy = [min(p, upper_clip_cost) for p in costs]
 
     data = pd.DataFrame({"average policy cost (rad)": clipped_policy,
                          "planning time (s)": clipped_times,
@@ -328,7 +327,7 @@ def plot_avg_fig(all_experiments, save_path):
     exps = [exp for exp in all_experiments
             if exp.scenario == scenario
             if is_selected_strat(exp.strategy)]
-    plot_sorted_single(exps, "all", save_path)
+    bar_plot_by_scenario_and_prior(exps, "all", save_path)
 
 
 # def plot_swarm(all_experiments, save_path):
@@ -453,9 +452,9 @@ def write_latex(experiments, save_path):
         write_time_table(scenario_to_parse)
 
 
-def load_file(filepath, filename):
+def load_file(filepath):
     exp = Experiment()
-    with (filepath / filename).open() as f:
+    with filepath.open() as f:
         exp.timestamp = f.readline()
         while line := f.readline():
             parts = line.split()
@@ -481,7 +480,7 @@ def load_file(filepath, filename):
                 exp.planning_time = float(parts[4])
                 exp.num_steps = parts[5]
 
-    print(filename)
+    print(f'Loaded {filepath.parts[-1]}')
     exp.label = short_belief[exp.belief] + "_" + short_strategy[exp.strategy]
     # IPython.embed()
     return exp
@@ -496,15 +495,9 @@ def load_all_files():
     save_dir = root_dir() / OUTDIR
     if not save_dir.exists():
         save_dir.mkdir()
-    experiments = []
-    for name in os.listdir(path):
-        if name.endswith(".png") or \
-                name.endswith(".pdf") or \
-                name.endswith(".tex"):
-            continue
-        experiments.append(load_file(path, name))
 
-    experiments = group_experiments(experiments)
+    experiments = group_experiments([load_file(fp) for fp in path.glob('*')])
+
 
     # plot_all_data_for_scenarios(experiments, path)
 
