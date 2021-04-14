@@ -11,12 +11,12 @@ import seaborn as sns
 from pathlib import Path
 
 # Real
-# experiment_dir = "/experiments_real/"
-# scenarios_to_parse = ["RealTable", "Refrigerator"]
+real_experiment_dir = "experiments_real"
+real_scenarios_to_parse = ["RealTable", "Refrigerator"]
 
 # Sim
-experiment_dir = "experiments"
-scenarios_to_parse = ["Box", "Bookshelf"]
+sim_experiment_dir = "experiments"
+sim_scenarios_to_parse = ["Box", "Bookshelf"]
 
 # Output
 OUT_DIR = "paper_figures"
@@ -196,7 +196,63 @@ def plot_scenario(experiments, save_path):
     ax.get_figure().savefig(save_path + experiments[0].scenario + ".png")
 
 
-def plot_sorted(all_experiments: List[ExperimentGroup], save_path: Path):
+def scatter_plots(all_experiments: List[ExperimentGroup], save_path: Path):
+    hardness_map = {"Easy Prior": ["CHS", "Particles Good", "MoE Good"],
+                    "Medium Prior": ["CHS", "Particles Noisy", "MoE Noisy"],
+                    "Hard Prior": ["CHS", "Particles Bonkers", "MoE Bonkers"]}
+
+    for scenario in get_scenarios(all_experiments):
+        for hardness in hardness_map:
+            exps = [exp for exp in all_experiments
+                    if exp.scenario == scenario
+                    if short_belief[exp.belief] in hardness_map[hardness]
+                    if is_selected_strat(exp.strategy)]
+            scatter_plot(exps, hardness, save_path)
+
+
+def scatter_plot(experiments: List[ExperimentGroup], hardness: str, save_path):
+    exeriments_to_plot = ["MoE+CM 1",
+                          "CHS+CM 1",
+                          "MPF+CM 1",
+                          # "CHS+MCBE",
+                          # "MPF+MCBE",
+                          "MoE+OFU",
+                          "MoE+TS",
+                          "CHS+QMDP",
+                          "MoE+MCBE",
+                          "CHS+ORO",
+                          # "CHS+OFU",
+                          # "MPF+OFU"
+                          ]
+
+    experiments = [e for e in experiments if e.label in exeriments_to_plot]
+    upper_clip_time = 100
+    upper_clip_cost = 40
+
+    costs = [e.avg_exec_cost * e.succeeded for e in experiments]
+    planning_times = [e.avg_planning_time * e.succeeded for e in experiments]
+
+    x_labels, costs = average_same_xval([e.label for e in experiments], costs)
+    x_labels, planning_times = average_same_xval([e.label for e in experiments], planning_times)
+
+    # Add baseline experiment, all of which failed
+    x_labels = x_labels + ["Baseline [8]"]
+    costs = costs + [upper_clip_time]  # Add baseline cost
+    planning_times = planning_times + [15 * 60]  # Add baseline planning time
+
+    hue = [float(label == "MoE+CM 1") for label in x_labels]
+    # hue = [c for c in costs]
+    clipped_times = [min(p, upper_clip_time) for p in planning_times]
+    clipped_policy = [min(p, upper_clip_cost) for p in costs]
+
+    data = pd.DataFrame({"average policy cost (rad)": clipped_policy,
+                         "planning time (s)": clipped_times,
+                         "method": x_labels,
+                         "hue": hue})
+    ax = sns.scatterplot(data=data, x="average policy cost (rad)", y="planning time (s)", label="method")
+
+
+def bar_plots(all_experiments: List[ExperimentGroup], save_path: Path):
     hardness_map = {"Easy Prior": ["CHS", "Particles Good", "MoE Good"],
                     "Medium Prior": ["CHS", "Particles Noisy", "MoE Noisy"],
                     "Hard Prior": ["CHS", "Particles Bonkers", "MoE Bonkers"]}
@@ -425,7 +481,7 @@ def write_latex(experiments, save_path):
             f.write("\\label{tab:experiment_" + scenario + "_time}\n")
             f.write("\\end{table}\n")
 
-    for scenario_to_parse in scenarios_to_parse:
+    for scenario_to_parse in sim_scenarios_to_parse:
         write_cost_table(scenario_to_parse)
         write_time_table(scenario_to_parse)
 
@@ -469,17 +525,21 @@ def root_dir():
 
 
 def load_all_files():
-    path = root_dir() / experiment_dir
+    sim_path = root_dir() / sim_experiment_dir
+    real_path = root_dir() / real_experiment_dir
     save_dir = root_dir() / OUT_DIR
     if not save_dir.exists():
         save_dir.mkdir()
 
-    experiments = group_experiments([load_file(fp) for fp in path.glob('*')])
+    experiments = group_experiments([load_file(fp) for fp in sim_path.glob('*')])
+    experiments += group_experiments([load_file(fp) for fp in real_path.glob('*')])
 
     # plot_all_data_for_scenarios(experiments, path)
 
     # - this is the one currently in the paper
-    plot_sorted(experiments, save_dir)
+    bar_plots(experiments, save_dir)
+
+    # scatter_plots(experiments, save_dir)
 
     # plot_avg_fig(experiments, path)
     write_latex(experiments, save_dir)
