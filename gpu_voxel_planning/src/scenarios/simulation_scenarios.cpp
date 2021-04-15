@@ -97,7 +97,8 @@ void SimulationScenario::setPrior(ObstacleConfiguration &unknown_obstacles_prior
 
 void SimulationScenario::validate() {
   s.robot.set(s.getCurConfig().asMap());
-  if (s.robot.occupied_space.overlapsWith(&true_obstacles.occupied)) {
+  if (s.robot.occupied_space.overlapsWith(&true_obstacles.occupied) or
+      !s.isPossiblyValid(s.robot.occupied_space)) {
     std::cerr << "Start configuration overlaps with obstacle\n";
     throw(std::invalid_argument("Start configuration is invalid\n"));
   }
@@ -106,7 +107,8 @@ void SimulationScenario::validate() {
     auto goals = getPossibleGoals();
     assert(goals.size() == 1);
     s.robot.set(goals.at(0));
-    if (s.robot.occupied_space.overlapsWith(&true_obstacles.occupied)) {
+    if (s.robot.occupied_space.overlapsWith(&true_obstacles.occupied) or
+        !s.isPossiblyValid(s.robot.occupied_space)) {
       std::cerr << "Goal configuration overlaps with obstacle\n";
       throw(std::invalid_argument("Goal configuration is invalid\n"));
     }
@@ -379,6 +381,74 @@ Object Bookshelf::getTable() {
 }
 
 /****************************************
+ **         Tunnel
+ ****************************************/
+Tunnel::Tunnel(const BeliefParams &bp)
+    : SimulationScenario("tunnel_scenario.json"), name(std::string("Bookshelf")) {
+  robot::JointValueMap jvm;
+  jvm["victor_right_gripper_fingerA_joint_2"] = 0.0;
+  jvm["victor_right_gripper_fingerB_joint_2"] = 0.0;
+  jvm["victor_right_gripper_fingerC_joint_2"] = 0.0;
+  // ri.setRightGripper(0);
+  victor.set(jvm);
+
+  Object walls = getWalls();
+
+  unknown_obstacles.add(walls);
+  unknown_obstacles.add(getBlockers());
+
+//  bool table_known = (bp.belief_type == BeliefType::Deterministic);
+//  if (table_known) {
+//    known_obstacles.add(table);
+//  } else {
+//    unknown_obstacles.add(table);
+//  }
+
+  combineObstacles();
+  setPrior(unknown_obstacles, bp);
+
+  // s.current_config = VictorRightArmConfig(std::vector<double>
+  //                                         {-0.9, 1.3, -0.3, -0.8, 0.0, 0.2, 0.3}).asMap();
+  //    s.current_config = VictorRightArmConfig(std::vector<double>{-1.2, 1.3, -0.8, 0.4, 0.4, 0.3, 0.3}).asMap();
+  //    goal_config = VictorRightArmConfig(std::vector<double>{0.3, 1.2, -0.3, 1.5, 0, -0.7, -0.9}).asMap();
+
+  victor.set(s.current_config);
+}
+
+Object Tunnel::getWalls() {
+  Vector3f td(30.0 * 0.0254, 32.0 * 0.0254, 1.0 * 0.0254);  // table dimensions
+  Vector3f tc(1.7, 1.4, 0.9);                               // table corner
+  Vector3f tcf(1.7, 1.4, 0.0);                              // table corner at floor
+  Vector3f tld(.033, 0.033, tc.z);                          // table leg dims
+
+  Object horizontal_walls;
+  auto shelf = AABB(tc, tc + td);
+  horizontal_walls.add(shelf);
+  shelf.shift(Vector3f(0.0, 0.0, 0.5));
+  horizontal_walls.add(shelf);
+//  table.add(AABB(tcf, tcf + tld));
+//  table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x - tld.x, 0, 0),
+//                 Vector3f(tc.x, tc.y, 0) + Vector3f(td.x - tld.x, 0, 0) + tld));
+//  table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y - tld.y, 0),
+//                 Vector3f(tc.x, tc.y, 0) + Vector3f(0, td.y - tld.y, 0) + tld));
+//  table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x - tld.x, td.y - tld.y, 0),
+//                 Vector3f(tc.x, tc.y, 0) + Vector3f(td.x - tld.x, td.y - tld.y, 0) + tld));
+  return horizontal_walls;
+}
+
+Object Tunnel::getBlockers() {
+  Vector3f td(20 * 0.0254, 1.0 * 0.0254, 0.5);  // table dimensions
+  Vector3f tc(1.8, 1.8, 0.9);                               // table corner// table leg dims
+
+  Object blocker;
+  auto shelf = AABB(tc, tc + td);
+  blocker.add(shelf);
+
+  return blocker;
+}
+
+
+/****************************************
  **         CloseWall
  ****************************************/
 
@@ -496,3 +566,4 @@ bool ShapeRequestScenario::completed() const {
   std::cout << "cur pose is within " << prob_complete*100 << "% of the tsrs\n";
   return prob_complete >= 0.9;
 }
+

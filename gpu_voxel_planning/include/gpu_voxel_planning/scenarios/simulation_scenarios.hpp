@@ -95,6 +95,19 @@ class Bookshelf : public SimulationScenario {
 };
 
 /****************************************
+ **         Tunnel
+ ****************************************/
+class Tunnel : public SimulationScenario {
+  const std::string name;
+
+ public:
+  explicit Tunnel(const BeliefParams& bp);
+  std::string getName() const override { return "Tunnel"; }
+  static Object getWalls();
+  static Object getBlockers();
+};
+
+/****************************************
  **      Close Wall
  ****************************************/
 class CloseWall : public SimulationScenario {

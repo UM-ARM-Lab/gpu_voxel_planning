@@ -211,7 +211,7 @@ def scatter_plots(all_experiments: List[ExperimentGroup], save_path: Path):
 
 
 def scatter_plot(experiments: List[ExperimentGroup], hardness: str, save_path):
-    exeriments_to_plot = ["MoE+CM 1",
+    experiments_to_plot = ["MoE+CM 1",
                           "CHS+CM 1",
                           "MPF+CM 1",
                           # "CHS+MCBE",
@@ -225,7 +225,7 @@ def scatter_plot(experiments: List[ExperimentGroup], hardness: str, save_path):
                           # "MPF+OFU"
                           ]
 
-    experiments = [e for e in experiments if e.label in exeriments_to_plot]
+    experiments = [e for e in experiments if e.label in experiments_to_plot]
     upper_clip_time = 100
     upper_clip_cost = 40
 
@@ -322,7 +322,7 @@ def bar_plot_by_scenario_and_prior(experiments: List[ExperimentGroup], hardness:
     ax = sns.barplot(x="method", y="average policy cost (rad)", data=data, hue="hue", dodge=False)
 
     ax.legend_.remove()
-
+    # ax.set_ylabel("average policy cost (rad)", size=10)
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
     ax.set_title(f"{short_scenario[experiments[0].scenario]} {hardness}\n", fontsize=30)
     ax.set_yticks([20, 40])
@@ -352,7 +352,7 @@ def bar_plot_by_scenario_and_prior(experiments: List[ExperimentGroup], hardness:
     plt.axvline(x=0.5, linewidth=1, color='k')
     plt.tight_layout()
     plt.show()
-    filepath = save_path / (short_scenario[experiments[0].scenario] + "_" + hardness.replace(" ", "") + "_times.png")
+    filepath = save_path / f"{short_scenario[experiments[0].scenario]}_{hardness.replace(' ', '')}_times.png"
     ax.get_figure().savefig(filepath.as_posix())
 
 

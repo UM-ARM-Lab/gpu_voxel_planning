@@ -27,8 +27,9 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
 
   std::string filename = scenario.getName() + "_" + strategy.getName() + "_" + scenario.belief_name + "_" +
                          arc_helpers::GetCurrentTimeAsString();
-  //    PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
-  //    PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
+  std::cout << "\nWriting Results to file\n" << filename << "\n\n";
+  PROFILE_WRITE_SUMMARY_FOR_ALL(filename);
+  PROFILE_WRITE_ALL_FEWER_THAN(filename, 100);
 
   strategy.saveToFile(ros::package::getPath("gpu_voxel_planning") + "/graphs/swept_volumes_10k.map");
 }
@@ -50,21 +51,22 @@ void test(ros::NodeHandle &n, SimulationScenario &scenario, GraphSearchStrategy 
 std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenarioFactories(BeliefParams &bp) {
   std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> factories;
 
-  factories.push_back([&]() { return std::make_shared<TableWithBox>(bp, true, true, false); });
+  //  factories.push_back([&]() { return std::make_shared<TableWithBox>(bp, true, true, false); });
   // factories.push_back([](){ return std::make_shared<TableWithBox>(bp, true, false, false);});
-  factories.push_back([&]() { return std::make_shared<Bookshelf>(bp); });
+  //  factories.push_back([&]() { return std::make_shared<Bookshelf>(bp); });
+  factories.push_back([&]() { return std::make_shared<Tunnel>(bp); });
   return factories;
 }
 
 std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrategyFactories() {
   std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> factories;
-  //    factories.push_back([]() { return std::make_shared<OptimisticGraphSearch>(); });
+  factories.push_back([]() { return std::make_shared<OptimisticGraphSearch>(); });
   factories.push_back([]() { return std::make_shared<CollisionMeasure>(1.0); });
-  // factories.push_back([](){ return std::make_shared<CollisionMeasure>(10.0);});
-  // factories.push_back([](){ return std::make_shared<ThompsonGraphSearch>();});
-  // factories.push_back([](){ return std::make_shared<HOPGraphSearch>();});
-  // factories.push_back([](){ return std::make_shared<QMDP>();});
-  // factories.push_back([](){ return std::make_shared<OROGraphSearch>();});
+  factories.push_back([]() { return std::make_shared<CollisionMeasure>(10.0); });
+  //     factories.push_back([](){ return std::make_shared<ThompsonGraphSearch>();});
+  factories.push_back([]() { return std::make_shared<HOPGraphSearch>(); });
+  factories.push_back([]() { return std::make_shared<QMDP>(); });
+  factories.push_back([]() { return std::make_shared<OROGraphSearch>(); });
 
   return factories;
 }
@@ -72,17 +74,17 @@ std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrate
 std::vector<BeliefParams> getBeliefParams() {
   std::vector<BeliefParams> bps;
   bps.emplace_back(BeliefType::CHS);
-  // bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0,0,0}, 0.1);
-  // bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
-  // bps.emplace_back(BeliefType::Bonkers, std::vector<double>{0,0,0}, 0.05);
-  // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0,0,0}, 0.1);
-  // bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0.1,0.1,0.1}, 0.4);
-  // bps.emplace_back(BeliefType::MoEBonkers, std::vector<double>{0,0,0}, 0.05);
+  bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0, 0, 0}, 0.1);
+  bps.emplace_back(BeliefType::Obstacle, std::vector<double>{0.1, 0.1, 0.1}, 0.4);
+  bps.emplace_back(BeliefType::Bonkers, std::vector<double>{0, 0, 0}, 0.05);
+  bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0, 0, 0}, 0.1);
+  bps.emplace_back(BeliefType::MoEObstacle, std::vector<double>{0.1, 0.1, 0.1}, 0.4);
+  bps.emplace_back(BeliefType::MoEBonkers, std::vector<double>{0, 0, 0}, 0.05);
   return bps;
 }
 
 void testAll(ros::NodeHandle &n) {
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 1; i++) {
     for (auto bp : getBeliefParams()) {
       for (auto scenario_factory : getScenarioFactories(bp)) {
         for (auto strategy_factory : getStrategyFactories()) {
