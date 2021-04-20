@@ -1,0 +1,324 @@
+2021-04-19 22:41:19
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.100000_0.100000_0.100000_0.400000          0.000000               1        0.000000        0.000000        0.000000
+Bump                                                     0.000000               2        0.000000        0.000000        0.000000
+ComputeSweptVolume                                       0.320033               5        0.064007
+Config Added to Swept Volume                             0.317619             449        0.000707
+EdgeCheck                                                0.374517              41        0.009135
+GetSweptVolume                                           0.337588              60        0.005626
+Obstacle_belief_update_collision                         0.108232               2        0.054116
+Obstacle_belief_update_free                              3.001181             530        0.005663
+Scenario: Tunnel                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                         0.643200             993        0.000648
+Strategy: Thompson                                       0.000000               1        0.000000        0.000000        0.000000
+Tunnel, Thompson Motion Time                            19.621166               9        2.180130
+Tunnel, Thompson Planning Time                           0.770380               9        0.085598
+Update belief from free obs                              3.032069             530        0.005721
+Viz_sample                                               0.000211               7        0.000030
+Viz_sample_ee_path                                       0.001251               7        0.000179
+Viz_scenario                                            15.258173             531        0.028735
+accumulated_cost                                         0.000000               1        0.000000       10.348059       10.348059
+astar_add_neighbors                                      0.084570             291        0.000291
+astar_cost_to_come                                       0.010049           14247        0.000001
+astar_edge_validity_check                                0.008086           14574        0.000001
+astar_expansion_in_closed_list                           0.003191            5903        0.000001
+astar_heuristic                                          0.007370            8344        0.000001
+astar_num_edge_expansions                                0.000000              29        0.000000    14574.000000      502.551724
+astar_num_lower_cost_edge_expansions                     0.000000              29        0.000000     8344.000000      287.724138
+astar_num_node_expansions                                0.000000              29        0.000000      320.000000       11.034483
+astar_push_to_queue                                      0.006374            8344        0.000001
+lazySP path cost                                         0.000000               7        0.000000       23.627497        3.375357
+lazy_sp a_star                                           0.085949              29        0.002964
+lazysp astar iters                                       0.000000               7        0.000000       29.000000        4.142857
+lazysp_successful                                        0.488409               7        0.069773
+simulation_state_move                                    3.486778             530        0.006579
+
+2021-04-19 22:41:19
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.100000_0.100000_0.100000_0.400000          0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+ComputeSweptVolume                                       0.073301 
+ComputeSweptVolume                                       0.069455 
+ComputeSweptVolume                                       0.071266 
+ComputeSweptVolume                                       0.055028 
+ComputeSweptVolume                                       0.050983 
+EdgeCheck                                                0.078315 
+EdgeCheck                                                0.073508 
+EdgeCheck                                                0.075891 
+EdgeCheck                                                0.001064 
+EdgeCheck                                                0.059581 
+EdgeCheck                                                0.000816 
+EdgeCheck                                                0.001065 
+EdgeCheck                                                0.000815 
+EdgeCheck                                                0.000789 
+EdgeCheck                                                0.000788 
+EdgeCheck                                                0.000792 
+EdgeCheck                                                0.000803 
+EdgeCheck                                                0.000815 
+EdgeCheck                                                0.001067 
+EdgeCheck                                                0.000802 
+EdgeCheck                                                0.000802 
+EdgeCheck                                                0.000799 
+EdgeCheck                                                0.000820 
+EdgeCheck                                                0.001055 
+EdgeCheck                                                0.000822 
+EdgeCheck                                                0.000809 
+EdgeCheck                                                0.000819 
+EdgeCheck                                                0.000808 
+EdgeCheck                                                0.000810 
+EdgeCheck                                                0.000809 
+EdgeCheck                                                0.000816 
+EdgeCheck                                                0.001064 
+EdgeCheck                                                0.001067 
+EdgeCheck                                                0.000836 
+EdgeCheck                                                0.001068 
+EdgeCheck                                                0.000793 
+EdgeCheck                                                0.000783 
+EdgeCheck                                                0.000794 
+EdgeCheck                                                0.001065 
+EdgeCheck                                                0.000773 
+EdgeCheck                                                0.000794 
+EdgeCheck                                                0.001063 
+EdgeCheck                                                0.055660 
+EdgeCheck                                                0.000804 
+EdgeCheck                                                0.001067 
+EdgeCheck                                                0.000810 
+GetSweptVolume                                           0.077177 
+GetSweptVolume                                           0.072371 
+GetSweptVolume                                           0.074813 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.058495 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.054570 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000003 
+GetSweptVolume                                           0.000002 
+GetSweptVolume                                           0.000004 
+GetSweptVolume                                           0.000003 
+Obstacle_belief_update_collision                         0.052696 
+Obstacle_belief_update_collision                         0.055536 
+Scenario: Tunnel                                         0.000000        0.000000 
+Strategy: Thompson                                       0.000000        0.000000 
+Tunnel, Thompson Motion Time                             4.502525 
+Tunnel, Thompson Motion Time                             0.431099 
+Tunnel, Thompson Motion Time                             0.211060 
+Tunnel, Thompson Motion Time                             2.767193 
+Tunnel, Thompson Motion Time                             1.849922 
+Tunnel, Thompson Motion Time                             1.857593 
+Tunnel, Thompson Motion Time                             2.812020 
+Tunnel, Thompson Motion Time                             2.672991 
+Tunnel, Thompson Motion Time                             2.516764 
+Tunnel, Thompson Planning Time                           0.338877 
+Tunnel, Thompson Planning Time                           0.045174 
+Tunnel, Thompson Planning Time                           0.000037 
+Tunnel, Thompson Planning Time                           0.135702 
+Tunnel, Thompson Planning Time                           0.045183 
+Tunnel, Thompson Planning Time                           0.000090 
+Tunnel, Thompson Planning Time                           0.117854 
+Tunnel, Thompson Planning Time                           0.045228 
+Tunnel, Thompson Planning Time                           0.042235 
+Viz_sample                                               0.000029 
+Viz_sample                                               0.000030 
+Viz_sample                                               0.000029 
+Viz_sample                                               0.000029 
+Viz_sample                                               0.000031 
+Viz_sample                                               0.000031 
+Viz_sample                                               0.000032 
+Viz_sample_ee_path                                       0.000230 
+Viz_sample_ee_path                                       0.000142 
+Viz_sample_ee_path                                       0.000174 
+Viz_sample_ee_path                                       0.000175 
+Viz_sample_ee_path                                       0.000187 
+Viz_sample_ee_path                                       0.000175 
+Viz_sample_ee_path                                       0.000168 
+accumulated_cost                                         0.000000       10.348059 
+astar_num_edge_expansions                                0.000000      135.000000 
+astar_num_edge_expansions                                0.000000      132.000000 
+astar_num_edge_expansions                                0.000000      234.000000 
+astar_num_edge_expansions                                0.000000      106.000000 
+astar_num_edge_expansions                                0.000000      106.000000 
+astar_num_edge_expansions                                0.000000      109.000000 
+astar_num_edge_expansions                                0.000000      222.000000 
+astar_num_edge_expansions                                0.000000      236.000000 
+astar_num_edge_expansions                                0.000000      270.000000 
+astar_num_edge_expansions                                0.000000      453.000000 
+astar_num_edge_expansions                                0.000000      559.000000 
+astar_num_edge_expansions                                0.000000      673.000000 
+astar_num_edge_expansions                                0.000000      716.000000 
+astar_num_edge_expansions                                0.000000      778.000000 
+astar_num_edge_expansions                                0.000000      781.000000 
+astar_num_edge_expansions                                0.000000      897.000000 
+astar_num_edge_expansions                                0.000000     1209.000000 
+astar_num_edge_expansions                                0.000000     1329.000000 
+astar_num_edge_expansions                                0.000000     1287.000000 
+astar_num_edge_expansions                                0.000000     1273.000000 
+astar_num_edge_expansions                                0.000000     1223.000000 
+astar_num_edge_expansions                                0.000000       80.000000 
+astar_num_edge_expansions                                0.000000       83.000000 
+astar_num_edge_expansions                                0.000000      190.000000 
+astar_num_edge_expansions                                0.000000      391.000000 
+astar_num_edge_expansions                                0.000000      394.000000 
+astar_num_edge_expansions                                0.000000      572.000000 
+astar_num_edge_expansions                                0.000000       92.000000 
+astar_num_edge_expansions                                0.000000       44.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      127.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      122.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      171.000000 
+astar_num_lower_cost_edge_expansions                     0.000000       81.000000 
+astar_num_lower_cost_edge_expansions                     0.000000       98.000000 
+astar_num_lower_cost_edge_expansions                     0.000000       85.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      158.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      169.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      177.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      251.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      329.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      388.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      392.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      424.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      424.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      478.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      603.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      666.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      646.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      622.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      596.000000 
+astar_num_lower_cost_edge_expansions                     0.000000       67.000000 
+astar_num_lower_cost_edge_expansions                     0.000000       65.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      156.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      286.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      266.000000 
+astar_num_lower_cost_edge_expansions                     0.000000      369.000000 
+astar_num_lower_cost_edge_expansions                     0.000000       84.000000 
+astar_num_lower_cost_edge_expansions                     0.000000       44.000000 
+astar_num_node_expansions                                0.000000        3.000000 
+astar_num_node_expansions                                0.000000        3.000000 
+astar_num_node_expansions                                0.000000        5.000000 
+astar_num_node_expansions                                0.000000        3.000000 
+astar_num_node_expansions                                0.000000        3.000000 
+astar_num_node_expansions                                0.000000        3.000000 
+astar_num_node_expansions                                0.000000        5.000000 
+astar_num_node_expansions                                0.000000        5.000000 
+astar_num_node_expansions                                0.000000        6.000000 
+astar_num_node_expansions                                0.000000       10.000000 
+astar_num_node_expansions                                0.000000       12.000000 
+astar_num_node_expansions                                0.000000       15.000000 
+astar_num_node_expansions                                0.000000       16.000000 
+astar_num_node_expansions                                0.000000       17.000000 
+astar_num_node_expansions                                0.000000       17.000000 
+astar_num_node_expansions                                0.000000       19.000000 
+astar_num_node_expansions                                0.000000       24.000000 
+astar_num_node_expansions                                0.000000       26.000000 
+astar_num_node_expansions                                0.000000       25.000000 
+astar_num_node_expansions                                0.000000       25.000000 
+astar_num_node_expansions                                0.000000       24.000000 
+astar_num_node_expansions                                0.000000        3.000000 
+astar_num_node_expansions                                0.000000        3.000000 
+astar_num_node_expansions                                0.000000        5.000000 
+astar_num_node_expansions                                0.000000       11.000000 
+astar_num_node_expansions                                0.000000       11.000000 
+astar_num_node_expansions                                0.000000       16.000000 
+astar_num_node_expansions                                0.000000        3.000000 
+astar_num_node_expansions                                0.000000        2.000000 
+lazySP path cost                                         0.000000        4.485459 
+lazySP path cost                                         0.000000        2.515441 
+lazySP path cost                                         0.000000        4.630119 
+lazySP path cost                                         0.000000        3.066020 
+lazySP path cost                                         0.000000        4.556096 
+lazySP path cost                                         0.000000        2.953687 
+lazySP path cost                                         0.000000        1.420675 
+lazy_sp a_star                                           0.000947 
+lazy_sp a_star                                           0.000940 
+lazy_sp a_star                                           0.001487 
+lazy_sp a_star                                           0.000716 
+lazy_sp a_star                                           0.000775 
+lazy_sp a_star                                           0.000724 
+lazy_sp a_star                                           0.001402 
+lazy_sp a_star                                           0.001456 
+lazy_sp a_star                                           0.001705 
+lazy_sp a_star                                           0.002630 
+lazy_sp a_star                                           0.003380 
+lazy_sp a_star                                           0.003942 
+lazy_sp a_star                                           0.004178 
+lazy_sp a_star                                           0.004468 
+lazy_sp a_star                                           0.004490 
+lazy_sp a_star                                           0.005175 
+lazy_sp a_star                                           0.006858 
+lazy_sp a_star                                           0.007607 
+lazy_sp a_star                                           0.007277 
+lazy_sp a_star                                           0.007177 
+lazy_sp a_star                                           0.006868 
+lazy_sp a_star                                           0.000556 
+lazy_sp a_star                                           0.000561 
+lazy_sp a_star                                           0.001275 
+lazy_sp a_star                                           0.002473 
+lazy_sp a_star                                           0.002403 
+lazy_sp a_star                                           0.003474 
+lazy_sp a_star                                           0.000665 
+lazy_sp a_star                                           0.000340 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000       17.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        5.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp_successful                                        0.296170 
+lazysp_successful                                        0.005489 
+lazysp_successful                                        0.095533 
+lazysp_successful                                        0.005373 
+lazysp_successful                                        0.077772 
+lazysp_successful                                        0.005436 
+lazysp_successful                                        0.002636 
+

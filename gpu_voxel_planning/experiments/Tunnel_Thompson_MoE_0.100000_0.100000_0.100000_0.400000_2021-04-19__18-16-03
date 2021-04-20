@@ -1,0 +1,127 @@
+2021-04-19 18:16:03
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.100000_0.100000_0.100000_0.400000          0.000000               1        0.000000        0.000000        0.000000
+Bump                                                     0.000000               3        0.000000        0.000000        0.000000
+ComputeSweptVolume                                     192.512589            2960        0.065038
+Config Added to Swept Volume                           190.763637          255282        0.000747
+EdgeCheck                                              213.105050            8125        0.026228
+GetSweptVolume                                         203.903760            9259        0.022022
+Obstacle_belief_update_collision                         0.168049               3        0.056016
+Obstacle_belief_update_free                              4.694701             750        0.006260
+Scenario: Tunnel                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                       189.366282          256051        0.000740
+Strategy: Thompson                                       0.000000               1        0.000000        0.000000        0.000000
+Tunnel, Thompson Motion Time                            29.716679              13        2.285898
+Tunnel, Thompson Planning Time                        6586.191565              13      506.630120
+Update belief from free obs                              4.738639             750        0.006318
+Viz_sample                                               0.000300              10        0.000030
+Viz_sample_ee_path                                       0.001845              10        0.000184
+Viz_scenario                                            23.064594             752        0.030671
+accumulated_cost                                         0.000000               1        0.000000       14.672715       14.672715
+astar_add_neighbors                                   6300.087877        36444338        0.000173
+astar_cost_to_come                                    1140.846913      1292743761        0.000001
+astar_edge_validity_check                              689.161242      1328842172        0.000001
+astar_expansion_in_closed_list                         634.448288      1198339160        0.000001
+astar_heuristic                                         92.992006        94404601        0.000001
+astar_num_edge_expansions                                0.000000            7113        0.000000 1328842172.000000   186818.806692
+astar_num_lower_cost_edge_expansions                     0.000000            7113        0.000000 94404601.000000    13272.121608
+astar_num_node_expansions                                0.000000            7113        0.000000 36451451.000000     5124.624069
+astar_push_to_queue                                     71.876029        94404601        0.000001
+lazySP path cost                                         0.000000              10        0.000000       43.062088        4.306209
+lazy_sp a_star                                        6370.656927            7113        0.895636
+lazysp astar iters                                       0.000000              10        0.000000     7113.000000      711.300000
+lazysp_successful                                     6585.787267              10      658.578727
+simulation_state_move                                    5.379229             750        0.007172
+
+2021-04-19 18:16:37
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.100000_0.100000_0.100000_0.400000          0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Obstacle_belief_update_collision                         0.057578 
+Obstacle_belief_update_collision                         0.054136 
+Obstacle_belief_update_collision                         0.056335 
+Scenario: Tunnel                                         0.000000        0.000000 
+Strategy: Thompson                                       0.000000        0.000000 
+Tunnel, Thompson Motion Time                             4.259353 
+Tunnel, Thompson Motion Time                             4.208868 
+Tunnel, Thompson Motion Time                             4.215043 
+Tunnel, Thompson Motion Time                             2.075131 
+Tunnel, Thompson Motion Time                             0.915712 
+Tunnel, Thompson Motion Time                             0.815908 
+Tunnel, Thompson Motion Time                             1.066532 
+Tunnel, Thompson Motion Time                             1.816256 
+Tunnel, Thompson Motion Time                             0.387939 
+Tunnel, Thompson Motion Time                             0.246949 
+Tunnel, Thompson Motion Time                             3.476443 
+Tunnel, Thompson Motion Time                             3.635484 
+Tunnel, Thompson Motion Time                             2.597060 
+Tunnel, Thompson Planning Time                        6584.832657 
+Tunnel, Thompson Planning Time                           0.121831 
+Tunnel, Thompson Planning Time                           0.531275 
+Tunnel, Thompson Planning Time                           0.083736 
+Tunnel, Thompson Planning Time                           0.000075 
+Tunnel, Thompson Planning Time                           0.046330 
+Tunnel, Thompson Planning Time                           0.000054 
+Tunnel, Thompson Planning Time                           0.050010 
+Tunnel, Thompson Planning Time                           0.045476 
+Tunnel, Thompson Planning Time                           0.000035 
+Tunnel, Thompson Planning Time                           0.390480 
+Tunnel, Thompson Planning Time                           0.047196 
+Tunnel, Thompson Planning Time                           0.042408 
+Viz_sample                                               0.000030 
+Viz_sample                                               0.000030 
+Viz_sample                                               0.000030 
+Viz_sample                                               0.000029 
+Viz_sample                                               0.000031 
+Viz_sample                                               0.000030 
+Viz_sample                                               0.000030 
+Viz_sample                                               0.000031 
+Viz_sample                                               0.000030 
+Viz_sample                                               0.000029 
+Viz_sample_ee_path                                       0.000211 
+Viz_sample_ee_path                                       0.000196 
+Viz_sample_ee_path                                       0.000197 
+Viz_sample_ee_path                                       0.000202 
+Viz_sample_ee_path                                       0.000176 
+Viz_sample_ee_path                                       0.000148 
+Viz_sample_ee_path                                       0.000144 
+Viz_sample_ee_path                                       0.000199 
+Viz_sample_ee_path                                       0.000202 
+Viz_sample_ee_path                                       0.000170 
+accumulated_cost                                         0.000000       14.672715 
+lazySP path cost                                         0.000000       11.688235 
+lazySP path cost                                         0.000000        4.596064 
+lazySP path cost                                         0.000000        4.965960 
+lazySP path cost                                         0.000000        2.897548 
+lazySP path cost                                         0.000000        3.134496 
+lazySP path cost                                         0.000000        3.543240 
+lazySP path cost                                         0.000000        2.515441 
+lazySP path cost                                         0.000000        5.013748 
+lazySP path cost                                         0.000000        3.286681 
+lazySP path cost                                         0.000000        1.420675 
+lazysp astar iters                                       0.000000     7028.000000 
+lazysp astar iters                                       0.000000        4.000000 
+lazysp astar iters                                       0.000000       41.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000       33.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp_successful                                     6584.790747 
+lazysp_successful                                        0.082018 
+lazysp_successful                                        0.491344 
+lazysp_successful                                        0.043818 
+lazysp_successful                                        0.006406 
+lazysp_successful                                        0.009942 
+lazysp_successful                                        0.005559 
+lazysp_successful                                        0.349175 
+lazysp_successful                                        0.005651 
+lazysp_successful                                        0.002608 
+

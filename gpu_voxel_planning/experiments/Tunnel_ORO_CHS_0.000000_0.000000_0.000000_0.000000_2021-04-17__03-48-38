@@ -1,0 +1,189 @@
+2021-04-17 03:48:38
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000               1        0.000000        0.000000        0.000000
+Bump                                                     0.000000              17        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                      25608.492486          502573        0.050955
+ComputeSweptVolume                                      15.894748             268        0.059309
+Config Added to Swept Volume                            15.759039           23041        0.000684
+GetSweptVolume                                          20.815617         1248571        0.000017
+ORO_plan                                             37287.506414              28     1331.696658
+Rollout                                              36154.936095           13930        2.595473
+Rollout viz sv                                          46.781425           76123        0.000615
+Scenario: Tunnel                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                      3534.194760         1199649        0.002946
+Simulate transition first                              837.873634           13930        0.060149
+Simulate transition in rollout                        8226.444229           76123        0.108068
+Strategy: ORO                                            0.000000               1        0.000000        0.000000        0.000000
+Tunnel, ORO Motion Time                                 76.493417              45        1.699854
+Tunnel, ORO Planning Time                            37287.515732              45      828.611461
+Update belief from free obs                              0.041365            1945        0.000021
+Viz_sample                                               0.007961             280        0.000028
+Viz_scenario                                            71.200388            1961        0.036308
+accumulated_cost                                         0.000000               1        0.000000       38.059148       38.059148
+astar_add_neighbors                                   1104.703614         3948641        0.000280
+astar_cost_to_come                                     132.060590       188017092        0.000001
+astar_edge_validity_check                              101.397106       190986024        0.000001
+astar_expansion_in_closed_list                          44.336654        83486059        0.000001
+astar_heuristic                                         95.658162       104531033        0.000001
+astar_num_edge_expansions                                0.000000          488029        0.000000 190986024.000000      391.341547
+astar_num_lower_cost_edge_expansions                     0.000000          488029        0.000000 104531033.000000      214.190208
+astar_num_node_expansions                                0.000000          488029        0.000000  4436670.000000        9.090997
+astar_push_to_queue                                     77.478898       104531033        0.000001
+lazySP path cost                                         0.000000           76403        0.000000   235222.099492        3.078702
+lazy_sp a_star                                        1126.576445          488029        0.002308
+lazy_sp a_star forward                                 587.807884          280559        0.002095
+lazy_sp a_star reverse                                 538.930546          207470        0.002598
+lazysp astar iters                                       0.000000           76403        0.000000   488029.000000        6.387563
+lazysp_successful                                    27939.532445           76403        0.365686
+rollout lazysp                                       27845.530536           76123        0.365797
+simulate_belief_update_collision                      3332.475170           42124        0.079111
+simulate_belief_update_free                            119.754807           47929        0.002499
+simulate_belief_update_free_before_collision            25.220956         1132222        0.000022
+simulation_state_move                                    1.662139            1945        0.000855
+total_lazy_sp                                       311724.812994          488029        0.638742
+
+2021-04-17 03:48:43
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+ORO_plan                                                25.262021 
+ORO_plan                                                11.560143 
+ORO_plan                                                54.298647 
+ORO_plan                                                70.569524 
+ORO_plan                                               145.946628 
+ORO_plan                                               373.829131 
+ORO_plan                                               300.543016 
+ORO_plan                                               115.303057 
+ORO_plan                                               280.555517 
+ORO_plan                                               342.258331 
+ORO_plan                                               551.559957 
+ORO_plan                                              1265.790162 
+ORO_plan                                              1878.997800 
+ORO_plan                                               952.858383 
+ORO_plan                                               229.211190 
+ORO_plan                                              2245.385995 
+ORO_plan                                              2455.513888 
+ORO_plan                                              5355.539474 
+ORO_plan                                              3420.517318 
+ORO_plan                                              4572.241592 
+ORO_plan                                              7133.625155 
+ORO_plan                                              2756.427702 
+ORO_plan                                               281.317676 
+ORO_plan                                              1689.301831 
+ORO_plan                                               147.358084 
+ORO_plan                                               296.652877 
+ORO_plan                                               250.165439 
+ORO_plan                                                84.915877 
+Scenario: Tunnel                                         0.000000        0.000000 
+Strategy: ORO                                            0.000000        0.000000 
+Tunnel, ORO Motion Time                                  1.199167 
+Tunnel, ORO Motion Time                                  0.342519 
+Tunnel, ORO Motion Time                                  0.302236 
+Tunnel, ORO Motion Time                                  0.479456 
+Tunnel, ORO Motion Time                                  0.446507 
+Tunnel, ORO Motion Time                                  0.423646 
+Tunnel, ORO Motion Time                                  0.373764 
+Tunnel, ORO Motion Time                                  0.507609 
+Tunnel, ORO Motion Time                                  0.462989 
+Tunnel, ORO Motion Time                                  1.423259 
+Tunnel, ORO Motion Time                                  1.468725 
+Tunnel, ORO Motion Time                                  1.639420 
+Tunnel, ORO Motion Time                                  1.202218 
+Tunnel, ORO Motion Time                                  1.207325 
+Tunnel, ORO Motion Time                                  1.803425 
+Tunnel, ORO Motion Time                                  1.123220 
+Tunnel, ORO Motion Time                                  1.109814 
+Tunnel, ORO Motion Time                                  0.828179 
+Tunnel, ORO Motion Time                                  0.777246 
+Tunnel, ORO Motion Time                                  1.046279 
+Tunnel, ORO Motion Time                                  0.998588 
+Tunnel, ORO Motion Time                                  1.074419 
+Tunnel, ORO Motion Time                                  1.029697 
+Tunnel, ORO Motion Time                                  2.550040 
+Tunnel, ORO Motion Time                                  0.151173 
+Tunnel, ORO Motion Time                                  0.078410 
+Tunnel, ORO Motion Time                                  0.312587 
+Tunnel, ORO Motion Time                                  0.207892 
+Tunnel, ORO Motion Time                                  0.160208 
+Tunnel, ORO Motion Time                                  0.087957 
+Tunnel, ORO Motion Time                                  3.035026 
+Tunnel, ORO Motion Time                                  1.178316 
+Tunnel, ORO Motion Time                                  1.114970 
+Tunnel, ORO Motion Time                                  4.728980 
+Tunnel, ORO Motion Time                                  4.846956 
+Tunnel, ORO Motion Time                                  3.829821 
+Tunnel, ORO Motion Time                                  4.421488 
+Tunnel, ORO Motion Time                                  0.424786 
+Tunnel, ORO Motion Time                                  0.312896 
+Tunnel, ORO Motion Time                                  5.284286 
+Tunnel, ORO Motion Time                                  4.452324 
+Tunnel, ORO Motion Time                                  4.516940 
+Tunnel, ORO Motion Time                                  4.236846 
+Tunnel, ORO Motion Time                                  5.233145 
+Tunnel, ORO Motion Time                                  4.058664 
+Tunnel, ORO Planning Time                               25.265900 
+Tunnel, ORO Planning Time                               11.560290 
+Tunnel, ORO Planning Time                                0.000052 
+Tunnel, ORO Planning Time                               54.298787 
+Tunnel, ORO Planning Time                                0.000051 
+Tunnel, ORO Planning Time                               70.569664 
+Tunnel, ORO Planning Time                                0.000052 
+Tunnel, ORO Planning Time                              145.946766 
+Tunnel, ORO Planning Time                                0.000048 
+Tunnel, ORO Planning Time                              373.829299 
+Tunnel, ORO Planning Time                                0.000100 
+Tunnel, ORO Planning Time                              300.543160 
+Tunnel, ORO Planning Time                              115.303207 
+Tunnel, ORO Planning Time                                0.000088 
+Tunnel, ORO Planning Time                              280.555656 
+Tunnel, ORO Planning Time                              342.258480 
+Tunnel, ORO Planning Time                                0.000067 
+Tunnel, ORO Planning Time                              551.560095 
+Tunnel, ORO Planning Time                                0.000056 
+Tunnel, ORO Planning Time                             1265.790321 
+Tunnel, ORO Planning Time                                0.000056 
+Tunnel, ORO Planning Time                             1878.997979 
+Tunnel, ORO Planning Time                                0.000062 
+Tunnel, ORO Planning Time                              952.858542 
+Tunnel, ORO Planning Time                              229.211336 
+Tunnel, ORO Planning Time                                0.000025 
+Tunnel, ORO Planning Time                             2245.386180 
+Tunnel, ORO Planning Time                                0.000039 
+Tunnel, ORO Planning Time                             2455.514059 
+Tunnel, ORO Planning Time                                0.000033 
+Tunnel, ORO Planning Time                             5355.539642 
+Tunnel, ORO Planning Time                             3420.517497 
+Tunnel, ORO Planning Time                                0.000061 
+Tunnel, ORO Planning Time                             4572.241781 
+Tunnel, ORO Planning Time                                0.000122 
+Tunnel, ORO Planning Time                             7133.625331 
+Tunnel, ORO Planning Time                             2756.427904 
+Tunnel, ORO Planning Time                              281.317804 
+Tunnel, ORO Planning Time                                0.000034 
+Tunnel, ORO Planning Time                             1689.302026 
+Tunnel, ORO Planning Time                              147.358255 
+Tunnel, ORO Planning Time                                0.000110 
+Tunnel, ORO Planning Time                              296.653053 
+Tunnel, ORO Planning Time                              250.165621 
+Tunnel, ORO Planning Time                               84.916039 
+accumulated_cost                                         0.000000       38.059148 
+

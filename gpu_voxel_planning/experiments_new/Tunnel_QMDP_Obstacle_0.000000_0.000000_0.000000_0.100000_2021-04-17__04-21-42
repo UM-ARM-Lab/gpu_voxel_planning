@@ -1,0 +1,123 @@
+2021-04-17 04:21:42
+
+Label                                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+Bump                                                          0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                           11.151496             181        0.061610
+Config Added to Swept Volume                                 11.060341           16076        0.000688
+GetSweptVolume                                               12.145754          120127        0.000101
+Obstacle_belief_update_collision                             13.198149             225        0.058658
+Obstacle_belief_update_free                                 135.430899           22166        0.006110
+QMDP_plan                                                  1933.535151               5      386.707030
+Rollout                                                    1713.333619            2210        0.775264
+Rollout viz sv                                                4.698837            7377        0.000637
+Scenario: Tunnel                                              0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                             18.089677           29148        0.000621
+Simulate transition first                                   128.578245            2220        0.057918
+Simulate transition in rollout                               57.494173            7377        0.007794
+Strategy: QMDP                                                0.000000               1        0.000000        0.000000        0.000000
+Tunnel, QMDP Motion Time                                     12.306753               6        2.051125
+Tunnel, QMDP Planning Time                                 1933.539151               6      322.256525
+Update belief from free obs                                   2.233138             369        0.006052
+Viz_sample                                                    0.001720              50        0.000034
+Viz_scenario                                                  9.251480             369        0.025072
+accumulated_cost                                              0.000000               1        0.000000        7.202394        7.202394
+astar_add_neighbors                                        1442.929574         5835844        0.000247
+astar_cost_to_come                                          199.790874       274063081        0.000001
+astar_edge_validity_check                                   135.527805       274090582        0.000000
+astar_expansion_in_closed_list                               93.250921       179109864        0.000001
+astar_heuristic                                              81.167179        94953217        0.000001
+astar_num_edge_expansions                                     0.000000           93357        0.000000 274090582.000000     2935.940337
+astar_num_lower_cost_edge_expansions                          0.000000           93357        0.000000 94953217.000000     1017.097989
+astar_num_node_expansions                                     0.000000           93357        0.000000  5929201.000000       63.511049
+astar_push_to_queue                                          67.826853        94953217        0.000001
+lazySP path cost                                              0.000000            2260        0.000000    12015.760210        5.316708
+lazy_sp a_star                                             1458.767082           93357        0.015626
+lazy_sp a_star forward                                      723.961103           45899        0.015773
+lazy_sp a_star reverse                                      734.855850           47458        0.015484
+lazysp astar iters                                            0.000000            2260        0.000000    93357.000000       41.308407
+lazysp_successful                                          1675.881548            2260        0.741541
+rollout lazysp                                             1647.584644            2210        0.745513
+simulate_belief_update_collision                             21.913588             224        0.097829
+simulate_belief_update_free                                  62.853480            9373        0.006706
+simulate_belief_update_free_before_collision                 74.515956           12424        0.005998
+simulation_state_move                                         2.542768             369        0.006891
+total_lazy_sp                                             73204.474899           93357        0.784135
+
+2021-04-17 04:21:50
+
+Label                                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+Bump                                                          0.000000        0.000000 
+QMDP_plan                                                  1086.332964 
+QMDP_plan                                                   390.232001 
+QMDP_plan                                                   329.805050 
+QMDP_plan                                                   102.067295 
+QMDP_plan                                                    25.097841 
+Scenario: Tunnel                                              0.000000        0.000000 
+Strategy: QMDP                                                0.000000        0.000000 
+Tunnel, QMDP Motion Time                                      4.325654 
+Tunnel, QMDP Motion Time                                      0.351617 
+Tunnel, QMDP Motion Time                                      0.182317 
+Tunnel, QMDP Motion Time                                      2.620213 
+Tunnel, QMDP Motion Time                                      2.825915 
+Tunnel, QMDP Motion Time                                      2.001037 
+Tunnel, QMDP Planning Time                                 1086.336179 
+Tunnel, QMDP Planning Time                                  390.232172 
+Tunnel, QMDP Planning Time                                    0.000033 
+Tunnel, QMDP Planning Time                                  329.805267 
+Tunnel, QMDP Planning Time                                  102.067491 
+Tunnel, QMDP Planning Time                                   25.098009 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000095 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000033 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000031 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000031 
+Viz_sample                                                    0.000031 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000032 
+Viz_sample                                                    0.000031 
+Viz_sample                                                    0.000032 
+accumulated_cost                                              0.000000        7.202394 
+

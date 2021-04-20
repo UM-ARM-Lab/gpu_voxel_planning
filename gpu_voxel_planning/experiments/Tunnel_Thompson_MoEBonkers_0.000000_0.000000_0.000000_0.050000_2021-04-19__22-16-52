@@ -1,0 +1,245 @@
+2021-04-19 22:16:52
+
+Label                                                       tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoEBonkers_0.000000_0.000000_0.000000_0.050000          0.000000               1        0.000000        0.000000        0.000000
+Bump                                                            0.000000              12        0.000000        0.000000        0.000000
+ComputeSweptVolume                                              0.701069              12        0.058422
+Config Added to Swept Volume                                    0.694306             991        0.000701
+EdgeCheck                                                       0.857629             136        0.006306
+GetSweptVolume                                                  0.739792             190        0.003894
+Obstacle_belief_update_collision                                1.039560              12        0.086630
+Obstacle_belief_update_free                                     1.099096            1141        0.000963
+Scenario: Tunnel                                                0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                                1.405603            2179        0.000645
+Strategy: Thompson                                              0.000000               1        0.000000        0.000000        0.000000
+Tunnel, Thompson Motion Time                                   41.277664              32        1.289927
+Tunnel, Thompson Planning Time                                  2.156140              32        0.067379
+Update belief from free obs                                     1.144772            1141        0.001003
+Viz_sample                                                      0.000621              20        0.000031
+Viz_sample_ee_path                                              0.003464              20        0.000173
+Viz_scenario                                                   35.837484            1152        0.031109
+accumulated_cost                                                0.000000               1        0.000000       22.219023       22.219023
+astar_add_neighbors                                             0.265685             848        0.000313
+astar_cost_to_come                                              0.031223           43808        0.000001
+astar_edge_validity_check                                       0.025750           45363        0.000001
+astar_expansion_in_closed_list                                  0.009336           17106        0.000001
+astar_heuristic                                                 0.024352           26702        0.000001
+astar_num_edge_expansions                                       0.000000             104        0.000000    45363.000000      436.182692
+astar_num_lower_cost_edge_expansions                            0.000000             104        0.000000    26702.000000      256.750000
+astar_num_node_expansions                                       0.000000             104        0.000000      952.000000        9.153846
+astar_push_to_queue                                             0.020396           26702        0.000001
+lazySP path cost                                                0.000000              20        0.000000       64.944807        3.247240
+lazy_sp a_star                                                  0.270459             104        0.002601
+lazysp astar iters                                              0.000000              20        0.000000      104.000000        5.200000
+lazysp_successful                                               1.207790              20        0.060390
+simulation_state_move                                           2.107789            1141        0.001847
+
+2021-04-19 22:16:52
+
+Label                                                               time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoEBonkers_0.000000_0.000000_0.000000_0.050000          0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+Bump                                                            0.000000        0.000000 
+ComputeSweptVolume                                              0.074128 
+ComputeSweptVolume                                              0.065515 
+ComputeSweptVolume                                              0.056378 
+ComputeSweptVolume                                              0.049327 
+ComputeSweptVolume                                              0.058318 
+ComputeSweptVolume                                              0.046711 
+ComputeSweptVolume                                              0.069918 
+ComputeSweptVolume                                              0.051254 
+ComputeSweptVolume                                              0.073480 
+ComputeSweptVolume                                              0.054893 
+ComputeSweptVolume                                              0.042364 
+ComputeSweptVolume                                              0.058783 
+Obstacle_belief_update_collision                                0.086127 
+Obstacle_belief_update_collision                                0.086331 
+Obstacle_belief_update_collision                                0.086920 
+Obstacle_belief_update_collision                                0.086127 
+Obstacle_belief_update_collision                                0.088861 
+Obstacle_belief_update_collision                                0.086120 
+Obstacle_belief_update_collision                                0.086554 
+Obstacle_belief_update_collision                                0.088183 
+Obstacle_belief_update_collision                                0.086577 
+Obstacle_belief_update_collision                                0.086040 
+Obstacle_belief_update_collision                                0.085846 
+Obstacle_belief_update_collision                                0.085876 
+Scenario: Tunnel                                                0.000000        0.000000 
+Strategy: Thompson                                              0.000000        0.000000 
+Tunnel, Thompson Motion Time                                    4.529991 
+Tunnel, Thompson Motion Time                                    1.144426 
+Tunnel, Thompson Motion Time                                    0.312180 
+Tunnel, Thompson Motion Time                                    0.462090 
+Tunnel, Thompson Motion Time                                    0.325890 
+Tunnel, Thompson Motion Time                                    0.660526 
+Tunnel, Thompson Motion Time                                    0.510515 
+Tunnel, Thompson Motion Time                                    1.351068 
+Tunnel, Thompson Motion Time                                    0.206027 
+Tunnel, Thompson Motion Time                                    0.044096 
+Tunnel, Thompson Motion Time                                    1.108588 
+Tunnel, Thompson Motion Time                                    1.012116 
+Tunnel, Thompson Motion Time                                    0.239815 
+Tunnel, Thompson Motion Time                                    0.053692 
+Tunnel, Thompson Motion Time                                    0.221430 
+Tunnel, Thompson Motion Time                                    0.058389 
+Tunnel, Thompson Motion Time                                    2.020145 
+Tunnel, Thompson Motion Time                                    0.900359 
+Tunnel, Thompson Motion Time                                    0.759430 
+Tunnel, Thompson Motion Time                                    0.877113 
+Tunnel, Thompson Motion Time                                    0.713642 
+Tunnel, Thompson Motion Time                                    1.850564 
+Tunnel, Thompson Motion Time                                    0.745109 
+Tunnel, Thompson Motion Time                                    0.581973 
+Tunnel, Thompson Motion Time                                    3.067941 
+Tunnel, Thompson Motion Time                                    1.956234 
+Tunnel, Thompson Motion Time                                    1.877790 
+Tunnel, Thompson Motion Time                                    1.802571 
+Tunnel, Thompson Motion Time                                    1.699591 
+Tunnel, Thompson Motion Time                                    3.916081 
+Tunnel, Thompson Motion Time                                    2.534784 
+Tunnel, Thompson Motion Time                                    3.733500 
+Tunnel, Thompson Planning Time                                  0.195067 
+Tunnel, Thompson Planning Time                                  0.042049 
+Tunnel, Thompson Planning Time                                  0.000052 
+Tunnel, Thompson Planning Time                                  0.105147 
+Tunnel, Thompson Planning Time                                  0.000054 
+Tunnel, Thompson Planning Time                                  0.166599 
+Tunnel, Thompson Planning Time                                  0.000055 
+Tunnel, Thompson Planning Time                                  0.048211 
+Tunnel, Thompson Planning Time                                  0.045309 
+Tunnel, Thompson Planning Time                                  0.000024 
+Tunnel, Thompson Planning Time                                  0.149401 
+Tunnel, Thompson Planning Time                                  0.000077 
+Tunnel, Thompson Planning Time                                  0.055101 
+Tunnel, Thompson Planning Time                                  0.000028 
+Tunnel, Thompson Planning Time                                  0.199472 
+Tunnel, Thompson Planning Time                                  0.000026 
+Tunnel, Thompson Planning Time                                  0.178143 
+Tunnel, Thompson Planning Time                                  0.054437 
+Tunnel, Thompson Planning Time                                  0.000051 
+Tunnel, Thompson Planning Time                                  0.115086 
+Tunnel, Thompson Planning Time                                  0.000047 
+Tunnel, Thompson Planning Time                                  0.099864 
+Tunnel, Thompson Planning Time                                  0.056376 
+Tunnel, Thompson Planning Time                                  0.000042 
+Tunnel, Thompson Planning Time                                  0.220660 
+Tunnel, Thompson Planning Time                                  0.057472 
+Tunnel, Thompson Planning Time                                  0.000083 
+Tunnel, Thompson Planning Time                                  0.061861 
+Tunnel, Thompson Planning Time                                  0.000085 
+Tunnel, Thompson Planning Time                                  0.185065 
+Tunnel, Thompson Planning Time                                  0.064034 
+Tunnel, Thompson Planning Time                                  0.056163 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000030 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000032 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000030 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000032 
+Viz_sample                                                      0.000030 
+Viz_sample                                                      0.000030 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000033 
+Viz_sample                                                      0.000030 
+Viz_sample                                                      0.000031 
+Viz_sample                                                      0.000033 
+Viz_sample                                                      0.000031 
+Viz_sample_ee_path                                              0.000212 
+Viz_sample_ee_path                                              0.000197 
+Viz_sample_ee_path                                              0.000154 
+Viz_sample_ee_path                                              0.000160 
+Viz_sample_ee_path                                              0.000162 
+Viz_sample_ee_path                                              0.000165 
+Viz_sample_ee_path                                              0.000159 
+Viz_sample_ee_path                                              0.000163 
+Viz_sample_ee_path                                              0.000204 
+Viz_sample_ee_path                                              0.000172 
+Viz_sample_ee_path                                              0.000155 
+Viz_sample_ee_path                                              0.000185 
+Viz_sample_ee_path                                              0.000169 
+Viz_sample_ee_path                                              0.000143 
+Viz_sample_ee_path                                              0.000188 
+Viz_sample_ee_path                                              0.000187 
+Viz_sample_ee_path                                              0.000150 
+Viz_sample_ee_path                                              0.000203 
+Viz_sample_ee_path                                              0.000153 
+Viz_sample_ee_path                                              0.000183 
+accumulated_cost                                                0.000000       22.219023 
+lazySP path cost                                                0.000000        3.742353 
+lazySP path cost                                                0.000000        1.747096 
+lazySP path cost                                                0.000000        2.724393 
+lazySP path cost                                                0.000000        2.924882 
+lazySP path cost                                                0.000000        2.736279 
+lazySP path cost                                                0.000000        1.384345 
+lazySP path cost                                                0.000000        4.246341 
+lazySP path cost                                                0.000000        2.974058 
+lazySP path cost                                                0.000000        3.308036 
+lazySP path cost                                                0.000000        4.330704 
+lazySP path cost                                                0.000000        2.978770 
+lazySP path cost                                                0.000000        3.196648 
+lazySP path cost                                                0.000000        4.120460 
+lazySP path cost                                                0.000000        2.891276 
+lazySP path cost                                                0.000000        4.922714 
+lazySP path cost                                                0.000000        3.271745 
+lazySP path cost                                                0.000000        4.276710 
+lazySP path cost                                                0.000000        4.677355 
+lazySP path cost                                                0.000000        2.830124 
+lazySP path cost                                                0.000000        1.660516 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp astar iters                                              0.000000        2.000000 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp astar iters                                              0.000000       20.000000 
+lazysp astar iters                                              0.000000        4.000000 
+lazysp astar iters                                              0.000000       11.000000 
+lazysp astar iters                                              0.000000       18.000000 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp astar iters                                              0.000000        2.000000 
+lazysp astar iters                                              0.000000       10.000000 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp astar iters                                              0.000000       21.000000 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp astar iters                                              0.000000        4.000000 
+lazysp astar iters                                              0.000000        2.000000 
+lazysp astar iters                                              0.000000        1.000000 
+lazysp_successful                                               0.152260 
+lazysp_successful                                               0.002745 
+lazysp_successful                                               0.064700 
+lazysp_successful                                               0.124693 
+lazysp_successful                                               0.005577 
+lazysp_successful                                               0.002668 
+lazysp_successful                                               0.105390 
+lazysp_successful                                               0.009820 
+lazysp_successful                                               0.152823 
+lazysp_successful                                               0.130401 
+lazysp_successful                                               0.005933 
+lazysp_successful                                               0.066137 
+lazysp_successful                                               0.049398 
+lazysp_successful                                               0.006251 
+lazysp_successful                                               0.169584 
+lazysp_successful                                               0.005612 
+lazysp_successful                                               0.009324 
+lazysp_successful                                               0.131468 
+lazysp_successful                                               0.010419 
+lazysp_successful                                               0.002588 
+

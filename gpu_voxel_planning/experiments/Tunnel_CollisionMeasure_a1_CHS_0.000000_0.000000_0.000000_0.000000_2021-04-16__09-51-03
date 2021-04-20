@@ -1,0 +1,196 @@
+2021-04-16 09:51:03
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000               1        0.000000        0.000000        0.000000
+Bump                                                     0.000000              13        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                          7.144221             329        0.021715
+ComputeSweptVolume                                       0.958496              15        0.063900
+Config Added to Swept Volume                             0.949114            1321        0.000718
+EdgeCheck                                                1.151218             144        0.007995
+GetSweptVolume                                           1.013348             487        0.002081
+Scenario: Tunnel                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                         1.812377            2629        0.000689
+Strategy: CollisionMeasure_a1                            0.000000               1        0.000000        0.000000        0.000000
+Tunnel, CollisionMeasure_a1 Motion Time                 44.447338              33        1.346889
+Tunnel, CollisionMeasure_a1 Planning Time               11.125474              33        0.337136
+Update belief from free obs                              0.026727            1279        0.000021
+Viz_scenario                                            40.667550            1291        0.031501
+accumulated_cost                                         0.000000               1        0.000000       24.981538       24.981538
+astar_add_neighbors                                      2.282182            7515        0.000304
+astar_cost_to_come                                       0.299961          405110        0.000001
+astar_edge_validity_check                                0.211756          408591        0.000001
+astar_expansion_in_closed_list                           0.111546          222914        0.000001
+astar_heuristic                                          0.178841          182196        0.000001
+astar_num_edge_expansions                                0.000000             314        0.000000   408591.000000     1301.245223
+astar_num_lower_cost_edge_expansions                     0.000000             314        0.000000   182196.000000      580.242038
+astar_num_node_expansions                                0.000000             314        0.000000     7829.000000       24.933121
+astar_push_to_queue                                      0.132701          182196        0.000001
+lazySP path cost                                         0.000000              20        0.000000       71.877913        3.593896
+lazy_sp a_star                                           2.314990             314        0.007373
+lazysp astar iters                                       0.000000              20        0.000000      314.000000       15.700000
+lazysp_successful                                       11.115251              20        0.555763
+simulation_state_move                                    1.238462            1279        0.000968
+
+2021-04-16 09:51:03
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+ComputeSweptVolume                                       0.086286 
+ComputeSweptVolume                                       0.066880 
+ComputeSweptVolume                                       0.056665 
+ComputeSweptVolume                                       0.059229 
+ComputeSweptVolume                                       0.064433 
+ComputeSweptVolume                                       0.064008 
+ComputeSweptVolume                                       0.070190 
+ComputeSweptVolume                                       0.060919 
+ComputeSweptVolume                                       0.071009 
+ComputeSweptVolume                                       0.054951 
+ComputeSweptVolume                                       0.068956 
+ComputeSweptVolume                                       0.066418 
+ComputeSweptVolume                                       0.067161 
+ComputeSweptVolume                                       0.043047 
+ComputeSweptVolume                                       0.058346 
+Scenario: Tunnel                                         0.000000        0.000000 
+Strategy: CollisionMeasure_a1                            0.000000        0.000000 
+Tunnel, CollisionMeasure_a1 Motion Time                  1.301173 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.356672 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.321846 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.524655 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.461214 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.473589 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.410895 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.528052 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.476129 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.578925 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.527410 
+Tunnel, CollisionMeasure_a1 Motion Time                  1.753046 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.130721 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.054989 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.245923 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.150893 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.173089 
+Tunnel, CollisionMeasure_a1 Motion Time                  0.065754 
+Tunnel, CollisionMeasure_a1 Motion Time                  2.700940 
+Tunnel, CollisionMeasure_a1 Motion Time                  1.858514 
+Tunnel, CollisionMeasure_a1 Motion Time                  1.786709 
+Tunnel, CollisionMeasure_a1 Motion Time                  2.193780 
+Tunnel, CollisionMeasure_a1 Motion Time                  2.219000 
+Tunnel, CollisionMeasure_a1 Motion Time                  1.513286 
+Tunnel, CollisionMeasure_a1 Motion Time                  1.492498 
+Tunnel, CollisionMeasure_a1 Motion Time                  3.176442 
+Tunnel, CollisionMeasure_a1 Motion Time                  3.770263 
+Tunnel, CollisionMeasure_a1 Motion Time                  2.132801 
+Tunnel, CollisionMeasure_a1 Motion Time                  2.132060 
+Tunnel, CollisionMeasure_a1 Motion Time                  1.742973 
+Tunnel, CollisionMeasure_a1 Motion Time                  1.767521 
+Tunnel, CollisionMeasure_a1 Motion Time                  3.342527 
+Tunnel, CollisionMeasure_a1 Motion Time                  4.083047 
+Tunnel, CollisionMeasure_a1 Planning Time                0.174783 
+Tunnel, CollisionMeasure_a1 Planning Time                0.001942 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000049 
+Tunnel, CollisionMeasure_a1 Planning Time                0.153403 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000053 
+Tunnel, CollisionMeasure_a1 Planning Time                0.103093 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000074 
+Tunnel, CollisionMeasure_a1 Planning Time                0.136626 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000067 
+Tunnel, CollisionMeasure_a1 Planning Time                0.485111 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000048 
+Tunnel, CollisionMeasure_a1 Planning Time                0.185242 
+Tunnel, CollisionMeasure_a1 Planning Time                0.016855 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000029 
+Tunnel, CollisionMeasure_a1 Planning Time                0.718018 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000032 
+Tunnel, CollisionMeasure_a1 Planning Time                1.258830 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000032 
+Tunnel, CollisionMeasure_a1 Planning Time                2.091385 
+Tunnel, CollisionMeasure_a1 Planning Time                0.112136 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000092 
+Tunnel, CollisionMeasure_a1 Planning Time                1.046527 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000090 
+Tunnel, CollisionMeasure_a1 Planning Time                0.927515 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000069 
+Tunnel, CollisionMeasure_a1 Planning Time                3.043326 
+Tunnel, CollisionMeasure_a1 Planning Time                0.159895 
+Tunnel, CollisionMeasure_a1 Planning Time                0.033581 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000102 
+Tunnel, CollisionMeasure_a1 Planning Time                0.285932 
+Tunnel, CollisionMeasure_a1 Planning Time                0.000083 
+Tunnel, CollisionMeasure_a1 Planning Time                0.150722 
+Tunnel, CollisionMeasure_a1 Planning Time                0.039731 
+accumulated_cost                                         0.000000       24.981538 
+lazySP path cost                                         0.000000        3.742353 
+lazySP path cost                                         0.000000        1.747096 
+lazySP path cost                                         0.000000        2.924882 
+lazySP path cost                                         0.000000        2.929837 
+lazySP path cost                                         0.000000        3.203129 
+lazySP path cost                                         0.000000        4.122451 
+lazySP path cost                                         0.000000        4.130302 
+lazySP path cost                                         0.000000        1.859580 
+lazySP path cost                                         0.000000        4.584851 
+lazySP path cost                                         0.000000        4.974455 
+lazySP path cost                                         0.000000        5.465552 
+lazySP path cost                                         0.000000        3.735281 
+lazySP path cost                                         0.000000        4.711728 
+lazySP path cost                                         0.000000        4.727927 
+lazySP path cost                                         0.000000        5.362688 
+lazySP path cost                                         0.000000        3.740051 
+lazySP path cost                                         0.000000        1.933810 
+lazySP path cost                                         0.000000        3.093500 
+lazySP path cost                                         0.000000        3.126828 
+lazySP path cost                                         0.000000        1.761613 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        4.000000 
+lazysp astar iters                                       0.000000        4.000000 
+lazysp astar iters                                       0.000000        6.000000 
+lazysp astar iters                                       0.000000       14.000000 
+lazysp astar iters                                       0.000000       12.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000       26.000000 
+lazysp astar iters                                       0.000000       48.000000 
+lazysp astar iters                                       0.000000       70.000000 
+lazysp astar iters                                       0.000000        4.000000 
+lazysp astar iters                                       0.000000       24.000000 
+lazysp astar iters                                       0.000000       22.000000 
+lazysp astar iters                                       0.000000       62.000000 
+lazysp astar iters                                       0.000000        4.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000        4.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp_successful                                        0.168394 
+lazysp_successful                                        0.001791 
+lazysp_successful                                        0.153264 
+lazysp_successful                                        0.102890 
+lazysp_successful                                        0.136493 
+lazysp_successful                                        0.484952 
+lazysp_successful                                        0.185108 
+lazysp_successful                                        0.016726 
+lazysp_successful                                        0.717858 
+lazysp_successful                                        1.258696 
+lazysp_successful                                        2.091204 
+lazysp_successful                                        0.111948 
+lazysp_successful                                        1.046384 
+lazysp_successful                                        0.927334 
+lazysp_successful                                        3.043175 
+lazysp_successful                                        0.159711 
+lazysp_successful                                        0.033394 
+lazysp_successful                                        0.285762 
+lazysp_successful                                        0.150587 
+lazysp_successful                                        0.039583 
+

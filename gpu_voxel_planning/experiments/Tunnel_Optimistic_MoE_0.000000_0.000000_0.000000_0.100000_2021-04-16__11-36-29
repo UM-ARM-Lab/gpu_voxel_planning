@@ -1,0 +1,422 @@
+2021-04-16 11:36:29
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+Bump                                                     0.000000              45        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                         10.645491             185        0.057543
+ComputeSweptVolume                                       1.210576              21        0.057646
+Config Added to Swept Volume                             1.199093            1776        0.000675
+EdgeCheck                                                1.365218              99        0.013790
+GetSweptVolume                                           1.274877             297        0.004293
+Obstacle_belief_update_collision                         2.385388              45        0.053009
+Obstacle_belief_update_free                              1.193104            2392        0.000499
+Scenario: Tunnel                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                         2.664102            4261        0.000625
+Strategy: Optimistic                                     0.000000               1        0.000000        0.000000        0.000000
+Tunnel, Optimistic Motion Time                         193.586116             101        1.916694
+Tunnel, Optimistic Planning Time                        12.592522             101        0.124678
+Update belief from free obs                              1.363942            2392        0.000570
+Viz_scenario                                           181.406228            2436        0.074469
+accumulated_cost                                         0.000000               1        0.000000       46.237027       46.237027
+astar_add_neighbors                                      0.253163             807        0.000314
+astar_cost_to_come                                       0.031669           41146        0.000001
+astar_edge_validity_check                                0.022920           43021        0.000001
+astar_expansion_in_closed_list                           0.007393           14604        0.000001
+astar_heuristic                                          0.025770           26542        0.000001
+astar_num_edge_expansions                                0.000000             126        0.000000    43021.000000      341.436508
+astar_num_lower_cost_edge_expansions                     0.000000             126        0.000000    26542.000000      210.650794
+astar_num_node_expansions                                0.000000             126        0.000000      933.000000        7.404762
+astar_push_to_queue                                      0.019183           26542        0.000001
+lazySP path cost                                         0.000000              56        0.000000      183.263817        3.272568
+lazy_sp a_star                                           0.258875             126        0.002055
+lazysp astar iters                                       0.000000              56        0.000000      126.000000        2.250000
+lazysp_successful                                       12.579484              56        0.224634
+simulation_state_move                                    3.373573            2392        0.001410
+
+2021-04-16 11:36:29
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: MoE_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+ComputeSweptVolume                                       0.071520 
+ComputeSweptVolume                                       0.064795 
+ComputeSweptVolume                                       0.054573 
+ComputeSweptVolume                                       0.047662 
+ComputeSweptVolume                                       0.045128 
+ComputeSweptVolume                                       0.033732 
+ComputeSweptVolume                                       0.056410 
+ComputeSweptVolume                                       0.057042 
+ComputeSweptVolume                                       0.066449 
+ComputeSweptVolume                                       0.051674 
+ComputeSweptVolume                                       0.067142 
+ComputeSweptVolume                                       0.067105 
+ComputeSweptVolume                                       0.056993 
+ComputeSweptVolume                                       0.065009 
+ComputeSweptVolume                                       0.061829 
+ComputeSweptVolume                                       0.052959 
+ComputeSweptVolume                                       0.057746 
+ComputeSweptVolume                                       0.065060 
+ComputeSweptVolume                                       0.065838 
+ComputeSweptVolume                                       0.049686 
+ComputeSweptVolume                                       0.052226 
+EdgeCheck                                                0.075746 
+EdgeCheck                                                0.069031 
+EdgeCheck                                                0.000845 
+EdgeCheck                                                0.059179 
+EdgeCheck                                                0.000981 
+EdgeCheck                                                0.052285 
+EdgeCheck                                                0.000834 
+EdgeCheck                                                0.048976 
+EdgeCheck                                                0.000842 
+EdgeCheck                                                0.037547 
+EdgeCheck                                                0.000857 
+EdgeCheck                                                0.000802 
+EdgeCheck                                                0.060289 
+EdgeCheck                                                0.000800 
+EdgeCheck                                                0.060913 
+EdgeCheck                                                0.000826 
+EdgeCheck                                                0.070364 
+EdgeCheck                                                0.000786 
+EdgeCheck                                                0.000784 
+EdgeCheck                                                0.056249 
+EdgeCheck                                                0.000837 
+EdgeCheck                                                0.071074 
+EdgeCheck                                                0.000817 
+EdgeCheck                                                0.000806 
+EdgeCheck                                                0.000772 
+EdgeCheck                                                0.000812 
+EdgeCheck                                                0.071036 
+EdgeCheck                                                0.000811 
+EdgeCheck                                                0.060850 
+EdgeCheck                                                0.000844 
+EdgeCheck                                                0.068895 
+EdgeCheck                                                0.000813 
+EdgeCheck                                                0.000821 
+EdgeCheck                                                0.000835 
+EdgeCheck                                                0.000842 
+EdgeCheck                                                0.001060 
+EdgeCheck                                                0.000868 
+EdgeCheck                                                0.001055 
+EdgeCheck                                                0.000863 
+EdgeCheck                                                0.000845 
+EdgeCheck                                                0.065739 
+EdgeCheck                                                0.000844 
+EdgeCheck                                                0.056862 
+EdgeCheck                                                0.000849 
+EdgeCheck                                                0.061634 
+EdgeCheck                                                0.000828 
+EdgeCheck                                                0.000870 
+EdgeCheck                                                0.069672 
+EdgeCheck                                                0.000833 
+EdgeCheck                                                0.000790 
+EdgeCheck                                                0.070482 
+EdgeCheck                                                0.000802 
+EdgeCheck                                                0.001042 
+EdgeCheck                                                0.000973 
+EdgeCheck                                                0.000852 
+EdgeCheck                                                0.000830 
+EdgeCheck                                                0.000844 
+EdgeCheck                                                0.000837 
+EdgeCheck                                                0.000846 
+EdgeCheck                                                0.000831 
+EdgeCheck                                                0.001046 
+EdgeCheck                                                0.000837 
+EdgeCheck                                                0.000895 
+EdgeCheck                                                0.000848 
+EdgeCheck                                                0.001056 
+EdgeCheck                                                0.000864 
+EdgeCheck                                                0.000878 
+EdgeCheck                                                0.001046 
+EdgeCheck                                                0.000851 
+EdgeCheck                                                0.000808 
+EdgeCheck                                                0.000843 
+EdgeCheck                                                0.001060 
+EdgeCheck                                                0.000859 
+EdgeCheck                                                0.000852 
+EdgeCheck                                                0.000854 
+EdgeCheck                                                0.000847 
+EdgeCheck                                                0.000857 
+EdgeCheck                                                0.001057 
+EdgeCheck                                                0.000974 
+EdgeCheck                                                0.001071 
+EdgeCheck                                                0.000870 
+EdgeCheck                                                0.001053 
+EdgeCheck                                                0.000963 
+EdgeCheck                                                0.000874 
+EdgeCheck                                                0.001063 
+EdgeCheck                                                0.000970 
+EdgeCheck                                                0.053637 
+EdgeCheck                                                0.000851 
+EdgeCheck                                                0.000772 
+EdgeCheck                                                0.000798 
+EdgeCheck                                                0.001050 
+EdgeCheck                                                0.000840 
+EdgeCheck                                                0.001060 
+EdgeCheck                                                0.000843 
+EdgeCheck                                                0.000840 
+EdgeCheck                                                0.000865 
+EdgeCheck                                                0.000791 
+EdgeCheck                                                0.056137 
+EdgeCheck                                                0.000783 
+Obstacle_belief_update_collision                         0.048901 
+Obstacle_belief_update_collision                         0.053667 
+Obstacle_belief_update_collision                         0.048800 
+Obstacle_belief_update_collision                         0.049377 
+Obstacle_belief_update_collision                         0.048889 
+Obstacle_belief_update_collision                         0.049975 
+Obstacle_belief_update_collision                         0.048755 
+Obstacle_belief_update_collision                         0.049946 
+Obstacle_belief_update_collision                         0.050163 
+Obstacle_belief_update_collision                         0.050270 
+Obstacle_belief_update_collision                         0.048985 
+Obstacle_belief_update_collision                         0.052217 
+Obstacle_belief_update_collision                         0.048904 
+Obstacle_belief_update_collision                         0.047843 
+Obstacle_belief_update_collision                         0.054709 
+Obstacle_belief_update_collision                         0.055055 
+Obstacle_belief_update_collision                         0.054558 
+Obstacle_belief_update_collision                         0.054455 
+Obstacle_belief_update_collision                         0.053477 
+Obstacle_belief_update_collision                         0.053573 
+Obstacle_belief_update_collision                         0.054518 
+Obstacle_belief_update_collision                         0.054557 
+Obstacle_belief_update_collision                         0.054434 
+Obstacle_belief_update_collision                         0.054509 
+Obstacle_belief_update_collision                         0.054399 
+Obstacle_belief_update_collision                         0.054565 
+Obstacle_belief_update_collision                         0.054675 
+Obstacle_belief_update_collision                         0.048819 
+Obstacle_belief_update_collision                         0.054684 
+Obstacle_belief_update_collision                         0.054525 
+Obstacle_belief_update_collision                         0.054580 
+Obstacle_belief_update_collision                         0.054502 
+Obstacle_belief_update_collision                         0.054728 
+Obstacle_belief_update_collision                         0.054637 
+Obstacle_belief_update_collision                         0.054602 
+Obstacle_belief_update_collision                         0.054611 
+Obstacle_belief_update_collision                         0.054601 
+Obstacle_belief_update_collision                         0.055796 
+Obstacle_belief_update_collision                         0.054534 
+Obstacle_belief_update_collision                         0.054698 
+Obstacle_belief_update_collision                         0.054715 
+Obstacle_belief_update_collision                         0.054684 
+Obstacle_belief_update_collision                         0.054827 
+Obstacle_belief_update_collision                         0.055842 
+Obstacle_belief_update_collision                         0.055826 
+Scenario: Tunnel                                         0.000000        0.000000 
+Strategy: Optimistic                                     0.000000        0.000000 
+accumulated_cost                                         0.000000       46.237027 
+lazySP path cost                                         0.000000        3.742353 
+lazySP path cost                                         0.000000        1.747096 
+lazySP path cost                                         0.000000        2.724393 
+lazySP path cost                                         0.000000        2.736279 
+lazySP path cost                                         0.000000        1.384345 
+lazySP path cost                                         0.000000        2.341407 
+lazySP path cost                                         0.000000        2.596488 
+lazySP path cost                                         0.000000        2.974058 
+lazySP path cost                                         0.000000        3.013384 
+lazySP path cost                                         0.000000        3.039133 
+lazySP path cost                                         0.000000        3.071731 
+lazySP path cost                                         0.000000        3.126193 
+lazySP path cost                                         0.000000        3.286932 
+lazySP path cost                                         0.000000        3.517217 
+lazySP path cost                                         0.000000        3.582441 
+lazySP path cost                                         0.000000        3.586928 
+lazySP path cost                                         0.000000        4.241109 
+lazySP path cost                                         0.000000        4.276815 
+lazySP path cost                                         0.000000        2.924882 
+lazySP path cost                                         0.000000        2.978770 
+lazySP path cost                                         0.000000        3.090548 
+lazySP path cost                                         0.000000        3.196648 
+lazySP path cost                                         0.000000        3.245933 
+lazySP path cost                                         0.000000        3.304234 
+lazySP path cost                                         0.000000        3.868478 
+lazySP path cost                                         0.000000        3.934952 
+lazySP path cost                                         0.000000        2.891276 
+lazySP path cost                                         0.000000        3.076784 
+lazySP path cost                                         0.000000        3.505104 
+lazySP path cost                                         0.000000        4.322561 
+lazySP path cost                                         0.000000        4.638380 
+lazySP path cost                                         0.000000        4.729012 
+lazySP path cost                                         0.000000        2.897548 
+lazySP path cost                                         0.000000        3.134496 
+lazySP path cost                                         0.000000        3.167900 
+lazySP path cost                                         0.000000        3.543240 
+lazySP path cost                                         0.000000        2.515441 
+lazySP path cost                                         0.000000        2.798858 
+lazySP path cost                                         0.000000        2.822109 
+lazySP path cost                                         0.000000        3.519721 
+lazySP path cost                                         0.000000        3.670869 
+lazySP path cost                                         0.000000        4.018631 
+lazySP path cost                                         0.000000        4.117374 
+lazySP path cost                                         0.000000        4.178708 
+lazySP path cost                                         0.000000        3.179405 
+lazySP path cost                                         0.000000        3.641953 
+lazySP path cost                                         0.000000        4.315953 
+lazySP path cost                                         0.000000        2.641238 
+lazySP path cost                                         0.000000        3.051629 
+lazySP path cost                                         0.000000        3.428211 
+lazySP path cost                                         0.000000        3.989292 
+lazySP path cost                                         0.000000        4.133472 
+lazySP path cost                                         0.000000        2.529032 
+lazySP path cost                                         0.000000        2.840743 
+lazySP path cost                                         0.000000        3.011455 
+lazySP path cost                                         0.000000        1.420675 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000        5.000000 
+lazysp astar iters                                       0.000000        5.000000 
+lazysp astar iters                                       0.000000        5.000000 
+lazysp astar iters                                       0.000000        8.000000 
+lazysp astar iters                                       0.000000        8.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        5.000000 
+lazysp astar iters                                       0.000000        8.000000 
+lazysp astar iters                                       0.000000       11.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        3.000000 
+lazysp astar iters                                       0.000000        4.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        2.000000 
+lazysp astar iters                                       0.000000        1.000000 
+lazysp_successful                                        0.156487 
+lazysp_successful                                        0.005297 
+lazysp_successful                                        0.075504 
+lazysp_successful                                        0.073831 
+lazysp_successful                                        0.006716 
+lazysp_successful                                        0.068670 
+lazysp_successful                                        0.062371 
+lazysp_successful                                        0.105722 
+lazysp_successful                                        0.112870 
+lazysp_successful                                        0.129981 
+lazysp_successful                                        0.146400 
+lazysp_successful                                        0.170951 
+lazysp_successful                                        0.109827 
+lazysp_successful                                        0.225267 
+lazysp_successful                                        0.225726 
+lazysp_successful                                        0.246497 
+lazysp_successful                                        0.352292 
+lazysp_successful                                        0.373938 
+lazysp_successful                                        0.079659 
+lazysp_successful                                        0.085860 
+lazysp_successful                                        0.156522 
+lazysp_successful                                        0.152861 
+lazysp_successful                                        0.162607 
+lazysp_successful                                        0.229496 
+lazysp_successful                                        0.244714 
+lazysp_successful                                        0.242696 
+lazysp_successful                                        0.115316 
+lazysp_successful                                        0.122864 
+lazysp_successful                                        0.190656 
+lazysp_successful                                        0.535699 
+lazysp_successful                                        0.846910 
+lazysp_successful                                        1.048011 
+lazysp_successful                                        0.139961 
+lazysp_successful                                        0.146004 
+lazysp_successful                                        0.151883 
+lazysp_successful                                        0.237181 
+lazysp_successful                                        0.155048 
+lazysp_successful                                        0.165341 
+lazysp_successful                                        0.166265 
+lazysp_successful                                        0.171981 
+lazysp_successful                                        0.179164 
+lazysp_successful                                        0.275278 
+lazysp_successful                                        0.286730 
+lazysp_successful                                        0.291650 
+lazysp_successful                                        0.190623 
+lazysp_successful                                        0.196940 
+lazysp_successful                                        0.305144 
+lazysp_successful                                        0.200392 
+lazysp_successful                                        0.261947 
+lazysp_successful                                        0.214081 
+lazysp_successful                                        0.550576 
+lazysp_successful                                        0.566878 
+lazysp_successful                                        0.221903 
+lazysp_successful                                        0.287302 
+lazysp_successful                                        0.237552 
+lazysp_successful                                        0.117444 
+
