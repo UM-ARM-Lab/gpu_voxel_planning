@@ -13,6 +13,7 @@
 #include "gpu_voxel_planning/scenario_tester.hpp"
 #include "gpu_voxel_planning/state.hpp"
 #include "gpu_voxel_planning/strategies/graph_search_strategies.hpp"
+#include "gpu_voxel_planning/strategies/contact_shape_completion_strategies.hpp"
 
 
 
@@ -61,7 +62,7 @@ std::vector<std::function<std::shared_ptr<SimulationScenario>(void)>> getScenari
 
 std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrategyFactories() {
   std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> factories;
-  factories.push_back([]() { return std::make_shared<OptimisticGraphSearch>(); });
+//  factories.push_back([]() { return std::make_shared<OptimisticGraphSearch>(); });
   // factories.push_back([](){ return std::make_shared<CollisionMeasure>(1.0);});
   // factories.push_back([](){ return std::make_shared<CollisionMeasure>(10.0);});
   // factories.push_back([](){ return std::make_shared<ThompsonGraphSearch>();});
@@ -69,6 +70,7 @@ std::vector<std::function<std::shared_ptr<GraphSearchStrategy>(void)>> getStrate
   // factories.push_back([](){ return std::make_shared<QMDP>();});
   // factories.push_back([](){ return std::make_shared<OROGraphSearch>();});
 
+  factories.push_back([]() {return std::make_shared<OptimismIG>(); });
   return factories;
 }
 

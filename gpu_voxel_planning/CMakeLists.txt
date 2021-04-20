@@ -246,6 +246,7 @@ set(Planning_SOURCES
         src/scenarios/real_scenario.cpp
         src/scenarios/goal.cpp
         src/strategies/graph_search_strategies.cpp
+        src/strategies/contact_shape_completion_strategies.cpp
         src/scenario_tester.cpp
         # src/strategies/ompl_strategies.cpp
         # src/ompl_modifications/custom_bitstar.cpp              #Removed due to long compilation time

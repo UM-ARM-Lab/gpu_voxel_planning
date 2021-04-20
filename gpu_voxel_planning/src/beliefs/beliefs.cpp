@@ -5,6 +5,7 @@
 
 #include <gpu_voxel_planning/pointcloud_utils.h>
 #include <gpu_voxel_planning_msgs/CompleteShape.h>
+#include <gpu_voxel_planning_msgs/ResetShapeCompleter.h>
 #include <sensor_msgs/PointCloud2.h>
 
 using namespace GVP;
@@ -354,6 +355,18 @@ ShapeCompletionBelief::ShapeCompletionBelief() {
 
   ros::NodeHandle nh;
   free_space_publisher = nh.advertise<sensor_msgs::PointCloud2>("swept_freespace_pointcloud", 10);
+  resetShapeCompleter();
+}
+
+void ShapeCompletionBelief::resetShapeCompleter() {
+  ros::NodeHandle n;
+  ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::ResetShapeCompleter>("reset_completer");
+  gpu_voxel_planning_msgs::ResetShapeCompleter srv;
+  if (client.call(srv) and srv.response.reset_complete) {
+    std::cout << "Shape completer reset\n";
+  } else {
+    throw(std::runtime_error("Unable to reset shape completer. Perhaps the service is not running?"));
+  }
 }
 
 void ShapeCompletionBelief::syncWithShapeCompletion() {

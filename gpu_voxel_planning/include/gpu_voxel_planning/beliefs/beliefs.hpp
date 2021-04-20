@@ -221,6 +221,8 @@ class ShapeCompletionBelief : public Belief {
  public:
   ShapeCompletionBelief();
 
+  void resetShapeCompleter();
+
   void syncWithShapeCompletion();
 
   double calcProbFree(const DenseGrid &volume) override;
