@@ -3,6 +3,7 @@
 #include "gpu_voxel_planning/gvp_exceptions.hpp"
 
 using namespace GVP;
+#define TIMEOUT 900
 
 /*******************************
  *  Simulation Scenario Tester
@@ -59,6 +60,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy) {
   scenario.getSimulationState().bel->syncBelief();
 
   std::string name = getName(strategy);
+
   while (!scenario.completed() and ros::ok()) {
     // arc_helpers::WaitForInput();
     PROFILE_START(name + " Planning Time");
@@ -70,7 +72,11 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy) {
       PROFILE_RECORD_DOUBLE("Failed", 0);
       return false;
     }
-    PROFILE_RECORD(name + " Planning Time");
+    double planning_time_so_far = PROFILE_RECORD(name + " Planning Time");
+    if (planning_time_so_far > TIMEOUT){
+      PROFILE_RECORD_DOUBLE("Timeout", 1.0);
+      return false;
+    }
 
     ri.viz.vizEEPath(path, "attempt", 0, makeColor(0.0, 0.0, 0.0));
     // std::cout << "path found with " << path.size() << " verts\n";

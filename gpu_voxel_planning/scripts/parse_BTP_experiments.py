@@ -16,7 +16,8 @@ real_scenarios_to_parse = ["RealTable", "Refrigerator"]
 
 # Sim
 sim_experiment_dir = "experiments"
-sim_scenarios_to_parse = ["Box", "Bookshelf"]
+# sim_scenarios_to_parse = ["Box", "Bookshelf", "cul-de-sac"]
+sim_scenarios_to_parse = ["cul-de-sac"]
 
 # Output
 OUT_DIR = "paper_figures"
@@ -25,7 +26,8 @@ short_scenario = OrderedDict([
     ("Bookshelf", "Bookshelf"),
     ("Table_with_Box_table_known_visible_cave_known_full_cave_unknown", "Box"),
     ("RealEmpty", "RealTable"),
-    ("Fridge", "Refrigerator")])
+    ("Fridge", "Refrigerator"),
+    ("Tunnel", "cul-de-sac")])
 
 short_belief = OrderedDict([
     ("MoE_0.000000_0.000000_0.000000_0.100000", "MoE Good"),
@@ -39,6 +41,8 @@ short_belief = OrderedDict([
 
 short_strategy = OrderedDict([
     ("ParetoCosta1", "CM 1"),
+    ("CollisionMeasure_a1", "CM 1"),
+    ("CollisionMeasure_a10", "CM 10"),
     ("ParetoCosta10", "CM 10"),
     ("Optimistic", "OFU"),
     ("ORO", "ORO"),
@@ -403,9 +407,16 @@ def write_latex(experiments, save_path):
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
 """
 
+    def remove_duplicates(seq):
+        seen = set()
+        seen_add = seen.add
+        return [x for x in seq if not (x in seen or seen_add(x))]
+
     beliefs = short_belief.values()
     scenarios = short_scenario.values()
-    strategies = short_strategy.values()
+    strategies = remove_duplicates(short_strategy.values())
+
+
 
     def get_cost(scenario, strategy, bel):
         exp = get_experiment(experiments, scenario, strategy, bel)
@@ -445,7 +456,7 @@ def write_latex(experiments, save_path):
 
     def write_cost_table(scenario):
         with (save_path / f"table_{scenario}_cost.tex").open("w") as f:
-            f.write("\\begin{table}[]\n")
+            f.write("\\begin{subtable}{0.5\\linewidth}\n")
             f.write("\\centering\n")
             f.write("\\begin{tabular}{|c|" + "c|" * len(beliefs) + "}\n")
             f.write("\\hline\n")
@@ -456,7 +467,7 @@ def write_latex(experiments, save_path):
             f.write("\\end{tabular}\n")
             f.write("\\caption{" + scenario + " Policy Cost}\n")
             f.write("\\label{tab:experiment_" + scenario + "_cost}\n")
-            f.write("\\end{table}\n")
+            f.write("\\end{subtable}\n")
 
     def write_time_line(f, scenario, strat):
         f.write("\\hline\n")
@@ -468,7 +479,7 @@ def write_latex(experiments, save_path):
 
     def write_time_table(scenario):
         with (save_path / f"table_{scenario}_timings.tex").open("w") as f:
-            f.write("\\begin{table}[]\n")
+            f.write("\\begin{subtable}{0.5\\linewidth}\n")
             f.write("\\centering\n")
             f.write("\\begin{tabular}{|c|" + "c|" * len(beliefs) + "}\n")
             f.write("\\hline\n")
@@ -479,7 +490,7 @@ def write_latex(experiments, save_path):
             f.write("\\end{tabular}\n")
             f.write("\\caption{" + scenario + " Planning Times}\n")
             f.write("\\label{tab:experiment_" + scenario + "_time}\n")
-            f.write("\\end{table}\n")
+            f.write("\\end{subtable}\n")
 
     for scenario_to_parse in sim_scenarios_to_parse:
         write_cost_table(scenario_to_parse)
@@ -489,7 +500,10 @@ def write_latex(experiments, save_path):
 def load_file(filepath):
     exp = Experiment()
     with filepath.open() as f:
-        exp.timestamp = f.readline()
+        try:
+            exp.timestamp = f.readline()
+        except UnicodeDecodeError as e:
+            print(f"Trying to decode {filepath} and got error {e}")
         while line := f.readline():
             parts = line.split()
             if len(parts) == 0:
@@ -532,12 +546,12 @@ def load_all_files():
         save_dir.mkdir()
 
     experiments = group_experiments([load_file(fp) for fp in sim_path.glob('*')])
-    experiments += group_experiments([load_file(fp) for fp in real_path.glob('*')])
+    # experiments += group_experiments([load_file(fp) for fp in real_path.glob('*')])
 
     # plot_all_data_for_scenarios(experiments, path)
 
     # - this is the one currently in the paper
-    bar_plots(experiments, save_dir)
+    # bar_plots(experiments, save_dir)
 
     # scatter_plots(experiments, save_dir)
 
