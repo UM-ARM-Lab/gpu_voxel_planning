@@ -15,3 +15,21 @@ double OptimismIG::calculateEdgeWeight(State& s, const arc_dijkstras::GraphEdge&
 }
 
 std::string OptimismIG::getName() const { return "OptimismIG"; }
+
+void OptimismIG::updateGoals(const Scenario& scenario) {
+  GraphSearchStrategy::updateGoals(scenario);
+  generic_goals = scenario.getState().bel->getGoals();
+  //  auto bel = scenario.getState().bel.get();
+  //  auto shape_bel = dynamic_cast<ShapeCompletionBelief*>(bel);
+  //  shape_bel->
+}
+
+
+std::vector<NodeIndex> OptimismIG::plan(NodeIndex start, std::vector<NodeIndex> goals, State& s,
+                                        GpuVoxelRvizVisualizer& viz) {
+  for(const auto& goal: generic_goals){
+    goal.
+  }
+
+  return GraphSearchStrategy::plan(start, goals, s, viz);
+}

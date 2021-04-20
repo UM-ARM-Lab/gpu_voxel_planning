@@ -9,6 +9,8 @@
 
 namespace GVP {
 class OptimismIG : public GraphSearchStrategy {
+  std::vector<std::shared_ptr<Goal>> generic_goals;
+
  public:
   explicit OptimismIG(const std::string &filename);
 
@@ -16,7 +18,14 @@ class OptimismIG : public GraphSearchStrategy {
 
   double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
 
-  std::string getName() const override;
+  [[nodiscard]] std::string getName() const override;
+
+  void updateGoals(const Scenario &scenario) override;
+
+  std::vector<NodeIndex> plan(NodeIndex start, std::vector<NodeIndex> goals, State &s,
+                              GpuVoxelRvizVisualizer &viz) override;
+
+  //TODO: Need to override `applyTo`
 };
 }  // namespace GVP
 

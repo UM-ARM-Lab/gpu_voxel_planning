@@ -481,3 +481,7 @@ std::vector<robot::JointValueMap> ShapeCompletionBelief::getPossibleGoals(const 
   }
   return sampled_goal_configs;
 }
+
+std::vector<std::shared_ptr<Goal>> ShapeCompletionBelief::getGoals() const{
+  return goal_tsrs;
+}

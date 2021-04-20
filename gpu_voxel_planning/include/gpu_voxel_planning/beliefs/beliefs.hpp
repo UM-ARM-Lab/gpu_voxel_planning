@@ -60,11 +60,14 @@ class Belief {
     throw std::logic_error("getPossibleGoals is not implemented for this belief type\n");
   }
 
+  [[nodiscard]] virtual std::vector<std::shared_ptr<Goal>> getGoals() const {
+    throw std::logic_error("getGoals is not implemented this belief type");
+  }
+
   virtual void syncBelief() {}
 };
 
 class EmptyBelief : public Belief {
- public:
  public:
   EmptyBelief() = default;
 
@@ -214,14 +217,13 @@ class ShapeCompletionBelief : public Belief {
   std::vector<DenseGrid> sampled_particles;
   ros::Publisher free_space_publisher;
   int num_samples = 10;
-  std::optional<std::vector<robot::JointValueMap>> goal_configs;
-  std::vector<std::shared_ptr<Goal>> goal_tsrs;
   bool sync_needed = true;
+  std::vector<std::shared_ptr<Goal>> goal_tsrs;
 
  public:
   ShapeCompletionBelief();
 
-  void resetShapeCompleter();
+  static void resetShapeCompleter();
 
   void syncWithShapeCompletion();
 
@@ -240,6 +242,8 @@ class ShapeCompletionBelief : public Belief {
   void requestCompletions();
 
   [[nodiscard]] std::vector<robot::JointValueMap> getPossibleGoals(const Scenario* scenario) const override;
+
+  [[nodiscard]] std::vector<std::shared_ptr<Goal>> getGoals() const override;
 
   void syncBelief() override { syncWithShapeCompletion(); };
 };

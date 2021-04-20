@@ -55,7 +55,7 @@ void GraphSearchStrategy::updateGoals(const Scenario &scenario) {
 
   std::cout << "Updating goals\n";
   const auto &goal_configs = scenario.getPossibleGoals();
-  if (goal_configs.size() == 0) {
+  if (goal_configs.empty()) {
     throw std::logic_error("Attempted to plan but belief does not have any goal_configs");
   }
   goal_nodes.clear();

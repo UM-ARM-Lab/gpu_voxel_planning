@@ -67,7 +67,7 @@ class GraphSearchStrategy : public Strategy {
 
   std::vector<NodeIndex> lazySp(NodeIndex start, std::vector<NodeIndex> goals, State &s, Roadmap &rm);
 
-  void updateGoals(const Scenario &scenario);
+  virtual void updateGoals(const Scenario &scenario);
 };
 
 class OmniscientGraphSearch : public GraphSearchStrategy {
