@@ -453,3 +453,10 @@ target_link_libraries(test_graph_search
         planning_library
         victor_halton_roadmap
         )
+
+catkin_add_gtest(test_information
+        tests/test_information_utils.cpp)
+target_link_libraries(test_information
+#        ${EXTERN_LIBS}
+        gtest
+        )

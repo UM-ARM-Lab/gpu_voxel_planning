@@ -3,6 +3,7 @@
 //
 
 #include "gpu_voxel_planning/strategies/contact_shape_completion_strategies.hpp"
+#include "gpu_voxel_planning/utils/information_utils.hpp"
 using namespace GVP;
 
 OptimismIG::OptimismIG(const std::string& filename) : GraphSearchStrategy(filename) {}
@@ -40,14 +41,29 @@ Path OptimismIG::maxIGAction(Scenario& scenario, GpuVoxelRvizVisualizer &viz) {
   }
   const auto& cur_node = graph.getNode(cur_ind.value());
   std::cout << "IG: considering " << cur_node.getOutEdges().size() << " edges\n";
+
+  double best_IG = 0;
+  const arc_dijkstras::GraphEdge* best_edge;
   for(const auto& edge: cur_node.getOutEdges()){
     viz.vizGrid(getSweptVolume(scenario.getState(), edge), "swept_edge");
-    std::cout << "IG is " << calcIG(scenario, edge) << "\n";
-    std::cout << "";
+    double ig = calcIG(scenario, edge);
+    if(ig > best_IG){
+      best_IG = ig;
+      best_edge = &edge;
+    }
+//    std::cout << "IG is " << calcIG(scenario, edge) << "\n";
+//    std::cout << "";
   }
 
+  if(best_IG == 0){
+    throw std::logic_error("No action has any information. Need to implement next strategy");
+  }
+
+  auto cur = VictorRightArmConfig(graph.getNode(best_edge->getFromIndex()).getValue());
+  auto next = VictorRightArmConfig(graph.getNode(best_edge->getToIndex()).getValue());
+
   //TODO: Return actually meaningful path
-  return Path();
+  return interpolate(cur, next, discretization);
 }
 
 double OptimismIG::calcIG(Scenario &scenario, const arc_dijkstras::GraphEdge &e) const{
@@ -59,7 +75,7 @@ double OptimismIG::calcIG(Scenario &scenario, const arc_dijkstras::GraphEdge &e)
   GVP::Path path = interpolate(q_start, q_end, discretization);
   auto sv = computeSweptVolume(scenario.getState(), e);
 
-  std::vector<int> collision_point(particles.size());
+  std::vector<int> collision_points(particles.size());
   for(int i=0; i<particles.size(); i++){
     if(!sv.overlapsWith(&particles[i])){
       break;
@@ -68,15 +84,17 @@ double OptimismIG::calcIG(Scenario &scenario, const arc_dijkstras::GraphEdge &e)
     for(int j=0; j<path.size(); j++){
       scenario.victor.set(path[j].asMap());
       if(scenario.victor.occupied_space.overlapsWith(&particles[i])){
-        collision_point[i] = j;
+        collision_points[i] = j;
         break;
       }
     }
   }
 
-  std::cout << "Collision points: " << PrettyPrint::PrettyPrint(collision_point) << "\n";
 
-  return 0.0;
+
+//  std::cout << "Collision points: " << PrettyPrint::PrettyPrint(collision_points) << "\n";
+
+  return GVP::calcIG(collision_points);
 }
 
 Path OptimismIG::applyTo(Scenario& scenario, GpuVoxelRvizVisualizer& viz) {
