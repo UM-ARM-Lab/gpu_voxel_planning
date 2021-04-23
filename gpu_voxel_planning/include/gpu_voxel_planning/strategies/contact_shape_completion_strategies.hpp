@@ -25,7 +25,11 @@ class OptimismIG : public GraphSearchStrategy {
   std::vector<NodeIndex> plan(NodeIndex start, std::vector<NodeIndex> goals, State &s,
                               GpuVoxelRvizVisualizer &viz) override;
 
-  //TODO: Need to override `applyTo`
+  Path applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &viz) override;
+
+  Path maxIGAction(Scenario &scenario, GpuVoxelRvizVisualizer &viz);
+
+  double calcIG(Scenario &scenario, const arc_dijkstras::GraphEdge &e) const;
 };
 }  // namespace GVP
 

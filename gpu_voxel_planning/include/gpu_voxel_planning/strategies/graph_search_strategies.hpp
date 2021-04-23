@@ -60,9 +60,9 @@ class GraphSearchStrategy : public Strategy {
 
   void saveToFile() { saveToFile(swept_volumes_filepath); }
 
- protected:
-  DenseGrid computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e);
+  DenseGrid computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) const;
 
+ protected:
   void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
 
   std::vector<NodeIndex> lazySp(NodeIndex start, std::vector<NodeIndex> goals, State &s, Roadmap &rm);

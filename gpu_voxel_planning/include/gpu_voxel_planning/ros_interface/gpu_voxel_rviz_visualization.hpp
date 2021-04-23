@@ -41,7 +41,7 @@ class GpuVoxelRvizVisualizer {
  public:
   std::string topic_prefix = "voxelgrid/";
   std::vector<std::string> grid_names{"known_obstacles", "unknown_obstacles", "active_robot",    "passive_robot",
-                                      "known_free",      "true_obstacles",    "belief_obstacles"};
+                                      "known_free",      "true_obstacles",    "belief_obstacles", "swept_edge"};
   std::map<std::string, ros::Publisher> grid_pubs;
   //  ros::Publisher grid_pub;
   ros::Publisher chs_pub;
@@ -70,6 +70,7 @@ class GpuVoxelRvizVisualizer {
   }
 
   virtual void vizGrid(const DenseGrid& grid, const std::string& name, const std_msgs::ColorRGBA& color) const;
+  virtual void vizGrid(const DenseGrid& grid, const std::string& name) const;
 
   virtual void vizGrids(const std::vector<DenseGrid*>& grids, const std::vector<double>& alphas,
                         const std::string& name) const;

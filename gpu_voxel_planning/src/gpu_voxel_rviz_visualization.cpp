@@ -133,6 +133,10 @@ void GVP::GpuVoxelRvizVisualizer::vizEEPosition(const std::vector<double>& confi
 
 void GVP::GpuVoxelRvizVisualizer::vizGrid(const DenseGrid& grid, const std::string& name,
                                           const std_msgs::ColorRGBA& color) const {
+  vizGrid(grid, name);
+}
+
+void GVP::GpuVoxelRvizVisualizer::vizGrid(const DenseGrid& grid, const std::string& name) const {
   try {
     grid_pubs.at(name).publish(denseGridToMsg(grid, global_frame));
   } catch (std::out_of_range& e) {

@@ -61,9 +61,14 @@ void GraphSearchStrategy::updateGoals(const Scenario &scenario) {
   goal_nodes.clear();
   for(const auto& goal_config: goal_configs){
     const auto v = VictorRightArmConfig(goal_config).asVector();
-    const auto n = graph.addVertexAndEdges(v);
-    goal_nodes.push_back(n);
-//    std::cout << "Goal nodes " << n << " added: " << PrettyPrint::PrettyPrint(v, true) << "\n";
+    const auto existing_node = graph.getNodeAt(v);
+    if(existing_node.has_value()){
+      goal_nodes.push_back(existing_node.value());
+    } else {
+      const auto n = graph.addVertexAndEdges(v);
+      goal_nodes.push_back(n);
+    }
+    //    std::cout << "Goal nodes " << n << " added: " << PrettyPrint::PrettyPrint(v, true) << "\n";
   }
 }
 
@@ -79,7 +84,6 @@ Path GraphSearchStrategy::applyTo(Scenario &scenario, GpuVoxelRvizVisualizer &vi
   VictorRightArmConfig next;
 
   if (current == expected) {
-    //TODO: Temporary. Only uses first goal node
     std::vector<NodeIndex> node_path = plan(cur_node, goal_nodes, scenario.getState(), viz);
     std::cout << "Planning to nodes: " << PrettyPrint::PrettyPrint(node_path, true) << "\n";
     next = VictorRightArmConfig(graph.getNode(node_path[1]).getValue());
@@ -105,7 +109,7 @@ std::vector<NodeIndex> GraphSearchStrategy::plan(NodeIndex start, std::vector<No
   return path;
 }
 
-DenseGrid GraphSearchStrategy::computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) {
+DenseGrid GraphSearchStrategy::computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) const {
   VictorRightArmConfig q_start(graph.getFromValue(e));
   VictorRightArmConfig q_end(graph.getToValue(e));
   GVP::Path path = interpolate(q_start, q_end, discretization);
