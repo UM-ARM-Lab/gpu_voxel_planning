@@ -4,6 +4,7 @@
 #include <arc_utilities/math_helpers.hpp>
 #include <arc_utilities/stl_wrappers.hpp>
 #include <arc_utilities/timing.hpp>
+#include <arc_utilities/text_color.hpp>
 #include <stdexcept>
 
 #include "gpu_voxel_planning/beliefs/beliefs.hpp"
@@ -102,7 +103,8 @@ class SimulationState : public State {
     if (robot.occupied_space.overlapsWith(&true_world)) {
       bel->updateCollisionSpace(robot, getFirstLinkInCollision(robot, true_world));
       robot.set(current_config);
-      std::cout << "Collided with true world\n";
+      using namespace arc_color;
+      std::cout << RED << BOLD << "Collided with true world\n" << RESET;
       return false;
     }
     // }

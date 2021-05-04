@@ -144,6 +144,10 @@ void GVP::GpuVoxelRvizVisualizer::vizGrid(const DenseGrid& grid, const std::stri
   }
 }
 
+void GVP::GpuVoxelRvizVisualizer::clearGrid(const std::string& name) const{
+  vizGrid(DenseGrid(), name);
+}
+
 void GVP::GpuVoxelRvizVisualizer::vizGrids(const std::vector<DenseGrid*>& grids, const std::vector<double>& alphas,
                                            const std::string& name) const {
   try {

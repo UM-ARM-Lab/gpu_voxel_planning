@@ -51,10 +51,10 @@ Path OptimismIG::maxIGAction(Scenario& scenario, GpuVoxelRvizVisualizer &viz) {
       best_IG = ig;
       best_edge = &edge;
     }
-//    std::cout << "IG is " << calcIG(scenario, edge) << "\n";
-//    std::cout << "";
   }
+  viz.clearGrid("swept_edge");
 
+  std::cout << "Best action has IG of " << best_IG << "\n";
   if(best_IG == 0){
     throw std::logic_error("No action has any information. Need to implement next strategy");
   }
