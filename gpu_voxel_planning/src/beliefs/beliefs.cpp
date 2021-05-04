@@ -454,6 +454,9 @@ void ShapeCompletionBelief::requestCompletions() {
   ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::CompleteShape>("/complete_shape");
   gpu_voxel_planning_msgs::CompleteShape srv;
   srv.request.known_free = toMsg(known_free);
+  for(const auto& chs: chss){
+    srv.request.chss.push_back(toMsg(chs));
+  }
   srv.request.num_samples = num_samples;
   if (client.call(srv)) {
     std::cout << "Shapes completed\n";
