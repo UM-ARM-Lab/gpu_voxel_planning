@@ -62,7 +62,6 @@ Path OptimismIG::maxIGAction(Scenario& scenario, GpuVoxelRvizVisualizer &viz) {
   auto cur = VictorRightArmConfig(graph.getNode(best_edge->getFromIndex()).getValue());
   auto next = VictorRightArmConfig(graph.getNode(best_edge->getToIndex()).getValue());
 
-  //TODO: Return actually meaningful path
   return interpolate(cur, next, discretization);
 }
 

@@ -73,6 +73,8 @@ class GpuVoxelRvizVisualizer {
   virtual void vizGrid(const DenseGrid& grid, const std::string& name) const;
   virtual void clearGrid(const std::string& name) const;
 
+  virtual void clearAllGrids() const;
+
   virtual void vizGrids(const std::vector<DenseGrid*>& grids, const std::vector<double>& alphas,
                         const std::string& name) const;
 

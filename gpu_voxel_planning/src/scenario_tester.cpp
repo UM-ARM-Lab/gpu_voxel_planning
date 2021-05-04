@@ -47,6 +47,7 @@ bool SimulationScenarioTester::attemptStrategy(Strategy &strategy) {
   std::cout << "Testing simulation scenario: " << scenario.getName() << ", " << strategy.getName() << ", "
             << scenario.belief_name << "\n";
   ros::Duration(1.0).sleep();
+  ri.viz.clearAllGrids();
 
   scenario.initFakeVictor(ri);
   try {
