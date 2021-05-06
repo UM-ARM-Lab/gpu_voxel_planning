@@ -508,9 +508,9 @@ Object CloseWall::getCloseWall() {
 ****************************************/
 ShapeRequestScenario::ShapeRequestScenario(const BeliefParams &bp)
     : SimulationScenario("shape_request_scenario.json"), name(std::string("ShapeRequestScenario")) {
-  Object table = getObstacles();
-
-  unknown_obstacles.add(table);
+//  Object table = getObstacles("get_true_world");
+  known_obstacles.add(getObstacles("get_known_world"));
+//  unknown_obstacles.add(table);
   // visible_cave_known ? known_obstacles.add(known_cave) : unknown_obstacles.add(known_cave);
   // full_cave_known ? known_obstacles.add(cave_back) : unknown_obstacles.add(cave_back);
 
@@ -519,10 +519,10 @@ ShapeRequestScenario::ShapeRequestScenario(const BeliefParams &bp)
   setPrior(unknown_obstacles, bp);
 }
 
-Object ShapeRequestScenario::getObstacles() {
+Object ShapeRequestScenario::getObstacles(const std::string& topic) {
   Object obj;
   ros::NodeHandle n;
-  ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::RequestShape>("/get_shape");
+  ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::RequestShape>(topic);
   gpu_voxel_planning_msgs::RequestShape srv;
   if (client.call(srv)) {
     std::cout << "Got shape\n";

@@ -128,7 +128,7 @@ class ShapeRequestScenario : public SimulationScenario {
  public:
   explicit ShapeRequestScenario(const BeliefParams& bp);
   std::string getName() const override { return "ShapeRequest"; }
-  static Object getObstacles();
+  static Object getObstacles(const std::string& topic);
   std::vector<robot::JointValueMap> getPossibleGoals() const override;
 
   bool completed() const override;
