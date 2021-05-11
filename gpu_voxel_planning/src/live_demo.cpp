@@ -54,5 +54,6 @@ int main(int argc, char* argv[]) {
   // strat.saveToFile(ros::package::getPath("gpu_voxel_planning") + "/graphs/swept_volumes_100k.map");
 
   ros::Duration(3.0).sleep();
+  std::cout << "Reversing path\n";
   tester.reversePath();
 }

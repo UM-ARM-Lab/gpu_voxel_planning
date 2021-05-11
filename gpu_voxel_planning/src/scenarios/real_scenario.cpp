@@ -159,7 +159,7 @@ RealEmpty::RealEmpty(BeliefParams bp) : name("Fridge") {
   setPrior(unknown_obstacles, bp);
   // setPrior(bp);
 
-  DenseGrid kinect = loadPointCloudFromFile();
+//  DenseGrid kinect = loadPointCloudFromFile();
   // s.known_obstacles.add(&kinect);
 
   for (auto& ob : known_obstacles.obstacles) {

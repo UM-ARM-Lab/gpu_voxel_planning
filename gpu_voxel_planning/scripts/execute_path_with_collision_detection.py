@@ -17,6 +17,7 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import rospy
 from threading import Lock
 import copy
+from colorama import Fore
 
 voice = None
 check_collision_lock = Lock()
@@ -55,8 +56,8 @@ def check_collision(motion_status_msg):
             return False
 
         g_links_in_contact = ["victor_right_arm_link_" + str(idx + 1) for idx in range(col_indicies[-1], len(jt))]
-        print("check_collision links in contact")
-        print(g_links_in_contact)
+        # print("check_collision links in contact")
+        # print(g_links_in_contact)
         return True
 
 
@@ -127,7 +128,7 @@ def execute_path(path):
     """
     global g_in_collision
     global g_links_in_contact
-    global vm
+    global victor
     global path_in_progress
     # global col_links
 
@@ -136,13 +137,13 @@ def execute_path(path):
     # global in_collision
     in_collision = False
 
-    def stop():
+    def stop(*args):
         global g_in_collision
         global g_links_in_contact
-        global in_collision
-        global col_links
+        nonlocal in_collision
+        nonlocal col_links
         with check_collision_lock:
-            if (g_in_collision):
+            if g_in_collision:
                 # rospy.loginfo("collision during motion")
                 in_collision = True
                 col_links = copy.deepcopy(g_links_in_contact)
@@ -164,21 +165,33 @@ def execute_path(path):
     # vm.action_terminate_check_callback = stop
 
     # traj = vm.traj_from_path(path)
-    victor.follow_joint_trajectory(traj, client=victor.arms_client, stop_condition=stop)
+    # victor.follow_joint_trajectory(traj, client=victor.arms_client, stop_condition=stop)
+    # result = victor.plan_to_joint_config("right_arm", path[0])
+    victor.set_execute(False)
+    # a = path[-1]
+    # b = list(path[-1])
+    # b[-1] = 1
+    # plan_result = victor.plan_to_joint_config("right_arm", b)
+    plan_result = victor.plan_to_joint_config("right_arm", path[-1])
+    if not plan_result.success:
+        raise RuntimeError("Error, unable to plan. This should not happen")
+    victor.set_execute(True)
+    result = victor.follow_arms_joint_trajectory(plan_result.planning_result.plan.joint_trajectory, stop_condition=stop)
+    # result = victor.follow_arms_joint_trajectory(plan_result.planning_result.plan.joint_trajectory)
+
+    # victor.plan_to_joint_config("right_arm", a)
+
+    # result = victor.plan_to_joint_config("right_arm", path[-1])
     # vm.execute_trajectory(traj)
 
-    vm.action_terminate_check_callback = None
+    # vm.action_terminate_check_callback = None
 
     msg = CollisionInformation()
     msg.collided = in_collision
 
     if not in_collision:
-
-        # Check for collision at end of trajectory
         rospy.sleep(0.2)
         stop()
-        if in_collision:
-            print("This extra check did something!")
 
     if not in_collision:
         return msg
@@ -191,8 +204,8 @@ def execute_path(path):
 
     cur_pos = vu.jvq_to_list(right_arm_listener.get().measured_joint_position)
 
-    _, cur_ind, _ = pu.closest_point(path, cur_pos);
-    free_poses = path[0:cur_ind];
+    _, cur_ind, _ = pu.closest_point(path, cur_pos)
+    free_poses = path[0:cur_ind]
     next_poses = pu.densify(pu.travel_along(path, .15, cur_pos), .03)
 
     for pos in free_poses:
@@ -208,8 +221,8 @@ def execute_path(path):
     backup_path = pu.travel_along(path, -0.1, cur_pos)
 
     rospy.loginfo("Collision detected. Backing up")
-
-    vm.execute_trajectory(vm.traj_from_path(backup_path))
+    victor.plan_to_joint_config('right_arm', backup_path[-1])
+    # vm.execute_trajectory(vm.traj_from_path(backup_path))
     return msg
 
 
@@ -236,7 +249,7 @@ if __name__ == "__main__":
     voice = rospy.Publisher("polly", String, queue_size=10)
 
     # vm = arm_or_robots.motion_victor.MotionEnabledVictor(viewer=False, world_frame="gpu_voxel_world")
-    victor = Victor()
+    victor = Victor(display_goals=False)
     victor.connect()
     # vm.set_manipulator("left_arm")
     # vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
