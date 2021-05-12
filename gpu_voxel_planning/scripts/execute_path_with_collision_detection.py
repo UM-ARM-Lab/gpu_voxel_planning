@@ -152,39 +152,21 @@ def execute_path(path):
                 print(g_links_in_contact)
                 print(col_links)
             return g_in_collision
-        # return 
-        # global hit_torque_limit
-        # tqs = vm.active_arm_motion_status().estimated_external_torque
-        # for tq in vu.jvq_to_list(tqs):
-        #     if abs(tq) > 4:
-        #         print("Torque limit exceeded")
-        #         hit_torque_limit = True
-        #         return True
-        # return False
 
-    # vm.action_terminate_check_callback = stop
 
-    # traj = vm.traj_from_path(path)
-    # victor.follow_joint_trajectory(traj, client=victor.arms_client, stop_condition=stop)
-    # result = victor.plan_to_joint_config("right_arm", path[0])
     victor.set_execute(False)
-    # a = path[-1]
-    # b = list(path[-1])
-    # b[-1] = 1
-    # plan_result = victor.plan_to_joint_config("right_arm", b)
     plan_result = victor.plan_to_joint_config("right_arm", path[-1])
     if not plan_result.success:
         raise RuntimeError("Error, unable to plan. This should not happen")
     victor.set_execute(True)
+
+    # old_traj = plan_result.planning_result.plan.joint_trajectory
+    #
+    # traj = victor.joint_trajectory_from_path("right_arm", path)
+    # traj = victor.joint_trajectory_from_path("right_arm", old_traj)
     result = victor.follow_arms_joint_trajectory(plan_result.planning_result.plan.joint_trajectory, stop_condition=stop)
-    # result = victor.follow_arms_joint_trajectory(plan_result.planning_result.plan.joint_trajectory)
 
-    # victor.plan_to_joint_config("right_arm", a)
-
-    # result = victor.plan_to_joint_config("right_arm", path[-1])
-    # vm.execute_trajectory(traj)
-
-    # vm.action_terminate_check_callback = None
+    # result = victor.follow_arms_joint_trajectory(traj, stop_condition=stop)
 
     msg = CollisionInformation()
     msg.collided = in_collision
@@ -255,6 +237,7 @@ if __name__ == "__main__":
     # vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
     # vm.set_manipulator("right_arm")
     # vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
+    victor.set_control_mode(ControlMode.JOINT_IMPEDANCE, vel=0.1)
 
     sub = rospy.Subscriber("victor/right_arm/motion_status", MotionStatus, check_collision)
     s = rospy.Service("attempt_path_on_victor", AttemptPathStart, attempt_path_srv)

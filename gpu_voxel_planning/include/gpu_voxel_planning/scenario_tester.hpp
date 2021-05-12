@@ -46,6 +46,7 @@ class RealScenarioTester {
   bool attemptStrategy(Strategy &strategy);
 
   std::string getName(const Strategy &strategy) const;
+  bool move_arm_to_start();
 };
 }  // namespace GVP
 

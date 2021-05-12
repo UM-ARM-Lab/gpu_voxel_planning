@@ -66,7 +66,7 @@ class GpuVoxelRvizVisualizer {
   virtual void vizEEPath(const std::vector<GVP::VictorRightArmConfig>& path_config, const std::string& path_name,
                          int id, const std_msgs::ColorRGBA& color) {
     std::vector<Eigen::Vector3d> path_3d = configPathTo3DPath(path_config);
-    ee_path_pub.publish(visualize3DPath(path_3d, global_frame, path_name, id, color));
+    ee_path_pub.publish(visualize3DPath(path_3d, "world", path_name, id, color));
   }
 
   virtual void vizGrid(const DenseGrid& grid, const std::string& name, const std_msgs::ColorRGBA& color) const;

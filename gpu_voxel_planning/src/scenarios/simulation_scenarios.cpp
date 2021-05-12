@@ -29,16 +29,10 @@ static ObstacleConfiguration getBonkersBelief() {
 }
 
 SimulationScenario::SimulationScenario(const std::string &config_file) : s(victor) {
-  //  Hjson::Value obj;
-  //  std::ifstream ifs(ros::package::getPath("gpu_voxel_planning") + "/config/" + config_file);
-  //  if(not ifs.is_open()){
-  //    throw std::invalid_argument(std::string("Config file not found: ") + config_file);
-  //  }
-  //  ifs >> obj;
+
   auto obj = Hjson::UnmarshalFromFile(ros::package::getPath("gpu_voxel_planning") + "/config/" + config_file);
 
   s.current_config = VictorRightArmConfig(Json::toVector<double>(obj.at("initial_configuration"))).asMap();
-  //    goal_config = VictorRightArmConfig(Json::toVector<double>(obj.at("goal_configuration"))).asMap();
   try {
     setKnownGoalConfig(VictorRightArmConfig(Json::toVector<double>(obj.at("goal_configuration"))).asMap());
   } catch (Hjson::index_out_of_bounds &e) {

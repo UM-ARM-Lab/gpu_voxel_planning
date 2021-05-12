@@ -125,7 +125,7 @@ class SimulationState : public State {
  ***************************************/
 class RealState : public State {
  public:
-  RealState(Robot &robot) : State(robot) {}
+  explicit RealState(Robot &robot) : State(robot) {}
 
   /*
    *  Moves robot either to new config, or stops at collision.
@@ -139,7 +139,7 @@ class RealState : public State {
     if (resp.ci.collided) {
       // TODO: handle physical robot case of collision
       DenseGrid sv;
-      for (const auto free_point : resp.ci.free_path.points) {
+      for (const auto& free_point : resp.ci.free_path.points) {
         robot.set(VictorRightArmConfig(free_point.positions).asMap());
         sv.add(&robot.occupied_space);
       }
@@ -168,7 +168,7 @@ class RealState : public State {
     // TODO: update entire swept volume
     PROFILE_START("Update belief from free obs");
     DenseGrid sv;
-    for (const auto c : path) {
+    for (const auto& c : path) {
       robot.set(c.asMap());
       sv.add(&robot.occupied_space);
     }

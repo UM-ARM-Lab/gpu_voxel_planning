@@ -124,6 +124,14 @@ bool RealScenarioTester::attemptPath(const std::vector<VictorRightArmConfig> &pa
   return succeeded;
 }
 
+bool RealScenarioTester::move_arm_to_start(){
+  auto resp = ri.moveRightArm(std::vector<VictorRightArmConfig>{VictorRightArmConfig(scenario.getState().current_config)});
+  if(resp.ci.collided){
+    throw std::logic_error("Unable to move to start position without collision");
+  }
+  return true;
+}
+
 bool RealScenarioTester::attemptStrategy(Strategy &strategy) {
   PROFILE_RECORD_DOUBLE("Scenario: " + scenario.getName(), 0);
   PROFILE_RECORD_DOUBLE("Strategy: " + strategy.getName(), 0);
@@ -141,6 +149,11 @@ bool RealScenarioTester::attemptStrategy(Strategy &strategy) {
     scenario.viz(ri.viz);
     throw e;
   }
+
+  std::cout << "Current config is: " << PrettyPrint::PrettyPrint(VictorRightArmConfig(scenario.getState().current_config).asVector()) << "\n";
+  std::cout << "Moving to start configuration\n";
+  move_arm_to_start();
+  std::cout << "At start configuration, starting trial";
 
   std::cout << "getname\n";
   std::string name = getName(strategy);
@@ -160,7 +173,14 @@ bool RealScenarioTester::attemptStrategy(Strategy &strategy) {
     // std::cout << "path found with " << path.size() << " verts\n";
     PROFILE_START(name + " Motion Time");
     if (attemptPath(path)) {
-      path_taken.insert(path_taken.end(), path.begin(), path.end());
+//      path_taken.insert(path_taken.end(), path.begin(), path.end());
+        // TODO: FIX HACK. Currently cannot execute path on robot, only plan to a single config
+      path_taken.push_back(path.back());
+
+      std::cout << "Path taken: \n";
+      for(const auto& config: path_taken) {
+         std::cout << PrettyPrint::PrettyPrint(config.asVector()) << "\n";
+      }
     }
     PROFILE_RECORD(name + " Motion Time");
   }
@@ -171,7 +191,19 @@ bool RealScenarioTester::attemptStrategy(Strategy &strategy) {
 
 bool RealScenarioTester::reversePath() {
   std::reverse(path_taken.begin(), path_taken.end());
-  scenario.getRealState().move(path_taken, ri);
+//  if(scenario.getRealState().move(path_taken, ri)){
+//    return true;
+//  }
+//  throw std::logic_error("Collision when reversing path");
+
+
+  // HACK because we can't execute a path on the robot, only a single config
+  for(const auto& config: path_taken){
+    std::vector<VictorRightArmConfig> path_step{config};
+    if(!scenario.getRealState().move(path_step, ri)){
+      throw std::logic_error("Collision when reversing path");
+    }
+  }
   return true;
 }
 

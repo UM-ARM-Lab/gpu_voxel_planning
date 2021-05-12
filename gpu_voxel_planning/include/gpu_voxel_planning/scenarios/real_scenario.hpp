@@ -13,7 +13,7 @@ class RealScenario : public Scenario {
 
   std::string belief_name;
 
-  RealScenario();
+  RealScenario(const std::string &config_file);
 
   void initFakeVictor(RosInterface& ri);
   virtual void setPrior(ObstacleConfiguration& unknown_obstacles, BeliefParams bp);
@@ -57,7 +57,7 @@ class RealEmpty : public RealScenario {
  public:
   const std::string name;
 
-  RealEmpty(BeliefParams bp);
+  explicit RealEmpty(BeliefParams bp);
 
   virtual std::string getName() const override { return name; }
 

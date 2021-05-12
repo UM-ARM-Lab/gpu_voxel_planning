@@ -11,10 +11,10 @@
 namespace Json {
 
 template <typename T>
-std::vector<T> toVector(const Hjson::Value &val);
+inline std::vector<T> toVector(const Hjson::Value &val);
 
 template <>
-std::vector<double> toVector(const Hjson::Value &val) {
+inline std::vector<double> toVector(const Hjson::Value &val) {
   std::vector<double> v;
   for (int i = 0; i < val.size(); i++) {
     v.push_back(val[i]);
@@ -23,7 +23,7 @@ std::vector<double> toVector(const Hjson::Value &val) {
 }
 
 template <>
-std::vector<float> toVector(const Hjson::Value &val) {
+inline std::vector<float> toVector(const Hjson::Value &val) {
   std::vector<float> v;
   for (int i = 0; i < val.size(); i++) {
     v.push_back(val[i]);

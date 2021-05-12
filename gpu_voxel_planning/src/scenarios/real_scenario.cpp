@@ -1,6 +1,8 @@
 #include "gpu_voxel_planning/scenarios/real_scenario.hpp"
 #undef likely  // boost::likely conflict with arc_helpers
 #include <arm_pointcloud_utilities/load_save_to_file.h>
+#include <hjson/hjson.h>
+#include "gpu_voxel_planning/json_helpers.h"
 
 using namespace GVP;
 
@@ -22,7 +24,16 @@ static ObstacleConfiguration getBonkersBelief() {
   return oc;
 }
 
-RealScenario::RealScenario() : s(victor) {}
+RealScenario::RealScenario(const std::string &config_file) : s(victor) {
+  auto obj = Hjson::UnmarshalFromFile(ros::package::getPath("gpu_voxel_planning") + "/config/" + config_file);
+  s.current_config = VictorRightArmConfig(Json::toVector<double>(obj.at("initial_configuration"))).asMap();
+
+  try {
+    setKnownGoalConfig(VictorRightArmConfig(Json::toVector<double>(obj.at("goal_configuration"))).asMap());
+  } catch (Hjson::index_out_of_bounds &e) {
+    std::cout << "No goal configuration set. I hope the belief defines a goal\n";
+  }
+}
 
 void RealScenario::initFakeVictor(RosInterface& ri) {
   // NOTE:!!! These values are duplicated, and harded coded elsewhere in this code
@@ -151,7 +162,8 @@ DenseGrid RealScenario::loadPointCloudFromFile() {
 /****************************************
  **         Real Empty
  ***************************************/
-RealEmpty::RealEmpty(BeliefParams bp) : name("Fridge") {
+RealEmpty::RealEmpty(BeliefParams bp) : RealScenario("real_empty.json"),
+                                        name("Fridge") {
   addLeftArm();
 
   unknown_obstacles.add(getTable());
@@ -165,31 +177,7 @@ RealEmpty::RealEmpty(BeliefParams bp) : name("Fridge") {
   for (auto& ob : known_obstacles.obstacles) {
     s.known_obstacles.add(&ob.occupied);
   }
-  // TODO: Read this in from a config file
-  s.current_config = VictorRightArmConfig(std::vector<double>{
-                                              1.955, -1.141, 0.644, 0.949, -2.459, 0.0, -2.107
-                                              // 1.662, -0.876, 0.453, 1.474, -2.433, 0.196, -0.62
-                                              // -1.078, -0.907, 2.411, -1.024, 0.558, 1.197, 0.929
-                                              // -1.309, 0.834, 0.211, -0.21, 0.275, 0.516, -1.929
-                                              // -0.859, 0.357, 0.578, -0.226, 0.197, 0.492, -1.502
-                                              // -0.71, 0.376, 0.261, -0.195, -0.524, 0.493, -0.425
-                                              // 0.053, 0.058, 0.633, -0.504, -0.595, 0.684, -0.357
-                                              // -1.453, 0.445, 1.602, -0.476, -0.867, 0.316, -0.646
-                                              // -1.701, 1.231, 1.383, -0.271, -0.957, 0.284, -0.765
-                                              // -1.513, 1.217, 0.954, -0.935, -1.949, 0.879, -0.029
-                                              // -1.231, 1.225, -0.666, -0.893, -1.496, 0.804, -0.037
-                                          })
-                         .asMap();
-  auto goal_config = VictorRightArmConfig(std::vector<double>{
-                                              2.212, -0.783, 1.117, 0.77, -2.426, 0.327, -2.181
-                                              // 2.105, -0.761, 0.902, 1.569, -1.7, 0.142, 0.315
-                                              // -0.424, 0.82, 0.338, -0.946, 0.173, 0.683, -1.498
-                                              // -0.873, 0.771, 0.449, -0.781, 0.102, 0.936, -1.51
-                                              // -1.286, 1.025, 1.334, -1.051, -0.856, 0.946, -1.026
-                                              // 0.274, 0.712, -0.502, -1.131, -1.339, 1.346, -0.03
-                                          })
-                         .asMap();
-  setKnownGoalConfig(goal_config);
+
 }
 
 Object RealEmpty::getTable() {
@@ -233,7 +221,7 @@ Object RealEmpty::getTable() {
 /****************************************
  **         RealTable
  ****************************************/
-RealTable::RealTable(BeliefParams bp) : name("RealTable") {
+RealTable::RealTable(BeliefParams bp) : RealScenario("real_table.json"), name("RealTable") {
   addLeftArm();
 
   // known_obstacles.add(getTable());
@@ -244,19 +232,6 @@ RealTable::RealTable(BeliefParams bp) : name("RealTable") {
   for (auto& ob : known_obstacles.obstacles) {
     // s.known_obstacles.add(&ob.occupied);
   }
-
-  // TODO: Read these in from a config file
-  s.current_config = VictorRightArmConfig(std::vector<double>{
-                                              1.955, -1.141, 0.644, 0.949, -2.459, 0.0, -2.107
-                                              // 0,0,0,0,0,0,0
-                                          })
-                         .asMap();
-  auto goal_config = VictorRightArmConfig(std::vector<double>{
-                                              2.212, -0.783, 1.117, 0.77, -2.426, 0.327, -2.181
-                                              // -0.15, 1.0, 0, -0.5, 0, 1.0, 0
-                                          })
-                         .asMap();
-  setKnownGoalConfig(goal_config);
 }
 
 Object RealTable::getTable() {
