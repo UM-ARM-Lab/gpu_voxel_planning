@@ -28,7 +28,7 @@ class GraphSearchStrategy : public Strategy {
   const std::string swept_volumes_filepath;
 
   // std::map<arc_dijkstras::HashableEdge, SparseGrid> precomputed_swept_volumes;
-  MemorizedSweptVolume precomputed_swept_volumes;
+  mutable MemorizedSweptVolume precomputed_swept_volumes;
 
   // GraphSearchStrategy(const std::string &filename) : graph(filename), initialized(false) {}
   GraphSearchStrategy(const std::string &graph_filepath, const std::string &swept_volumes_filepath);
@@ -47,12 +47,12 @@ class GraphSearchStrategy : public Strategy {
 
   void initialize(const Scenario &scenario);
 
-  virtual DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e);
+  virtual DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) const;
 
   /* Checks an edge against known obstacles to see if there is a collision.
    * Changes the graph edge validity accordingly
    */
-  bool checkEdge(arc_dijkstras::GraphEdge &e, State &s);
+  bool checkEdge(arc_dijkstras::GraphEdge &e, State &s) const;
 
   double evaluateEdge(arc_dijkstras::GraphEdge &e, State &s);
 
@@ -63,9 +63,9 @@ class GraphSearchStrategy : public Strategy {
   DenseGrid computeSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) const;
 
  protected:
-  void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g);
+  void storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &g) const;
 
-  std::vector<NodeIndex> lazySp(NodeIndex start, std::vector<NodeIndex> goals, State &s, Roadmap &rm);
+  std::vector<NodeIndex> lazySp(NodeIndex start, const std::vector<NodeIndex>& goals, State &s, Roadmap &rm);
 
   virtual void updateGoals(const Scenario &scenario);
 };
@@ -127,7 +127,7 @@ class AStarGraphSearch : public GraphSearchStrategy {
 
   double calculateEdgeWeight(State &s, const arc_dijkstras::GraphEdge &e) override;
 
-  DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) override;
+  DenseGrid getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) const override;
 };
 
 class ThompsonGraphSearch : public GraphSearchStrategy {

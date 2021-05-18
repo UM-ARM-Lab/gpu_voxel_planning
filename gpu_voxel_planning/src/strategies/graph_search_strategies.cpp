@@ -117,11 +117,11 @@ DenseGrid GraphSearchStrategy::computeSweptVolume(State &s, const arc_dijkstras:
   return GVP::sweptVolume(s.robot, path);
 }
 
-void GraphSearchStrategy::storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &swept_volume) {
+void GraphSearchStrategy::storeSweptVolume(const arc_dijkstras::GraphEdge &e, const DenseGrid &swept_volume) const {
   precomputed_swept_volumes[arc_dijkstras::getSortedHashable(e)] = swept_volume;
 }
 
-DenseGrid GraphSearchStrategy::getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) {
+DenseGrid GraphSearchStrategy::getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) const {
   PROFILE_START("GetSweptVolume");
   arc_dijkstras::HashableEdge e_hashed = arc_dijkstras::getSortedHashable(e);
   if (!precomputed_swept_volumes.count(e_hashed)) {
@@ -132,7 +132,7 @@ DenseGrid GraphSearchStrategy::getSweptVolume(State &s, const arc_dijkstras::Gra
   return DenseGrid(precomputed_swept_volumes[e_hashed]);
 }
 
-bool GraphSearchStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s) {
+bool GraphSearchStrategy::checkEdge(arc_dijkstras::GraphEdge &e, State &s) const {
   PROFILE_START("EdgeCheck");
   bool valid = !getSweptVolume(s, e).overlapsWith(&s.known_obstacles);
   e.setValidity(valid ? arc_dijkstras::EDGE_VALIDITY::VALID : arc_dijkstras::EDGE_VALIDITY::INVALID);
@@ -147,7 +147,7 @@ double GraphSearchStrategy::evaluateEdge(arc_dijkstras::GraphEdge &e, State &s) 
   return calculateEdgeWeight(s, e);
 }
 
-std::vector<NodeIndex> GraphSearchStrategy::lazySp(NodeIndex start, std::vector<NodeIndex> goals, State &s, Roadmap &rm) {
+std::vector<NodeIndex> GraphSearchStrategy::lazySp(NodeIndex start, const std::vector<NodeIndex>& goals, State &s, Roadmap &rm) {
   const auto eval_fn = [&](arc_dijkstras::Graph<std::vector<double>> &g, arc_dijkstras::GraphEdge &e) {
     return evaluateEdge(e, s);
   };
@@ -290,7 +290,7 @@ std::vector<NodeIndex> AStarGraphSearch::plan(NodeIndex start, std::vector<NodeI
   return result.first;
 }
 
-DenseGrid AStarGraphSearch::getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) {
+DenseGrid AStarGraphSearch::getSweptVolume(State &s, const arc_dijkstras::GraphEdge &e) const {
   return computeSweptVolume(s, e);
 }
 
