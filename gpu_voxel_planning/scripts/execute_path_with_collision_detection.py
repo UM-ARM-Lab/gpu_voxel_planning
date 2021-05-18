@@ -178,7 +178,8 @@ def execute_path(path):
     if not in_collision:
         return msg
 
-    # speak_collision_link()
+    # victor.speak(f"Collided with link {col_links[0][-1]}")
+    victor.speak(f"Collision")
 
     print("assignment links in contact")
     print(col_links)

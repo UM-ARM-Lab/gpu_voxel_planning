@@ -171,8 +171,8 @@ RealEmpty::RealEmpty(BeliefParams bp) : RealScenario("real_empty.json"),
   setPrior(unknown_obstacles, bp);
   // setPrior(bp);
 
-//  DenseGrid kinect = loadPointCloudFromFile();
-  // s.known_obstacles.add(&kinect);
+  DenseGrid kinect = loadPointCloudFromFile();
+   s.known_obstacles.add(&kinect);
 
   for (auto& ob : known_obstacles.obstacles) {
     s.known_obstacles.add(&ob.occupied);
