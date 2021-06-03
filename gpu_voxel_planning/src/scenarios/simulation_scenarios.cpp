@@ -7,6 +7,7 @@
 
 #include "gpu_voxel_planning/json_helpers.h"
 #include "gpu_voxel_planning/pointcloud_utils.h"
+#include <arc_utilities/text_color.hpp>
 
 using namespace GVP;
 
@@ -504,9 +505,7 @@ ShapeRequestScenario::ShapeRequestScenario(const BeliefParams &bp)
     : SimulationScenario("shape_request_scenario.json"), name(std::string("ShapeRequestScenario")) {
 //  Object table = getObstacles("get_true_world");
   known_obstacles.add(getObstacles("get_known_world"));
-//  unknown_obstacles.add(table);
-  // visible_cave_known ? known_obstacles.add(known_cave) : unknown_obstacles.add(known_cave);
-  // full_cave_known ? known_obstacles.add(cave_back) : unknown_obstacles.add(cave_back);
+  unknown_obstacles.add(getObstacles("get_true_world"));
 
   combineObstacles();
 
@@ -557,7 +556,9 @@ bool ShapeRequestScenario::completed() const {
   }
 
   double prob_complete = (double)num_valid / bel->goal_tsrs.size();
-  std::cout << "cur pose is within " << prob_complete*100 << "% of the tsrs\n";
+  using namespace arc_color;
+  std::cout << "cur pose is within " << GREEN << prob_complete*100 << "%" <<
+          RESET << "of the tsrs\n";
   return prob_complete >= 0.9;
 }
 
