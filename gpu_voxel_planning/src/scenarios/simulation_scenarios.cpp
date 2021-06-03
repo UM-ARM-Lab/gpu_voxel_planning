@@ -547,7 +547,7 @@ bool ShapeRequestScenario::completed() const {
   s.bel->syncBelief();
   auto bel = dynamic_cast<ShapeCompletionBelief *>(s.bel.get());
   auto cur_angles = VictorRightArmConfig(s.current_config).asVector();
-  auto cur_pose = jacobian_follower.computeFK(cur_angles, "right_arm");
+  auto cur_pose = jacobian_follower.computeGroupFK(cur_angles, right_arm_joint_names, "right_arm");
 
   int num_valid = 0;
   for (const auto &goal : bel->goal_tsrs) {

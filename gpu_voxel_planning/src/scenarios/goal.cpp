@@ -39,7 +39,8 @@ TSRGoal::TSRGoal(const gpu_voxel_planning_msgs::TSR& tsr) : goal_tsr(tsr) {}
 bool TSRGoal::isAchieved(const VictorRightArmConfig& config, const Scenario* scenario) const {
 //  throw std::logic_error("Not implemented");
   auto cur_angles = config.asVector();
-  auto cur_pose = scenario->jacobian_follower.computeFK(cur_angles, "right_arm");
+//  auto cur_pose = scenario->jacobian_follower.computeFK(cur_angles, "right_arm");
+  auto cur_pose = scenario->jacobian_follower.computeGroupFK(cur_angles, right_arm_joint_names, "right_arm");
   return(goal_tsr.contains(cur_pose));
 }
 
