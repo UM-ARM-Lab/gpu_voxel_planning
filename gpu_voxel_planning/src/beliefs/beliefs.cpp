@@ -8,6 +8,8 @@
 #include <gpu_voxel_planning_msgs/ResetShapeCompleter.h>
 #include <sensor_msgs/PointCloud2.h>
 
+#include <arc_utilities/text_color.hpp>
+
 using namespace GVP;
 
 /******************************************************************************
@@ -454,7 +456,7 @@ void ShapeCompletionBelief::requestCompletions() {
   ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::CompleteShape>("/complete_shape");
   gpu_voxel_planning_msgs::CompleteShape srv;
   srv.request.known_free = toMsg(known_free);
-  for(const auto& chs: chss){
+  for (const auto &chs : chss) {
     srv.request.chss.push_back(toMsg(chs));
   }
   srv.request.num_samples = num_samples;
@@ -464,13 +466,23 @@ void ShapeCompletionBelief::requestCompletions() {
     throw(std::runtime_error("complete shape failed. Perhaps the service is not running?"));
   }
   if (srv.response.sampled_completions.size() != num_samples) {
-    throw std::length_error("Requested " + std::to_string(num_samples) + " completions but got " +
-                            std::to_string(srv.response.sampled_completions.size()));
+    //    throw std::length_error("Requested " + std::to_string(num_samples) + " completions but got " +
+    //                            std::to_string(srv.response.sampled_completions.size()));
+    std::cout << arc_color::RED
+              << "Requested " + std::to_string(num_samples) + " completions but got " +
+                     std::to_string(srv.response.sampled_completions.size())
+              << arc_color::RESET << "\n";
   }
-  
+
+  if (srv.response.sampled_completions.empty()){
+    throw std::length_error("Cannot form a belief from 0 sampled particles");
+  }
+
+  sampled_particles.clear();
   goal_tsrs.clear();
-  for (int i = 0; i < num_samples; i++) {
-    sampled_particles[i] = DenseGrid();
+  for (int i = 0; i < srv.response.sampled_completions.size(); i++) {
+    //    sampled_particles[i] = DenseGrid();
+    sampled_particles.emplace_back();
     sampled_particles[i].insertPointCloud(toPointsVector(srv.response.sampled_completions[i]), PROB_OCCUPIED);
     goal_tsrs.emplace_back(std::make_shared<TSRGoal>(srv.response.goal_tsrs[i]));
   }
@@ -485,6 +497,4 @@ std::vector<robot::JointValueMap> ShapeCompletionBelief::getPossibleGoals(const 
   return sampled_goal_configs;
 }
 
-std::vector<std::shared_ptr<Goal>> ShapeCompletionBelief::getGoals() const{
-  return goal_tsrs;
-}
+std::vector<std::shared_ptr<Goal>> ShapeCompletionBelief::getGoals() const { return goal_tsrs; }

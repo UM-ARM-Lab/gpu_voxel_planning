@@ -558,7 +558,7 @@ bool ShapeRequestScenario::completed() const {
   double prob_complete = (double)num_valid / bel->goal_tsrs.size();
   using namespace arc_color;
   std::cout << "cur pose is within " << GREEN << prob_complete*100 << "%" <<
-          RESET << "of the tsrs\n";
+          RESET << " of the tsrs\n";
   return prob_complete >= 0.9;
 }
 
