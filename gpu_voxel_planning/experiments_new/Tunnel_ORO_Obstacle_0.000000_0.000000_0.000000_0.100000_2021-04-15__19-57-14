@@ -1,0 +1,119 @@
+2021-04-15 19:57:14
+
+Label                                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                           34.517363             492        0.070157
+Config Added to Swept Volume                                 34.219748           42259        0.000810
+GetSweptVolume                                               37.602799          325909        0.000115
+ORO_plan                                                   4156.652557               5      831.330511
+Obstacle_belief_update_collision                            250.103268            2843        0.087972
+Obstacle_belief_update_free                                1626.494978          129709        0.012540
+Rollout                                                    3762.862826            2370        1.587706
+Rollout viz sv                                                7.425780           11164        0.000665
+Scenario: Tunnel                                              0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                            109.056570          164173        0.000664
+Simulate transition first                                   278.431588            2370        0.117482
+Simulate transition in rollout                             1964.239255           11164        0.175944
+Strategy: ORO                                                 0.000000               1        0.000000        0.000000        0.000000
+Tunnel, ORO Motion Time                                      23.151239               5        4.630248
+Tunnel, ORO Planning Time                                  4156.657625               5      831.331525
+Update belief from free obs                                   6.566315             424        0.015487
+Viz_sample                                                    0.001821              50        0.000036
+Viz_scenario                                                 15.688434             423        0.037088
+accumulated_cost                                              0.000000               1        0.000000        8.280277        8.280277
+astar_add_neighbors                                         697.779412         2169374        0.000322
+astar_cost_to_come                                          102.622399       103735846        0.000001
+astar_edge_validity_check                                    61.738459       103735846        0.000001
+astar_expansion_in_closed_list                               31.839684        56846918        0.000001
+astar_heuristic                                              52.261104        46888928        0.000001
+astar_num_edge_expansions                                     0.000000          107240        0.000000 103735846.000000      967.324189
+astar_num_lower_cost_edge_expansions                          0.000000          107240        0.000000 46888928.000000      437.233570
+astar_num_node_expansions                                     0.000000          107240        0.000000  2276614.000000       21.229150
+astar_push_to_queue                                          37.887568        46888928        0.000001
+lazySP path cost                                              0.000000           11214        0.000000    39001.185812        3.477901
+lazy_sp a_star                                              708.005142          107240        0.006602
+lazy_sp a_star forward                                      352.972729           54368        0.006492
+lazy_sp a_star reverse                                      355.077674           52872        0.006716
+lazysp astar iters                                            0.000000           11214        0.000000   107240.000000        9.563046
+lazysp_successful                                          1812.771531           11214        0.161653
+rollout lazysp                                             1785.674024           11164        0.159949
+simulate_belief_update_collision                            378.660263            2843        0.133190
+simulate_belief_update_free                                 175.815977           10691        0.016445
+simulate_belief_update_free_before_collision               1452.875046          118594        0.012251
+simulation_state_move                                         7.000576             424        0.016511
+total_lazy_sp                                             35326.900495          107240        0.329419
+
+2021-04-15 19:57:18
+
+Label                                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+ORO_plan                                                   1752.726369 
+ORO_plan                                                   1261.758559 
+ORO_plan                                                    751.671864 
+ORO_plan                                                    270.322023 
+ORO_plan                                                    120.173742 
+Scenario: Tunnel                                              0.000000        0.000000 
+Strategy: ORO                                                 0.000000        0.000000 
+Tunnel, ORO Motion Time                                       5.472440 
+Tunnel, ORO Motion Time                                       4.627966 
+Tunnel, ORO Motion Time                                       4.945218 
+Tunnel, ORO Motion Time                                       4.188447 
+Tunnel, ORO Motion Time                                       3.917168 
+Tunnel, ORO Planning Time                                  1752.730423 
+Tunnel, ORO Planning Time                                  1261.758802 
+Tunnel, ORO Planning Time                                   751.672121 
+Tunnel, ORO Planning Time                                   270.322280 
+Tunnel, ORO Planning Time                                   120.173999 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000040 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000039 
+Viz_sample                                                    0.000038 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000038 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000034 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000038 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000038 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000038 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000038 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000038 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000035 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000036 
+Viz_sample                                                    0.000037 
+Viz_sample                                                    0.000038 
+Viz_sample                                                    0.000036 
+accumulated_cost                                              0.000000        8.280277 
+

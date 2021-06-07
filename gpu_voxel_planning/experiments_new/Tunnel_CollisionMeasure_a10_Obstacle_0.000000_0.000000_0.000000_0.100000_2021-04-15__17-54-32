@@ -1,0 +1,61 @@
+2021-04-15 17:54:32
+
+Label                                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000          0.000000               1        0.000000        0.000000        0.000000
+ComputeSweptVolume                                            9.748251             123        0.079254
+Config Added to Swept Volume                                  9.668855           10892        0.000888
+EdgeCheck                                                    10.801343             447        0.024164
+GetSweptVolume                                               10.210383             969        0.010537
+Obstacle_belief_update_free                                   6.126563             348        0.017605
+Scenario: Tunnel                                              0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                              9.852745           11243        0.000876
+Strategy: CollisionMeasure_a10                                0.000000               1        0.000000        0.000000        0.000000
+Tunnel, CollisionMeasure_a10 Motion Time                     21.501520               4        5.375380
+Tunnel, CollisionMeasure_a10 Planning Time                   68.266163               4       17.066541
+Update belief from free obs                                   6.131775             348        0.017620
+Viz_scenario                                                 14.534603             347        0.041886
+accumulated_cost                                              0.000000               1        0.000000        6.797441        6.797441
+astar_add_neighbors                                          53.408818          162721        0.000328
+astar_cost_to_come                                            9.373842         7984707        0.000001
+astar_edge_validity_check                                     5.060322         7984707        0.000001
+astar_expansion_in_closed_list                                3.893315         6310833        0.000001
+astar_heuristic                                               2.103117         1673874        0.000001
+astar_num_edge_expansions                                     0.000000             434        0.000000  7984707.000000    18397.942396
+astar_num_lower_cost_edge_expansions                          0.000000             434        0.000000  1673874.000000     3856.852535
+astar_num_node_expansions                                     0.000000             434        0.000000   163155.000000      375.933180
+astar_push_to_queue                                           1.478325         1673874        0.000001
+lazySP path cost                                              0.000000               4        0.000000       20.788739        5.197185
+lazy_sp a_star                                               53.927925             434        0.124258
+lazysp astar iters                                            0.000000               4        0.000000      434.000000      108.500000
+lazysp_successful                                            68.262242               4       17.065560
+simulation_state_move                                         6.602331             348        0.018972
+
+2021-04-15 17:54:32
+
+Label                                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.000000_0.000000_0.000000_0.100000          0.000000        0.000000 
+Scenario: Tunnel                                              0.000000        0.000000 
+Strategy: CollisionMeasure_a10                                0.000000        0.000000 
+Tunnel, CollisionMeasure_a10 Motion Time                      5.367893 
+Tunnel, CollisionMeasure_a10 Motion Time                      5.860181 
+Tunnel, CollisionMeasure_a10 Motion Time                      6.042220 
+Tunnel, CollisionMeasure_a10 Motion Time                      4.231227 
+Tunnel, CollisionMeasure_a10 Planning Time                   65.078218 
+Tunnel, CollisionMeasure_a10 Planning Time                    3.096427 
+Tunnel, CollisionMeasure_a10 Planning Time                    0.070028 
+Tunnel, CollisionMeasure_a10 Planning Time                    0.021490 
+accumulated_cost                                              0.000000        6.797441 
+lazySP path cost                                              0.000000        7.851046 
+lazySP path cost                                              0.000000        6.123127 
+lazySP path cost                                              0.000000        4.340286 
+lazySP path cost                                              0.000000        2.474280 
+lazysp astar iters                                            0.000000      360.000000 
+lazysp astar iters                                            0.000000       66.000000 
+lazysp astar iters                                            0.000000        5.000000 
+lazysp astar iters                                            0.000000        3.000000 
+lazysp_successful                                            65.074927 
+lazysp_successful                                             3.096229 
+lazysp_successful                                             0.069830 
+lazysp_successful                                             0.021256 
+

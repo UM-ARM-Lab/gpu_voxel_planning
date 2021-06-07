@@ -1,0 +1,201 @@
+2021-04-15 16:50:28
+
+Label                                                tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000               1        0.000000        0.000000        0.000000
+Bump                                                     0.000000              20        0.000000        0.000000        0.000000
+CalcProbFreeCHS                                       5562.947776           92345        0.060241
+ComputeSweptVolume                                     116.135182            1581        0.073457
+Config Added to Swept Volume                           115.139302          134676        0.000855
+GetSweptVolume                                         123.551484          353483        0.000350
+QMDP_plan                                             8909.894086              29      307.237727
+Rollout                                               7052.926722           15020        0.469569
+Rollout viz sv                                          31.877871           37405        0.000852
+Scenario: Tunnel                                         0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                       820.250907          293790        0.002792
+Simulate transition first                             1391.615836           15040        0.092528
+Simulate transition in rollout                         220.405270           37405        0.005892
+Strategy: QMDP                                           0.000000               1        0.000000        0.000000        0.000000
+Tunnel, QMDP Motion Time                                83.819152              49        1.710595
+Tunnel, QMDP Planning Time                            8909.909043              49      181.834878
+Update belief from free obs                              0.059426            1654        0.000036
+Viz_sample                                               0.010949             290        0.000038
+Viz_scenario                                            78.151894            1673        0.046714
+accumulated_cost                                         0.000000               1        0.000000       32.233245       32.233245
+astar_add_neighbors                                    973.747041         3050917        0.000319
+astar_cost_to_come                                     142.013873       141365003        0.000001
+astar_edge_validity_check                               86.471089       143051964        0.000001
+astar_expansion_in_closed_list                          43.352436        76098351        0.000001
+astar_heuristic                                         73.194141        65266652        0.000001
+astar_num_edge_expansions                                0.000000          145462        0.000000 143051964.000000      983.431852
+astar_num_lower_cost_edge_expansions                     0.000000          145462        0.000000 65266652.000000      448.685237
+astar_num_node_expansions                                0.000000          145462        0.000000  3196379.000000       21.973979
+astar_push_to_queue                                     54.000616        65266652        0.000001
+lazySP path cost                                         0.000000           15310        0.000000    59482.647722        3.885215
+lazy_sp a_star                                         987.680340          145462        0.006790
+lazy_sp a_star forward                                 504.815108           76955        0.006560
+lazy_sp a_star reverse                                 482.954501           68507        0.007050
+lazysp astar iters                                       0.000000           15310        0.000000   145462.000000        9.501110
+lazysp_successful                                     6935.000751           15310        0.452972
+rollout lazysp                                        6782.034627           15020        0.451534
+simulate_belief_update_collision                       411.759104            4019        0.102453
+simulate_belief_update_free                            204.469463           48426        0.004222
+simulate_belief_update_free_before_collision             4.279235          153108        0.000028
+simulation_state_move                                    1.922189            1654        0.001162
+total_lazy_sp                                       106013.997948          145462        0.728809
+
+2021-04-15 16:50:33
+
+Label                                                        time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: CHS_0.000000_0.000000_0.000000_0.000000          0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+Bump                                                     0.000000        0.000000 
+QMDP_plan                                               30.719858 
+QMDP_plan                                               14.964097 
+QMDP_plan                                               34.453185 
+QMDP_plan                                               53.841482 
+QMDP_plan                                               78.607698 
+QMDP_plan                                              112.223844 
+QMDP_plan                                              118.412746 
+QMDP_plan                                              181.648012 
+QMDP_plan                                              133.875563 
+QMDP_plan                                              223.182178 
+QMDP_plan                                              448.493754 
+QMDP_plan                                              271.522506 
+QMDP_plan                                              318.003943 
+QMDP_plan                                              373.169438 
+QMDP_plan                                              502.913587 
+QMDP_plan                                              419.038870 
+QMDP_plan                                              501.480275 
+QMDP_plan                                              653.168948 
+QMDP_plan                                              783.605728 
+QMDP_plan                                              843.720263 
+QMDP_plan                                              570.923777 
+QMDP_plan                                              211.820169 
+QMDP_plan                                              379.769745 
+QMDP_plan                                              528.459962 
+QMDP_plan                                              145.772512 
+QMDP_plan                                              186.635684 
+QMDP_plan                                              298.814707 
+QMDP_plan                                              385.329790 
+QMDP_plan                                              105.321768 
+Scenario: Tunnel                                         0.000000        0.000000 
+Strategy: QMDP                                           0.000000        0.000000 
+Tunnel, QMDP Motion Time                                 1.462636 
+Tunnel, QMDP Motion Time                                 0.492421 
+Tunnel, QMDP Motion Time                                 0.434383 
+Tunnel, QMDP Motion Time                                 0.466721 
+Tunnel, QMDP Motion Time                                 0.399659 
+Tunnel, QMDP Motion Time                                 0.718195 
+Tunnel, QMDP Motion Time                                 0.697037 
+Tunnel, QMDP Motion Time                                 0.688874 
+Tunnel, QMDP Motion Time                                 0.623716 
+Tunnel, QMDP Motion Time                                 0.789127 
+Tunnel, QMDP Motion Time                                 0.753023 
+Tunnel, QMDP Motion Time                                 0.835928 
+Tunnel, QMDP Motion Time                                 0.714777 
+Tunnel, QMDP Motion Time                                 1.944284 
+Tunnel, QMDP Motion Time                                 0.820041 
+Tunnel, QMDP Motion Time                                 0.794641 
+Tunnel, QMDP Motion Time                                 0.584928 
+Tunnel, QMDP Motion Time                                 0.497924 
+Tunnel, QMDP Motion Time                                 2.399859 
+Tunnel, QMDP Motion Time                                 2.691249 
+Tunnel, QMDP Motion Time                                 2.724733 
+Tunnel, QMDP Motion Time                                 1.356252 
+Tunnel, QMDP Motion Time                                 1.279247 
+Tunnel, QMDP Motion Time                                 1.547181 
+Tunnel, QMDP Motion Time                                 1.560257 
+Tunnel, QMDP Motion Time                                 1.167515 
+Tunnel, QMDP Motion Time                                 1.114321 
+Tunnel, QMDP Motion Time                                 1.960821 
+Tunnel, QMDP Motion Time                                 1.926081 
+Tunnel, QMDP Motion Time                                 1.224353 
+Tunnel, QMDP Motion Time                                 1.144457 
+Tunnel, QMDP Motion Time                                 1.016669 
+Tunnel, QMDP Motion Time                                 0.931217 
+Tunnel, QMDP Motion Time                                 1.104913 
+Tunnel, QMDP Motion Time                                 1.016010 
+Tunnel, QMDP Motion Time                                 5.323306 
+Tunnel, QMDP Motion Time                                 3.158074 
+Tunnel, QMDP Motion Time                                 0.488012 
+Tunnel, QMDP Motion Time                                 0.357559 
+Tunnel, QMDP Motion Time                                 0.588913 
+Tunnel, QMDP Motion Time                                 0.459805 
+Tunnel, QMDP Motion Time                                 5.284951 
+Tunnel, QMDP Motion Time                                 3.563708 
+Tunnel, QMDP Motion Time                                 3.500380 
+Tunnel, QMDP Motion Time                                 2.371660 
+Tunnel, QMDP Motion Time                                 2.202310 
+Tunnel, QMDP Motion Time                                 5.755155 
+Tunnel, QMDP Motion Time                                 5.553638 
+Tunnel, QMDP Motion Time                                 5.328231 
+Tunnel, QMDP Planning Time                              30.726276 
+Tunnel, QMDP Planning Time                              14.964313 
+Tunnel, QMDP Planning Time                               0.000054 
+Tunnel, QMDP Planning Time                              34.453338 
+Tunnel, QMDP Planning Time                               0.000052 
+Tunnel, QMDP Planning Time                              53.841688 
+Tunnel, QMDP Planning Time                               0.000100 
+Tunnel, QMDP Planning Time                              78.607896 
+Tunnel, QMDP Planning Time                               0.000065 
+Tunnel, QMDP Planning Time                             112.224031 
+Tunnel, QMDP Planning Time                               0.000056 
+Tunnel, QMDP Planning Time                             118.413098 
+Tunnel, QMDP Planning Time                               0.000065 
+Tunnel, QMDP Planning Time                             181.648192 
+Tunnel, QMDP Planning Time                             133.875746 
+Tunnel, QMDP Planning Time                               0.000056 
+Tunnel, QMDP Planning Time                             223.182408 
+Tunnel, QMDP Planning Time                               0.000049 
+Tunnel, QMDP Planning Time                             448.494096 
+Tunnel, QMDP Planning Time                             271.522765 
+Tunnel, QMDP Planning Time                               0.000098 
+Tunnel, QMDP Planning Time                             318.004233 
+Tunnel, QMDP Planning Time                               0.000059 
+Tunnel, QMDP Planning Time                             373.169685 
+Tunnel, QMDP Planning Time                               0.000058 
+Tunnel, QMDP Planning Time                             502.913811 
+Tunnel, QMDP Planning Time                               0.000053 
+Tunnel, QMDP Planning Time                             419.039085 
+Tunnel, QMDP Planning Time                               0.000103 
+Tunnel, QMDP Planning Time                             501.480603 
+Tunnel, QMDP Planning Time                               0.000050 
+Tunnel, QMDP Planning Time                             653.169266 
+Tunnel, QMDP Planning Time                               0.000056 
+Tunnel, QMDP Planning Time                             783.606034 
+Tunnel, QMDP Planning Time                               0.000051 
+Tunnel, QMDP Planning Time                             843.720591 
+Tunnel, QMDP Planning Time                             570.924040 
+Tunnel, QMDP Planning Time                             211.820437 
+Tunnel, QMDP Planning Time                               0.000039 
+Tunnel, QMDP Planning Time                             379.770026 
+Tunnel, QMDP Planning Time                               0.000037 
+Tunnel, QMDP Planning Time                             528.460206 
+Tunnel, QMDP Planning Time                             145.772817 
+Tunnel, QMDP Planning Time                               0.000116 
+Tunnel, QMDP Planning Time                             186.636041 
+Tunnel, QMDP Planning Time                               0.000076 
+Tunnel, QMDP Planning Time                             298.814992 
+Tunnel, QMDP Planning Time                             385.330041 
+Tunnel, QMDP Planning Time                             105.321995 
+accumulated_cost                                         0.000000       32.233245 
+

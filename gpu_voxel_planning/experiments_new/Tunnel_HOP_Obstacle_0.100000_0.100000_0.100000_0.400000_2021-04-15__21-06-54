@@ -1,0 +1,77 @@
+2021-04-15 21:06:54
+
+Label                                                     tot time (s)       num_calls    avg time (s)     total value       avg value
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000          0.000000               1        0.000000        0.000000        0.000000
+Bump                                                          0.000000               2        0.000000        0.000000        0.000000
+ComputeSweptVolume                                           14.849507             206        0.072085
+Config Added to Swept Volume                                 14.720599           18217        0.000808
+Copy_graph                                                    3.808667             677        0.005626
+EdgeCheck                                                    30.629591           13247        0.002312
+GetSweptVolume                                               15.662896           13924        0.001125
+HOP_plan                                                   2267.317261               7      323.902466
+Obstacle_belief_update_collision                              0.144503               2        0.072251
+Obstacle_belief_update_free                                   5.063504             530        0.009554
+Scenario: Tunnel                                              0.000000               1        0.000000        0.000000        0.000000
+Set robot config                                             15.385210           19454        0.000791
+Strategy: HOP                                                 0.000000               1        0.000000        0.000000        0.000000
+Tunnel, HOP Motion Time                                      19.854251               9        2.206028
+Tunnel, HOP Planning Time                                  2267.348045               9      251.927561
+Update belief from free obs                                   5.067973             530        0.009562
+Viz sample sv                                                 0.292663             677        0.000432
+Viz_sample                                                    0.013032             700        0.000019
+Viz_sample_ee_path                                            0.131851             677        0.000195
+Viz_scenario                                                 13.448932             531        0.025328
+accumulated_cost                                              0.000000               1        0.000000       10.348059       10.348059
+astar_add_neighbors                                        2206.819890         8552328        0.000258
+astar_cost_to_come                                          405.082351       378431249        0.000001
+astar_edge_validity_check                                   214.404681       385845000        0.000001
+astar_expansion_in_closed_list                              175.603303       323653225        0.000001
+astar_heuristic                                              61.343689        54778024        0.000001
+astar_num_edge_expansions                                     0.000000           10615        0.000000 385845000.000000    36349.034385
+astar_num_lower_cost_edge_expansions                          0.000000           10615        0.000000 54778024.000000     5160.435610
+astar_num_node_expansions                                     0.000000           10615        0.000000  8562943.000000      806.683278
+astar_push_to_queue                                          42.768487        54778024        0.000001
+lazySP path cost                                              0.000000             677        0.000000     2339.298900        3.455390
+lazy_sp a_star                                             2228.898510           10615        0.209976
+lazysp astar iters                                            0.000000             677        0.000000    10615.000000       15.679468
+lazysp_successful                                          2259.828314             677        3.338003
+simulation_state_move                                         5.584879             530        0.010538
+
+2021-04-15 21:07:06
+
+Label                                                             time           value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ............       ~~~~~~~~~
+Belief: Obstacle_0.100000_0.100000_0.100000_0.400000          0.000000        0.000000 
+Bump                                                          0.000000        0.000000 
+Bump                                                          0.000000        0.000000 
+HOP_plan                                                   2246.592827 
+HOP_plan                                                      2.252821 
+HOP_plan                                                     11.318663 
+HOP_plan                                                      1.378235 
+HOP_plan                                                      3.142024 
+HOP_plan                                                      1.391920 
+HOP_plan                                                      1.240771 
+Obstacle_belief_update_collision                              0.071217 
+Obstacle_belief_update_collision                              0.073286 
+Scenario: Tunnel                                              0.000000        0.000000 
+Strategy: HOP                                                 0.000000        0.000000 
+Tunnel, HOP Motion Time                                       5.171356 
+Tunnel, HOP Motion Time                                       0.453477 
+Tunnel, HOP Motion Time                                       0.220426 
+Tunnel, HOP Motion Time                                       2.923932 
+Tunnel, HOP Motion Time                                       1.858912 
+Tunnel, HOP Motion Time                                       1.692939 
+Tunnel, HOP Motion Time                                       2.651356 
+Tunnel, HOP Motion Time                                       2.521078 
+Tunnel, HOP Motion Time                                       2.360776 
+Tunnel, HOP Planning Time                                  2246.599876 
+Tunnel, HOP Planning Time                                     2.256673 
+Tunnel, HOP Planning Time                                     0.000038 
+Tunnel, HOP Planning Time                                    11.322456 
+Tunnel, HOP Planning Time                                     1.382167 
+Tunnel, HOP Planning Time                                     0.000089 
+Tunnel, HOP Planning Time                                     3.145810 
+Tunnel, HOP Planning Time                                     1.396006 
+Tunnel, HOP Planning Time                                     1.244929 
+accumulated_cost                                              0.000000       10.348059 
+
