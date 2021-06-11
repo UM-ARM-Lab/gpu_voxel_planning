@@ -272,10 +272,18 @@ target_link_libraries(victor_voxelgrid_live_publisher
         planning_library
         )
 
-add_executable(wip_shape_completion
-        src/wip/wip_shape_completion_scenario.cpp
+add_executable(shape_completion_simulation
+        src/contact_shape_completion/simulation_shape_completion.cpp
         )
-target_link_libraries(wip_shape_completion
+target_link_libraries(shape_completion_simulation
+        ${EXTERN_LIBS}
+        planning_library
+        )
+
+add_executable(shape_completion_live
+        src/contact_shape_completion/live_shape_completion.cpp
+        )
+target_link_libraries(shape_completion_live
         ${EXTERN_LIBS}
         planning_library
         )

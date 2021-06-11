@@ -1,8 +1,12 @@
 #include "gpu_voxel_planning/scenarios/real_scenario.hpp"
 #undef likely  // boost::likely conflict with arc_helpers
 #include <arm_pointcloud_utilities/load_save_to_file.h>
+#include <gpu_voxel_planning_msgs/RequestShape.h>
 #include <hjson/hjson.h>
+#include <gpu_voxel_planning_msgs/RequestShape.h>
+
 #include "gpu_voxel_planning/json_helpers.h"
+#include "gpu_voxel_planning/pointcloud_utils.h"
 
 using namespace GVP;
 
@@ -66,6 +70,10 @@ void RealScenario::setPrior(ObstacleConfiguration& unknown_obstacles, BeliefPara
     case BeliefType::MoEBonkers:
       std::cout << "Using MoE Obstalcebelief\n";
       s.bel = std::make_unique<MoEBelief>(getBonkersBelief(), bp.noise, bp.bias);
+      break;
+    case BeliefType::ShapeCompletion:
+      std::cout << "Using shape completion belief\n";
+      s.bel = std::make_unique<ShapeCompletionBelief>();
       break;
     // case BeliefType::IID:
     //     std::cout << "Using IID belief\n";
@@ -250,4 +258,70 @@ Object RealTable::getTable() {
   table.add(AABB(Vector3f(tc.x, tc.y, 0) + Vector3f(td.x - tld.x, td.y - tld.y, 0),
                  Vector3f(tc.x, tc.y, 0) + Vector3f(td.x - tld.x, td.y - tld.y, 0) + tld));
   return table;
+}
+
+
+/****************************************
+**      Real ShapeRequest Scenario
+****************************************/
+RealShapeRequestScenario::RealShapeRequestScenario(const BeliefParams &bp)
+    : RealScenario("shape_request_scenario.json"), name(std::string("ShapeRequestScenario")) {
+//  Object table = getObstacles("get_true_world");
+//  known_obstacles.add(getObstacles("get_known_world"));
+  unknown_obstacles.add(getObstacles("get_true_world"));
+
+//  combineObstacles();
+
+  setPrior(unknown_obstacles, bp);
+  apply_frame_offset = true;
+}
+
+Object RealShapeRequestScenario::getObstacles(const std::string& topic) {
+  Object obj;
+  ros::NodeHandle n;
+  ros::ServiceClient client = n.serviceClient<gpu_voxel_planning_msgs::RequestShape>(topic);
+  gpu_voxel_planning_msgs::RequestShape srv;
+  if (client.call(srv)) {
+    std::cout << "Got shape\n";
+    obj.occupied.insertPointCloud(toPointsVector(srv.response.points), PROB_OCCUPIED);
+  } else {
+    std::cout << "Service call failed\n";
+  }
+  return obj;
+}
+
+std::vector<robot::JointValueMap> RealShapeRequestScenario::getPossibleGoals() const {
+  //    if(known_goal_config.has_value()){
+  //        return std::vector<robot::JointValueMap>{known_goal_config.value()};
+  //    }
+
+  return s.bel->getPossibleGoals(this);
+  // TODO: Made more general for more types of beliefs
+//  auto bel = dynamic_cast<ShapeCompletionBelief *>(s.bel.get());
+//  std::vector<robot::JointValueMap> goal_configs;
+
+
+  //  return s.bel->getPossibleGoals();
+  //    throw std::runtime_error("Shape Request Scenario does not have a known_goal_config");
+//  return goal_configs;
+}
+
+bool RealShapeRequestScenario::completed() const {
+  s.bel->syncBelief();
+  auto bel = dynamic_cast<ShapeCompletionBelief *>(s.bel.get());
+  auto cur_angles = VictorRightArmConfig(s.current_config).asVector();
+  auto cur_pose = jacobian_follower.computeGroupFK(cur_angles, right_arm_joint_names, "right_arm");
+
+  int num_valid = 0;
+  for (const auto &goal : bel->goal_tsrs) {
+    if(goal->isAchieved(VictorRightArmConfig(s.current_config), this)){
+      num_valid += 1;
+    }
+  }
+
+  double prob_complete = (double)num_valid / bel->goal_tsrs.size();
+  using namespace arc_color;
+  std::cout << "cur pose is within " << GREEN << prob_complete*100 << "%" <<
+            RESET << " of the tsrs\n";
+  return prob_complete >= 0.9;
 }

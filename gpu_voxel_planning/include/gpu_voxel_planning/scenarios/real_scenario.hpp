@@ -13,10 +13,10 @@ class RealScenario : public Scenario {
 
   std::string belief_name;
 
-  RealScenario(const std::string &config_file);
+  explicit RealScenario(const std::string &config_file);
 
   void initFakeVictor(RosInterface& ri);
-  virtual void setPrior(ObstacleConfiguration& unknown_obstacles, BeliefParams bp);
+  void setPrior(ObstacleConfiguration& unknown_obstacles, BeliefParams bp);
   // virtual void setPrior(BeliefParams bp);
 
   virtual void validate();
@@ -63,6 +63,22 @@ class RealEmpty : public RealScenario {
 
   Object getTable();
 };
+
+/****************************************
+**      Real ShapeRequest Scenario
+****************************************/
+class RealShapeRequestScenario : public RealScenario {
+  const std::string name;
+
+ public:
+  explicit RealShapeRequestScenario(const BeliefParams& bp);
+  std::string getName() const override { return "ShapeRequest"; }
+  static Object getObstacles(const std::string& topic);
+  std::vector<robot::JointValueMap> getPossibleGoals() const override;
+
+  bool completed() const override;
+};
 }  // namespace GVP
 
 #endif
+

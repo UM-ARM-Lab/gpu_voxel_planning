@@ -9,12 +9,14 @@
 namespace GVP {
 class Scenario {
  public:
-  explicit Scenario(): jacobian_follower("victor", 0.01) {}
+  explicit Scenario(): jacobian_follower("victor", 0.01), apply_frame_offset(false) {}
 
   VictorRightArm victor;
   //        robot::JointValueMap goal_config;
   std::optional<robot::JointValueMap> known_goal_config;
   JacobianFollower jacobian_follower;
+
+  bool apply_frame_offset;
 
   void setKnownGoalConfig(robot::JointValueMap goal_config) { known_goal_config = goal_config; }
 

@@ -2,7 +2,9 @@
 // Created by bsaund on 4/8/21.
 //
 #include "gpu_voxel_planning/scenarios/goal.hpp"
+
 #include "gpu_voxel_planning/scenarios/scenarios.hpp"
+#include "gpu_voxel_planning/scenarios/real_scenario.hpp"
 
 using namespace GVP;
 
@@ -28,7 +30,9 @@ bool TSR::contains(const geometry_msgs::Pose& pose) const {
   return x.contains(pose.position.x) and y.contains(pose.position.y) and z.contains(pose.position.z);
 }
 
-bool ConfigGoal::isAchieved(const VictorRightArmConfig& config, const Scenario* scenario) const { return goal_config == config; }
+bool ConfigGoal::isAchieved(const VictorRightArmConfig& config, const Scenario* scenario) const {
+  return goal_config == config;
+}
 
 std::vector<robot::JointValueMap> ConfigGoal::sampleGoalConfigs(const Scenario* scenario) const {
   return std::vector<robot::JointValueMap>{goal_config.asMap()};
@@ -37,11 +41,15 @@ std::vector<robot::JointValueMap> ConfigGoal::sampleGoalConfigs(const Scenario* 
 TSRGoal::TSRGoal(const gpu_voxel_planning_msgs::TSR& tsr) : goal_tsr(tsr) {}
 
 bool TSRGoal::isAchieved(const VictorRightArmConfig& config, const Scenario* scenario) const {
-//  throw std::logic_error("Not implemented");
+  //  throw std::logic_error("Not implemented");
   auto cur_angles = config.asVector();
-//  auto cur_pose = scenario->jacobian_follower.computeFK(cur_angles, "right_arm");
+  //  auto cur_pose = scenario->jacobian_follower.computeFK(cur_angles, "right_arm");
   auto cur_pose = scenario->jacobian_follower.computeGroupFK(cur_angles, right_arm_joint_names, "right_arm");
-  return(goal_tsr.contains(cur_pose));
+  if(scenario->apply_frame_offset){
+    cur_pose.position.x += 1.0;
+    cur_pose.position.y += 2.0;
+  }
+  return (goal_tsr.contains(cur_pose));
 }
 
 std::vector<robot::JointValueMap> TSRGoal::sampleGoalConfigs(const Scenario* scenario) const {
@@ -56,11 +64,18 @@ std::vector<robot::JointValueMap> TSRGoal::sampleGoalConfigs(const Scenario* sce
   target_pose.orientation.z = -0.6317937464624142;
   target_pose.orientation.w = 0.08661771909760922;
 
-//  auto tsr = dynamic_cast<TSRGoal*>(tsrgoal.get())->goal;
+  //  auto tsr = dynamic_cast<TSRGoal*>(tsrgoal.get())->goal;
+  // TODO: These are hardcoded offset to account for the offset from the real scenario
+  double x_offset = 0;
+  double y_offset = 0;
 
+  if (scenario->apply_frame_offset) {
+    x_offset = -1;
+    y_offset = -2;
+  }
 
-  target_pose.position.x = (goal_tsr.x.min + goal_tsr.x.max) / 2;
-  target_pose.position.y = (goal_tsr.y.min + goal_tsr.y.max) / 2;
+  target_pose.position.x = (goal_tsr.x.min + goal_tsr.x.max) / 2 + x_offset;
+  target_pose.position.y = (goal_tsr.y.min + goal_tsr.y.max) / 2 + y_offset;
   target_pose.position.z = (goal_tsr.z.min + goal_tsr.z.max) / 2;
 
   auto ik_solutions = scenario->jacobian_follower.compute_IK_solutions(target_pose, "right_arm");

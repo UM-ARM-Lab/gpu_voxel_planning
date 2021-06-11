@@ -153,9 +153,10 @@ bool RealScenarioTester::attemptStrategy(Strategy &strategy) {
   std::cout << "Current config is: " << PrettyPrint::PrettyPrint(VictorRightArmConfig(scenario.getState().current_config).asVector()) << "\n";
   std::cout << "Moving to start configuration\n";
   move_arm_to_start();
-  std::cout << "At start configuration, starting trial";
+  std::cout << "At start configuration, starting trial: ";
 
-  std::cout << "getname\n";
+  std::cout << scenario.getName() << ", " << strategy.getName() << ", "
+            << scenario.belief_name << "\n";
   std::string name = getName(strategy);
   while (!scenario.completed()) {
     PROFILE_START(name + " Planning Time");
@@ -164,7 +165,8 @@ bool RealScenarioTester::attemptStrategy(Strategy &strategy) {
       std::cout << "plan\n";
       path = strategy.applyTo(scenario, ri.viz);
     } catch (std::logic_error &e) {
-      std::cout << "No path found\n";
+      std::cout << "No path found: ";
+      std::cout << e.what() << "\n";
       return false;
     }
     PROFILE_RECORD(name + " Planning Time");
