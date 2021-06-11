@@ -46,6 +46,12 @@ Path OptimismIG::maxIGAction(Scenario& scenario, GpuVoxelRvizVisualizer &viz) {
   const arc_dijkstras::GraphEdge* best_edge;
   for(const auto& edge: cur_node.getOutEdges()){
     viz.vizGrid(getSweptVolume(scenario.getState(), edge), "swept_edge");
+
+//    auto sv = computeSweptVolume(scenario.getState(), edge);
+//    if(scenario.getState().known_obstacles.overlapsWith(sv)){
+//      continue;
+//    }
+
     double ig = calcIG(scenario, edge);
     if(ig > best_IG){
       best_IG = ig;
@@ -73,6 +79,10 @@ double OptimismIG::calcIG(Scenario &scenario, const arc_dijkstras::GraphEdge &e)
   VictorRightArmConfig q_end(graph.getToValue(e));
   GVP::Path path = interpolate(q_start, q_end, discretization);
   auto sv = computeSweptVolume(scenario.getState(), e);
+
+  if(sv.overlapsWith(&scenario.getState().known_obstacles)){
+    return 0;
+  }
 
   std::vector<int> collision_points(particles.size());
   for(int i=0; i<particles.size(); i++){

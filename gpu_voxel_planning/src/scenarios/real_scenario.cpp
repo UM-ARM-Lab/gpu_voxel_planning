@@ -267,10 +267,14 @@ Object RealTable::getTable() {
 RealShapeRequestScenario::RealShapeRequestScenario(const BeliefParams &bp)
     : RealScenario("shape_request_scenario.json"), name(std::string("ShapeRequestScenario")) {
 //  Object table = getObstacles("get_true_world");
-//  known_obstacles.add(getObstacles("get_known_world"));
-  unknown_obstacles.add(getObstacles("get_true_world"));
+  known_obstacles.add(getObstacles("get_known_world"));
+//  unknown_obstacles.add(getObstacles("get_true_world"));
 
 //  combineObstacles();
+
+  for (auto& ob : known_obstacles.obstacles) {
+    s.known_obstacles.add(&ob.occupied);
+  }
 
   setPrior(unknown_obstacles, bp);
   apply_frame_offset = true;

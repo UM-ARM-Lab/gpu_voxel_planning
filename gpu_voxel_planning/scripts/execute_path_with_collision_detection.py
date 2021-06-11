@@ -25,7 +25,7 @@ last_collision_info = CollisionInformation()
 ros_path = []
 path_in_progress = False
 
-ext_torque_limits = [10, 5, 4, 5, 4, 3, .9]
+ext_torque_limits = [3, 5, 3, 2.4, 3, 3, .9]
 
 right_arm_listener = None
 
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     # vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
     # vm.set_manipulator("right_arm")
     # vm.change_control_mode(ControlMode.JOINT_IMPEDANCE, stiffness=vu.Stiffness.MEDIUM)
-    victor.set_control_mode(ControlMode.JOINT_IMPEDANCE, vel=0.1)
+    victor.set_control_mode(ControlMode.JOINT_IMPEDANCE, vel=0.05)
 
     sub = rospy.Subscriber("victor/right_arm/motion_status", MotionStatus, check_collision)
     s = rospy.Service("attempt_path_on_victor", AttemptPathStart, attempt_path_srv)
