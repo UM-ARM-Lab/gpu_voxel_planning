@@ -1,23 +1,19 @@
 #! /usr/bin/env python
 
-# from openravepy import *
-from arm_robots.victor import Victor
-# import arm_or_robots.motion_victor
-# import victor_hardware_interface.msg as vhimsg
-import gpu_voxel_planning_msgs.srv as gvpsrv
-from victor_hardware_interface import victor_utils as vu
-from victor_hardware_interface_msgs.msg import *
-# from arc_utilities import ros_helpers as rh
-from arc_utilities.listener import Listener
+import copy
+from threading import Lock
+
+import rospy
+from std_msgs.msg import String
+from trajectory_msgs.msg import JointTrajectoryPoint
+
 from arc_utilities import path_utils as pu
+from arc_utilities.listener import Listener
+from arm_robots.victor import Victor
 from gpu_voxel_planning_msgs.msg import CollisionInformation
 from gpu_voxel_planning_msgs.srv import *
-from std_msgs.msg import String
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-import rospy
-from threading import Lock
-import copy
-from colorama import Fore
+from victor_hardware_interface import victor_utils as vu
+from victor_hardware_interface_msgs.msg import *
 
 voice = None
 check_collision_lock = Lock()
@@ -130,12 +126,15 @@ def execute_path(path):
     global g_links_in_contact
     global victor
     global path_in_progress
-    # global col_links
 
     rospy.loginfo("Executing path")
     col_links = []
-    # global in_collision
     in_collision = False
+
+    if victor.get_right_arm_control_mode().mode != ControlMode.JOINT_IMPEDANCE:
+        victor.speak(f"Wrong control mode, stopping")
+        raise RuntimeError(
+            f"Victor must be in Joint Impedance mode, but is currently in {victor.get_right_arm_control_mode()}")
 
     def stop(*args):
         global g_in_collision
@@ -152,7 +151,6 @@ def execute_path(path):
                 print(g_links_in_contact)
                 print(col_links)
             return g_in_collision
-
 
     victor.set_execute(False)
     plan_result = victor.plan_to_joint_config("right_arm", path[-1])
@@ -209,12 +207,6 @@ def execute_path(path):
     return msg
 
 
-def go_to(config):
-    cur_pos = vu.jvq_to_list(right_arm_listener.get().measured_joint_position)
-    path = [cur_pos, config]
-    return execute_path(path)
-
-
 def speak_collision_link():
     while not rospy.is_shutdown():
 
@@ -244,14 +236,6 @@ if __name__ == "__main__":
     s = rospy.Service("attempt_path_on_victor", AttemptPathStart, attempt_path_srv)
     s = rospy.Service("get_path_status", AttemptPathResult, path_status_srv)
     right_arm_listener = Listener("victor/right_arm/motion_status", MotionStatus)
-
-    # while(True):
-    #     while go_to([-.25, .5, -.18, -1.2, .4, .4, -.7]).collided:
-    #         rospy.sleep(1)
-    #     while go_to([-.25, -.11, -.18, -1.0, .4, .4, -.7]).collided:
-    #         rospy.sleep(1)
-    #     while go_to([-.25, -.11, .3, -1.0, .4, .4, -.7]).collided:
-    #         rospy.sleep(1)
 
     rospy.loginfo("Waiting for start path messages")
     while not rospy.is_shutdown():
