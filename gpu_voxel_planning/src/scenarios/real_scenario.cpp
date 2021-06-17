@@ -267,6 +267,7 @@ Object RealTable::getTable() {
 RealShapeRequestScenario::RealShapeRequestScenario(const BeliefParams &bp)
     : RealScenario("shape_request_scenario.json"), name(std::string("ShapeRequestScenario")) {
 //  Object table = getObstacles("get_true_world");
+  addLeftArm();
   known_obstacles.add(getObstacles("get_known_world"));
 //  unknown_obstacles.add(getObstacles("get_true_world"));
 

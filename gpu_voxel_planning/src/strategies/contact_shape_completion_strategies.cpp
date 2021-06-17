@@ -125,9 +125,9 @@ Path OptimismIG::applyTo(Scenario& scenario, GpuVoxelRvizVisualizer& viz) {
   }
 
   if (current == expected) {
-    //TODO: Temporary. Only uses first goal node
+    std::cout << "Planning...\n";
     std::vector<NodeIndex> node_path = plan(cur_node, goal_nodes, scenario.getState(), viz);
-    std::cout << "Planning to nodes: " << PrettyPrint::PrettyPrint(node_path, true) << "\n";
+    std::cout << "Planned to nodes: " << PrettyPrint::PrettyPrint(node_path, true) << "\n";
     next = VictorRightArmConfig(graph.getNode(node_path[1]).getValue());
     prev_node = cur_node;
     cur_node = node_path[1];
